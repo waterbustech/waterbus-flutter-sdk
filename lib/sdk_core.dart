@@ -1,6 +1,10 @@
+// Package imports:
 import 'package:injectable/injectable.dart';
-import 'package:waterbus/interfaces/webrtc_interface.dart';
-import 'package:waterbus/models/index.dart';
+import 'package:wakelock/wakelock.dart';
+
+// Project imports:
+import 'package:waterbus_sdk/interfaces/webrtc_interface.dart';
+import 'package:waterbus_sdk/models/index.dart';
 
 @Singleton()
 class SdkCore {
@@ -12,6 +16,8 @@ class SdkCore {
     required int participantId,
     required Function(CallbackPayload) onNewEvent,
   }) async {
+    Wakelock.enable();
+
     await _rtcManager.joinRoom(
       roomId: roomId,
       participantId: participantId,
@@ -24,6 +30,7 @@ class SdkCore {
 
   Future<void> leaveRoom() async {
     await _rtcManager.dispose();
+    Wakelock.disable();
   }
 
   Future<void> prepareMedia() async {

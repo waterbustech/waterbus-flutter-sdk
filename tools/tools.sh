@@ -7,12 +7,12 @@ do
 	read -p "Run with: " input
 	case $input in
 		1)
-		flutter pub run import_sorter:main
+		dart run import_sorter:main
 		break
 		;;
 		2)
-		flutter packages pub run build_runner build -d
-		flutter pub run import_sorter:main
+		dart run build_runner build -d
+		dart run import_sorter:main
 		dart fix --apply 
 		break
         ;;

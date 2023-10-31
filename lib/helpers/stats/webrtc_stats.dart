@@ -2,13 +2,10 @@
 import 'dart:async';
 import 'dart:io';
 
-// Package imports:
-import 'package:flutter_webrtc/flutter_webrtc.dart';
-
 // Project imports:
-import 'package:waterbus/flutter_waterbus_sdk.dart';
-import 'package:waterbus/helpers/extensions/duration_extensions.dart';
-import 'package:waterbus/helpers/logger/logger.dart';
+import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/helpers/extensions/duration_extensions.dart';
+import 'package:waterbus_sdk/helpers/logger/logger.dart';
 
 class WebRTCStatsUtility {
   RTCPeerConnection peerConnection;

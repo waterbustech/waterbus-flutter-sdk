@@ -1,10 +1,13 @@
 library waterbus;
 
-import 'package:waterbus/injection/injection_container.dart';
-import 'package:waterbus/models/index.dart';
-import 'package:waterbus/sdk_core.dart';
+// Project imports:
+import 'package:waterbus_sdk/injection/injection_container.dart';
+import 'package:waterbus_sdk/interfaces/socket_handler_interface.dart';
+import 'package:waterbus_sdk/models/index.dart';
+import 'package:waterbus_sdk/sdk_core.dart';
 
 export './models/index.dart';
+export 'package:flutter_webrtc/flutter_webrtc.dart';
 
 class WaterbusSdk {
   static String recordBenchmarkPath = '';
@@ -14,8 +17,12 @@ class WaterbusSdk {
     required String waterbusUrl,
     String recordBenchmarkPath = '',
   }) {
+    // Init dependency injection
+    configureDependencies();
+
     WaterbusSdk.waterbusUrl = waterbusUrl;
     WaterbusSdk.recordBenchmarkPath = recordBenchmarkPath;
+    _socketHandler.establishConnection();
   }
 
   Future<void> joinRoom({
@@ -23,7 +30,7 @@ class WaterbusSdk {
     required int participantId,
     required Function(CallbackPayload) onNewEvent,
   }) async {
-    await sdk.joinRoom(
+    await _sdk.joinRoom(
       roomId: roomId,
       participantId: participantId,
       onNewEvent: onNewEvent,
@@ -31,28 +38,31 @@ class WaterbusSdk {
   }
 
   Future<void> leaveRoom() async {
-    await sdk.leaveRoom();
+    await _sdk.leaveRoom();
   }
 
   // Related to local media
   Future<void> prepareMedia() async {
-    await sdk.prepareMedia();
+    await _sdk.prepareMedia();
   }
 
   Future<void> toggleVideo() async {
-    await sdk.toggleVideo();
+    await _sdk.toggleVideo();
   }
 
   Future<void> toggleAudio() async {
-    await sdk.toggleAudio();
+    await _sdk.toggleAudio();
   }
 
   Future<void> changeCallSetting(CallSetting setting) async {
-    await sdk.changeCallSettings(setting);
+    await _sdk.changeCallSettings(setting);
   }
 
+  CallState get callState => _sdk.callState;
+
   // Private
-  SdkCore get sdk => getIt.get<SdkCore>();
+  SdkCore get _sdk => getIt<SdkCore>();
+  SocketHandler get _socketHandler => getIt<SocketHandler>();
 
   ///Singleton factory
   static final WaterbusSdk instance = WaterbusSdk._internal();

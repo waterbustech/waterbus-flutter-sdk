@@ -4,7 +4,7 @@
 import 'dart:convert';
 
 // Project imports:
-import 'package:waterbus/models/index.dart';
+import 'package:waterbus_sdk/models/index.dart';
 
 class CallSetting {
   final bool isLowBandwidthMode;

@@ -6,6 +6,8 @@ abstract class SocketEmiter {
     required String sdp,
     required String roomId,
     required String participantId,
+    required bool isVideoEnabled,
+    required bool isAudioEnabled,
   });
   void requestEstablishSubscriber({required String targetId});
   void answerEstablishSubscriber({

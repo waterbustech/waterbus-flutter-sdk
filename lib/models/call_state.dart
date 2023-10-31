@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:equatable/equatable.dart';
 
 // Project imports:
-import 'package:waterbus/models/participant_sfu.dart';
+import 'package:waterbus_sdk/models/participant_sfu.dart';
 
 class CallState extends Equatable {
   final ParticipantSFU? mParticipant;

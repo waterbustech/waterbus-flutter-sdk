@@ -2,16 +2,15 @@
 import 'dart:async';
 
 // Package imports:
-import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:sdp_transform/sdp_transform.dart';
 
 // Project imports:
-import 'package:waterbus/constants/webrtc_configurations.dart';
-import 'package:waterbus/flutter_waterbus_sdk.dart';
-import 'package:waterbus/helpers/extensions/sdp_extensions.dart';
-import 'package:waterbus/interfaces/socket_emiter_interface.dart';
-import 'package:waterbus/interfaces/webrtc_interface.dart';
+import 'package:waterbus_sdk/constants/webrtc_configurations.dart';
+import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/helpers/extensions/sdp_extensions.dart';
+import 'package:waterbus_sdk/interfaces/socket_emiter_interface.dart';
+import 'package:waterbus_sdk/interfaces/webrtc_interface.dart';
 
 @LazySingleton(as: WaterbusWebRTCManager)
 class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
@@ -80,6 +79,8 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
         sdp: sdp,
         roomId: _roomId!,
         participantId: participantId.toString(),
+        isVideoEnabled: _mParticipant?.isVideoEnabled ?? false,
+        isAudioEnabled: _mParticipant?.isAudioEnabled ?? false,
       );
     };
   }
@@ -156,12 +157,18 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   Future<void> newParticipant(String targetId) async {
     await _makeConnectionReceive(targetId);
 
-    _notify(CallbackEvents.newParticipant);
+    _notify(
+      CallbackEvents.newParticipant,
+      participantId: targetId,
+    );
   }
 
   @override
   Future<void> participantHasLeft(String targetId) async {
-    _notify(CallbackEvents.participantHasLeft);
+    _notify(
+      CallbackEvents.participantHasLeft,
+      participantId: targetId,
+    );
 
     await _subscribers[targetId]?.dispose();
     _subscribers.remove(targetId);
@@ -423,11 +430,12 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     Helper.setSpeakerphoneOn(true);
   }
 
-  void _notify(CallbackEvents event) {
+  void _notify(CallbackEvents event, {String? participantId}) {
     _notifyChanged.sink.add(
       CallbackPayload(
         event: event,
         callState: callState(),
+        participantId: participantId,
       ),
     );
   }

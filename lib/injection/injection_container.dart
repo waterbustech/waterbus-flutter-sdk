@@ -3,7 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 
 // Project imports:
-import 'package:waterbus/injection/injection_container.config.dart';
+import 'package:waterbus_sdk/injection/injection_container.config.dart';
 
 final getIt = GetIt.instance;
 

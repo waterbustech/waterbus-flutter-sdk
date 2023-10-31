@@ -1,21 +1,25 @@
 // Project imports:
-import 'package:waterbus/models/index.dart';
+import 'package:waterbus_sdk/models/index.dart';
 
 class CallbackPayload {
   CallbackEvents event;
   CallState callState;
+  String? participantId;
   CallbackPayload({
     required this.event,
     required this.callState,
+    this.participantId,
   });
 
   CallbackPayload copyWith({
     CallbackEvents? event,
     CallState? callState,
+    String? participantId,
   }) {
     return CallbackPayload(
       event: event ?? this.event,
       callState: callState ?? this.callState,
+      participantId: participantId ?? this.participantId,
     );
   }
 

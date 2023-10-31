@@ -1,6 +1,5 @@
-// Package imports:
-import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:waterbus/flutter_waterbus_sdk.dart';
+// Project imports:
+import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 
 abstract class WaterbusWebRTCManager {
   Future<void> prepareMedia();

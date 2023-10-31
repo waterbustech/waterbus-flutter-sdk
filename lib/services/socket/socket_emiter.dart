@@ -4,10 +4,10 @@ import 'package:injectable/injectable.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 // Project imports:
-import 'package:waterbus/constants/socket_events.dart';
-import 'package:waterbus/injection/injection_container.dart';
-import 'package:waterbus/interfaces/socket_emiter_interface.dart';
-import 'package:waterbus/interfaces/socket_handler_interface.dart';
+import 'package:waterbus_sdk/constants/socket_events.dart';
+import 'package:waterbus_sdk/injection/injection_container.dart';
+import 'package:waterbus_sdk/interfaces/socket_emiter_interface.dart';
+import 'package:waterbus_sdk/interfaces/socket_handler_interface.dart';
 
 @Injectable(as: SocketEmiter)
 class SocketEmiterImpl extends SocketEmiter {
@@ -17,11 +17,15 @@ class SocketEmiterImpl extends SocketEmiter {
     required String sdp,
     required String roomId,
     required String participantId,
+    required bool isVideoEnabled,
+    required bool isAudioEnabled,
   }) {
     _socket?.emit(SocketEvent.joinRoomCSS, {
       "roomId": roomId,
       "sdp": sdp,
       "participantId": participantId,
+      "isVideoEnabled": isVideoEnabled,
+      "isAudioEnabled": isAudioEnabled,
     });
   }
 
@@ -79,5 +83,5 @@ class SocketEmiterImpl extends SocketEmiter {
     _socket?.emit(SocketEvent.setVideoEnabledCSS, {'isEnabled': isEnabled});
   }
 
-  Socket? get _socket => getIt.get<SocketHandler>().socket;
+  Socket? get _socket => getIt<SocketHandler>().socket;
 }

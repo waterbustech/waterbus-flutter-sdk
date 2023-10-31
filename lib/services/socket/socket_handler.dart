@@ -1,21 +1,22 @@
-// Flutter imports:
-import 'package:flutter/foundation.dart';
-
 // Package imports:
-import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 // Project imports:
-import 'package:waterbus/constants/socket_events.dart';
-import 'package:waterbus/flutter_waterbus_sdk.dart';
-import 'package:waterbus/interfaces/socket_handler_interface.dart';
-import 'package:waterbus/interfaces/webrtc_interface.dart';
+import 'package:waterbus_sdk/constants/socket_events.dart';
+import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/helpers/logger/logger.dart';
+import 'package:waterbus_sdk/interfaces/socket_handler_interface.dart';
+import 'package:waterbus_sdk/interfaces/webrtc_interface.dart';
 
 @Singleton(as: SocketHandler)
 class SocketHandlerImpl extends SocketHandler {
   final WaterbusWebRTCManager _rtcManager;
-  SocketHandlerImpl(this._rtcManager);
+  final WaterbusLogger _logger;
+  SocketHandlerImpl(
+    this._rtcManager,
+    this._logger,
+  );
 
   Socket? _socket;
 
@@ -39,7 +40,7 @@ class SocketHandlerImpl extends SocketHandler {
     });
 
     _socket?.onConnect((_) async {
-      debugPrint('established connection - sid: ${_socket?.id}');
+      _logger.log('established connection - sid: ${_socket?.id}');
 
       _socket?.on(SocketEvent.joinRoomSSC, (data) {
         // pc context: only send peer
@@ -128,7 +129,7 @@ class SocketHandlerImpl extends SocketHandler {
         if (data == null) return;
 
         final String participantId = data['participantId'];
-        final bool isEnabled = data['participantId'];
+        final bool isEnabled = data['isEnabled'];
 
         _rtcManager.setAudioEnabled(
           targetId: participantId,
@@ -141,7 +142,7 @@ class SocketHandlerImpl extends SocketHandler {
         if (data == null) return;
 
         final String participantId = data['participantId'];
-        final bool isEnabled = data['participantId'];
+        final bool isEnabled = data['isEnabled'];
 
         _rtcManager.setVideoEnabled(
           targetId: participantId,

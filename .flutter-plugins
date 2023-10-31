@@ -5,3 +5,6 @@ path_provider_android=/Users/lambiengcode/.pub-cache/hosted/pub.dev/path_provide
 path_provider_foundation=/Users/lambiengcode/.pub-cache/hosted/pub.dev/path_provider_foundation-2.3.1/
 path_provider_linux=/Users/lambiengcode/.pub-cache/hosted/pub.dev/path_provider_linux-2.2.1/
 path_provider_windows=/Users/lambiengcode/.pub-cache/hosted/pub.dev/path_provider_windows-2.2.1/
+wakelock=/Users/lambiengcode/.pub-cache/hosted/pub.dev/wakelock-0.6.2/
+wakelock_macos=/Users/lambiengcode/.pub-cache/hosted/pub.dev/wakelock_macos-0.4.0/
+wakelock_web=/Users/lambiengcode/.pub-cache/hosted/pub.dev/wakelock_web-0.4.0/

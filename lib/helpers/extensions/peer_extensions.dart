@@ -2,7 +2,7 @@
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
 // Project imports:
-import 'package:waterbus/helpers/stats/webrtc_stats.dart';
+import 'package:waterbus_sdk/helpers/stats/webrtc_stats.dart';
 
 // Project imports:
 

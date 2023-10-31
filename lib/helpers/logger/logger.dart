@@ -1,6 +1,8 @@
 // Package imports:
+import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
 
+@injectable
 class WaterbusLogger {
   final String tag = 'WaterbusLogger';
   final Logger logger = Logger(
@@ -8,7 +10,7 @@ class WaterbusLogger {
   );
 
   void log(String msg) {
-    logger.d('[$tag]: $msg');
+    logger.i('[$tag]: $msg');
   }
 
   ///Singleton factory
