@@ -45,26 +45,30 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
 
   @override
   Future<void> startScreenSharing() async {
-    if (_mParticipant == null) return;
+    try {
+      if (_mParticipant == null) return;
 
-    if (_mParticipant!.isVideoEnabled) {
-      await toggleVideo(forceValue: false, ignoreUpdateValue: true);
+      if (_mParticipant!.isVideoEnabled) {
+        await toggleVideo(forceValue: false, ignoreUpdateValue: true);
+      }
+
+      if (Platform.isAndroid) {
+        await _foregroundService.startForegroundService();
+      }
+
+      final MediaStream displayStream = await _getDisplayMedia();
+
+      if (displayStream.getVideoTracks().isEmpty) return;
+
+      await _replaceVideoTrack(displayStream.getVideoTracks().first);
+
+      _mParticipant?.isSharingScreen = true;
+
+      _notify(CallbackEvents.shouldBeUpdateState);
+      _socketEmiter.setScreenSharing(true);
+    } catch (e) {
+      stopScreenSharing();
     }
-
-    if (Platform.isAndroid) {
-      await _foregroundService.startForegroundService();
-    }
-
-    final MediaStream displayStream = await _getDisplayMedia();
-
-    if (displayStream.getVideoTracks().isEmpty) return;
-
-    await _replaceVideoTrack(displayStream.getVideoTracks().first);
-
-    _mParticipant?.isSharingScreen = true;
-
-    _notify(CallbackEvents.shouldBeUpdateState);
-    _socketEmiter.setScreenSharing(true);
   }
 
   @override

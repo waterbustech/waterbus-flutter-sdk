@@ -51,7 +51,7 @@ class ShareScreenService : Service() {
             )
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-//                    .setSmallIcon(R.)
+                    .setSmallIcon(resources.getIdentifier("ic_screen_sharing", "drawable", packageName))
                     .setColor(Color.BLUE)
                     .setContentTitle("Waterbus: Online Meeting")
                     .setContentText("You are sharing your screen")

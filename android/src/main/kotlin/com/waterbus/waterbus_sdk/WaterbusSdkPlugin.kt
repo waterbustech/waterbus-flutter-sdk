@@ -1,9 +1,14 @@
 package com.waterbus.waterbus_sdk
 
+import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
+import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.os.Build
 import androidx.annotation.NonNull
+import androidx.core.content.getSystemService
 import com.waterbus.waterbus_sdk.Services.ShareScreenService
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -22,9 +27,10 @@ class WaterbusSdkPlugin: FlutterPlugin, MethodCallHandler {
   private lateinit var mContext : Context
 
   override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "waterbus-sdk/foreground-channel")
-    channel.setMethodCallHandler(this)
+      channel = MethodChannel(flutterPluginBinding.binaryMessenger, "waterbus-sdk/foreground-channel")
+      channel.setMethodCallHandler(this)
       mContext = flutterPluginBinding.applicationContext
+      registerForegroundServiceId()
   }
 
   override fun onMethodCall(call: MethodCall, result: Result) {
@@ -63,4 +69,17 @@ class WaterbusSdkPlugin: FlutterPlugin, MethodCallHandler {
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     channel.setMethodCallHandler(null)
   }
+
+    private fun registerForegroundServiceId() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationManager = mContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            @SuppressLint("WrongConstant") val notificationChannel = NotificationChannel(
+                ShareScreenService.CHANNEL_ID,
+                ShareScreenService.CHANNEL_ID,
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            notificationChannel.description = ShareScreenService.CHANNEL_ID
+            notificationManager.createNotificationChannel(notificationChannel)
+        }
+    }
 }
