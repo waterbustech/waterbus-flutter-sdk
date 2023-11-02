@@ -46,6 +46,14 @@ class WaterbusSdk {
     await _sdk.prepareMedia();
   }
 
+  Future<void> startScreenSharing() async {
+    await _sdk.startScreenSharing();
+  }
+
+  Future<void> stopScreenSharing() async {
+    await _sdk.stopScreenSharing();
+  }
+
   Future<void> toggleVideo() async {
     await _sdk.toggleVideo();
   }

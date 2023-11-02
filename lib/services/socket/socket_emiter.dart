@@ -83,5 +83,10 @@ class SocketEmiterImpl extends SocketEmiter {
     _socket?.emit(SocketEvent.setVideoEnabledCSS, {'isEnabled': isEnabled});
   }
 
+  @override
+  void setScreenSharing(bool isSharing) {
+    _socket?.emit(SocketEvent.setScreenSharingCSS, {'isSharing': isSharing});
+  }
+
   Socket? get _socket => getIt<SocketHandler>().socket;
 }

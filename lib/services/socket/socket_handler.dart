@@ -149,6 +149,19 @@ class SocketHandlerImpl extends SocketHandler {
           isEnabled: isEnabled,
         );
       });
+
+      _socket?.on(SocketEvent.setScreenSharingSSC, (data) {
+        /// targetId, isSharing
+        if (data == null) return;
+
+        final String participantId = data['participantId'];
+        final bool isSharing = data['isSharing'];
+
+        _rtcManager.setScreenSharing(
+          targetId: participantId,
+          isSharing: isSharing,
+        );
+      });
     });
   }
 
