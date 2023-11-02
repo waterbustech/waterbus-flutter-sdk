@@ -1,5 +1,6 @@
 // Dart imports:
 import 'dart:async';
+import 'dart:io';
 
 // Package imports:
 import 'package:injectable/injectable.dart';
@@ -11,11 +12,19 @@ import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/helpers/extensions/sdp_extensions.dart';
 import 'package:waterbus_sdk/interfaces/socket_emiter_interface.dart';
 import 'package:waterbus_sdk/interfaces/webrtc_interface.dart';
+import 'package:waterbus_sdk/method_channels/foreground.dart';
+import 'package:waterbus_sdk/method_channels/replaykit.dart';
 
 @LazySingleton(as: WaterbusWebRTCManager)
 class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   final SocketEmiter _socketEmiter;
-  WaterbusWebRTCManagerIpml(this._socketEmiter);
+  final ForegroundService _foregroundService;
+  final ReplayKitChannel _replayKitChannel;
+  WaterbusWebRTCManagerIpml(
+    this._socketEmiter,
+    this._foregroundService,
+    this._replayKitChannel,
+  );
 
   String? _roomId;
   MediaStream? _localStream;
@@ -32,6 +41,62 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   @override
   Future<void> prepareMedia() async {
     await _prepareMedia();
+  }
+
+  @override
+  Future<void> startScreenSharing() async {
+    try {
+      if (_mParticipant == null) return;
+
+      if (_mParticipant!.isVideoEnabled) {
+        await toggleVideo(forceValue: false, ignoreUpdateValue: true);
+      }
+
+      if (Platform.isAndroid) {
+        await _foregroundService.startForegroundService();
+      }
+
+      final MediaStream displayStream = await _getDisplayMedia();
+
+      if (displayStream.getVideoTracks().isEmpty) return;
+
+      await _replaceVideoTrack(displayStream.getVideoTracks().first);
+
+      _mParticipant?.isSharingScreen = true;
+
+      _notify(CallbackEvents.shouldBeUpdateState);
+      _socketEmiter.setScreenSharing(true);
+    } catch (e) {
+      stopScreenSharing();
+    }
+  }
+
+  @override
+  Future<void> stopScreenSharing({bool stayInRoom = true}) async {
+    _mParticipant?.isSharingScreen = false;
+
+    if (_mParticipant == null) return;
+
+    if (stayInRoom && (_localStream?.getVideoTracks().isNotEmpty ?? false)) {
+      await _replaceVideoTrack(_localStream!.getVideoTracks().first);
+
+      if (_mParticipant!.isVideoEnabled) {
+        await toggleVideo(forceValue: true, ignoreUpdateValue: true);
+      }
+    }
+
+    if (Platform.isAndroid) {
+      await _foregroundService.stopForegroundService();
+    }
+
+    _mParticipant?.isSharingScreen = false;
+
+    if (stayInRoom) {
+      _notify(CallbackEvents.shouldBeUpdateState);
+      _socketEmiter.setScreenSharing(false);
+    } else {
+      _replayKitChannel.closeReplayKit();
+    }
   }
 
   @override
@@ -201,8 +266,11 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   }
 
   @override
-  Future<void> toggleVideo({bool? forceValue}) async {
-    if (_mParticipant == null) return;
+  Future<void> toggleVideo({
+    bool? forceValue,
+    bool ignoreUpdateValue = false,
+  }) async {
+    if (_mParticipant == null || _mParticipant!.isSharingScreen) return;
 
     final tracks = _localStream?.getVideoTracks() ?? [];
 
@@ -215,6 +283,8 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
         track.enabled = forceValue ?? true;
       }
     }
+
+    if (ignoreUpdateValue) return;
 
     _mParticipant!.isVideoEnabled =
         forceValue ?? !_mParticipant!.isVideoEnabled;
@@ -269,6 +339,12 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   }
 
   @override
+  void setScreenSharing({required String targetId, required bool isSharing}) {
+    _subscribers[targetId]?.isSharingScreen = isSharing;
+    _notify(CallbackEvents.shouldBeUpdateState);
+  }
+
+  @override
   Future<void> dispose() async {
     if (_roomId != null) {
       _socketEmiter.leaveRoom(_roomId!);
@@ -283,6 +359,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     }
     _subscribers.clear();
 
+    await stopScreenSharing(stayInRoom: false);
     await _localStream?.dispose();
     await _mParticipant?.dispose();
     _mParticipant = null;
@@ -324,6 +401,27 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     if (_callSetting.isVideoMuted) {
       toggleVideo();
     }
+
+    return stream;
+  }
+
+  Future<MediaStream> _getDisplayMedia() async {
+    final Map<String, dynamic> mediaConstraints = <String, dynamic>{
+      'audio': false,
+      'video': {
+        'deviceId': 'broadcast',
+        'frameRate': 15,
+        'mandatory': {
+          'minWidth': 1280,
+          'minHeight': 720,
+          'minFrameRate': 10,
+        },
+      },
+    };
+
+    final MediaStream stream = await navigator.mediaDevices.getDisplayMedia(
+      mediaConstraints,
+    );
 
     return stream;
   }
@@ -416,14 +514,24 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
 
     for (final sender in senders) {
       if (sender.track?.kind == 'audio') {
-        sender.replaceTrack(newStream.getAudioTracks()[0]);
+        sender.replaceTrack(newStream.getAudioTracks().first);
       } else if (sender.track?.kind == 'video') {
-        sender.replaceTrack(newStream.getVideoTracks()[0]);
+        sender.replaceTrack(newStream.getVideoTracks().first);
       }
     }
 
     _mParticipant?.setSrcObject(newStream);
     _localStream = newStream;
+  }
+
+  Future<void> _replaceVideoTrack(MediaStreamTrack track) async {
+    final senders = await _mParticipant!.peerConnection.getSenders();
+
+    for (final sender in senders) {
+      if (sender.track?.kind == 'video') {
+        sender.replaceTrack(track);
+      }
+    }
   }
 
   Future<void> _toggleSpeakerPhone() async {

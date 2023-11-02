@@ -15,4 +15,6 @@ class SocketEvent {
   static const String setVideoEnabledSSC = "SET_VIDEO_ENABLED_SSC";
   static const String setAudioEnabledCSS = "SET_AUDIO_ENABLED_CSS";
   static const String setAudioEnabledSSC = "SET_AUDIO_ENABLED_SSC";
+  static const String setScreenSharingSSC = "SET_SCREEN_SHARING_SSC";
+  static const String setScreenSharingCSS = "SET_SCREEN_SHARING_CSS";
 }
