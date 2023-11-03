@@ -80,8 +80,9 @@ class SocketHandlerImpl extends SocketHandler {
         await _rtcManager.setSubscriberRemoteSdp(
           data['targetId'],
           data['offer'],
-          data['audioEnabled'],
-          data['videoEnabled'],
+          data['audioEnabled'] ?? false,
+          data['videoEnabled'] ?? false,
+          data['isScreenSharing'] ?? false,
         );
       });
 

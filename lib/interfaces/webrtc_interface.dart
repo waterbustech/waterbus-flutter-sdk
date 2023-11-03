@@ -10,6 +10,7 @@ abstract class WaterbusWebRTCManager {
     String sdp,
     bool videoEnabled,
     bool audioEnabled,
+    bool isScreenSharing,
   );
   Future<void> addPublisherCandidate(RTCIceCandidate candidate);
   Future<void> addSubscriberCandidate(

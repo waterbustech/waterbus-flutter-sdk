@@ -180,6 +180,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     String sdp,
     bool videoEnabled,
     bool audioEnabled,
+    bool isScreenSharing,
   ) async {
     if (_subscribers[targetId] != null) return;
 
@@ -193,6 +194,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       description,
       videoEnabled,
       audioEnabled,
+      isScreenSharing,
     );
   }
 
@@ -464,6 +466,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     RTCSessionDescription remoteDescription,
     bool videoEnabled,
     bool audioEnabled,
+    bool isScreenSharing,
   ) async {
     final RTCPeerConnection rtcPeerConnection = await _createPeerConnection(
       WebRTCConfigurations.offerSubscriberSdpConstraints,
@@ -474,6 +477,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       onChanged: () => _notify(CallbackEvents.shouldBeUpdateState),
       isAudioEnabled: videoEnabled,
       isVideoEnabled: audioEnabled,
+      isSharingScreen: isScreenSharing,
     );
 
     rtcPeerConnection.onAddStream = (stream) async {
