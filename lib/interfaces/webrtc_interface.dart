@@ -11,6 +11,7 @@ abstract class WaterbusWebRTCManager {
     bool videoEnabled,
     bool audioEnabled,
     bool isScreenSharing,
+    WebRTCCodec codec,
   );
   Future<void> addPublisherCandidate(RTCIceCandidate candidate);
   Future<void> addSubscriberCandidate(

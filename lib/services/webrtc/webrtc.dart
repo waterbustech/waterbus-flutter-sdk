@@ -9,6 +9,7 @@ import 'package:sdp_transform/sdp_transform.dart';
 // Project imports:
 import 'package:waterbus_sdk/constants/webrtc_configurations.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/helpers/e2ee/frame_crypto.dart';
 import 'package:waterbus_sdk/helpers/extensions/sdp_extensions.dart';
 import 'package:waterbus_sdk/interfaces/socket_emiter_interface.dart';
 import 'package:waterbus_sdk/interfaces/webrtc_interface.dart';
@@ -17,10 +18,12 @@ import 'package:waterbus_sdk/method_channels/replaykit.dart';
 
 @LazySingleton(as: WaterbusWebRTCManager)
 class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
+  final WebRTCFrameCrypto _frameCryptor;
   final SocketEmiter _socketEmiter;
   final ForegroundService _foregroundService;
   final ReplayKitChannel _replayKitChannel;
   WaterbusWebRTCManagerIpml(
+    this._frameCryptor,
     this._socketEmiter,
     this._foregroundService,
     this._replayKitChannel,
@@ -104,7 +107,10 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     required String roomId,
     required int participantId,
   }) async {
-    await _prepareMedia();
+    await Future.wait([
+      _frameCryptor.initialize(roomId, codec: _callSetting.preferedCodec),
+      _prepareMedia(),
+    ]);
 
     if (_mParticipant?.peerConnection == null) return;
 
@@ -124,30 +130,30 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       peerConnection.addTrack(track, _localStream!);
     });
 
-    peerConnection.onRenegotiationNeeded = () async {
-      if ((await peerConnection.getRemoteDescription()) != null) return;
+    await _frameCryptor.enableEncryption(
+      peerConnection: peerConnection,
+    );
 
-      String sdp = await _createOffer(peerConnection);
+    String sdp = await _createOffer(peerConnection);
 
-      sdp = sdp.enableAudioDTX().setPreferredCodec(
-            codec: _callSetting.preferedCodec,
-          );
+    sdp = sdp.enableAudioDTX().setPreferredCodec(
+          codec: _callSetting.preferedCodec,
+        );
 
-      final RTCSessionDescription description = RTCSessionDescription(
-        sdp,
-        DescriptionType.offer.type,
-      );
+    final RTCSessionDescription description = RTCSessionDescription(
+      sdp,
+      DescriptionType.offer.type,
+    );
 
-      await peerConnection.setLocalDescription(description);
+    await peerConnection.setLocalDescription(description);
 
-      _socketEmiter.establishBroadcast(
-        sdp: sdp,
-        roomId: _roomId!,
-        participantId: participantId.toString(),
-        isVideoEnabled: _mParticipant?.isVideoEnabled ?? false,
-        isAudioEnabled: _mParticipant?.isAudioEnabled ?? false,
-      );
-    };
+    _socketEmiter.establishBroadcast(
+      sdp: sdp,
+      roomId: _roomId!,
+      participantId: participantId.toString(),
+      isVideoEnabled: _mParticipant?.isVideoEnabled ?? false,
+      isAudioEnabled: _mParticipant?.isAudioEnabled ?? false,
+    );
   }
 
   @override
@@ -181,6 +187,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     bool videoEnabled,
     bool audioEnabled,
     bool isScreenSharing,
+    WebRTCCodec codec,
   ) async {
     if (_subscribers[targetId] != null) return;
 
@@ -195,6 +202,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       videoEnabled,
       audioEnabled,
       isScreenSharing,
+      codec,
     );
   }
 
@@ -361,6 +369,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     }
     _subscribers.clear();
 
+    _frameCryptor.dispose();
     await stopScreenSharing(stayInRoom: false);
     await _localStream?.dispose();
     await _mParticipant?.dispose();
@@ -467,6 +476,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     bool videoEnabled,
     bool audioEnabled,
     bool isScreenSharing,
+    WebRTCCodec codec,
   ) async {
     final RTCPeerConnection rtcPeerConnection = await _createPeerConnection(
       WebRTCConfigurations.offerSubscriberSdpConstraints,
@@ -484,6 +494,10 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       if (_subscribers[targetId] == null) return;
 
       _subscribers[targetId]?.setSrcObject(stream);
+      _frameCryptor.enableDecryption(
+        peerConnection: rtcPeerConnection,
+        codec: codec,
+      );
     };
 
     rtcPeerConnection.onIceCandidate = (candidate) {
