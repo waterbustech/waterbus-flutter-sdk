@@ -105,7 +105,7 @@ class WebRTCFrameCrypto {
         );
 
         frameCyrptor.onFrameCryptorStateChanged = (participantId, state) {
-          _logger.log('onFrameCryptorStateChanged $participantId $state');
+          _logger.log('Encryption: $participantId $state');
         };
 
         _frameCyrptors[id] = frameCyrptor;
@@ -146,6 +146,10 @@ class WebRTCFrameCrypto {
           algorithm: Algorithm.kAesGcm,
           keyProvider: _keyProvider!,
         );
+
+        frameCyrptor.onFrameCryptorStateChanged = (participantId, state) {
+          _logger.log('Decryption: $participantId $state');
+        };
 
         _frameCyrptors[id] = frameCyrptor;
         await frameCyrptor.setKeyIndex(0);

@@ -528,22 +528,33 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   }
 
   Future<void> _replaceMediaStream(MediaStream newStream) async {
-    final senders = await _mParticipant!.peerConnection.getSenders();
+    final List<RTCRtpSender> senders =
+        await _mParticipant!.peerConnection.getSenders();
 
-    for (final sender in senders) {
-      if (sender.track?.kind == 'audio') {
-        sender.replaceTrack(newStream.getAudioTracks().first);
-      } else if (sender.track?.kind == 'video') {
-        sender.replaceTrack(newStream.getVideoTracks().first);
-      }
+    final List<RTCRtpSender> sendersAudio =
+        senders.where((sender) => sender.track?.kind == 'audio').toList();
+    final List<RTCRtpSender> sendersVideo =
+        senders.where((sender) => sender.track?.kind == 'video').toList();
+
+    for (final sender in sendersAudio) {
+      sender.replaceTrack(newStream.getAudioTracks().first);
     }
+
+    await _replaceVideoTrack(
+      newStream.getVideoTracks().first,
+      sendersList: sendersVideo,
+    );
 
     _mParticipant?.setSrcObject(newStream);
     _localStream = newStream;
   }
 
-  Future<void> _replaceVideoTrack(MediaStreamTrack track) async {
-    final senders = await _mParticipant!.peerConnection.getSenders();
+  Future<void> _replaceVideoTrack(
+    MediaStreamTrack track, {
+    List<RTCRtpSender>? sendersList,
+  }) async {
+    final List<RTCRtpSender> senders =
+        sendersList ?? await _mParticipant!.peerConnection.getSenders();
 
     for (final sender in senders) {
       if (sender.track?.kind == 'video') {
