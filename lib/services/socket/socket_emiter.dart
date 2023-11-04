@@ -1,10 +1,10 @@
 // Package imports:
-import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 // Project imports:
 import 'package:waterbus_sdk/constants/socket_events.dart';
+import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
 import 'package:waterbus_sdk/interfaces/socket_emiter_interface.dart';
 import 'package:waterbus_sdk/interfaces/socket_handler_interface.dart';
@@ -17,15 +17,15 @@ class SocketEmiterImpl extends SocketEmiter {
     required String sdp,
     required String roomId,
     required String participantId,
-    required bool isVideoEnabled,
-    required bool isAudioEnabled,
+    required ParticipantSFU participant,
   }) {
     _socket?.emit(SocketEvent.joinRoomCSS, {
       "roomId": roomId,
       "sdp": sdp,
       "participantId": participantId,
-      "isVideoEnabled": isVideoEnabled,
-      "isAudioEnabled": isAudioEnabled,
+      "isVideoEnabled": participant.isVideoEnabled,
+      "isAudioEnabled": participant.isAudioEnabled,
+      "isE2eeEnabled": participant.isE2eeEnabled,
     });
   }
 
@@ -71,6 +71,11 @@ class SocketEmiterImpl extends SocketEmiter {
     _socket?.emit(SocketEvent.makeSubscriberCSS, {
       "targetId": targetId,
     });
+  }
+
+  @override
+  void setE2eeEnabled(bool isEnabled) {
+    _socket?.emit(SocketEvent.setE2eeEnabledCSS, {'isEnabled': isEnabled});
   }
 
   @override

@@ -75,18 +75,19 @@ class SocketHandlerImpl extends SocketHandler {
         // pc context: only receive peer
         // will receive sdp, get it and add to pc
         /// sdp, targetId
-        if (data == null) return;
+        if (data == null || data['offer'] == null) return;
 
         final WebRTCCodec codec =
             ((data['videoCodec'] ?? '') as String).videoCodec;
 
         await _rtcManager.setSubscriberRemoteSdp(
-          data['targetId'],
-          data['offer'],
-          data['audioEnabled'] ?? false,
-          data['videoEnabled'] ?? false,
-          data['isScreenSharing'] ?? false,
-          codec,
+          targetId: data['targetId'],
+          sdp: data['offer'],
+          audioEnabled: data['audioEnabled'] ?? false,
+          videoEnabled: data['videoEnabled'] ?? false,
+          isScreenSharing: data['isScreenSharing'] ?? false,
+          isE2eeEnabled: data['isE2eeEnabled'] ?? false,
+          codec: codec,
         );
       });
 
@@ -127,6 +128,19 @@ class SocketHandlerImpl extends SocketHandler {
         );
 
         _rtcManager.addSubscriberCandidate(participantId, candidate);
+      });
+
+      _socket?.on(SocketEvent.setE2eeEnabledSSC, (data) {
+        /// targetId, isEnabled
+        if (data == null) return;
+
+        final String participantId = data['participantId'];
+        final bool isEnabled = data['isEnabled'];
+
+        _rtcManager.setE2eeEnabled(
+          targetId: participantId,
+          isEnabled: isEnabled,
+        );
       });
 
       _socket?.on(SocketEvent.setAudioEnabledSSC, (data) {

@@ -2,7 +2,7 @@
 
 // Package imports:
 import 'package:equatable/equatable.dart';
-import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 
 // Project imports:
 import 'package:waterbus_sdk/helpers/extensions/peer_extensions.dart';
@@ -14,15 +14,19 @@ class ParticipantSFU extends Equatable {
   bool isAudioEnabled;
   bool isSharingScreen;
   bool hasFirstFrameRendered;
+  bool isE2eeEnabled;
+  final WebRTCCodec videoCodec;
   final Function() onChanged;
   ParticipantSFU({
     this.isVideoEnabled = true,
     this.isAudioEnabled = true,
     this.isSharingScreen = false,
     this.hasFirstFrameRendered = false,
+    this.isE2eeEnabled = false,
     this.renderer,
     required this.peerConnection,
     required this.onChanged,
+    required this.videoCodec,
     bool enableStats = false,
   }) {
     _initialRenderer();
@@ -37,8 +41,10 @@ class ParticipantSFU extends Equatable {
     bool? isAudioEnabled,
     bool? isVideoEnabled,
     bool? isSharingScreen,
+    bool? isE2eeEnabled,
     RTCPeerConnection? peerConnection,
     RTCVideoRenderer? renderer,
+    WebRTCCodec? videoCodec,
   }) {
     return ParticipantSFU(
       isVideoEnabled: isAudioEnabled ?? this.isVideoEnabled,
@@ -47,6 +53,8 @@ class ParticipantSFU extends Equatable {
       peerConnection: peerConnection ?? this.peerConnection,
       renderer: renderer ?? this.renderer,
       onChanged: onChanged,
+      videoCodec: videoCodec ?? this.videoCodec,
+      isE2eeEnabled: isE2eeEnabled ?? this.isE2eeEnabled,
     );
   }
 

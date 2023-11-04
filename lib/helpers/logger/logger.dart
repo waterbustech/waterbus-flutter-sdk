@@ -10,7 +10,7 @@ class WaterbusLogger {
   );
 
   void log(String msg) {
-    logger.i('[$tag]: $msg');
+    // logger.i('[$tag]: $msg');
   }
 
   void bug(String msg) {

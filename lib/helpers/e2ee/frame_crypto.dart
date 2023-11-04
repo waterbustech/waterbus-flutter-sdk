@@ -85,15 +85,14 @@ class WebRTCFrameCrypto {
 
   Future<void> enableEncryption({
     required RTCPeerConnection peerConnection,
+    required bool enabled,
   }) async {
     final List<RTCRtpSender> senders = await peerConnection.senders;
 
     for (final sender in senders) {
-      // if (sender.track?.kind.toString() == 'video') continue;
-
       final String trackId = sender.track?.id ?? '';
       final String id =
-          '${sender.track?.kind.toString().trim()}-$trackId-sender';
+          '${sender.track?.kind.toString().trim()}_${trackId}_sender';
 
       if (!_frameCyrptors.containsKey(id)) {
         final frameCyrptor =
@@ -118,8 +117,12 @@ class WebRTCFrameCrypto {
 
       final frameCyrptor0 = _frameCyrptors[id];
 
-      await frameCyrptor0?.setEnabled(true);
-      await _keyProvider?.setKey(participantId: id, index: 0, key: aesKey);
+      if (enabled) {
+        await frameCyrptor0?.setEnabled(true);
+        await _keyProvider?.setKey(participantId: id, index: 0, key: aesKey);
+      } else {
+        await frameCyrptor0?.setEnabled(false);
+      }
 
       await frameCyrptor0?.updateCodec(
         sender.track?.kind.toString().trim() == 'video'
@@ -132,12 +135,13 @@ class WebRTCFrameCrypto {
   Future<void> enableDecryption({
     required RTCPeerConnection peerConnection,
     required WebRTCCodec codec,
+    required bool enabled,
   }) async {
     final List<RTCRtpReceiver> receivers = await peerConnection.receivers;
 
     for (final receiver in receivers) {
       final String trackId = receiver.track?.id ?? '';
-      final String id = '${receiver.track?.kind}-$trackId-receiver';
+      final String id = '${receiver.track?.kind}_${trackId}_receiver';
       if (!_frameCyrptors.containsKey(id)) {
         final frameCyrptor =
             await _frameCyrptorFactory.createFrameCryptorForRtpReceiver(
@@ -157,8 +161,12 @@ class WebRTCFrameCrypto {
 
       final frameCyrptor0 = _frameCyrptors[id];
 
-      await frameCyrptor0?.setEnabled(true);
-      await _keyProvider?.setKey(participantId: id, index: 0, key: aesKey);
+      if (enabled) {
+        await frameCyrptor0?.setEnabled(true);
+        await _keyProvider?.setKey(participantId: id, index: 0, key: aesKey);
+      } else {
+        await frameCyrptor0?.setEnabled(false);
+      }
 
       await frameCyrptor0?.updateCodec(
         receiver.track?.kind == 'video'

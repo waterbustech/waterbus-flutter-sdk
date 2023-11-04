@@ -13,6 +13,7 @@ class CallSetting {
   final bool noiseSuppressionEnabled;
   final bool agcEnabled;
   final bool isVideoMuted;
+  final bool e2eeEnabled;
   final WebRTCCodec preferedCodec;
   final VideoQuality videoQuality;
   final VideoLayout videoLayout;
@@ -23,6 +24,7 @@ class CallSetting {
     this.noiseSuppressionEnabled = true,
     this.agcEnabled = true,
     this.isVideoMuted = false,
+    this.e2eeEnabled = false,
     this.preferedCodec = WebRTCCodec.h264,
     this.videoQuality = VideoQuality.low,
     this.videoLayout = VideoLayout.gridView,
@@ -35,6 +37,7 @@ class CallSetting {
     bool? noiseSuppressionEnabled,
     bool? agcEnabled,
     bool? isVideoMuted,
+    bool? e2eeEnabled,
     WebRTCCodec? preferedCodec,
     VideoQuality? videoQuality,
     VideoLayout? videoLayout,
@@ -48,6 +51,7 @@ class CallSetting {
           noiseSuppressionEnabled ?? this.noiseSuppressionEnabled,
       agcEnabled: agcEnabled ?? this.agcEnabled,
       isVideoMuted: isVideoMuted ?? this.isVideoMuted,
+      e2eeEnabled: e2eeEnabled ?? this.e2eeEnabled,
       preferedCodec: preferedCodec ?? this.preferedCodec,
       videoQuality: videoQuality ?? this.videoQuality,
       videoLayout: videoLayout ?? this.videoLayout,
@@ -62,6 +66,7 @@ class CallSetting {
       'noiseSuppressionEnabled': noiseSuppressionEnabled,
       'agcEnabled': agcEnabled,
       'isVideoMuted': isVideoMuted,
+      'e2eeEnabled': e2eeEnabled,
       'preferedCodec': preferedCodec.index,
       'videoQuality': videoQuality.index,
       'videoLayout': videoLayout.index,
@@ -76,6 +81,7 @@ class CallSetting {
       noiseSuppressionEnabled: map['noiseSuppressionEnabled'] as bool,
       agcEnabled: map['agcEnabled'] as bool,
       isVideoMuted: map['isVideoMuted'] as bool,
+      e2eeEnabled: map['e2eeEnabled'] ?? false,
       preferedCodec: WebRTCCodec.values[map['preferedCodec']],
       videoQuality: VideoQuality.values[map['videoQuality']],
       videoLayout: VideoLayout.values[map['videoLayout']],

@@ -130,9 +130,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       peerConnection.addTrack(track, _localStream!);
     });
 
-    await _frameCryptor.enableEncryption(
-      peerConnection: peerConnection,
-    );
+    await _enableEncryption(_callSetting.e2eeEnabled);
 
     String sdp = await _createOffer(peerConnection);
 
@@ -151,8 +149,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       sdp: sdp,
       roomId: _roomId!,
       participantId: participantId.toString(),
-      isVideoEnabled: _mParticipant?.isVideoEnabled ?? false,
-      isAudioEnabled: _mParticipant?.isAudioEnabled ?? false,
+      participant: _mParticipant!,
     );
   }
 
@@ -181,14 +178,15 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   }
 
   @override
-  Future<void> setSubscriberRemoteSdp(
-    String targetId,
-    String sdp,
-    bool videoEnabled,
-    bool audioEnabled,
-    bool isScreenSharing,
-    WebRTCCodec codec,
-  ) async {
+  Future<void> setSubscriberRemoteSdp({
+    required String targetId,
+    required String sdp,
+    required bool videoEnabled,
+    required bool audioEnabled,
+    required bool isScreenSharing,
+    required bool isE2eeEnabled,
+    required WebRTCCodec codec,
+  }) async {
     if (_subscribers[targetId] != null) return;
 
     final RTCSessionDescription description = RTCSessionDescription(
@@ -202,6 +200,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       videoEnabled,
       audioEnabled,
       isScreenSharing,
+      isE2eeEnabled,
       codec,
     );
   }
@@ -254,7 +253,12 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   @override
   Future<void> applyCallSettings(CallSetting setting) async {
     if (_callSetting.videoQuality == setting.videoQuality) {
+      if (_callSetting.e2eeEnabled != setting.e2eeEnabled) {
+        await _enableEncryption(setting.e2eeEnabled);
+      }
+
       _callSetting = setting;
+
       return;
     }
 
@@ -337,13 +341,41 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   }
 
   @override
+  Future<void> setE2eeEnabled({
+    required String targetId,
+    required bool isEnabled,
+    bool isForce = false,
+  }) async {
+    final RTCPeerConnection? peerConnection =
+        _subscribers[targetId]?.peerConnection;
+
+    if (peerConnection == null) return;
+
+    if (_subscribers[targetId]?.isE2eeEnabled == isEnabled && !isForce) {
+      return;
+    }
+
+    _subscribers[targetId]?.isE2eeEnabled = isEnabled;
+
+    await _frameCryptor.enableDecryption(
+      peerConnection: peerConnection,
+      codec: _subscribers[targetId]?.videoCodec ?? WebRTCCodec.h264,
+      enabled: isEnabled,
+    );
+  }
+
+  @override
   void setVideoEnabled({required String targetId, required bool isEnabled}) {
+    if (_subscribers[targetId]?.isVideoEnabled == isEnabled) return;
+
     _subscribers[targetId]?.isVideoEnabled = isEnabled;
     _notify(CallbackEvents.shouldBeUpdateState);
   }
 
   @override
   void setAudioEnabled({required String targetId, required bool isEnabled}) {
+    if (_subscribers[targetId]?.isAudioEnabled == isEnabled) return;
+
     _subscribers[targetId]?.isAudioEnabled = isEnabled;
     _notify(CallbackEvents.shouldBeUpdateState);
   }
@@ -389,6 +421,8 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       peerConnection: peerConnection,
       onChanged: () => _notify(CallbackEvents.shouldBeUpdateState),
       enableStats: true,
+      videoCodec: _callSetting.preferedCodec,
+      isE2eeEnabled: _callSetting.e2eeEnabled,
     );
 
     _localStream = await _getUserMedia();
@@ -476,6 +510,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     bool videoEnabled,
     bool audioEnabled,
     bool isScreenSharing,
+    bool isE2eeEnabled,
     WebRTCCodec codec,
   ) async {
     final RTCPeerConnection rtcPeerConnection = await _createPeerConnection(
@@ -485,19 +520,23 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     _subscribers[targetId] = ParticipantSFU(
       peerConnection: rtcPeerConnection,
       onChanged: () => _notify(CallbackEvents.shouldBeUpdateState),
-      isAudioEnabled: videoEnabled,
-      isVideoEnabled: audioEnabled,
+      isAudioEnabled: audioEnabled,
+      isVideoEnabled: videoEnabled,
       isSharingScreen: isScreenSharing,
+      isE2eeEnabled: isE2eeEnabled,
+      videoCodec: codec,
     );
 
     rtcPeerConnection.onAddStream = (stream) async {
       if (_subscribers[targetId] == null) return;
 
-      _subscribers[targetId]?.setSrcObject(stream);
-      _frameCryptor.enableDecryption(
-        peerConnection: rtcPeerConnection,
-        codec: codec,
+      setE2eeEnabled(
+        targetId: targetId,
+        isEnabled: isE2eeEnabled,
+        isForce: true,
       );
+
+      _subscribers[targetId]?.setSrcObject(stream);
     };
 
     rtcPeerConnection.onIceCandidate = (candidate) {
@@ -561,10 +600,26 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
         sender.replaceTrack(track);
       }
     }
+
+    await _enableEncryption(_callSetting.e2eeEnabled);
   }
 
   Future<void> _toggleSpeakerPhone() async {
     Helper.setSpeakerphoneOn(true);
+  }
+
+  Future<void> _enableEncryption(bool enabled) async {
+    final RTCPeerConnection? peerConnection = _mParticipant?.peerConnection;
+
+    if (peerConnection == null) return;
+
+    await _frameCryptor.enableEncryption(
+      peerConnection: peerConnection,
+      enabled: enabled,
+    );
+
+    _mParticipant?.isE2eeEnabled = enabled;
+    _socketEmiter.setE2eeEnabled(enabled);
   }
 
   void _notify(CallbackEvents event, {String? participantId}) {
