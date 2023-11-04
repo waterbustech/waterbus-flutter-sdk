@@ -9,6 +9,7 @@ import 'package:sdp_transform/sdp_transform.dart';
 // Project imports:
 import 'package:waterbus_sdk/constants/webrtc_configurations.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/helpers/e2ee/frame_crypto.dart';
 import 'package:waterbus_sdk/helpers/extensions/sdp_extensions.dart';
 import 'package:waterbus_sdk/interfaces/socket_emiter_interface.dart';
 import 'package:waterbus_sdk/interfaces/webrtc_interface.dart';
@@ -17,10 +18,12 @@ import 'package:waterbus_sdk/method_channels/replaykit.dart';
 
 @LazySingleton(as: WaterbusWebRTCManager)
 class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
+  final WebRTCFrameCrypto _frameCryptor;
   final SocketEmiter _socketEmiter;
   final ForegroundService _foregroundService;
   final ReplayKitChannel _replayKitChannel;
   WaterbusWebRTCManagerIpml(
+    this._frameCryptor,
     this._socketEmiter,
     this._foregroundService,
     this._replayKitChannel,
@@ -104,7 +107,10 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     required String roomId,
     required int participantId,
   }) async {
-    await _prepareMedia();
+    await Future.wait([
+      _frameCryptor.initialize(roomId, codec: _callSetting.preferedCodec),
+      _prepareMedia(),
+    ]);
 
     if (_mParticipant?.peerConnection == null) return;
 
@@ -124,30 +130,30 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       peerConnection.addTrack(track, _localStream!);
     });
 
-    peerConnection.onRenegotiationNeeded = () async {
-      if ((await peerConnection.getRemoteDescription()) != null) return;
+    await _frameCryptor.enableEncryption(
+      peerConnection: peerConnection,
+    );
 
-      String sdp = await _createOffer(peerConnection);
+    String sdp = await _createOffer(peerConnection);
 
-      sdp = sdp.enableAudioDTX().setPreferredCodec(
-            codec: _callSetting.preferedCodec,
-          );
+    sdp = sdp.enableAudioDTX().setPreferredCodec(
+          codec: _callSetting.preferedCodec,
+        );
 
-      final RTCSessionDescription description = RTCSessionDescription(
-        sdp,
-        DescriptionType.offer.type,
-      );
+    final RTCSessionDescription description = RTCSessionDescription(
+      sdp,
+      DescriptionType.offer.type,
+    );
 
-      await peerConnection.setLocalDescription(description);
+    await peerConnection.setLocalDescription(description);
 
-      _socketEmiter.establishBroadcast(
-        sdp: sdp,
-        roomId: _roomId!,
-        participantId: participantId.toString(),
-        isVideoEnabled: _mParticipant?.isVideoEnabled ?? false,
-        isAudioEnabled: _mParticipant?.isAudioEnabled ?? false,
-      );
-    };
+    _socketEmiter.establishBroadcast(
+      sdp: sdp,
+      roomId: _roomId!,
+      participantId: participantId.toString(),
+      isVideoEnabled: _mParticipant?.isVideoEnabled ?? false,
+      isAudioEnabled: _mParticipant?.isAudioEnabled ?? false,
+    );
   }
 
   @override
@@ -180,6 +186,8 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     String sdp,
     bool videoEnabled,
     bool audioEnabled,
+    bool isScreenSharing,
+    WebRTCCodec codec,
   ) async {
     if (_subscribers[targetId] != null) return;
 
@@ -193,6 +201,8 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       description,
       videoEnabled,
       audioEnabled,
+      isScreenSharing,
+      codec,
     );
   }
 
@@ -359,6 +369,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     }
     _subscribers.clear();
 
+    _frameCryptor.dispose();
     await stopScreenSharing(stayInRoom: false);
     await _localStream?.dispose();
     await _mParticipant?.dispose();
@@ -464,6 +475,8 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     RTCSessionDescription remoteDescription,
     bool videoEnabled,
     bool audioEnabled,
+    bool isScreenSharing,
+    WebRTCCodec codec,
   ) async {
     final RTCPeerConnection rtcPeerConnection = await _createPeerConnection(
       WebRTCConfigurations.offerSubscriberSdpConstraints,
@@ -474,12 +487,17 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       onChanged: () => _notify(CallbackEvents.shouldBeUpdateState),
       isAudioEnabled: videoEnabled,
       isVideoEnabled: audioEnabled,
+      isSharingScreen: isScreenSharing,
     );
 
     rtcPeerConnection.onAddStream = (stream) async {
       if (_subscribers[targetId] == null) return;
 
       _subscribers[targetId]?.setSrcObject(stream);
+      _frameCryptor.enableDecryption(
+        peerConnection: rtcPeerConnection,
+        codec: codec,
+      );
     };
 
     rtcPeerConnection.onIceCandidate = (candidate) {
@@ -510,22 +528,33 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   }
 
   Future<void> _replaceMediaStream(MediaStream newStream) async {
-    final senders = await _mParticipant!.peerConnection.getSenders();
+    final List<RTCRtpSender> senders =
+        await _mParticipant!.peerConnection.getSenders();
 
-    for (final sender in senders) {
-      if (sender.track?.kind == 'audio') {
-        sender.replaceTrack(newStream.getAudioTracks().first);
-      } else if (sender.track?.kind == 'video') {
-        sender.replaceTrack(newStream.getVideoTracks().first);
-      }
+    final List<RTCRtpSender> sendersAudio =
+        senders.where((sender) => sender.track?.kind == 'audio').toList();
+    final List<RTCRtpSender> sendersVideo =
+        senders.where((sender) => sender.track?.kind == 'video').toList();
+
+    for (final sender in sendersAudio) {
+      sender.replaceTrack(newStream.getAudioTracks().first);
     }
+
+    await _replaceVideoTrack(
+      newStream.getVideoTracks().first,
+      sendersList: sendersVideo,
+    );
 
     _mParticipant?.setSrcObject(newStream);
     _localStream = newStream;
   }
 
-  Future<void> _replaceVideoTrack(MediaStreamTrack track) async {
-    final senders = await _mParticipant!.peerConnection.getSenders();
+  Future<void> _replaceVideoTrack(
+    MediaStreamTrack track, {
+    List<RTCRtpSender>? sendersList,
+  }) async {
+    final List<RTCRtpSender> senders =
+        sendersList ?? await _mParticipant!.peerConnection.getSenders();
 
     for (final sender in senders) {
       if (sender.track?.kind == 'video') {

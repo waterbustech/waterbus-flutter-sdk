@@ -13,6 +13,10 @@ class WaterbusLogger {
     logger.i('[$tag]: $msg');
   }
 
+  void bug(String msg) {
+    logger.e('[$tag]: $msg');
+  }
+
   ///Singleton factory
   static final WaterbusLogger instance = WaterbusLogger._internal();
 

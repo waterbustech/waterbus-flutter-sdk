@@ -77,11 +77,16 @@ class SocketHandlerImpl extends SocketHandler {
         /// sdp, targetId
         if (data == null) return;
 
+        final WebRTCCodec codec =
+            ((data['videoCodec'] ?? '') as String).videoCodec;
+
         await _rtcManager.setSubscriberRemoteSdp(
           data['targetId'],
           data['offer'],
-          data['audioEnabled'],
-          data['videoEnabled'],
+          data['audioEnabled'] ?? false,
+          data['videoEnabled'] ?? false,
+          data['isScreenSharing'] ?? false,
+          codec,
         );
       });
 

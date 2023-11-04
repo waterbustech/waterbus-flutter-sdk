@@ -6,6 +6,7 @@ import 'package:injectable/injectable.dart';
 import 'package:wakelock/wakelock.dart';
 
 // Project imports:
+import 'package:waterbus_sdk/helpers/logger/logger.dart';
 import 'package:waterbus_sdk/helpers/replaykit/replaykit_helper.dart';
 import 'package:waterbus_sdk/interfaces/webrtc_interface.dart';
 import 'package:waterbus_sdk/method_channels/replaykit.dart';
@@ -15,9 +16,11 @@ import 'package:waterbus_sdk/models/index.dart';
 class SdkCore {
   final WaterbusWebRTCManager _rtcManager;
   final ReplayKitChannel _replayKitChannel;
+  final WaterbusLogger _logger;
   SdkCore(
     this._rtcManager,
     this._replayKitChannel,
+    this._logger,
   );
 
   Future<void> joinRoom({
@@ -25,21 +28,29 @@ class SdkCore {
     required int participantId,
     required Function(CallbackPayload) onNewEvent,
   }) async {
-    Wakelock.enable();
+    try {
+      Wakelock.enable();
 
-    await _rtcManager.joinRoom(
-      roomId: roomId,
-      participantId: participantId,
-    );
+      await _rtcManager.joinRoom(
+        roomId: roomId,
+        participantId: participantId,
+      );
 
-    _rtcManager.notifyChanged.listen((event) {
-      onNewEvent(event);
-    });
+      _rtcManager.notifyChanged.listen((event) {
+        onNewEvent(event);
+      });
+    } catch (error) {
+      _logger.bug(error.toString());
+    }
   }
 
   Future<void> leaveRoom() async {
-    await _rtcManager.dispose();
-    Wakelock.disable();
+    try {
+      await _rtcManager.dispose();
+      Wakelock.disable();
+    } catch (error) {
+      _logger.bug(error.toString());
+    }
   }
 
   Future<void> prepareMedia() async {
@@ -69,10 +80,14 @@ class SdkCore {
   }
 
   Future<void> stopScreenSharing() async {
-    if (Platform.isIOS) {
-      ReplayKitHelper().openReplayKit();
-    } else {
-      await _rtcManager.stopScreenSharing();
+    try {
+      if (Platform.isIOS) {
+        ReplayKitHelper().openReplayKit();
+      } else {
+        await _rtcManager.stopScreenSharing();
+      }
+    } catch (error) {
+      _logger.bug(error.toString());
     }
   }
 
