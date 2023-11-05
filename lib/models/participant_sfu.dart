@@ -2,6 +2,7 @@
 
 // Package imports:
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 
 // Project imports:
@@ -31,7 +32,7 @@ class ParticipantSFU extends Equatable {
   }) {
     _initialRenderer();
 
-    if (enableStats) {
+    if (enableStats && kDebugMode) {
       peerConnection.statistics();
     }
   }

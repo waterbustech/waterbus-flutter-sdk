@@ -1,4 +1,5 @@
 // Package imports:
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
 
@@ -10,10 +11,14 @@ class WaterbusLogger {
   );
 
   void log(String msg) {
-    // logger.i('[$tag]: $msg');
+    if (kReleaseMode) return;
+
+    logger.i('[$tag]: $msg');
   }
 
   void bug(String msg) {
+    if (kReleaseMode) return;
+    
     logger.e('[$tag]: $msg');
   }
 

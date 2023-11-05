@@ -11,6 +11,7 @@ import 'package:waterbus_sdk/constants/webrtc_configurations.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/helpers/e2ee/frame_crypto.dart';
 import 'package:waterbus_sdk/helpers/extensions/sdp_extensions.dart';
+import 'package:waterbus_sdk/helpers/logger/logger.dart';
 import 'package:waterbus_sdk/interfaces/socket_emiter_interface.dart';
 import 'package:waterbus_sdk/interfaces/webrtc_interface.dart';
 import 'package:waterbus_sdk/method_channels/foreground.dart';
@@ -76,6 +77,8 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
 
   @override
   Future<void> stopScreenSharing({bool stayInRoom = true}) async {
+    if (!(_mParticipant?.isSharingScreen ?? true)) return;
+
     _mParticipant?.isSharingScreen = false;
 
     if (_mParticipant == null) return;
@@ -388,25 +391,29 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
 
   @override
   Future<void> dispose() async {
-    if (_roomId != null) {
-      _socketEmiter.leaveRoom(_roomId!);
+    try {
+      if (_roomId != null) {
+        _socketEmiter.leaveRoom(_roomId!);
+      }
+
+      _queuePublisherCandidates.clear();
+      _queueRemoteSubCandidates.clear();
+      _flagPublisherCanAddCandidate = false;
+
+      for (final subscriber in _subscribers.values) {
+        await subscriber.dispose();
+      }
+      _subscribers.clear();
+
+      await stopScreenSharing(stayInRoom: false);
+      await _localStream?.dispose();
+      await _mParticipant?.dispose();
+      _mParticipant = null;
+      _localStream = null;
+      _frameCryptor.dispose();
+    } catch (error) {
+      WaterbusLogger().bug(error.toString());
     }
-
-    _queuePublisherCandidates.clear();
-    _queueRemoteSubCandidates.clear();
-    _flagPublisherCanAddCandidate = false;
-
-    for (final subscriber in _subscribers.values) {
-      await subscriber.dispose();
-    }
-    _subscribers.clear();
-
-    _frameCryptor.dispose();
-    await stopScreenSharing(stayInRoom: false);
-    await _localStream?.dispose();
-    await _mParticipant?.dispose();
-    _mParticipant = null;
-    _localStream = null;
   }
 
   // MARK: Private methods

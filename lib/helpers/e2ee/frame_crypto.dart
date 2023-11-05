@@ -204,6 +204,8 @@ class WebRTCFrameCrypto {
   }
 
   void dispose() {
+    stopVideo();
+    stopAudio();
     _senderParticipantId = null;
     _keyProvider = null;
   }

@@ -78,7 +78,7 @@ class WebRTCStatsUtility {
   }
 
   Future<void> _writeStatsToAsset() async {
-    if (WaterbusSdk.recordBenchmarkPath.isEmpty) return;
+    if (WaterbusSdk.recordBenchmarkPath.isEmpty || Platform.isAndroid) return;
 
     String stats = '''''';
     for (int index = 0; index < _bytesSentMeasurements.length; index++) {
