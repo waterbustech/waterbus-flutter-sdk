@@ -27,7 +27,7 @@ class WaterbusSdkPlugin: FlutterPlugin, MethodCallHandler {
   private lateinit var mContext : Context
 
   override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-      channel = MethodChannel(flutterPluginBinding.binaryMessenger, "waterbus-sdk/foreground-channel")
+      channel = MethodChannel(flutterPluginBinding.binaryMessenger, "waterbus-sdk/native-plugin")
       channel.setMethodCallHandler(this)
       mContext = flutterPluginBinding.applicationContext
       registerForegroundServiceId()
@@ -36,7 +36,7 @@ class WaterbusSdkPlugin: FlutterPlugin, MethodCallHandler {
   override fun onMethodCall(call: MethodCall, result: Result) {
     when (call.method) {
         "getPlatformVersion" -> {
-          result.success("Android ${android.os.Build.VERSION.RELEASE}")
+          result.success("${android.os.Build.VERSION.RELEASE}")
         }
         "startForeground" -> {
             val intent = Intent(mContext, ShareScreenService::class.java)

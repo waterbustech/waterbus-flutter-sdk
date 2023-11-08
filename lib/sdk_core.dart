@@ -6,11 +6,11 @@ import 'package:injectable/injectable.dart';
 import 'package:wakelock/wakelock.dart';
 
 // Project imports:
+import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/helpers/logger/logger.dart';
 import 'package:waterbus_sdk/helpers/replaykit/replaykit_helper.dart';
 import 'package:waterbus_sdk/interfaces/webrtc_interface.dart';
 import 'package:waterbus_sdk/method_channels/replaykit.dart';
-import 'package:waterbus_sdk/models/index.dart';
 
 @Singleton()
 class SdkCore {
@@ -23,22 +23,26 @@ class SdkCore {
     this._logger,
   );
 
+  bool _isListened = false;
+
   Future<void> joinRoom({
     required String roomId,
     required int participantId,
-    required Function(CallbackPayload) onNewEvent,
   }) async {
     try {
+      if (!_isListened) {
+        _isListened = true;
+        _rtcManager.notifyChanged.listen((event) {
+          WaterbusSdk.onEventChanged?.call(event);
+        });
+      }
+
       Wakelock.enable();
 
       await _rtcManager.joinRoom(
         roomId: roomId,
         participantId: participantId,
       );
-
-      _rtcManager.notifyChanged.listen((event) {
-        onNewEvent(event);
-      });
     } catch (error) {
       _logger.bug(error.toString());
     }

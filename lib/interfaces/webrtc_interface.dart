@@ -28,7 +28,7 @@ abstract class WaterbusWebRTCManager {
   Future<void> prepareMedia();
   Future<void> startScreenSharing();
   Future<void> stopScreenSharing({bool stayInRoom = true});
-  Future<void> toggleAudio();
+  Future<void> toggleAudio({bool? forceValue});
   Future<void> toggleVideo();
   void setE2eeEnabled({required String targetId, required bool isEnabled});
   void setVideoEnabled({required String targetId, required bool isEnabled});

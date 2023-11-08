@@ -33,9 +33,13 @@ extension SdpX on String {
 
     final vcaps = capSel.getCapabilities('video');
     if (vcaps != null) {
-      vcaps.codecs = vcaps.codecs
+      final List codecsFiltered = vcaps.codecs
           .where((e) => (e['codec'] as String).toLowerCase() == codec.codec)
           .toList();
+
+      if (codecsFiltered.isEmpty) return this; // Prefered codec not supported
+
+      vcaps.codecs = codecsFiltered;
       vcaps.setCodecPreferences('video', vcaps.codecs);
       capSel.setCapabilities(vcaps);
     }

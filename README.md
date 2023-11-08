@@ -4,6 +4,12 @@
 
 Flutter plugin of [Waterbus](https://docs.waterbus.tech). Build video call or online meeting application with SFU model. Supports iOS, Android. [ExampleApp](https://github.com/lambiengcode/waterbus)
 
+## Codec supported
+| Codec | VP8 | VP9 | H264 | H265 | AV1 |
+| :-----: | :---------------: | :------------: | :------------: | :----------------: | :--------------------------------: |
+|   iOS   |        🟢         |       🟢       |       🟢       |         🟢         |         🟢 (iOS 14+)        |
+| Android |        🟢         |       🟢       |       🟢       |         🟡         |         🟢 (Encode: Android 14+, Decode: Android 10+)   
+
 ## Features
 
 - Join room

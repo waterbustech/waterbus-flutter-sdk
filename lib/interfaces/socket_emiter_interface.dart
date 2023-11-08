@@ -1,4 +1,4 @@
-// Package imports:
+// Project imports:
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 
 abstract class SocketEmiter {

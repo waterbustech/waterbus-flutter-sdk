@@ -14,20 +14,20 @@ import 'package:waterbus_sdk/helpers/extensions/sdp_extensions.dart';
 import 'package:waterbus_sdk/helpers/logger/logger.dart';
 import 'package:waterbus_sdk/interfaces/socket_emiter_interface.dart';
 import 'package:waterbus_sdk/interfaces/webrtc_interface.dart';
-import 'package:waterbus_sdk/method_channels/foreground.dart';
+import 'package:waterbus_sdk/method_channels/native_channel.dart';
 import 'package:waterbus_sdk/method_channels/replaykit.dart';
 
 @LazySingleton(as: WaterbusWebRTCManager)
 class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   final WebRTCFrameCrypto _frameCryptor;
   final SocketEmiter _socketEmiter;
-  final ForegroundService _foregroundService;
   final ReplayKitChannel _replayKitChannel;
+  final NativeService _nativeService;
   WaterbusWebRTCManagerIpml(
     this._frameCryptor,
     this._socketEmiter,
-    this._foregroundService,
     this._replayKitChannel,
+    this._nativeService,
   );
 
   String? _roomId;
@@ -57,7 +57,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       }
 
       if (Platform.isAndroid) {
-        await _foregroundService.startForegroundService();
+        await _nativeService.startForegroundService();
       }
 
       final MediaStream displayStream = await _getDisplayMedia();
@@ -92,7 +92,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     }
 
     if (Platform.isAndroid) {
-      await _foregroundService.stopForegroundService();
+      await _nativeService.stopForegroundService();
     }
 
     _mParticipant?.isSharingScreen = false;
@@ -154,6 +154,8 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       participantId: participantId.toString(),
       participant: _mParticipant!,
     );
+
+    _nativeService.startCallKit(roomId);
   }
 
   @override
@@ -392,13 +394,17 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   @override
   Future<void> dispose() async {
     try {
+      if (_mParticipant == null) return;
+
       if (_roomId != null) {
         _socketEmiter.leaveRoom(_roomId!);
+        _roomId = null;
       }
 
       _queuePublisherCandidates.clear();
       _queueRemoteSubCandidates.clear();
       _flagPublisherCanAddCandidate = false;
+      _nativeService.endCallKit();
 
       for (final subscriber in _subscribers.values) {
         await subscriber.dispose();
@@ -411,6 +417,8 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       _mParticipant = null;
       _localStream = null;
       _frameCryptor.dispose();
+
+      _notify(CallbackEvents.meetingEnded);
     } catch (error) {
       WaterbusLogger().bug(error.toString());
     }
