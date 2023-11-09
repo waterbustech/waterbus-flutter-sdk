@@ -17,8 +17,6 @@ enum WebRTCCodec {
 
 extension CodecX on WebRTCCodec {
   Future<bool> isPlatformSupported() async {
-    if (this == WebRTCCodec.h265) return Platform.isIOS;
-
     if (this == WebRTCCodec.av1) {
       final double platformVersion = await NativeService().getPlatformVersion();
 

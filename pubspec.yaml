@@ -1,6 +1,6 @@
 name: waterbus_sdk
 description: Flutter plugin of Waterbus. Build video call or online meeting application with SFU model. Supports iOS, Android.
-version: 1.0.0
+version: 1.0.1
 homepage: https://docs.waterbus.tech
 publish_to: none
 
@@ -30,7 +30,7 @@ dependencies:
     git:
       url: https://github.com/waterbustech/flutter-webrtc.git
       path: "."
-      ref: 0.9.46+3
+      ref: 0.9.46+4
 
   # Dependency Injection
   get_it: ^7.6.4
