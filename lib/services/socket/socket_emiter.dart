@@ -89,6 +89,11 @@ class SocketEmiterImpl extends SocketEmiter {
   }
 
   @override
+  void setCameraType(CameraType cameraType) {
+    _socket?.emit(SocketEvent.setCameraTypeCSS, {'type': cameraType.type});
+  }
+
+  @override
   void setScreenSharing(bool isSharing) {
     _socket?.emit(SocketEvent.setScreenSharingCSS, {'isSharing': isSharing});
   }

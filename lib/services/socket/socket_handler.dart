@@ -80,6 +80,8 @@ class SocketHandlerImpl extends SocketHandler {
         final WebRTCCodec codec =
             ((data['videoCodec'] ?? '') as String).videoCodec;
 
+        final int type = data['cameraType'] ?? CameraType.front.type;
+
         await _rtcManager.setSubscriberRemoteSdp(
           targetId: data['targetId'],
           sdp: data['offer'],
@@ -87,6 +89,7 @@ class SocketHandlerImpl extends SocketHandler {
           videoEnabled: data['videoEnabled'] ?? false,
           isScreenSharing: data['isScreenSharing'] ?? false,
           isE2eeEnabled: data['isE2eeEnabled'] ?? false,
+          type: CameraType.values[type],
           codec: codec,
         );
       });
@@ -166,6 +169,19 @@ class SocketHandlerImpl extends SocketHandler {
         _rtcManager.setVideoEnabled(
           targetId: participantId,
           isEnabled: isEnabled,
+        );
+      });
+
+      _socket?.on(SocketEvent.setCameraTypeSSC, (data) {
+        /// targetId, isEnabled
+        if (data == null) return;
+
+        final String participantId = data['participantId'];
+        final int type = data['type'];
+
+        _rtcManager.setCameraType(
+          targetId: participantId,
+          type: CameraType.values[type],
         );
       });
 

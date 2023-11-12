@@ -12,6 +12,7 @@ import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/helpers/e2ee/frame_crypto.dart';
 import 'package:waterbus_sdk/helpers/extensions/sdp_extensions.dart';
 import 'package:waterbus_sdk/helpers/logger/logger.dart';
+import 'package:waterbus_sdk/helpers/stats/webrtc_stats.dart';
 import 'package:waterbus_sdk/interfaces/socket_emiter_interface.dart';
 import 'package:waterbus_sdk/interfaces/webrtc_interface.dart';
 import 'package:waterbus_sdk/method_channels/native_channel.dart';
@@ -23,11 +24,13 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   final SocketEmiter _socketEmiter;
   final ReplayKitChannel _replayKitChannel;
   final NativeService _nativeService;
+  final WebRTCStatsUtility _stats;
   WaterbusWebRTCManagerIpml(
     this._frameCryptor,
     this._socketEmiter,
     this._replayKitChannel,
     this._nativeService,
+    this._stats,
   );
 
   String? _roomId;
@@ -50,7 +53,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   @override
   Future<void> startScreenSharing() async {
     try {
-      if (_mParticipant == null) return;
+      if (_mParticipant == null || _mParticipant!.isSharingScreen) return;
 
       if (_mParticipant!.isVideoEnabled) {
         await toggleVideo(forceValue: false, ignoreUpdateValue: true);
@@ -156,6 +159,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     );
 
     _nativeService.startCallKit(roomId);
+    _stats.initialize();
   }
 
   @override
@@ -190,6 +194,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     required bool audioEnabled,
     required bool isScreenSharing,
     required bool isE2eeEnabled,
+    required CameraType type,
     required WebRTCCodec codec,
   }) async {
     if (_subscribers[targetId] != null) return;
@@ -206,6 +211,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       audioEnabled,
       isScreenSharing,
       isE2eeEnabled,
+      type,
       codec,
     );
   }
@@ -285,6 +291,21 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   }
 
   @override
+  Future<void> switchCamera() async {
+    if (_localStream == null) throw Exception('Stream is not initialized');
+
+    final List<MediaStreamTrack> videoTracks = _localStream!.getVideoTracks();
+
+    if (videoTracks.isEmpty) return;
+
+    await Helper.switchCamera(videoTracks.first);
+
+    _mParticipant?.switchCamera();
+
+    _notify(CallbackEvents.shouldBeUpdateState);
+  }
+
+  @override
   Future<void> toggleVideo({
     bool? forceValue,
     bool ignoreUpdateValue = false,
@@ -346,6 +367,20 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   }
 
   @override
+  Future<void> toggleSpeakerPhone({bool? forceValue}) async {
+    if (_mParticipant == null) return;
+
+    Helper.setSpeakerphoneOn(
+      forceValue ?? !_mParticipant!.isSpeakerPhoneEnabled,
+    );
+
+    _mParticipant?.isSpeakerPhoneEnabled =
+        forceValue ?? !_mParticipant!.isSpeakerPhoneEnabled;
+
+    _notify(CallbackEvents.shouldBeUpdateState);
+  }
+
+  @override
   Future<void> setE2eeEnabled({
     required String targetId,
     required bool isEnabled,
@@ -378,6 +413,14 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   }
 
   @override
+  void setCameraType({required String targetId, required CameraType type}) {
+    if (_subscribers[targetId]?.cameraType == type) return;
+
+    _subscribers[targetId]?.cameraType = type;
+    _notify(CallbackEvents.shouldBeUpdateState);
+  }
+
+  @override
   void setAudioEnabled({required String targetId, required bool isEnabled}) {
     if (_subscribers[targetId]?.isAudioEnabled == isEnabled) return;
 
@@ -405,6 +448,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       _queueRemoteSubCandidates.clear();
       _flagPublisherCanAddCandidate = false;
       _nativeService.endCallKit();
+      _stats.dispose();
 
       for (final subscriber in _subscribers.values) {
         await subscriber.dispose();
@@ -435,9 +479,10 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     _mParticipant = ParticipantSFU(
       peerConnection: peerConnection,
       onChanged: () => _notify(CallbackEvents.shouldBeUpdateState),
-      enableStats: true,
       videoCodec: _callSetting.preferedCodec,
       isE2eeEnabled: _callSetting.e2eeEnabled,
+      stats: _stats,
+      isMe: true,
     );
 
     _localStream = await _getUserMedia();
@@ -452,7 +497,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
 
     if (onlyStream) return stream;
 
-    await _toggleSpeakerPhone();
+    await toggleSpeakerPhone(forceValue: true);
 
     if (_callSetting.isAudioMuted) {
       toggleAudio();
@@ -526,6 +571,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     bool audioEnabled,
     bool isScreenSharing,
     bool isE2eeEnabled,
+    CameraType type,
     WebRTCCodec codec,
   ) async {
     final RTCPeerConnection rtcPeerConnection = await _createPeerConnection(
@@ -539,7 +585,9 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       isVideoEnabled: videoEnabled,
       isSharingScreen: isScreenSharing,
       isE2eeEnabled: isE2eeEnabled,
+      cameraType: type,
       videoCodec: codec,
+      stats: _stats,
     );
 
     rtcPeerConnection.onAddStream = (stream) async {
@@ -617,10 +665,6 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     }
 
     await _enableEncryption(_callSetting.e2eeEnabled);
-  }
-
-  Future<void> _toggleSpeakerPhone() async {
-    Helper.setSpeakerphoneOn(true);
   }
 
   Future<void> _enableEncryption(bool enabled) async {

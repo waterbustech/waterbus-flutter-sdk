@@ -19,6 +19,7 @@ abstract class SocketEmiter {
     required targetId,
   });
   void setE2eeEnabled(bool isEnabled);
+  void setCameraType(CameraType cameraType);
   void setVideoEnabled(bool isEnabled);
   void setAudioEnabled(bool isEnabled);
   void setScreenSharing(bool isSharing);

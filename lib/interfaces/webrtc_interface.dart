@@ -12,6 +12,7 @@ abstract class WaterbusWebRTCManager {
     required bool audioEnabled,
     required bool isScreenSharing,
     required bool isE2eeEnabled,
+    required CameraType type,
     required WebRTCCodec codec,
   });
   Future<void> addPublisherCandidate(RTCIceCandidate candidate);
@@ -29,9 +30,12 @@ abstract class WaterbusWebRTCManager {
   Future<void> startScreenSharing();
   Future<void> stopScreenSharing({bool stayInRoom = true});
   Future<void> toggleAudio({bool? forceValue});
+  Future<void> toggleSpeakerPhone({bool? forceValue});
   Future<void> toggleVideo();
+  Future<void> switchCamera();
   void setE2eeEnabled({required String targetId, required bool isEnabled});
   void setVideoEnabled({required String targetId, required bool isEnabled});
+  void setCameraType({required String targetId, required CameraType type});
   void setAudioEnabled({required String targetId, required bool isEnabled});
   void setScreenSharing({required String targetId, required bool isSharing});
 

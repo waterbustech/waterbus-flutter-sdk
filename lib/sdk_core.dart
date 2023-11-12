@@ -65,12 +65,20 @@ class SdkCore {
     await _rtcManager.applyCallSettings(setting);
   }
 
+  Future<void> switchCamera() async {
+    await _rtcManager.switchCamera();
+  }
+
   Future<void> toggleVideo() async {
     await _rtcManager.toggleVideo();
   }
 
   Future<void> toggleAudio() async {
     await _rtcManager.toggleAudio();
+  }
+
+  Future<void> toggleSpeakerPhone() async {
+    await _rtcManager.toggleSpeakerPhone();
   }
 
   Future<void> startScreenSharing() async {

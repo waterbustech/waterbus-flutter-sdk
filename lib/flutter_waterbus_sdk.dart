@@ -60,12 +60,20 @@ class WaterbusSdk {
     await _sdk.stopScreenSharing();
   }
 
+  Future<void> switchCamera() async {
+    await _sdk.switchCamera();
+  }
+
   Future<void> toggleVideo() async {
     await _sdk.toggleVideo();
   }
 
   Future<void> toggleAudio() async {
     await _sdk.toggleAudio();
+  }
+
+  Future<void> toggleSpeakerPhone() async {
+    await _sdk.toggleSpeakerPhone();
   }
 
   Future<void> changeCallSetting(CallSetting setting) async {

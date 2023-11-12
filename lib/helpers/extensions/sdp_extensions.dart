@@ -4,7 +4,7 @@ import 'package:sdp_transform/sdp_transform.dart';
 
 // Project imports:
 import 'package:waterbus_sdk/helpers/codec_selector.dart';
-import 'package:waterbus_sdk/models/codec.dart';
+import 'package:waterbus_sdk/models/enums/codec.dart';
 
 extension SdpX on String {
   String enableAudioDTX() {

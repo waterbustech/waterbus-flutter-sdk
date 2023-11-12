@@ -31,16 +31,29 @@ extension PeerX on RTCPeerConnection {
     });
   }
 
-  void statistics() {
-    final WebRTCStatsUtility stats = WebRTCStatsUtility(this);
-
-    onIceConnectionState = (state) {
+  void monitorStats(
+    WebRTCStatsUtility stats, {
+    required String id,
+    required bool isMe,
+  }) {
+    onIceConnectionState = (state) async {
       switch (state) {
         case RTCIceConnectionState.RTCIceConnectionStateConnected:
-          stats.start();
+          if (isMe) {
+            final senders = await getSenders();
+            stats.addSenders(id, senders);
+          } else {
+            final receivers = await getReceivers();
+            stats.addReceivers(id, receivers);
+          }
+
           break;
         case RTCIceConnectionState.RTCIceConnectionStateClosed:
-          stats.stop();
+          if (isMe) {
+            stats.removeSenders(id);
+          } else {
+            stats.removeReceivers(id);
+          }
           break;
         default:
           break;

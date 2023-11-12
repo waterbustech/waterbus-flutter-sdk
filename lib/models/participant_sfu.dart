@@ -1,23 +1,22 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first, must_be_immutable
-
-// Flutter imports:
-import 'package:flutter/foundation.dart';
-
 // Package imports:
 import 'package:equatable/equatable.dart';
 
 // Project imports:
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/helpers/extensions/peer_extensions.dart';
+import 'package:waterbus_sdk/helpers/stats/webrtc_stats.dart';
 
+// ignore: must_be_immutable
 class ParticipantSFU extends Equatable {
-  final RTCPeerConnection peerConnection;
-  RTCVideoRenderer? renderer;
   bool isVideoEnabled;
   bool isAudioEnabled;
+  bool isE2eeEnabled;
+  bool isSpeakerPhoneEnabled;
   bool isSharingScreen;
   bool hasFirstFrameRendered;
-  bool isE2eeEnabled;
+  CameraType cameraType;
+  RTCVideoRenderer? renderer;
+  final RTCPeerConnection peerConnection;
   final WebRTCCodec videoCodec;
   final Function() onChanged;
   ParticipantSFU({
@@ -26,16 +25,24 @@ class ParticipantSFU extends Equatable {
     this.isSharingScreen = false,
     this.hasFirstFrameRendered = false,
     this.isE2eeEnabled = false,
+    this.isSpeakerPhoneEnabled = true,
+    this.cameraType = CameraType.front,
     this.renderer,
     required this.peerConnection,
     required this.onChanged,
     required this.videoCodec,
-    bool enableStats = false,
+    // use only one time
+    WebRTCStatsUtility? stats,
+    bool isMe = false,
   }) {
     _initialRenderer();
 
-    if (enableStats && kDebugMode) {
-      peerConnection.statistics();
+    if (stats != null) {
+      peerConnection.monitorStats(
+        stats,
+        id: peerConnection.peerConnectionId,
+        isMe: isMe,
+      );
     }
   }
 
@@ -112,6 +119,14 @@ extension ParticipantSFUX on ParticipantSFU {
 
   Future<void> setRemoteDescription(RTCSessionDescription description) async {
     await peerConnection.setRemoteDescription(description);
+  }
+
+  void switchCamera() {
+    if (cameraType == CameraType.front) {
+      cameraType = CameraType.rear;
+    } else {
+      cameraType = CameraType.front;
+    }
   }
 
   // ignore: use_setters_to_change_properties

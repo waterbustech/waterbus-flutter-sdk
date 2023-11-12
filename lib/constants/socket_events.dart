@@ -15,6 +15,8 @@ class SocketEvent {
   static const String setE2eeEnabledSSC = "SET_E2EE_ENABLED_SSC";
   static const String setVideoEnabledCSS = "SET_VIDEO_ENABLED_CSS";
   static const String setVideoEnabledSSC = "SET_VIDEO_ENABLED_SSC";
+  static const String setCameraTypeCSS = "SET_CAMERA_TYPE_CSS";
+  static const String setCameraTypeSSC = "SET_CAMERA_TYPE_SSC";
   static const String setAudioEnabledCSS = "SET_AUDIO_ENABLED_CSS";
   static const String setAudioEnabledSSC = "SET_AUDIO_ENABLED_SSC";
   static const String setScreenSharingSSC = "SET_SCREEN_SHARING_SSC";
