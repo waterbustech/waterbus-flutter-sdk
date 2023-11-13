@@ -12,10 +12,14 @@ import 'package:waterbus_sdk/helpers/logger/logger.dart';
 
 @singleton
 class WebRTCStatsUtility {
-  final Map<String, List<RTCRtpSender>> _senders = {};
   final Map<String, List<RTCRtpReceiver>> _receivers = {};
   final Map<String, VideoReceiverStats> _prevStats = {};
   final Map<String, num> _currentBitrate = {};
+
+  // MARK: sender
+  final Map<String, List<RTCRtpSender>> _senders = {};
+  num? _currentSenderBitrate;
+  AudioSenderStats? _prevSenderStats;
 
   Timer? _statsTimer;
 
@@ -61,21 +65,20 @@ class WebRTCStatsUtility {
     for (final senders in _senders.entries) {
       for (final sender in senders.value) {
         final List<StatsReport> statsReport = await sender.getStats();
-        final stats = await _getStats(statsReport);
+        final stats = await _getSenderStats(statsReport);
 
         if (stats != null) {
           if (_prevStats[senders.key] != null) {
-            final num currentBitrate = computeBitrateForReceiverStats(
+            _currentSenderBitrate = computeBitrateForSenderStats(
               stats,
-              _prevStats[senders.key],
+              _prevSenderStats,
             );
-
-            _currentBitrate[senders.key] = currentBitrate;
           }
 
-          _prevStats[senders.key] = stats;
+          _prevSenderStats = stats;
 
-          WaterbusLogger().log(stats.toString());
+          WaterbusLogger()
+              .log('${stats.toString()} | bitRate: $_currentSenderBitrate');
         }
       }
     }
@@ -85,7 +88,7 @@ class WebRTCStatsUtility {
     for (final receivers in _receivers.entries) {
       for (final receiver in receivers.value) {
         final List<StatsReport> statsReport = await receiver.getStats();
-        final stats = await _getStats(statsReport, isSender: false);
+        final stats = await _getReceiverStats(statsReport);
 
         if (stats != null) {
           if (_prevStats[receivers.key] != null) {
@@ -103,42 +106,62 @@ class WebRTCStatsUtility {
     }
   }
 
-  Future<VideoReceiverStats?> _getStats(
-    List<StatsReport> stats, {
-    bool isSender = true,
-  }) async {
+  Future<AudioSenderStats?> _getSenderStats(List<StatsReport> stats) async {
+    AudioSenderStats? senderStats;
+    for (final v in stats) {
+      if (v.type == 'outbound-rtp') {
+        senderStats ??= AudioSenderStats(v.id, v.timestamp);
+        senderStats.packetsSent = getNumValFromReport(v.values, 'packetsSent');
+        senderStats.packetsLost = getNumValFromReport(v.values, 'packetsLost');
+        senderStats.bytesSent = getNumValFromReport(v.values, 'bytesSent');
+        senderStats.roundTripTime =
+            getNumValFromReport(v.values, 'roundTripTime');
+        senderStats.jitter = getNumValFromReport(v.values, 'jitter');
+
+        final c = stats.firstWhereOrNull((element) => element.type == 'codec');
+        if (c != null) {
+          senderStats.mimeType = getStringValFromReport(c.values, 'mimeType');
+          senderStats.payloadType =
+              getNumValFromReport(c.values, 'payloadType');
+          senderStats.channels = getNumValFromReport(c.values, 'channels');
+          senderStats.clockRate = getNumValFromReport(c.values, 'clockRate');
+        }
+        break;
+      }
+    }
+    return senderStats;
+  }
+
+  Future<VideoReceiverStats?> _getReceiverStats(List<StatsReport> stats) async {
     VideoReceiverStats? receiverStats;
     for (final v in stats) {
-      if (v.type == (isSender ? 'outbound-rtp' : 'inbound-rtp')) {
+      if (v.type == 'inbound-rtp') {
         receiverStats ??= VideoReceiverStats(v.id, v.timestamp);
         receiverStats.jitter = getNumValFromReport(v.values, 'jitter');
         receiverStats.jitterBufferDelay =
-            _getNumValFromReport(v.values, 'jitterBufferDelay');
+            getNumValFromReport(v.values, 'jitterBufferDelay');
         receiverStats.bytesReceived =
-            _getNumValFromReport(v.values, 'bytesReceived');
+            getNumValFromReport(v.values, 'bytesReceived');
         receiverStats.packetsLost =
-            _getNumValFromReport(v.values, 'packetsLost');
+            getNumValFromReport(v.values, 'packetsLost');
         receiverStats.framesDecoded =
-            _getNumValFromReport(v.values, 'framesDecoded');
+            getNumValFromReport(v.values, 'framesDecoded');
         receiverStats.framesDropped =
-            _getNumValFromReport(v.values, 'framesDropped');
+            getNumValFromReport(v.values, 'framesDropped');
         receiverStats.framesReceived =
-            _getNumValFromReport(v.values, 'framesReceived');
+            getNumValFromReport(v.values, 'framesReceived');
         receiverStats.packetsReceived =
-            _getNumValFromReport(v.values, 'packetsReceived');
+            getNumValFromReport(v.values, 'packetsReceived');
         receiverStats.framesPerSecond =
-            _getNumValFromReport(v.values, 'framesPerSecond');
-        receiverStats.frameWidth = _getNumValFromReport(v.values, 'frameWidth');
+            getNumValFromReport(v.values, 'framesPerSecond');
+        receiverStats.frameWidth = getNumValFromReport(v.values, 'frameWidth');
         receiverStats.frameHeight =
-            _getNumValFromReport(v.values, 'frameHeight');
-        receiverStats.pliCount = _getNumValFromReport(v.values, 'pliCount');
-        receiverStats.firCount = _getNumValFromReport(v.values, 'firCount');
-        receiverStats.nackCount = _getNumValFromReport(v.values, 'nackCount');
-        receiverStats.roundTripTime = _getNumValFromReport(
-          v.values,
-          'roundTripTime',
-        );
-        receiverStats.decoderImplementation = _getStringValFromReport(
+            getNumValFromReport(v.values, 'frameHeight');
+        receiverStats.pliCount = getNumValFromReport(v.values, 'pliCount');
+        receiverStats.firCount = getNumValFromReport(v.values, 'firCount');
+        receiverStats.nackCount = getNumValFromReport(v.values, 'nackCount');
+
+        receiverStats.decoderImplementation = getStringValFromReport(
           v.values,
           'decoderImplementation',
         );
@@ -146,11 +169,11 @@ class WebRTCStatsUtility {
         final c = stats.firstWhereOrNull((element) => element.type == 'codec');
         if (c != null) {
           receiverStats.mimeType =
-              _getStringValFromReport(c.values, 'mimeType');
+              getStringValFromReport(c.values, 'mimeType');
           receiverStats.payloadType =
-              _getNumValFromReport(c.values, 'payloadType');
-          receiverStats.channels = _getNumValFromReport(c.values, 'channels');
-          receiverStats.clockRate = _getNumValFromReport(c.values, 'clockRate');
+              getNumValFromReport(c.values, 'payloadType');
+          receiverStats.channels = getNumValFromReport(c.values, 'channels');
+          receiverStats.clockRate = getNumValFromReport(c.values, 'clockRate');
         }
         break;
       }
@@ -179,20 +202,4 @@ class WebRTCStatsUtility {
   //     WaterbusLogger.instance.log("Error writing data to the file: $e");
   //   }
   // }
-
-  num? _getNumValFromReport(Map<dynamic, dynamic> values, String key) {
-    if (values.containsKey(key)) {
-      return (values[key] is String)
-          ? num.tryParse(values[key])
-          : values[key] as num;
-    }
-    return null;
-  }
-
-  String? _getStringValFromReport(Map<dynamic, dynamic> values, String key) {
-    if (values.containsKey(key)) {
-      return values[key] as String;
-    }
-    return null;
-  }
 }

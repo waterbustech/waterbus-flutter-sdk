@@ -15,8 +15,6 @@
 // Flutter imports:
 import 'package:flutter/foundation.dart';
 
-const monitorFrequency = 2000;
-
 class CodecStats {
   String? mimeType;
   num? payloadType;
@@ -53,6 +51,11 @@ class SenderStats extends CodecStats {
 
 class AudioSenderStats extends SenderStats {
   AudioSenderStats(super.streamId, super.timestamp);
+
+  @override
+  String toString() {
+    return 'latency: $roundTripTime | jitter: $jitter';
+  }
 }
 
 class VideoSenderStats extends SenderStats {
@@ -138,14 +141,7 @@ class VideoReceiverStats extends ReceiverStats {
 
   num? nackCount;
 
-  num? roundTripTime;
-
   String? decoderImplementation;
-
-  @override
-  String toString() {
-    return 'rtt: $roundTripTime | fps: $framesPerSecond | dropped: $framesDropped';
-  }
 }
 
 num computeBitrateForSenderStats(
