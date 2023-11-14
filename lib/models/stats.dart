@@ -51,11 +51,6 @@ class SenderStats extends CodecStats {
 
 class AudioSenderStats extends SenderStats {
   AudioSenderStats(super.streamId, super.timestamp);
-
-  @override
-  String toString() {
-    return 'latency: $roundTripTime | jitter: $jitter';
-  }
 }
 
 class VideoSenderStats extends SenderStats {
@@ -83,6 +78,11 @@ class VideoSenderStats extends SenderStats {
   num? qualityLimitationResolutionChanges;
 
   num? retransmittedPacketsSent;
+
+  @override
+  String toString() {
+    return 'latency: ${(roundTripTime ?? 0) * 1000}ms | jitter: $jitter | packetsLost: $packetsLost';
+  }
 }
 
 class ReceiverStats extends CodecStats {

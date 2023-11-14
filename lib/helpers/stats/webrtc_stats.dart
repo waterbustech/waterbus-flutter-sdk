@@ -18,11 +18,13 @@ class WebRTCStatsUtility {
 
   // MARK: sender
   final Map<String, List<RTCRtpSender>> _senders = {};
+  final Map<String, num> _bitrateFoLayers = {};
   num? _currentSenderBitrate;
-  AudioSenderStats? _prevSenderStats;
+  Map<String, VideoSenderStats>? _prevSenderStats;
 
   Timer? _statsTimer;
 
+  get currentSenderBitrate => _currentSenderBitrate;
   get currentBitrate => _currentBitrate;
 
   void initialize() {
@@ -67,19 +69,24 @@ class WebRTCStatsUtility {
         final List<StatsReport> statsReport = await sender.getStats();
         final stats = await _getSenderStats(statsReport);
 
-        if (stats != null) {
-          if (_prevStats[senders.key] != null) {
-            _currentSenderBitrate = computeBitrateForSenderStats(
-              stats,
-              _prevSenderStats,
-            );
-          }
+        final Map<String, VideoSenderStats> statsMap = {};
 
-          _prevSenderStats = stats;
-
-          WaterbusLogger()
-              .log('${stats.toString()} | bitRate: $_currentSenderBitrate');
+        for (final s in stats) {
+          statsMap[s.rid ?? 'f'] = s;
         }
+
+        if (_prevSenderStats != null) {
+          num totalBitrate = 0;
+          statsMap.forEach((key, s) {
+            final prev = _prevSenderStats![key];
+            final bitRateForlayer = computeBitrateForSenderStats(s, prev);
+            _bitrateFoLayers[key] = bitRateForlayer;
+            totalBitrate += bitRateForlayer;
+          });
+          _currentSenderBitrate = totalBitrate;
+        }
+
+        _prevSenderStats = statsMap;
       }
     }
   }
@@ -106,30 +113,54 @@ class WebRTCStatsUtility {
     }
   }
 
-  Future<AudioSenderStats?> _getSenderStats(List<StatsReport> stats) async {
-    AudioSenderStats? senderStats;
+  Future<List<VideoSenderStats>> _getSenderStats(
+    List<StatsReport> stats,
+  ) async {
+    final List<VideoSenderStats> items = [];
     for (final v in stats) {
       if (v.type == 'outbound-rtp') {
-        senderStats ??= AudioSenderStats(v.id, v.timestamp);
-        senderStats.packetsSent = getNumValFromReport(v.values, 'packetsSent');
-        senderStats.packetsLost = getNumValFromReport(v.values, 'packetsLost');
-        senderStats.bytesSent = getNumValFromReport(v.values, 'bytesSent');
-        senderStats.roundTripTime =
-            getNumValFromReport(v.values, 'roundTripTime');
-        senderStats.jitter = getNumValFromReport(v.values, 'jitter');
+        final VideoSenderStats vs = VideoSenderStats(v.id, v.timestamp);
+        vs.frameHeight = getNumValFromReport(v.values, 'frameHeight');
+        vs.frameWidth = getNumValFromReport(v.values, 'frameWidth');
+        vs.framesPerSecond = getNumValFromReport(v.values, 'framesPerSecond');
+        vs.firCount = getNumValFromReport(v.values, 'firCount');
+        vs.pliCount = getNumValFromReport(v.values, 'pliCount');
+        vs.nackCount = getNumValFromReport(v.values, 'nackCount');
+        vs.packetsSent = getNumValFromReport(v.values, 'packetsSent');
+        vs.bytesSent = getNumValFromReport(v.values, 'bytesSent');
+        vs.framesSent = getNumValFromReport(v.values, 'framesSent');
+        vs.rid = getStringValFromReport(v.values, 'rid');
+        vs.encoderImplementation =
+            getStringValFromReport(v.values, 'encoderImplementation');
+        vs.retransmittedPacketsSent =
+            getNumValFromReport(v.values, 'retransmittedPacketsSent');
+        vs.qualityLimitationReason =
+            getStringValFromReport(v.values, 'qualityLimitationReason');
+        vs.qualityLimitationResolutionChanges =
+            getNumValFromReport(v.values, 'qualityLimitationResolutionChanges');
 
+        // locate the appropriate remote-inbound-rtp item
+        final remoteId = getStringValFromReport(v.values, 'remoteId');
+        final r = stats.firstWhereOrNull((element) => element.id == remoteId);
+        if (r != null) {
+          vs.jitter = getNumValFromReport(r.values, 'jitter');
+          vs.packetsLost = getNumValFromReport(r.values, 'packetsLost');
+          vs.roundTripTime = getNumValFromReport(r.values, 'roundTripTime');
+
+          // Monitor latency & jitter
+          WaterbusLogger().log(vs.toString());
+        }
         final c = stats.firstWhereOrNull((element) => element.type == 'codec');
         if (c != null) {
-          senderStats.mimeType = getStringValFromReport(c.values, 'mimeType');
-          senderStats.payloadType =
-              getNumValFromReport(c.values, 'payloadType');
-          senderStats.channels = getNumValFromReport(c.values, 'channels');
-          senderStats.clockRate = getNumValFromReport(c.values, 'clockRate');
+          vs.mimeType = getStringValFromReport(c.values, 'mimeType');
+          vs.payloadType = getNumValFromReport(c.values, 'payloadType');
+          vs.channels = getNumValFromReport(c.values, 'channels');
+          vs.clockRate = getNumValFromReport(c.values, 'clockRate');
         }
-        break;
+        items.add(vs);
       }
     }
-    return senderStats;
+    return items;
   }
 
   Future<VideoReceiverStats?> _getReceiverStats(List<StatsReport> stats) async {
@@ -168,8 +199,7 @@ class WebRTCStatsUtility {
 
         final c = stats.firstWhereOrNull((element) => element.type == 'codec');
         if (c != null) {
-          receiverStats.mimeType =
-              getStringValFromReport(c.values, 'mimeType');
+          receiverStats.mimeType = getStringValFromReport(c.values, 'mimeType');
           receiverStats.payloadType =
               getNumValFromReport(c.values, 'payloadType');
           receiverStats.channels = getNumValFromReport(c.values, 'channels');
