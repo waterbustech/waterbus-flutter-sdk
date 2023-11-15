@@ -83,6 +83,10 @@ class VideoSenderStats extends SenderStats {
   String toString() {
     return 'latency: ${(roundTripTime ?? 0) * 1000}ms | jitter: $jitter | packetsLost: $packetsLost';
   }
+
+  String infoVideo() {
+    return 'framesSent: $framesSent | frameHeight: $frameHeight | frameWidth: $frameWidth | framePerSecond: $framesPerSecond';
+  }
 }
 
 class ReceiverStats extends CodecStats {

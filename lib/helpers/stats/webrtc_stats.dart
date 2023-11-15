@@ -139,6 +139,11 @@ class WebRTCStatsUtility {
         vs.qualityLimitationResolutionChanges =
             getNumValFromReport(v.values, 'qualityLimitationResolutionChanges');
 
+        if (vs.framesSent != null) {
+          // Monitor frames info
+          WaterbusLogger().log(vs.infoVideo());
+        }
+
         // locate the appropriate remote-inbound-rtp item
         final remoteId = getStringValFromReport(v.values, 'remoteId');
         final r = stats.firstWhereOrNull((element) => element.id == remoteId);
