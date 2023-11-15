@@ -87,7 +87,7 @@ class WebRTCFrameCrypto {
     required RTCPeerConnection peerConnection,
     required bool enabled,
   }) async {
-    if (_videoCodec == WebRTCCodec.h265) return;
+    if (!_videoCodec.isSFrameSuported) return;
 
     final List<RTCRtpSender> senders = await peerConnection.senders;
 
@@ -139,7 +139,7 @@ class WebRTCFrameCrypto {
     required WebRTCCodec codec,
     required bool enabled,
   }) async {
-    if (codec == WebRTCCodec.h265) return;
+    if (!codec.isSFrameSuported) return;
 
     final List<RTCRtpReceiver> receivers = await peerConnection.receivers;
 

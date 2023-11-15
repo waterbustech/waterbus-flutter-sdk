@@ -6,14 +6,15 @@ import 'package:waterbus_sdk/constants/constants.dart';
 import 'package:waterbus_sdk/method_channels/native_channel.dart';
 
 enum WebRTCCodec {
-  vp8('vp8'),
-  vp9('vp9'),
-  h264('h264'),
-  h265('h265'),
-  av1('av1');
+  vp8('vp8', true),
+  vp9('vp9', true),
+  h264('h264', true),
+  h265('h265', false),
+  av1('av1', false);
 
-  const WebRTCCodec(this.codec);
+  const WebRTCCodec(this.codec, this.isSFrameSuported);
   final String codec;
+  final bool isSFrameSuported;
 }
 
 extension CodecX on WebRTCCodec {

@@ -52,7 +52,7 @@ class WebRTCStatsUtility {
   }
 
   void removeReceivers(String id) {
-    _senders.remove(id);
+    _receivers.remove(id);
   }
 
   void dispose() {
