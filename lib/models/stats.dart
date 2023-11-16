@@ -15,11 +15,15 @@
 // Flutter imports:
 import 'package:flutter/foundation.dart';
 
-class CodecStats {
+abstract class CodecStats {
   String? mimeType;
   num? payloadType;
   num? channels;
   num? clockRate;
+
+  String infoVideo() {
+    return '';
+  }
 }
 
 // key stats for senders and receivers
@@ -81,9 +85,10 @@ class VideoSenderStats extends SenderStats {
 
   @override
   String toString() {
-    return 'latency: ${(roundTripTime ?? 0) * 1000}ms | jitter: $jitter | packetsLost: $packetsLost';
+    return 'latency: ${((roundTripTime ?? 0) * 1000).toStringAsFixed(2)}ms | jitter: ${jitter?.toStringAsFixed(6)} | packetsLost: $packetsLost';
   }
 
+  @override
   String infoVideo() {
     return 'framesSent: $framesSent | frameHeight: $frameHeight | frameWidth: $frameWidth | framePerSecond: $framesPerSecond';
   }
@@ -146,6 +151,11 @@ class VideoReceiverStats extends ReceiverStats {
   num? nackCount;
 
   String? decoderImplementation;
+
+  @override
+  String infoVideo() {
+    return 'framesReceived: $framesReceived | packageReceived: $packetsReceived | packetsLost: $packetsLost';
+  }
 }
 
 num computeBitrateForSenderStats(

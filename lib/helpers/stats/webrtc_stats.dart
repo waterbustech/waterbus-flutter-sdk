@@ -214,6 +214,11 @@ class WebRTCStatsUtility {
       }
     }
 
+    if (receiverStats?.framesReceived != null) {
+      // Monitor frames receive
+      WaterbusLogger().log(receiverStats!.infoVideo());
+    }
+
     return receiverStats;
   }
 
