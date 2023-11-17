@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 // Copyright 2023 LiveKit, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -76,6 +77,8 @@ class VideoSenderStats extends SenderStats {
 
   num? framesPerSecond;
 
+  num? totalEncodeTime;
+
   // bandwidth, cpu, other, none
   String? qualityLimitationReason;
 
@@ -91,6 +94,14 @@ class VideoSenderStats extends SenderStats {
   @override
   String infoVideo() {
     return 'framesSent: $framesSent | frameHeight: $frameHeight | frameWidth: $frameWidth | framePerSecond: $framesPerSecond';
+  }
+
+  double get packetsLostPercent {
+    if (packetsLost == null || packetsSent == null || packetsLost == 0) {
+      return 0;
+    }
+
+    return packetsSent! / packetsLost!;
   }
 }
 
@@ -158,27 +169,52 @@ class VideoReceiverStats extends ReceiverStats {
   }
 }
 
+class WaterbusStatsBenchmark {
+  final num latency;
+  final num bitrate;
+  final num bytesSent;
+  final num jitter;
+  final num packetsLost;
+  final num totalEncodeTime;
+  WaterbusStatsBenchmark({
+    required this.latency,
+    required this.bitrate,
+    required this.bytesSent,
+    required this.jitter,
+    required this.packetsLost,
+    required this.totalEncodeTime,
+  });
+
+  @override
+  String toString() {
+    return '${(latency * 1000).toStringAsFixed(2)} $bitrate ${jitter.toStringAsFixed(6)} ${(bytesSent / (1024 * 1024)).toStringAsFixed(4)} $packetsLost ${(totalEncodeTime * 1000).toStringAsFixed(0)}';
+  }
+}
+
 num computeBitrateForSenderStats(
   SenderStats currentStats,
   SenderStats? prevStats,
 ) {
-  if (prevStats == null) {
+  if (prevStats == null || currentStats.timestamp == prevStats.timestamp) {
     return 0;
   }
-  num? bytesNow;
-  num? bytesPrev;
-  bytesNow = currentStats.bytesSent;
-  bytesPrev = prevStats.bytesSent;
+
+  final num? bytesNow = currentStats.bytesSent;
+  final num? bytesPrev = prevStats.bytesSent;
+
   if (bytesNow == null || bytesPrev == null) {
     return 0;
   }
-  if (kIsWeb) {
-    return ((bytesNow - bytesPrev) * 8) /
-        (currentStats.timestamp - prevStats.timestamp);
+
+  final num timeDifference = currentStats.timestamp - prevStats.timestamp;
+
+  if (timeDifference <= 0) {
+    return 0;
   }
 
-  return ((bytesNow - bytesPrev) * 8 * 1000) /
-      (currentStats.timestamp - prevStats.timestamp);
+  final num bitrate = ((bytesNow - bytesPrev).abs() * 8) / timeDifference;
+
+  return bitrate;
 }
 
 num computeBitrateForReceiverStats(
