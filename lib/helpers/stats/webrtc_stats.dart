@@ -39,6 +39,8 @@ class WebRTCStatsUtility {
     _statsTimer = Timer.periodic(2.seconds, (timer) {
       _monitorSenderStats();
       _monitorReceiverStats();
+
+      _recordStats();
     });
   }
 
