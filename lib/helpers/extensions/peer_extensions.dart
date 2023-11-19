@@ -2,7 +2,10 @@
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
 // Project imports:
+import 'package:waterbus_sdk/helpers/stats/webrtc_audio_stats.dart';
 import 'package:waterbus_sdk/helpers/stats/webrtc_stats.dart';
+import 'package:waterbus_sdk/models/audio_stats_params.dart';
+import 'package:waterbus_sdk/models/enums/audio_level.dart';
 
 // Project imports:
 
@@ -33,6 +36,8 @@ extension PeerX on RTCPeerConnection {
 
   void monitorStats(
     WebRTCStatsUtility stats, {
+    required WebRTCAudioStats audioStats,
+    required Function(AudioLevel) onLevelChanged,
     required String id,
     required bool isMe,
   }) {
@@ -42,17 +47,31 @@ extension PeerX on RTCPeerConnection {
           if (isMe) {
             final senders = await getSenders();
             stats.addSenders(id, senders);
+
+            audioStats.setSender = AudioStatsParams(
+              peerConnection: this,
+              callBack: onLevelChanged,
+            );
           } else {
             final receivers = await getReceivers();
             stats.addReceivers(id, receivers);
+
+            audioStats.addReceiver(
+              AudioStatsParams(
+                peerConnection: this,
+                callBack: onLevelChanged,
+              ),
+            );
           }
 
           break;
         case RTCIceConnectionState.RTCIceConnectionStateClosed:
           if (isMe) {
             stats.removeSenders(id);
+            audioStats.setSender = null;
           } else {
             stats.removeReceivers(id);
+            audioStats.removeReceiver(peerConnectionId);
           }
           break;
         default:

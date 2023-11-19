@@ -20,7 +20,7 @@ class WaterbusLogger {
 
   void bug(String msg) {
     if (kReleaseMode) return;
-    
+
     logger.e('[$tag]: $msg');
   }
 

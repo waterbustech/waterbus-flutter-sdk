@@ -26,7 +26,6 @@ class WebRTCStatsUtility {
   final List<WaterbusStatsBenchmark> _statsBenchmark = [];
 
   Timer? _statsTimer;
-  int _secondsCount = 0;
 
   get currentSenderBitrate => _currentSenderBitrate;
   get currentBitrate => _currentReceiverBitrate;
@@ -40,9 +39,6 @@ class WebRTCStatsUtility {
     _statsTimer = Timer.periodic(2.seconds, (timer) {
       _monitorSenderStats();
       _monitorReceiverStats();
-
-      if (_secondsCount >= 60) return;
-      _recordStats();
     });
   }
 
@@ -63,7 +59,11 @@ class WebRTCStatsUtility {
   }
 
   void dispose() {
+    if (_statsTimer == null) return;
+
     _statsTimer?.cancel();
+    _statsTimer = null;
+
     _writeStatsToFile();
     _senders.clear();
     _receivers.clear();
@@ -241,7 +241,6 @@ class WebRTCStatsUtility {
   }
 
   void _recordStats() {
-    _secondsCount += 2;
     final VideoSenderStats? stats = _prevSenderStats.values.firstOrNull;
 
     _statsBenchmark.add(
@@ -275,7 +274,6 @@ class WebRTCStatsUtility {
       }
     }
 
-    _secondsCount = 0;
     _statsBenchmark.clear();
     _currentSenderBitrate = null;
     _prevSenderStats = {};

@@ -12,6 +12,7 @@ import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/helpers/e2ee/frame_crypto.dart';
 import 'package:waterbus_sdk/helpers/extensions/sdp_extensions.dart';
 import 'package:waterbus_sdk/helpers/logger/logger.dart';
+import 'package:waterbus_sdk/helpers/stats/webrtc_audio_stats.dart';
 import 'package:waterbus_sdk/helpers/stats/webrtc_stats.dart';
 import 'package:waterbus_sdk/interfaces/socket_emiter_interface.dart';
 import 'package:waterbus_sdk/interfaces/webrtc_interface.dart';
@@ -25,12 +26,14 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   final ReplayKitChannel _replayKitChannel;
   final NativeService _nativeService;
   final WebRTCStatsUtility _stats;
+  final WebRTCAudioStats _audioStats;
   WaterbusWebRTCManagerIpml(
     this._frameCryptor,
     this._socketEmiter,
     this._replayKitChannel,
     this._nativeService,
     this._stats,
+    this._audioStats,
   );
 
   String? _roomId;
@@ -160,6 +163,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
 
     _nativeService.startCallKit(roomId);
     _stats.initialize();
+    _audioStats.initialize();
   }
 
   @override
@@ -449,6 +453,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       _flagPublisherCanAddCandidate = false;
       _nativeService.endCallKit();
       _stats.dispose();
+      _audioStats.dispose();
 
       for (final subscriber in _subscribers.values) {
         await subscriber.dispose();
@@ -482,6 +487,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       videoCodec: _callSetting.preferedCodec,
       isE2eeEnabled: _callSetting.e2eeEnabled,
       stats: _stats,
+      audioStats: _audioStats,
       isMe: true,
     );
 
@@ -588,6 +594,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       cameraType: type,
       videoCodec: codec,
       stats: _stats,
+      audioStats: _audioStats,
     );
 
     rtcPeerConnection.onAddStream = (stream) async {
