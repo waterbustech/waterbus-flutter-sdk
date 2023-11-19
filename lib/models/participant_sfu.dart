@@ -1,10 +1,14 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+
 // Package imports:
 import 'package:equatable/equatable.dart';
 
 // Project imports:
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/helpers/extensions/peer_extensions.dart';
+import 'package:waterbus_sdk/helpers/stats/webrtc_audio_stats.dart';
 import 'package:waterbus_sdk/helpers/stats/webrtc_stats.dart';
+import 'package:waterbus_sdk/models/enums/audio_level.dart';
 
 // ignore: must_be_immutable
 class ParticipantSFU extends Equatable {
@@ -15,6 +19,7 @@ class ParticipantSFU extends Equatable {
   bool isSharingScreen;
   bool hasFirstFrameRendered;
   CameraType cameraType;
+  AudioLevel audioLevel;
   RTCVideoRenderer? renderer;
   final RTCPeerConnection peerConnection;
   final WebRTCCodec videoCodec;
@@ -27,21 +32,30 @@ class ParticipantSFU extends Equatable {
     this.isE2eeEnabled = false,
     this.isSpeakerPhoneEnabled = true,
     this.cameraType = CameraType.front,
+    this.audioLevel = AudioLevel.kSilence,
     this.renderer,
     required this.peerConnection,
     required this.onChanged,
     required this.videoCodec,
     // use only one time
     WebRTCStatsUtility? stats,
+    WebRTCAudioStats? audioStats,
     bool isMe = false,
   }) {
     _initialRenderer();
 
-    if (stats != null) {
+    if (stats != null && audioStats != null) {
       peerConnection.monitorStats(
         stats,
-        id: peerConnection.peerConnectionId,
         isMe: isMe,
+        id: peerConnection.peerConnectionId,
+        audioStats: audioStats,
+        onLevelChanged: (level) {
+          if (level == audioLevel) return;
+
+          audioLevel = level;
+          onChanged();
+        },
       );
     }
   }
@@ -100,8 +114,14 @@ class ParticipantSFU extends Equatable {
     return [
       isVideoEnabled,
       isAudioEnabled,
+      isE2eeEnabled,
+      isSpeakerPhoneEnabled,
       isSharingScreen,
       hasFirstFrameRendered,
+      cameraType,
+      audioLevel,
+      peerConnection,
+      videoCodec,
       onChanged,
     ];
   }
