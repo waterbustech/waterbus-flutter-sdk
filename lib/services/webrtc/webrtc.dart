@@ -306,6 +306,8 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
 
     _mParticipant?.switchCamera();
 
+    _socketEmiter.setCameraType(_mParticipant?.cameraType ?? CameraType.front);
+
     _notify(CallbackEvents.shouldBeUpdateState);
   }
 
