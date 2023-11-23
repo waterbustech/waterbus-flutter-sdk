@@ -12,7 +12,7 @@ import 'package:waterbus_sdk/helpers/extensions/duration_extensions.dart';
 import 'package:waterbus_sdk/helpers/logger/logger.dart';
 
 @singleton
-class WebRTCStatsUtility {
+class WebRTCVideoStats {
   // MARK: State of receiver
   final Map<String, List<RTCRtpReceiver>> _receivers = {};
   final Map<String, VideoReceiverStats> _prevStats = {};
@@ -135,7 +135,7 @@ class WebRTCStatsUtility {
   ) async {
     final List<VideoSenderStats> items = [];
     for (final v in stats) {
-      if (v.type == 'outbound-rtp') {
+      if (v.type == 'outbound-rtp' && v.values['kind'] == 'video') {
         final VideoSenderStats vs = VideoSenderStats(v.id, v.timestamp);
         vs.frameHeight = getNumValFromReport(v.values, 'frameHeight');
         vs.frameWidth = getNumValFromReport(v.values, 'frameWidth');
@@ -191,7 +191,7 @@ class WebRTCStatsUtility {
   Future<VideoReceiverStats?> _getReceiverStats(List<StatsReport> stats) async {
     VideoReceiverStats? receiverStats;
     for (final v in stats) {
-      if (v.type == 'inbound-rtp') {
+      if (v.type == 'inbound-rtp' && v.values['kind'] == 'video') {
         receiverStats ??= VideoReceiverStats(v.id, v.timestamp);
         receiverStats.jitter = getNumValFromReport(v.values, 'jitter');
         receiverStats.jitterBufferDelay =

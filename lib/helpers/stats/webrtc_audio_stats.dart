@@ -63,8 +63,7 @@ class WebRTCAudioStats {
           await params.peerConnection.getStats();
       stats.addAll(senderStats);
     } else {
-      final List<RTCRtpReceiver> rtpReceivers =
-          await params.peerConnection.getReceivers();
+      final List<RTCRtpReceiver> rtpReceivers = params.receivers;
 
       for (final rtpReceiver in rtpReceivers) {
         final receiverStats = await rtpReceiver.getStats();

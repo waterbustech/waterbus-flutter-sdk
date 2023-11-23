@@ -13,7 +13,7 @@ import 'package:waterbus_sdk/helpers/e2ee/frame_crypto.dart';
 import 'package:waterbus_sdk/helpers/extensions/sdp_extensions.dart';
 import 'package:waterbus_sdk/helpers/logger/logger.dart';
 import 'package:waterbus_sdk/helpers/stats/webrtc_audio_stats.dart';
-import 'package:waterbus_sdk/helpers/stats/webrtc_stats.dart';
+import 'package:waterbus_sdk/helpers/stats/webrtc_video_stats.dart';
 import 'package:waterbus_sdk/interfaces/socket_emiter_interface.dart';
 import 'package:waterbus_sdk/interfaces/webrtc_interface.dart';
 import 'package:waterbus_sdk/method_channels/native_channel.dart';
@@ -25,7 +25,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   final SocketEmiter _socketEmiter;
   final ReplayKitChannel _replayKitChannel;
   final NativeService _nativeService;
-  final WebRTCStatsUtility _stats;
+  final WebRTCVideoStats _stats;
   final WebRTCAudioStats _audioStats;
   WaterbusWebRTCManagerIpml(
     this._frameCryptor,

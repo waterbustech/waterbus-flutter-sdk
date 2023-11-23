@@ -7,7 +7,7 @@ import 'package:equatable/equatable.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/helpers/extensions/peer_extensions.dart';
 import 'package:waterbus_sdk/helpers/stats/webrtc_audio_stats.dart';
-import 'package:waterbus_sdk/helpers/stats/webrtc_stats.dart';
+import 'package:waterbus_sdk/helpers/stats/webrtc_video_stats.dart';
 import 'package:waterbus_sdk/models/enums/audio_level.dart';
 
 // ignore: must_be_immutable
@@ -38,7 +38,7 @@ class ParticipantSFU extends Equatable {
     required this.onChanged,
     required this.videoCodec,
     // use only one time
-    WebRTCStatsUtility? stats,
+    WebRTCVideoStats? stats,
     WebRTCAudioStats? audioStats,
     bool isMe = false,
   }) {

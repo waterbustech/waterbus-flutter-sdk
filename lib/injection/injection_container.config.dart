@@ -17,7 +17,7 @@ import 'package:injectable/injectable.dart' as _i2;
 import '../helpers/e2ee/frame_crypto.dart' as _i9;
 import '../helpers/logger/logger.dart' as _i7;
 import '../helpers/stats/webrtc_audio_stats.dart' as _i8;
-import '../helpers/stats/webrtc_stats.dart' as _i10;
+import '../helpers/stats/webrtc_video_stats.dart' as _i10;
 import '../interfaces/socket_emiter_interface.dart' as _i5;
 import '../interfaces/socket_handler_interface.dart' as _i15;
 import '../interfaces/webrtc_interface.dart' as _i11;
@@ -47,14 +47,14 @@ _i1.GetIt $initGetIt(
   gh.singleton<_i8.WebRTCAudioStats>(_i8.WebRTCAudioStats());
   gh.singleton<_i9.WebRTCFrameCrypto>(
       _i9.WebRTCFrameCrypto(gh<_i7.WaterbusLogger>()));
-  gh.singleton<_i10.WebRTCStatsUtility>(_i10.WebRTCStatsUtility());
+  gh.singleton<_i10.WebRTCVideoStats>(_i10.WebRTCVideoStats());
   gh.lazySingleton<_i11.WaterbusWebRTCManager>(
       () => _i12.WaterbusWebRTCManagerIpml(
             gh<_i9.WebRTCFrameCrypto>(),
             gh<_i5.SocketEmiter>(),
             gh<_i4.ReplayKitChannel>(),
             gh<_i3.NativeService>(),
-            gh<_i10.WebRTCStatsUtility>(),
+            gh<_i10.WebRTCVideoStats>(),
             gh<_i8.WebRTCAudioStats>(),
           ));
   gh.singleton<_i13.CallKitListener>(_i13.CallKitListener(

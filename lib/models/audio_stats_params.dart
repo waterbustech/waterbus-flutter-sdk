@@ -5,9 +5,11 @@ import 'package:waterbus_sdk/models/enums/audio_level.dart';
 class AudioStatsParams {
   final RTCPeerConnection peerConnection;
   final Function(AudioLevel) callBack;
+  final List<RTCRtpReceiver> receivers;
   AudioStatsParams({
     required this.peerConnection,
     required this.callBack,
+    this.receivers = const [],
   });
 
   AudioStatsParams copyWith({

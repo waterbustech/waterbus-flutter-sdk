@@ -3,11 +3,9 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 
 // Project imports:
 import 'package:waterbus_sdk/helpers/stats/webrtc_audio_stats.dart';
-import 'package:waterbus_sdk/helpers/stats/webrtc_stats.dart';
+import 'package:waterbus_sdk/helpers/stats/webrtc_video_stats.dart';
 import 'package:waterbus_sdk/models/audio_stats_params.dart';
 import 'package:waterbus_sdk/models/enums/audio_level.dart';
-
-// Project imports:
 
 extension PeerX on RTCPeerConnection {
   void setMaxBandwidth(int? bandwidth) {
@@ -35,7 +33,7 @@ extension PeerX on RTCPeerConnection {
   }
 
   void monitorStats(
-    WebRTCStatsUtility stats, {
+    WebRTCVideoStats stats, {
     required WebRTCAudioStats audioStats,
     required Function(AudioLevel) onLevelChanged,
     required String id,
@@ -60,6 +58,7 @@ extension PeerX on RTCPeerConnection {
               AudioStatsParams(
                 peerConnection: this,
                 callBack: onLevelChanged,
+                receivers: receivers,
               ),
             );
           }
