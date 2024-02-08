@@ -1,4 +1,6 @@
 // Project imports:
+import 'dart:typed_data';
+
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 
 abstract class WaterbusWebRTCManager {
@@ -38,6 +40,10 @@ abstract class WaterbusWebRTCManager {
   void setCameraType({required String targetId, required CameraType type});
   void setAudioEnabled({required String targetId, required bool isEnabled});
   void setScreenSharing({required String targetId, required bool isSharing});
+  Future<void> enableVirtualBackground({
+    required Uint8List backgroundImage,
+    double thresholdConfidence = 0.7,
+  });
 
   CallState callState();
   Stream<CallbackPayload> get notifyChanged;

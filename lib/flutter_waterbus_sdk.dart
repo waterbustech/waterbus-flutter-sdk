@@ -1,6 +1,8 @@
 library waterbus_sdk;
 
 // Project imports:
+import 'dart:typed_data';
+
 import 'package:waterbus_sdk/injection/injection_container.dart';
 import 'package:waterbus_sdk/interfaces/socket_handler_interface.dart';
 import 'package:waterbus_sdk/models/index.dart';
@@ -78,6 +80,16 @@ class WaterbusSdk {
 
   Future<void> changeCallSetting(CallSetting setting) async {
     await _sdk.changeCallSettings(setting);
+  }
+
+  Future<void> enableVirtualBackground({
+    required Uint8List backgroundImage,
+    double thresholdConfidence = 0.7,
+  }) async {
+    await _sdk.enableVirtualBackground(
+      backgroundImage: backgroundImage,
+      thresholdConfidence: thresholdConfidence,
+    );
   }
 
   Future<List<WebRTCCodec>> filterSupportedCodecs() async {

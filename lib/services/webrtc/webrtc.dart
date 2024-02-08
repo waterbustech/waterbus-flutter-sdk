@@ -1,6 +1,7 @@
 // Dart imports:
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 // Package imports:
 import 'package:injectable/injectable.dart';
@@ -470,9 +471,23 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       _frameCryptor.dispose();
 
       _notify(CallbackEvents.meetingEnded);
+
+      // Clear for next time
+      Helper.disableVirtualBackground();
     } catch (error) {
       WaterbusLogger().bug(error.toString());
     }
+  }
+
+  // MARK: Public virtual background
+  @override
+  Future<void> enableVirtualBackground({
+    required Uint8List backgroundImage,
+    double thresholdConfidence = 0.7,
+  }) async {
+    await Helper.enableVirtualBackground(
+      backgroundImage: backgroundImage,
+    );
   }
 
   // MARK: Private methods

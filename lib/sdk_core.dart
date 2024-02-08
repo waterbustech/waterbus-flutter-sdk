@@ -1,5 +1,6 @@
 // Dart imports:
 import 'dart:io';
+import 'dart:typed_data';
 
 // Package imports:
 import 'package:injectable/injectable.dart';
@@ -101,6 +102,16 @@ class SdkCore {
     } catch (error) {
       _logger.bug(error.toString());
     }
+  }
+
+  Future<void> enableVirtualBackground({
+    required Uint8List backgroundImage,
+    double thresholdConfidence = 0.7,
+  }) async {
+    await _rtcManager.enableVirtualBackground(
+      backgroundImage: backgroundImage,
+      thresholdConfidence: thresholdConfidence,
+    );
   }
 
   CallState get callState => _rtcManager.callState();
