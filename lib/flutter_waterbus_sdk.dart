@@ -92,6 +92,10 @@ class WaterbusSdk {
     );
   }
 
+  Future<void> disableVirtualBackground() async {
+    await _sdk.disableVirtualBackground();
+  }
+
   Future<List<WebRTCCodec>> filterSupportedCodecs() async {
     final List<WebRTCCodec> supportedCodecs = [];
 

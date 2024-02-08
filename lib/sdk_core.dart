@@ -114,5 +114,9 @@ class SdkCore {
     );
   }
 
+  Future<void> disableVirtualBackground() async {
+    await _rtcManager.disableVirtualBackground();
+  }
+
   CallState get callState => _rtcManager.callState();
 }

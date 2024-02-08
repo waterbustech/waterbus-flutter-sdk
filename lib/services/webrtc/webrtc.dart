@@ -490,6 +490,11 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     );
   }
 
+  @override
+  Future<void> disableVirtualBackground() async {
+    await Helper.disableVirtualBackground();
+  }
+
   // MARK: Private methods
   Future<void> _prepareMedia() async {
     if (_mParticipant?.peerConnection != null) return;
