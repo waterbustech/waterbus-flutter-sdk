@@ -3,6 +3,7 @@ library waterbus_sdk;
 // Project imports:
 import 'dart:typed_data';
 
+import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
 import 'package:waterbus_sdk/interfaces/socket_handler_interface.dart';
 import 'package:waterbus_sdk/models/index.dart';
@@ -54,8 +55,8 @@ class WaterbusSdk {
     await _sdk.prepareMedia();
   }
 
-  Future<void> startScreenSharing() async {
-    await _sdk.startScreenSharing();
+  Future<void> startScreenSharing({DesktopCapturerSource? source}) async {
+    await _sdk.startScreenSharing(source: source);
   }
 
   Future<void> stopScreenSharing() async {

@@ -82,13 +82,13 @@ class SdkCore {
     await _rtcManager.toggleSpeakerPhone();
   }
 
-  Future<void> startScreenSharing() async {
+  Future<void> startScreenSharing({DesktopCapturerSource? source}) async {
     if (Platform.isIOS) {
       ReplayKitHelper().openReplayKit();
       _replayKitChannel.startReplayKit();
       _replayKitChannel.listenEvents(_rtcManager);
     } else {
-      await _rtcManager.startScreenSharing();
+      await _rtcManager.startScreenSharing(source: source);
     }
   }
 

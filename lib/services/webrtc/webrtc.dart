@@ -55,7 +55,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   }
 
   @override
-  Future<void> startScreenSharing() async {
+  Future<void> startScreenSharing({DesktopCapturerSource? source}) async {
     try {
       if (_mParticipant == null || _mParticipant!.isSharingScreen) return;
 
@@ -67,7 +67,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
         await _nativeService.startForegroundService();
       }
 
-      final MediaStream displayStream = await _getDisplayMedia();
+      final MediaStream displayStream = await _getDisplayMedia(source);
 
       if (displayStream.getVideoTracks().isEmpty) return;
 
@@ -538,11 +538,11 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     return stream;
   }
 
-  Future<MediaStream> _getDisplayMedia() async {
+  Future<MediaStream> _getDisplayMedia(DesktopCapturerSource? source) async {
     final Map<String, dynamic> mediaConstraints = <String, dynamic>{
       'audio': false,
       'video': {
-        'deviceId': 'broadcast',
+        'deviceId': source?.id ?? 'broadcast',
         'frameRate': 15,
         'mandatory': {
           'minWidth': 1280,

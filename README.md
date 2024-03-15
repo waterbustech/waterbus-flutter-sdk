@@ -8,7 +8,7 @@ Flutter plugin of [Waterbus](https://docs.waterbus.tech). Build video call or on
 | Codec | VP8 | VP9 | H264 | H265 | AV1 |
 | :-----: | :---------------: | :------------: | :------------: | :----------------: | :--------------------------------: |
 |   iOS   |        🟢         |       🟢       |       🟢       |         🟢         |         🟢        |
-| Android |        🟢         |       🟢       |       🟢       |         🟢         |         🟢        |
+| Android |        🟢         |       🟢       |       🟢       |                  |         🟢        |
 
 ## Features
 

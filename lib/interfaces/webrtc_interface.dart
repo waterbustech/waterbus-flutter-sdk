@@ -29,7 +29,7 @@ abstract class WaterbusWebRTCManager {
   // MARK: control
   Future<void> applyCallSettings(CallSetting setting);
   Future<void> prepareMedia();
-  Future<void> startScreenSharing();
+  Future<void> startScreenSharing({DesktopCapturerSource? source});
   Future<void> stopScreenSharing({bool stayInRoom = true});
   Future<void> toggleAudio({bool? forceValue});
   Future<void> toggleSpeakerPhone({bool? forceValue});
