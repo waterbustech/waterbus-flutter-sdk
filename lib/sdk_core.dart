@@ -1,5 +1,4 @@
 // Dart imports:
-import 'dart:io';
 import 'dart:typed_data';
 
 // Package imports:
@@ -83,7 +82,7 @@ class SdkCore {
   }
 
   Future<void> startScreenSharing({DesktopCapturerSource? source}) async {
-    if (Platform.isIOS) {
+    if (WebRTC.platformIsIOS) {
       ReplayKitHelper().openReplayKit();
       _replayKitChannel.startReplayKit();
       _replayKitChannel.listenEvents(_rtcManager);
@@ -94,7 +93,7 @@ class SdkCore {
 
   Future<void> stopScreenSharing() async {
     try {
-      if (Platform.isIOS) {
+      if (WebRTC.platformIsIOS) {
         ReplayKitHelper().openReplayKit();
       } else {
         await _rtcManager.stopScreenSharing();

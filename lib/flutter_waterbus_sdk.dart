@@ -32,7 +32,11 @@ class WaterbusSdk {
 
     WaterbusSdk.waterbusUrl = waterbusUrl;
     WaterbusSdk.recordBenchmarkPath = recordBenchmarkPath;
-    _callKitListener.listenerEvents();
+
+    if (WebRTC.platformIsIOS) {
+      _callKitListener.listenerEvents();
+    }
+
     _socketHandler.establishConnection();
   }
 

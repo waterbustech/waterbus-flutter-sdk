@@ -2,6 +2,7 @@
 import 'dart:typed_data';
 
 // Package imports:
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 
 // Project imports:

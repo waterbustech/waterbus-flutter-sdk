@@ -1,6 +1,3 @@
-// Dart imports:
-import 'dart:io';
-
 // Flutter imports:
 import 'package:flutter/services.dart';
 
@@ -10,12 +7,15 @@ import 'package:injectable/injectable.dart';
 
 // Project imports:
 import 'package:waterbus_sdk/constants/constants.dart';
+import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 
 @injectable
 class NativeService {
   final MethodChannel _nativeChannel = const MethodChannel(kNativeChannel);
 
   Future<double> getPlatformVersion() async {
+    if (!WebRTC.platformIsMobile) return 0;
+
     final String? platformVersion = await _nativeChannel.invokeMethod(
       "getPlatformVersion",
     );
@@ -24,19 +24,19 @@ class NativeService {
   }
 
   Future<void> startForegroundService() async {
-    if (!Platform.isAndroid) return;
+    if (!WebRTC.platformIsAndroid) return;
 
     await _nativeChannel.invokeMethod("startForeground");
   }
 
   Future<void> stopForegroundService() async {
-    if (!Platform.isAndroid) return;
+    if (!WebRTC.platformIsAndroid) return;
 
     await _nativeChannel.invokeMethod("stopForeground");
   }
 
   Future<void> startCallKit(String nameCaller) async {
-    if (!Platform.isIOS) return;
+    if (!WebRTC.platformIsIOS) return;
 
     await _nativeChannel.invokeMethod("startCallKit", {
       "nameCaller": nameCaller,
@@ -44,6 +44,8 @@ class NativeService {
   }
 
   Future<void> endCallKit() async {
+    if (!WebRTC.platformIsIOS) return;
+
     final String uuidCaller = await _getCurrentUuid();
 
     if (uuidCaller.isEmpty) return;
@@ -52,7 +54,7 @@ class NativeService {
   }
 
   Future<String> _getCurrentUuid() async {
-    if (!Platform.isIOS) return '';
+    if (!WebRTC.platformIsIOS) return '';
 
     final String uuid =
         await _nativeChannel.invokeMethod("getCurrentUuid") ?? '';

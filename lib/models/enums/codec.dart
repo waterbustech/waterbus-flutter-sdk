@@ -1,8 +1,6 @@
-// Dart imports:
-import 'dart:io';
-
 // Project imports:
 import 'package:waterbus_sdk/constants/constants.dart';
+import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/method_channels/native_channel.dart';
 
 enum WebRTCCodec {
@@ -22,8 +20,8 @@ extension CodecX on WebRTCCodec {
     if (this == WebRTCCodec.av1) {
       final double platformVersion = await NativeService().getPlatformVersion();
 
-      if (Platform.isAndroid && platformVersion >= kMinAV1AndroidSupported ||
-          Platform.isIOS && platformVersion >= kMinAV1iOSSupported) {
+      if (WebRTC.platformIsAndroid && platformVersion >= kMinAV1AndroidSupported ||
+          WebRTC.platformIsIOS && platformVersion >= kMinAV1iOSSupported) {
         return true;
       }
     }

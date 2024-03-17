@@ -1,10 +1,8 @@
-// Dart imports:
-import 'dart:io';
-
 // Package imports:
 import 'package:flutter_callkit_incoming/entities/call_event.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:injectable/injectable.dart';
+import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 
 // Project imports:
 import 'package:waterbus_sdk/helpers/logger/logger.dart';
@@ -20,7 +18,7 @@ class CallKitListener {
   );
 
   void listenerEvents() {
-    if (!Platform.isIOS) return;
+    if (!WebRTC.platformIsIOS) return;
 
     try {
       FlutterCallkitIncoming.onEvent.listen((event) {

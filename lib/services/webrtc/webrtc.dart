@@ -1,9 +1,8 @@
 // Dart imports:
 import 'dart:async';
-import 'dart:io';
-import 'dart:typed_data';
 
 // Package imports:
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:sdp_transform/sdp_transform.dart';
 
@@ -63,7 +62,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
         await toggleVideo(forceValue: false, ignoreUpdateValue: true);
       }
 
-      if (Platform.isAndroid) {
+      if (WebRTC.platformIsAndroid) {
         await _nativeService.startForegroundService();
       }
 
@@ -98,7 +97,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       }
     }
 
-    if (Platform.isAndroid) {
+    if (WebRTC.platformIsAndroid) {
       await _nativeService.stopForegroundService();
     }
 
@@ -118,7 +117,8 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     required int participantId,
   }) async {
     await Future.wait([
-      _frameCryptor.initialize(roomId, codec: _callSetting.preferedCodec),
+      if (!kIsWeb)
+        _frameCryptor.initialize(roomId, codec: _callSetting.preferedCodec),
       _prepareMedia(),
     ]);
 
@@ -377,9 +377,11 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   Future<void> toggleSpeakerPhone({bool? forceValue}) async {
     if (_mParticipant == null) return;
 
-    Helper.setSpeakerphoneOn(
-      forceValue ?? !_mParticipant!.isSpeakerPhoneEnabled,
-    );
+    if (WebRTC.platformIsMobile) {
+      Helper.setSpeakerphoneOn(
+        forceValue ?? !_mParticipant!.isSpeakerPhoneEnabled,
+      );
+    }
 
     _mParticipant?.isSpeakerPhoneEnabled =
         forceValue ?? !_mParticipant!.isSpeakerPhoneEnabled;
@@ -468,7 +470,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       await _mParticipant?.dispose();
       _mParticipant = null;
       _localStream = null;
-      _frameCryptor.dispose();
+      // _frameCryptor.dispose();
 
       _notify(CallbackEvents.meetingEnded);
 
@@ -520,7 +522,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
 
   Future<MediaStream> _getUserMedia({bool onlyStream = false}) async {
     final MediaStream stream = await navigator.mediaDevices.getUserMedia(
-      _callSetting.mediaConstraints,
+      kIsWeb ? {'video': true, 'audio': true} : _callSetting.mediaConstraints,
     );
 
     if (onlyStream) return stream;
@@ -539,18 +541,26 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   }
 
   Future<MediaStream> _getDisplayMedia(DesktopCapturerSource? source) async {
-    final Map<String, dynamic> mediaConstraints = <String, dynamic>{
-      'audio': false,
-      'video': {
-        'deviceId': source?.id ?? 'broadcast',
-        'frameRate': 15,
-        'mandatory': {
-          'minWidth': 1280,
-          'minHeight': 720,
-          'minFrameRate': 10,
+    late final Map<String, dynamic> mediaConstraints;
+    if (kIsWeb) {
+      mediaConstraints = {
+        "video": true,
+        "audio": false,
+      };
+    } else {
+      mediaConstraints = <String, dynamic>{
+        'audio': false,
+        'video': {
+          'deviceId': source?.id ?? 'broadcast',
+          'frameRate': 15,
+          'mandatory': {
+            'minWidth': 1280,
+            'minHeight': 720,
+            'minFrameRate': 10,
+          },
         },
-      },
-    };
+      };
+    }
 
     final MediaStream stream = await navigator.mediaDevices.getDisplayMedia(
       mediaConstraints,
@@ -697,6 +707,8 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   }
 
   Future<void> _enableEncryption(bool enabled) async {
+    if (kIsWeb) return;
+
     final RTCPeerConnection? peerConnection = _mParticipant?.peerConnection;
 
     if (peerConnection == null) return;

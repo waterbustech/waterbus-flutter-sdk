@@ -135,12 +135,10 @@ extension CallSettingX on CallSetting {
         'sampleSize': '16',
         'channelCount': '1',
         'mandatory': audioMandatory,
-        'optional': [],
       },
       'video': {
         'mandatory': videoQuality.videoProfile,
         'facingMode': 'user',
-        'optional': [],
       },
     };
   }

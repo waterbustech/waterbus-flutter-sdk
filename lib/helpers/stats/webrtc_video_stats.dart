@@ -4,6 +4,7 @@ import 'dart:io';
 
 // Package imports:
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 
 // Project imports:
@@ -61,6 +62,8 @@ class WebRTCVideoStats {
   }
 
   void dispose() {
+    if (kIsWeb) return;
+
     if (_statsTimer == null) return;
 
     _statsTimer?.cancel();

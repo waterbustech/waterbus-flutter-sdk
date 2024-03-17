@@ -2,6 +2,7 @@
 
 // Package imports:
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 
 // Project imports:
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
@@ -159,6 +160,12 @@ extension ParticipantSFUX on ParticipantSFU {
 
     renderer = RTCVideoRenderer();
     await renderer?.initialize();
+
+    if (kIsWeb) {
+      hasFirstFrameRendered = true;
+
+      onChanged.call();
+    }
 
     renderer?.onFirstFrameRendered = () {
       hasFirstFrameRendered = true;
