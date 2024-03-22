@@ -117,8 +117,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     required int participantId,
   }) async {
     await Future.wait([
-      if (!kIsWeb)
-        _frameCryptor.initialize(roomId, codec: _callSetting.preferedCodec),
+      _frameCryptor.initialize(roomId, codec: _callSetting.preferedCodec),
       _prepareMedia(),
     ]);
 
@@ -470,7 +469,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       await _mParticipant?.dispose();
       _mParticipant = null;
       _localStream = null;
-      // _frameCryptor.dispose();
+      _frameCryptor.dispose();
 
       _notify(CallbackEvents.meetingEnded);
 
@@ -707,8 +706,6 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   }
 
   Future<void> _enableEncryption(bool enabled) async {
-    if (kIsWeb) return;
-
     final RTCPeerConnection? peerConnection = _mParticipant?.peerConnection;
 
     if (peerConnection == null) return;

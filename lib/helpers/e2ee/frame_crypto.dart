@@ -88,50 +88,53 @@ class WebRTCFrameCrypto {
     required RTCPeerConnection peerConnection,
     required bool enabled,
   }) async {
-    if (!_videoCodec.isSFrameSuported) return;
+    try {
+      if (!_videoCodec.isSFrameSuported) return;
 
-    final List<RTCRtpSender> senders = await peerConnection.senders;
+      final List<RTCRtpSender> senders = await peerConnection.senders;
 
-    for (final sender in senders) {
-      final String trackId = sender.track?.id ?? '';
-      final String id =
-          '${sender.track?.kind.toString().trim()}_${trackId}_sender';
+      for (final sender in senders) {
+        final String trackId = sender.track?.id ?? '';
+        final String id =
+            '${sender.track?.kind.toString().trim()}_${trackId}_sender';
 
-      if (!_frameCyrptors.containsKey(id)) {
-        final frameCyrptor =
-            await _frameCyrptorFactory.createFrameCryptorForRtpSender(
-          participantId: id,
-          sender: sender,
-          algorithm: Algorithm.kAesGcm,
-          keyProvider: _keyProvider!,
+        if (!_frameCyrptors.containsKey(id)) {
+          final frameCyrptor =
+              await _frameCyrptorFactory.createFrameCryptorForRtpSender(
+            participantId: id,
+            sender: sender,
+            algorithm: Algorithm.kAesGcm,
+            keyProvider: _keyProvider!,
+          );
+
+          frameCyrptor.onFrameCryptorStateChanged = (participantId, state) {
+            _logger.log('Encryption: $participantId $state');
+          };
+
+          _frameCyrptors[id] = frameCyrptor;
+          await frameCyrptor.setKeyIndex(0);
+        }
+
+        if (sender.track?.kind.toString().trim() == 'video') {
+          _senderParticipantId = id;
+        }
+
+        final frameCyrptor0 = _frameCyrptors[id];
+
+        if (enabled) {
+          await _keyProvider?.setKey(participantId: id, index: 0, key: aesKey);
+        }
+
+        await frameCyrptor0?.setEnabled(enabled);
+
+        await frameCyrptor0?.updateCodec(
+          sender.track?.kind.toString().trim() == 'video'
+              ? _videoCodec.codec.toUpperCase()
+              : audioCodec,
         );
-
-        frameCyrptor.onFrameCryptorStateChanged = (participantId, state) {
-          _logger.log('Encryption: $participantId $state');
-        };
-
-        _frameCyrptors[id] = frameCyrptor;
-        await frameCyrptor.setKeyIndex(0);
       }
-
-      if (sender.track?.kind.toString().trim() == 'video') {
-        _senderParticipantId = id;
-      }
-
-      final frameCyrptor0 = _frameCyrptors[id];
-
-      if (enabled) {
-        await frameCyrptor0?.setEnabled(true);
-        await _keyProvider?.setKey(participantId: id, index: 0, key: aesKey);
-      } else {
-        await frameCyrptor0?.setEnabled(false);
-      }
-
-      await frameCyrptor0?.updateCodec(
-        sender.track?.kind.toString().trim() == 'video'
-            ? _videoCodec.codec.toUpperCase()
-            : audioCodec,
-      );
+    } catch (e) {
+      _logger.bug(e.toString());
     }
   }
 

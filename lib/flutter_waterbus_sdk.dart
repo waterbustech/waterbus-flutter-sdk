@@ -3,7 +3,7 @@ library waterbus_sdk;
 // Project imports:
 import 'dart:typed_data';
 
-import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
 import 'package:waterbus_sdk/interfaces/socket_handler_interface.dart';
 import 'package:waterbus_sdk/models/index.dart';
@@ -11,7 +11,7 @@ import 'package:waterbus_sdk/sdk_core.dart';
 import 'package:waterbus_sdk/services/callkit/callkit_listener.dart';
 
 export './models/index.dart';
-export 'package:flutter_webrtc/flutter_webrtc.dart';
+export 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 
 class WaterbusSdk {
   static String recordBenchmarkPath = '';
