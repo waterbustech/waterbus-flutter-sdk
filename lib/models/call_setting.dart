@@ -4,6 +4,7 @@
 import 'dart:convert';
 
 // Project imports:
+import 'package:flutter/foundation.dart';
 import 'package:waterbus_sdk/models/index.dart';
 
 class CallSetting {
@@ -134,7 +135,7 @@ extension CallSettingX on CallSetting {
         'sampleRate': '48000',
         'sampleSize': '16',
         'channelCount': '1',
-        'mandatory': audioMandatory,
+        ...(kIsWeb ? audioMandatory : {'mandatory': audioMandatory}),
       },
       'video': {
         'mandatory': videoQuality.videoProfile,

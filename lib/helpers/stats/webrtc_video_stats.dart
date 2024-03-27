@@ -53,7 +53,7 @@ class WebRTCVideoStats {
     _receivers[id] = receivers;
   }
 
-  void removeSenders(String id) {
+  void removeSenders() {
     _senders.clear();
   }
 
@@ -78,35 +78,39 @@ class WebRTCVideoStats {
 
   Future<void> _monitorSenderStats() async {
     for (final sender in _senders) {
-      final List<StatsReport> statsReport = await sender.getStats();
-      final List<VideoSenderStats> stats = await _getSenderStats(statsReport);
+      try {
+        final List<StatsReport> statsReport = await sender.getStats();
+        final List<VideoSenderStats> stats = await _getSenderStats(statsReport);
 
-      final Map<String, VideoSenderStats> statsMap = {};
+        final Map<String, VideoSenderStats> statsMap = {};
 
-      for (final s in stats) {
-        if (s.rid == null) continue;
+        for (final s in stats) {
+          if (s.rid == null) continue;
 
-        statsMap[s.rid ?? 'f'] = s;
-      }
-
-      if (_prevSenderStats.isNotEmpty) {
-        num totalBitrate = 0;
-
-        for (final stats in statsMap.entries) {
-          final prev = _prevSenderStats[stats.key];
-          final bitRateForlayer = computeBitrateForSenderStats(
-            stats.value,
-            prev,
-          );
-          _bitrateFoLayers[stats.key] = bitRateForlayer;
-          totalBitrate += bitRateForlayer;
+          statsMap[s.rid ?? 'f'] = s;
         }
 
-        _currentSenderBitrate = totalBitrate;
-      }
+        if (_prevSenderStats.isNotEmpty) {
+          num totalBitrate = 0;
 
-      for (final stats in statsMap.entries) {
-        _prevSenderStats[stats.key] = stats.value;
+          for (final stats in statsMap.entries) {
+            final prev = _prevSenderStats[stats.key];
+            final bitRateForlayer = computeBitrateForSenderStats(
+              stats.value,
+              prev,
+            );
+            _bitrateFoLayers[stats.key] = bitRateForlayer;
+            totalBitrate += bitRateForlayer;
+          }
+
+          _currentSenderBitrate = totalBitrate;
+        }
+
+        for (final stats in statsMap.entries) {
+          _prevSenderStats[stats.key] = stats.value;
+        }
+      } catch (error) {
+        WaterbusLogger().bug(error.toString());
       }
     }
   }
@@ -114,20 +118,24 @@ class WebRTCVideoStats {
   Future<void> _monitorReceiverStats() async {
     for (final receivers in _receivers.entries) {
       for (final receiver in receivers.value) {
-        final List<StatsReport> statsReport = await receiver.getStats();
-        final stats = await _getReceiverStats(statsReport);
+        try {
+          final List<StatsReport> statsReport = await receiver.getStats();
+          final stats = await _getReceiverStats(statsReport);
 
-        if (stats != null) {
-          if (_prevStats[receivers.key] != null) {
-            final num currentBitrate = computeBitrateForReceiverStats(
-              stats,
-              _prevStats[receivers.key],
-            );
+          if (stats != null) {
+            if (_prevStats[receivers.key] != null) {
+              final num currentBitrate = computeBitrateForReceiverStats(
+                stats,
+                _prevStats[receivers.key],
+              );
 
-            _currentReceiverBitrate[receivers.key] = currentBitrate;
+              _currentReceiverBitrate[receivers.key] = currentBitrate;
+            }
+
+            _prevStats[receivers.key] = stats;
           }
-
-          _prevStats[receivers.key] = stats;
+        } catch (error) {
+          WaterbusLogger().bug(error.toString());
         }
       }
     }

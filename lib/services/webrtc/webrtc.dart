@@ -38,6 +38,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
 
   String? _roomId;
   MediaStream? _localStream;
+  MediaStream? _displayStream;
   ParticipantSFU? _mParticipant;
   bool _flagPublisherCanAddCandidate = false;
   CallSetting _callSetting = CallSetting();
@@ -58,19 +59,23 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     try {
       if (_mParticipant == null || _mParticipant!.isSharingScreen) return;
 
-      if (_mParticipant!.isVideoEnabled) {
-        await toggleVideo(forceValue: false, ignoreUpdateValue: true);
-      }
-
       if (WebRTC.platformIsAndroid) {
         await _nativeService.startForegroundService();
       }
 
-      final MediaStream displayStream = await _getDisplayMedia(source);
+      _displayStream = await _getDisplayMedia(source);
 
-      if (displayStream.getVideoTracks().isEmpty) return;
+      if (_displayStream?.getVideoTracks().isEmpty ?? true) return;
 
-      await _replaceVideoTrack(displayStream.getVideoTracks().first);
+      if (_mParticipant!.isVideoEnabled) {
+        await toggleVideo(forceValue: false, ignoreUpdateValue: true);
+      }
+
+      _displayStream?.getVideoTracks().first.onEnded = () {
+        stopScreenSharing();
+      };
+
+      await _replaceVideoTrack(_displayStream!.getVideoTracks().first);
 
       _mParticipant?.isSharingScreen = true;
 
@@ -101,7 +106,13 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       await _nativeService.stopForegroundService();
     }
 
+    for (final MediaStreamTrack track in _displayStream?.getTracks() ?? []) {
+      track.stop();
+    }
+
     _mParticipant?.isSharingScreen = false;
+    _displayStream?.dispose();
+    _displayStream = null;
 
     if (stayInRoom) {
       _notify(CallbackEvents.shouldBeUpdateState);
@@ -320,14 +331,24 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
 
     final tracks = _localStream?.getVideoTracks() ?? [];
 
-    if (_mParticipant!.isVideoEnabled) {
-      for (final track in tracks) {
-        track.enabled = forceValue ?? false;
+    for (final track in tracks) {
+      track.enabled = forceValue ?? !_mParticipant!.isVideoEnabled;
+
+      if (kIsWeb) {
+        if (!track.enabled) {
+          await track.stop();
+        } else {
+          await _localStream?.removeTrack(track);
+        }
       }
-    } else {
-      for (final track in tracks) {
-        track.enabled = forceValue ?? true;
-      }
+    }
+
+    if (kIsWeb && (forceValue ?? !_mParticipant!.isVideoEnabled)) {
+      final MediaStream localStream = await _getUserMedia(onlyStream: true);
+      await _localStream!.addTrack(localStream.getVideoTracks().first);
+      await _replaceVideoTrack(localStream.getVideoTracks().first);
+
+      _mParticipant?.setSrcObject(localStream);
     }
 
     if (ignoreUpdateValue) return;
@@ -465,6 +486,11 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       _subscribers.clear();
 
       await stopScreenSharing(stayInRoom: false);
+
+      for (final MediaStreamTrack track in _localStream?.getTracks() ?? []) {
+        track.stop();
+      }
+
       await _localStream?.dispose();
       await _mParticipant?.dispose();
       _mParticipant = null;
@@ -521,12 +547,14 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
 
   Future<MediaStream> _getUserMedia({bool onlyStream = false}) async {
     final MediaStream stream = await navigator.mediaDevices.getUserMedia(
-      kIsWeb ? {'video': true, 'audio': true} : _callSetting.mediaConstraints,
+      _callSetting.mediaConstraints,
     );
 
     if (onlyStream) return stream;
 
-    await toggleSpeakerPhone(forceValue: true);
+    if (WebRTC.platformIsMobile) {
+      await toggleSpeakerPhone(forceValue: true);
+    }
 
     if (_callSetting.isAudioMuted) {
       toggleAudio();

@@ -66,7 +66,7 @@ extension PeerX on RTCPeerConnection {
           break;
         case RTCIceConnectionState.RTCIceConnectionStateClosed:
           if (isMe) {
-            stats.removeSenders(id);
+            stats.removeSenders();
             audioStats.setSender = null;
           } else {
             stats.removeReceivers(id);
