@@ -2,19 +2,19 @@ class WebRTCConfigurations {
   static const Map<String, dynamic> configurationWebRTC = {
     'iceServers': [
       {
-        "urls": "stun:149.28.156.10:3478",
+        "urls": "stun:turn.waterbus.tech:3478",
         "username": "waterbus",
-        "credential": "lambiengcode",
+        "credential": "waterbus",
       },
       {
-        "urls": "turn:149.28.156.10:3478?transport=udp",
+        "urls": "turn:turn.waterbus.tech:3478?transport=udp",
         "username": "waterbus",
-        "credential": "lambiengcode",
+        "credential": "waterbus",
       }
     ],
     'iceTransportPolicy': 'all',
     'bundlePolicy': 'max-bundle',
-    'rtcpMuxPolicy': 'require',
+    // 'rtcpMuxPolicy': 'require',
     'sdpSemantics': 'unified-plan',
   };
 
