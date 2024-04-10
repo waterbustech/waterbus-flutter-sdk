@@ -1,8 +1,10 @@
 // Dart imports:
 import 'dart:async';
 
-// Package imports:
+// Flutter imports:
 import 'package:flutter/foundation.dart';
+
+// Package imports:
 import 'package:injectable/injectable.dart';
 import 'package:sdp_transform/sdp_transform.dart';
 
@@ -254,13 +256,10 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   }
 
   @override
-  Future<void> newParticipant(String targetId) async {
-    await _makeConnectionReceive(targetId);
+  Future<void> newParticipant(NewParticipant participant) async {
+    await _makeConnectionReceive(participant.id.toString());
 
-    _notify(
-      CallbackEvents.newParticipant,
-      participantId: targetId,
-    );
+    _notify(CallbackEvents.newParticipant, participant: participant);
   }
 
   @override
@@ -747,11 +746,16 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     _socketEmiter.setE2eeEnabled(enabled);
   }
 
-  void _notify(CallbackEvents event, {String? participantId}) {
+  void _notify(
+    CallbackEvents event, {
+    String? participantId,
+    NewParticipant? participant,
+  }) {
     _notifyChanged.sink.add(
       CallbackPayload(
         event: event,
         callState: callState(),
+        newParticipant: participant,
         participantId: participantId,
       ),
     );

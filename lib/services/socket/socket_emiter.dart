@@ -19,7 +19,7 @@ class SocketEmiterImpl extends SocketEmiter {
     required String participantId,
     required ParticipantSFU participant,
   }) {
-    _socket?.emit(SocketEvent.joinRoomCSS, {
+    _socket?.emit(SocketEvent.publishCSS, {
       "roomId": roomId,
       "sdp": sdp,
       "participantId": participantId,
@@ -68,7 +68,7 @@ class SocketEmiterImpl extends SocketEmiter {
   void requestEstablishSubscriber({
     required String targetId,
   }) {
-    _socket?.emit(SocketEvent.makeSubscriberCSS, {
+    _socket?.emit(SocketEvent.subscribeCSS, {
       "targetId": targetId,
     });
   }

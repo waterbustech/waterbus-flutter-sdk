@@ -1,8 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+// Flutter imports:
+import 'package:flutter/foundation.dart';
+
 // Package imports:
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
 
 // Project imports:
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';

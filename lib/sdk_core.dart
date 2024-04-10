@@ -48,6 +48,14 @@ class SdkCore {
     }
   }
 
+  Future<void> subscribe(List<String> targetIds) async {
+    try {
+      _rtcManager.subscribe(targetIds);
+    } catch (error) {
+      _logger.bug(error.toString());
+    }
+  }
+
   Future<void> leaveRoom() async {
     try {
       await _rtcManager.dispose();

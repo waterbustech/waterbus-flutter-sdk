@@ -1,13 +1,13 @@
 class SocketEvent {
-  static const String joinRoomCSS = 'BROADCAST_CSS';
-  static const String joinRoomSSC = 'BROADCAST_SSC';
-  static const String makeSubscriberCSS = 'REQUEST_ESTABLISH_SUBSCRIBER_CSS';
-  static const String answerSubscriberSSC = 'SEND_RECEIVER_SDP_SSC';
-  static const String answerSubscriberCSS = 'SEND_RECEIVER_SDP_CSS';
-  static const String publisherCandidateCSS = 'SEND_BROADCAST_CANDIDATE_CSS';
-  static const String publisherCandidateSSC = 'SEND_BROADCAST_CANDIDATE_SSC';
-  static const String subscriberCandidateCSS = 'SEND_RECEIVER_CANDIDATE_CSS';
-  static const String subscriberCandidateSSC = 'SEND_RECEIVER_CANDIDATE_SSC';
+  static const String publishCSS = 'PUBLISH_CSS';
+  static const String publishSSC = 'PUBLISH_SSC';
+  static const String subscribeCSS = 'SUBSCRIBE_CSS';
+  static const String answerSubscriberSSC = 'SEND_SDP_SUBSCRIBER_SSC';
+  static const String answerSubscriberCSS = 'SEND_SDP_SUBSCRIBER_CSS';
+  static const String publisherCandidateCSS = 'SEND_CANDIDATE_PUBLISHER_CSS';
+  static const String publisherCandidateSSC = 'SEND_CANDIDATE_PUBLISHER_SSC';
+  static const String subscriberCandidateCSS = 'SEND_CANDIDATE_SUBSCRIBER_CSS';
+  static const String subscriberCandidateSSC = 'SEND_CANDIDATE_SUBSCRIBER_SSC';
   static const String newParticipantSSC = 'NEW_PARTICIPANT_SSC';
   static const String participantHasLeftSSC = 'PARTICIPANT_HAS_LEFT_SSC';
   static const String sendLeaveRoomCSS = 'LEAVE_ROOM_CSS';

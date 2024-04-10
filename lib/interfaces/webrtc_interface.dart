@@ -1,6 +1,7 @@
-// Project imports:
+// Dart imports:
 import 'dart:typed_data';
 
+// Project imports:
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 
 abstract class WaterbusWebRTCManager {
@@ -22,7 +23,7 @@ abstract class WaterbusWebRTCManager {
     String targetId,
     RTCIceCandidate candidate,
   );
-  Future<void> newParticipant(String targetId);
+  Future<void> newParticipant(NewParticipant participant);
   Future<void> participantHasLeft(String targetId);
   Future<void> dispose();
 

@@ -1,8 +1,10 @@
 // Dart imports:
 import 'dart:typed_data';
 
-// Package imports:
+// Flutter imports:
 import 'package:flutter/foundation.dart';
+
+// Package imports:
 import 'package:injectable/injectable.dart';
 
 // Project imports:

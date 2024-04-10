@@ -1,9 +1,12 @@
 library waterbus_sdk;
 
-// Project imports:
+// Dart imports:
 import 'dart:typed_data';
 
+// Package imports:
 import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
+
+// Project imports:
 import 'package:waterbus_sdk/injection/injection_container.dart';
 import 'package:waterbus_sdk/interfaces/socket_handler_interface.dart';
 import 'package:waterbus_sdk/models/index.dart';
@@ -48,6 +51,10 @@ class WaterbusSdk {
       roomId: roomId,
       participantId: participantId,
     );
+  }
+
+  Future<void> subscribe(List<String> targetIds) async {
+    await _sdk.subscribe(targetIds);
   }
 
   Future<void> leaveRoom() async {

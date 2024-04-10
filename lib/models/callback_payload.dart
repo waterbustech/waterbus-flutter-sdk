@@ -5,10 +5,12 @@ class CallbackPayload {
   CallbackEvents event;
   CallState callState;
   String? participantId;
+  NewParticipant? newParticipant;
   CallbackPayload({
     required this.event,
     required this.callState,
     this.participantId,
+    this.newParticipant,
   });
 
   CallbackPayload copyWith({

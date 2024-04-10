@@ -42,7 +42,7 @@ class SocketHandlerImpl extends SocketHandler {
     _socket?.onConnect((_) async {
       _logger.log('established connection - sid: ${_socket?.id}');
 
-      _socket?.on(SocketEvent.joinRoomSSC, (data) {
+      _socket?.on(SocketEvent.publishSSC, (data) {
         // pc context: only send peer
         // will receive sdp remote from service side if you join success
         /// otherParticipants, sdp (data)
@@ -50,15 +50,8 @@ class SocketHandlerImpl extends SocketHandler {
         if (data == null) return;
 
         final String sdp = data['sdp'];
-        final List<String> participants =
-            ((data['otherParticipants'] ?? []) as List)
-                .map((e) => e.toString())
-                .toList();
 
-        Future.wait([
-          _rtcManager.setPublisherRemoteSdp(sdp),
-          _rtcManager.subscribe(participants),
-        ]);
+        _rtcManager.setPublisherRemoteSdp(sdp);
       });
 
       _socket?.on(SocketEvent.newParticipantSSC, (data) {
@@ -66,9 +59,9 @@ class SocketHandlerImpl extends SocketHandler {
         /// targetId
         if (data == null) return;
 
-        final participantId = data['targetId'];
+        final participant = NewParticipant.fromMap(data);
 
-        _rtcManager.newParticipant(participantId);
+        _rtcManager.newParticipant(participant);
       });
 
       _socket?.on(SocketEvent.answerSubscriberSSC, (data) async {

@@ -2,9 +2,11 @@
 import 'dart:async';
 import 'dart:io';
 
+// Flutter imports:
+import 'package:flutter/foundation.dart';
+
 // Package imports:
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 
 // Project imports:

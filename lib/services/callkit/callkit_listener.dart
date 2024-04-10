@@ -2,9 +2,9 @@
 import 'package:flutter_callkit_incoming/entities/call_event.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:injectable/injectable.dart';
-import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 
 // Project imports:
+import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/helpers/logger/logger.dart';
 import 'package:waterbus_sdk/interfaces/webrtc_interface.dart';
 
