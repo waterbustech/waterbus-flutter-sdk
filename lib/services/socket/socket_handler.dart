@@ -21,7 +21,10 @@ class SocketHandlerImpl extends SocketHandler {
   Socket? _socket;
 
   @override
-  void establishConnection({bool forceConnection = false}) {
+  void establishConnection({
+    required String accessToken,
+    bool forceConnection = false,
+  }) {
     if (_socket != null && !forceConnection) return;
 
     _socket = io(
@@ -30,13 +33,16 @@ class SocketHandlerImpl extends SocketHandler {
           .setTransports(['websocket'])
           .enableReconnection()
           .enableForceNew()
+          .setExtraHeaders({
+            'Authorization': 'Bearer $accessToken',
+          })
           .build(),
     );
 
     _socket?.connect();
 
     _socket?.onError((data) async {
-      establishConnection();
+      establishConnection(accessToken: accessToken);
     });
 
     _socket?.onConnect((_) async {

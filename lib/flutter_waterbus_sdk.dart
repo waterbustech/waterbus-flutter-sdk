@@ -27,6 +27,7 @@ class WaterbusSdk {
   }
 
   void initial({
+    required String accessToken,
     required String waterbusUrl,
     String recordBenchmarkPath = '',
   }) {
@@ -40,7 +41,7 @@ class WaterbusSdk {
       _callKitListener.listenerEvents();
     }
 
-    _socketHandler.establishConnection();
+    _socketHandler.establishConnection(accessToken: accessToken);
   }
 
   Future<void> joinRoom({

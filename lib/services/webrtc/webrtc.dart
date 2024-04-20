@@ -39,6 +39,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   );
 
   String? _roomId;
+  String? _participantId;
   MediaStream? _localStream;
   MediaStream? _displayStream;
   ParticipantSFU? _mParticipant;
@@ -137,6 +138,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     if (_mParticipant?.peerConnection == null) return;
 
     _roomId = roomId;
+    _participantId = participantId.toString();
 
     final RTCPeerConnection peerConnection = _mParticipant!.peerConnection;
 
@@ -470,6 +472,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       if (_roomId != null) {
         _socketEmiter.leaveRoom(_roomId!);
         _roomId = null;
+        _participantId = null;
       }
 
       _queuePublisherCandidates.clear();
@@ -625,7 +628,13 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   }
 
   Future<void> _makeConnectionReceive(String targetId) async {
-    _socketEmiter.requestEstablishSubscriber(targetId: targetId);
+    if (_roomId == null || _participantId == null) return;
+
+    _socketEmiter.requestEstablishSubscriber(
+      roomId: _roomId!,
+      participantId: _participantId!,
+      targetId: targetId,
+    );
   }
 
   Future<void> _answerSubscriber(

@@ -66,10 +66,14 @@ class SocketEmiterImpl extends SocketEmiter {
 
   @override
   void requestEstablishSubscriber({
+    required String roomId,
+    required String participantId,
     required String targetId,
   }) {
     _socket?.emit(SocketEvent.subscribeCSS, {
+      "roomId": roomId,
       "targetId": targetId,
+      "participantId": participantId,
     });
   }
 

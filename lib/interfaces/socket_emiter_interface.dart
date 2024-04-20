@@ -8,7 +8,11 @@ abstract class SocketEmiter {
     required String participantId,
     required ParticipantSFU participant,
   });
-  void requestEstablishSubscriber({required String targetId});
+  void requestEstablishSubscriber({
+    required String roomId,
+    required String participantId,
+    required String targetId,
+  });
   void answerEstablishSubscriber({
     required String targetId,
     required String sdp,
