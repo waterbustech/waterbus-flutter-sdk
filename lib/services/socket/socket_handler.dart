@@ -1,4 +1,5 @@
 // Package imports:
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
@@ -30,13 +31,12 @@ class SocketHandlerImpl extends SocketHandler {
     _socket = io(
       WaterbusSdk.waterbusUrl,
       OptionBuilder()
-          .setTransports(['websocket'])
+          .setTransports(kIsWeb ? ['polling'] : ['websocket'])
           .enableReconnection()
           .enableForceNew()
           .setExtraHeaders({
-            'Authorization': 'Bearer $accessToken',
-          })
-          .build(),
+        'Authorization': 'Bearer $accessToken',
+      }).build(),
     );
 
     _socket?.connect();
