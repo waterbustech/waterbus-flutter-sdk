@@ -14,7 +14,6 @@ class WebRTCConfigurations {
     ],
     'iceTransportPolicy': 'all',
     'bundlePolicy': 'max-bundle',
-    // 'rtcpMuxPolicy': 'require',
     'sdpSemantics': 'unified-plan',
   };
 

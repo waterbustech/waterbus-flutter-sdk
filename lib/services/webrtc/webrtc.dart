@@ -158,9 +158,11 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
 
     String sdp = await _createOffer(peerConnection);
 
-    sdp = sdp.enableAudioDTX().setPreferredCodec(
-          codec: _callSetting.preferedCodec,
-        );
+    if (_localStream?.getVideoTracks().isNotEmpty ?? false) {
+      sdp = sdp.enableAudioDTX().setPreferredCodec(
+            codec: _callSetting.preferedCodec,
+          );
+    }
 
     final RTCSessionDescription description = RTCSessionDescription(
       sdp,
@@ -293,7 +295,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
 
     if (_localStream == null || _mParticipant == null) return;
 
-    final MediaStream newStream = await _getUserMedia(onlyStream: true);
+    final MediaStream? newStream = await _getUserMedia(onlyStream: true);
 
     await _replaceMediaStream(newStream);
 
@@ -345,11 +347,14 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     }
 
     if (kIsWeb && (forceValue ?? !_mParticipant!.isVideoEnabled)) {
-      final MediaStream localStream = await _getUserMedia(onlyStream: true);
-      await _localStream!.addTrack(localStream.getVideoTracks().first);
-      await _replaceVideoTrack(localStream.getVideoTracks().first);
+      final MediaStream? localStream = await _getUserMedia(onlyStream: true);
 
-      _mParticipant?.setSrcObject(localStream);
+      if (localStream != null) {
+        await _localStream!.addTrack(localStream.getVideoTracks().first);
+        await _replaceVideoTrack(localStream.getVideoTracks().first);
+
+        _mParticipant?.setSrcObject(localStream);
+      }
     }
 
     if (ignoreUpdateValue) return;
@@ -544,29 +549,51 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
 
     _localStream = await _getUserMedia();
 
-    _mParticipant?.setSrcObject(_localStream!);
+    if (_localStream != null) {
+      _mParticipant?.setSrcObject(_localStream!);
+    }
   }
 
-  Future<MediaStream> _getUserMedia({bool onlyStream = false}) async {
-    final MediaStream stream = await navigator.mediaDevices.getUserMedia(
-      _callSetting.mediaConstraints,
-    );
+  Future<MediaStream?> _getUserMedia({bool onlyStream = false}) async {
+    try {
+      final MediaStream stream = await navigator.mediaDevices.getUserMedia(
+        _callSetting.mediaConstraints,
+      );
 
-    if (onlyStream) return stream;
+      // Microphone not granted or has been broken
+      if (stream.getAudioTracks().isEmpty) {
+        toggleAudio(forceValue: false);
+      }
 
-    if (WebRTC.platformIsMobile) {
-      await toggleSpeakerPhone(forceValue: true);
+      // Camera not granted or has been broken
+      if (stream.getVideoTracks().isEmpty) {
+        toggleVideo(forceValue: false);
+      }
+
+      if (stream.getTracks().isEmpty) return null;
+
+      if (onlyStream) return stream;
+
+      if (WebRTC.platformIsMobile) {
+        await toggleSpeakerPhone(forceValue: true);
+      }
+
+      if (_callSetting.isAudioMuted) {
+        toggleAudio(forceValue: false);
+      }
+
+      if (_callSetting.isVideoMuted) {
+        toggleVideo(forceValue: false);
+      }
+
+      return stream;
+    } catch (error) {
+      // Unable getUserMedia
+      toggleAudio(forceValue: false);
+      toggleVideo(forceValue: false);
+
+      return null;
     }
-
-    if (_callSetting.isAudioMuted) {
-      toggleAudio();
-    }
-
-    if (_callSetting.isVideoMuted) {
-      toggleVideo();
-    }
-
-    return stream;
   }
 
   Future<MediaStream> _getDisplayMedia(DesktopCapturerSource? source) async {
@@ -703,7 +730,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     }
   }
 
-  Future<void> _replaceMediaStream(MediaStream newStream) async {
+  Future<void> _replaceMediaStream(MediaStream? newStream) async {
     final List<RTCRtpSender> senders =
         await _mParticipant!.peerConnection.getSenders();
 
@@ -712,16 +739,25 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     final List<RTCRtpSender> sendersVideo =
         senders.where((sender) => sender.track?.kind == 'video').toList();
 
-    for (final sender in sendersAudio) {
-      sender.replaceTrack(newStream.getAudioTracks().first);
+    final MediaStreamTrack? audioTrack =
+        newStream?.getAudioTracks().firstOrNull;
+    final MediaStreamTrack? videoTrack =
+        newStream?.getVideoTracks().firstOrNull;
+
+    if (audioTrack != null) {
+      for (final sender in sendersAudio) {
+        sender.replaceTrack(audioTrack);
+      }
     }
 
-    await _replaceVideoTrack(
-      newStream.getVideoTracks().first,
-      sendersList: sendersVideo,
-    );
+    if (videoTrack != null) {
+      await _replaceVideoTrack(
+        videoTrack,
+        sendersList: sendersVideo,
+      );
+    }
 
-    _mParticipant?.setSrcObject(newStream);
+    if (newStream != null) _mParticipant?.setSrcObject(newStream);
     _localStream = newStream;
   }
 

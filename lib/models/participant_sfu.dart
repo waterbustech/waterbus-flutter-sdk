@@ -9,6 +9,7 @@ import 'package:equatable/equatable.dart';
 // Project imports:
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/helpers/extensions/peer_extensions.dart';
+import 'package:waterbus_sdk/helpers/logger/logger.dart';
 import 'package:waterbus_sdk/helpers/stats/webrtc_audio_stats.dart';
 import 'package:waterbus_sdk/helpers/stats/webrtc_video_stats.dart';
 import 'package:waterbus_sdk/models/enums/audio_level.dart';
@@ -141,7 +142,11 @@ extension ParticipantSFUX on ParticipantSFU {
   }
 
   Future<void> setRemoteDescription(RTCSessionDescription description) async {
-    await peerConnection.setRemoteDescription(description);
+    try {
+      await peerConnection.setRemoteDescription(description);
+    } catch (error) {
+      WaterbusLogger.instance.bug(error.toString());
+    }
   }
 
   void switchCamera() {
