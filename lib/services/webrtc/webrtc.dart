@@ -555,10 +555,6 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   }
 
   Future<MediaStream?> _getUserMedia({bool onlyStream = false}) async {
-    toggleAudio(forceValue: false);
-    toggleVideo(forceValue: false);
-
-    return null;
     try {
       final MediaStream stream = await navigator.mediaDevices.getUserMedia(
         _callSetting.mediaConstraints,
