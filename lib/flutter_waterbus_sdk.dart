@@ -14,6 +14,7 @@ import 'package:waterbus_sdk/sdk_core.dart';
 import 'package:waterbus_sdk/services/callkit/callkit_listener.dart';
 
 export './models/index.dart';
+export './constants/constants.dart';
 export 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 
 class WaterbusSdk {

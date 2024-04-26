@@ -6,7 +6,6 @@ import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:injectable/injectable.dart';
 
 // Project imports:
-import 'package:waterbus_sdk/constants/constants.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 
 @injectable

@@ -196,6 +196,26 @@ class SocketHandlerImpl extends SocketHandler {
           isSharing: isSharing,
         );
       });
+
+      _socket!.on(SocketEvent.publisherRenegotiationSSC, (data) {
+        if (data == null) return;
+
+        final String sdp = data['sdp'];
+
+        _rtcManager.setPublisherRemoteSdp(sdp);
+      });
+
+      _socket!.on(SocketEvent.subscriberRenegotiationSSC, (data) {
+        if (data == null) return;
+
+        final String targetId = data['targetId'];
+        final String sdp = data['sdp'];
+
+        _rtcManager.handleSubscriberRenegotiation(
+          targetId: targetId,
+          sdp: sdp,
+        );
+      });
     });
   }
 

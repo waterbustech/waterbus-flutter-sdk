@@ -1,5 +1,6 @@
 // Package imports:
 import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
+import 'package:waterbus_sdk/helpers/logger/logger.dart';
 
 // Project imports:
 import 'package:waterbus_sdk/helpers/stats/webrtc_audio_stats.dart';
@@ -8,6 +9,61 @@ import 'package:waterbus_sdk/models/audio_stats_params.dart';
 import 'package:waterbus_sdk/models/enums/audio_level.dart';
 
 extension PeerX on RTCPeerConnection {
+  Future<void> createScreenSharingTrack(
+    MediaStreamTrack track, {
+    required String videoCodec,
+    required MediaStream stream,
+    String kind = 'video',
+  }) async {
+    final transceiver = await addTransceiver(
+      track: track,
+      kind: RTCRtpMediaType.RTCRtpMediaTypeVideo,
+      init: RTCRtpTransceiverInit(
+        direction: TransceiverDirection.SendOnly,
+        streams: [stream],
+      ),
+    );
+
+    final caps = await getRtpReceiverCapabilities(kind);
+    if (caps.codecs == null) return;
+
+    final List<RTCRtpCodecCapability> matched = [];
+    final List<RTCRtpCodecCapability> partialMatched = [];
+    final List<RTCRtpCodecCapability> unmatched = [];
+    for (final c in caps.codecs!) {
+      final codec = c.mimeType.toLowerCase();
+      if (codec == 'audio/opus') {
+        matched.add(c);
+        continue;
+      }
+
+      final matchesVideoCodec =
+          codec.toLowerCase() == 'video/$videoCodec'.toLowerCase();
+      if (!matchesVideoCodec) {
+        unmatched.add(c);
+        continue;
+      }
+      // for h264 codecs that have sdpFmtpLine available, use only if the
+      // profile-level-id is 42e01f for cross-browser compatibility
+      if (videoCodec.toLowerCase() == 'h264') {
+        if (c.sdpFmtpLine != null &&
+            c.sdpFmtpLine!.contains('profile-level-id=42e01f')) {
+          matched.add(c);
+        } else {
+          partialMatched.add(c);
+        }
+        continue;
+      }
+      matched.add(c);
+    }
+    matched.addAll([...partialMatched]);
+    try {
+      await transceiver.setCodecPreferences(matched);
+    } catch (e) {
+      WaterbusLogger.instance.bug('setCodecPreferences failed: $e');
+    }
+  }
+
   void setMaxBandwidth(int? bandwidth) {
     senders.then((senders) {
       for (final sender in senders) {

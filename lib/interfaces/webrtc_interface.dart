@@ -18,6 +18,10 @@ abstract class WaterbusWebRTCManager {
     required CameraType type,
     required WebRTCCodec codec,
   });
+  Future<void> handleSubscriberRenegotiation({
+    required String targetId,
+    required String sdp,
+  });
   Future<void> addPublisherCandidate(RTCIceCandidate candidate);
   Future<void> addSubscriberCandidate(
     String targetId,

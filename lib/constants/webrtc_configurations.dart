@@ -15,7 +15,7 @@ class WebRTCConfigurations {
     'iceTransportPolicy': 'all',
     // 'bundlePolicy': 'max-bundle',
     'sdpSemantics': 'unified-plan',
-    'encodedInsertableStreams': true,
+    // 'encodedInsertableStreams': true,
   };
 
   static const Map<String, dynamic> offerPublisherSdpConstraints = {

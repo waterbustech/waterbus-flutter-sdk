@@ -12,6 +12,7 @@ import 'package:sdp_transform/sdp_transform.dart';
 import 'package:waterbus_sdk/constants/webrtc_configurations.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/helpers/e2ee/frame_crypto.dart';
+import 'package:waterbus_sdk/helpers/extensions/peer_extensions.dart';
 import 'package:waterbus_sdk/helpers/extensions/sdp_extensions.dart';
 import 'package:waterbus_sdk/helpers/logger/logger.dart';
 import 'package:waterbus_sdk/helpers/stats/webrtc_audio_stats.dart';
@@ -70,15 +71,23 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
 
       if (_displayStream?.getVideoTracks().isEmpty ?? true) return;
 
-      if (_mParticipant!.isVideoEnabled) {
-        await toggleVideo(forceValue: false, ignoreUpdateValue: true);
+      if (WebRTC.platformIsMobile && _mParticipant!.isVideoEnabled) {
+        await toggleVideo(forceValue: false);
       }
+
+      final screenTrack = _displayStream!.getVideoTracks().first;
+
+      await _mParticipant!.peerConnection.createScreenSharingTrack(
+        screenTrack,
+        videoCodec: _callSetting.preferedCodec.codec,
+        stream: _displayStream!,
+      );
+
+      await _mParticipant?.setScreenSrcObject(_displayStream!);
 
       _displayStream?.getVideoTracks().first.onEnded = () {
         stopScreenSharing();
       };
-
-      await _replaceVideoTrack(_displayStream!.getVideoTracks().first);
 
       _mParticipant?.isSharingScreen = true;
 
@@ -97,11 +106,24 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
 
     if (_mParticipant == null) return;
 
-    if (stayInRoom && (_localStream?.getVideoTracks().isNotEmpty ?? false)) {
-      await _replaceVideoTrack(_localStream!.getVideoTracks().first);
+    if (stayInRoom) {
+      if (WebRTC.platformIsMobile &&
+          (_localStream?.getVideoTracks().isNotEmpty ?? false)) {
+        if (_mParticipant!.isVideoEnabled) {
+          await toggleVideo(forceValue: true);
+        }
+      }
 
-      if (_mParticipant!.isVideoEnabled) {
-        await toggleVideo(forceValue: true, ignoreUpdateValue: true);
+      final List<RTCRtpSender> senders =
+          await _mParticipant!.peerConnection.getSenders();
+
+      final RTCRtpSender? sendersVideo = senders
+          .where((sender) => sender.track?.kind == 'video')
+          .toList()
+          .lastOrNull;
+
+      if (sendersVideo != null) {
+        _mParticipant!.peerConnection.removeTrack(sendersVideo);
       }
     }
 
@@ -141,6 +163,25 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     _participantId = participantId.toString();
 
     final RTCPeerConnection peerConnection = _mParticipant!.peerConnection;
+
+    peerConnection.onRenegotiationNeeded = () async {
+      String sdp = await _createOffer(peerConnection);
+
+      if (_localStream?.getVideoTracks().isNotEmpty ?? false) {
+        sdp = sdp.enableAudioDTX().setPreferredCodec(
+              codec: _callSetting.preferedCodec,
+            );
+      }
+
+      final RTCSessionDescription description = RTCSessionDescription(
+        sdp,
+        DescriptionType.offer.type,
+      );
+
+      await peerConnection.setLocalDescription(description);
+
+      _socketEmiter.sendNewSdp(sdp);
+    };
 
     peerConnection.onIceCandidate = (candidate) {
       if (_flagPublisherCanAddCandidate) {
@@ -238,6 +279,34 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   }
 
   @override
+  Future<void> handleSubscriberRenegotiation({
+    required String targetId,
+    required String sdp,
+  }) async {
+    if (_subscribers[targetId]?.peerConnection == null) return;
+
+    final RTCPeerConnection pc = _subscribers[targetId]!.peerConnection;
+
+    final RTCSessionDescription remoteDescription = RTCSessionDescription(
+      sdp,
+      DescriptionType.offer.type,
+    );
+
+    await pc.setRemoteDescription(remoteDescription);
+
+    try {
+      final String ansSdp = await _createAnswer(pc);
+      final RTCSessionDescription localDescription = RTCSessionDescription(
+        ansSdp,
+        DescriptionType.answer.type,
+      );
+      await pc.setLocalDescription(localDescription);
+
+      _socketEmiter.answerEstablishSubscriber(targetId: targetId, sdp: ansSdp);
+    } catch (_) {}
+  }
+
+  @override
   Future<void> addPublisherCandidate(RTCIceCandidate candidate) async {
     await _mParticipant?.addCandidate(candidate);
   }
@@ -330,7 +399,10 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     bool? forceValue,
     bool ignoreUpdateValue = false,
   }) async {
-    if (_mParticipant == null || _mParticipant!.isSharingScreen) return;
+    if (_mParticipant == null ||
+        (_mParticipant!.isSharingScreen && WebRTC.platformIsMobile)) {
+      return;
+    }
 
     final tracks = _localStream?.getVideoTracks() ?? [];
 
@@ -538,6 +610,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     );
 
     _mParticipant = ParticipantSFU(
+      ownerId: kIsMine,
       peerConnection: peerConnection,
       onChanged: () => _notify(CallbackEvents.shouldBeUpdateState),
       videoCodec: _callSetting.preferedCodec,
@@ -681,6 +754,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     );
 
     _subscribers[targetId] = ParticipantSFU(
+      ownerId: targetId,
       peerConnection: rtcPeerConnection,
       onChanged: () => _notify(CallbackEvents.shouldBeUpdateState),
       isAudioEnabled: audioEnabled,
@@ -693,7 +767,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       audioStats: _audioStats,
     );
 
-    rtcPeerConnection.onAddStream = (stream) async {
+    rtcPeerConnection.onTrack = (track) {
       if (_subscribers[targetId] == null) return;
 
       setE2eeEnabled(
@@ -702,7 +776,9 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
         isForce: true,
       );
 
-      _subscribers[targetId]?.setSrcObject(stream);
+      if (track.streams.isEmpty) return;
+
+      _subscribers[targetId]?.setSrcObject(track.streams.first);
     };
 
     rtcPeerConnection.onIceCandidate = (candidate) {

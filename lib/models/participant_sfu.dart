@@ -16,6 +16,7 @@ import 'package:waterbus_sdk/models/enums/audio_level.dart';
 
 // ignore: must_be_immutable
 class ParticipantSFU extends Equatable {
+  final String ownerId;
   bool isVideoEnabled;
   bool isAudioEnabled;
   bool isE2eeEnabled;
@@ -25,10 +26,13 @@ class ParticipantSFU extends Equatable {
   CameraType cameraType;
   AudioLevel audioLevel;
   RTCVideoRenderer? renderer;
+  RTCVideoRenderer? screenShareRenderer;
+  MediaStream? mediaStream;
   final RTCPeerConnection peerConnection;
   final WebRTCCodec videoCodec;
   final Function() onChanged;
   ParticipantSFU({
+    required this.ownerId,
     this.isVideoEnabled = true,
     this.isAudioEnabled = true,
     this.isSharingScreen = false,
@@ -37,7 +41,9 @@ class ParticipantSFU extends Equatable {
     this.isSpeakerPhoneEnabled = true,
     this.cameraType = CameraType.front,
     this.audioLevel = AudioLevel.kSilence,
+    this.mediaStream,
     this.renderer,
+    this.screenShareRenderer,
     required this.peerConnection,
     required this.onChanged,
     required this.videoCodec,
@@ -62,28 +68,6 @@ class ParticipantSFU extends Equatable {
         },
       );
     }
-  }
-
-  ParticipantSFU copyWith({
-    String? participantId,
-    bool? isAudioEnabled,
-    bool? isVideoEnabled,
-    bool? isSharingScreen,
-    bool? isE2eeEnabled,
-    RTCPeerConnection? peerConnection,
-    RTCVideoRenderer? renderer,
-    WebRTCCodec? videoCodec,
-  }) {
-    return ParticipantSFU(
-      isVideoEnabled: isAudioEnabled ?? this.isVideoEnabled,
-      isAudioEnabled: isVideoEnabled ?? this.isAudioEnabled,
-      isSharingScreen: isSharingScreen ?? this.isSharingScreen,
-      peerConnection: peerConnection ?? this.peerConnection,
-      renderer: renderer ?? this.renderer,
-      onChanged: onChanged,
-      videoCodec: videoCodec ?? this.videoCodec,
-      isE2eeEnabled: isE2eeEnabled ?? this.isE2eeEnabled,
-    );
   }
 
   @override
@@ -129,6 +113,42 @@ class ParticipantSFU extends Equatable {
       onChanged,
     ];
   }
+
+  ParticipantSFU copyWith({
+    String? ownerId,
+    bool? isVideoEnabled,
+    bool? isAudioEnabled,
+    bool? isE2eeEnabled,
+    bool? isSpeakerPhoneEnabled,
+    bool? isSharingScreen,
+    bool? hasFirstFrameRendered,
+    CameraType? cameraType,
+    AudioLevel? audioLevel,
+    RTCVideoRenderer? renderer,
+    RTCVideoRenderer? screenShareRenderer,
+    RTCPeerConnection? peerConnection,
+    WebRTCCodec? videoCodec,
+    Function()? onChanged,
+  }) {
+    return ParticipantSFU(
+      ownerId: ownerId ?? this.ownerId,
+      isVideoEnabled: isVideoEnabled ?? this.isVideoEnabled,
+      isAudioEnabled: isAudioEnabled ?? this.isAudioEnabled,
+      isE2eeEnabled: isE2eeEnabled ?? this.isE2eeEnabled,
+      isSpeakerPhoneEnabled:
+          isSpeakerPhoneEnabled ?? this.isSpeakerPhoneEnabled,
+      isSharingScreen: isSharingScreen ?? this.isSharingScreen,
+      hasFirstFrameRendered:
+          hasFirstFrameRendered ?? this.hasFirstFrameRendered,
+      cameraType: cameraType ?? this.cameraType,
+      audioLevel: audioLevel ?? this.audioLevel,
+      renderer: renderer ?? this.renderer,
+      screenShareRenderer: screenShareRenderer ?? this.screenShareRenderer,
+      peerConnection: peerConnection ?? this.peerConnection,
+      videoCodec: videoCodec ?? this.videoCodec,
+      onChanged: onChanged ?? this.onChanged,
+    );
+  }
 }
 
 extension ParticipantSFUX on ParticipantSFU {
@@ -157,15 +177,36 @@ extension ParticipantSFUX on ParticipantSFU {
     }
   }
 
-  // ignore: use_setters_to_change_properties
-  void setSrcObject(MediaStream stream) {
-    renderer?.srcObject = stream;
+  Future<void> setSrcObject(MediaStream stream) async {
+    if (ownerId == kIsMine) {
+      renderer?.srcObject = stream;
+      onChanged.call();
+      return;
+    }
+
+    if (renderer?.srcObject?.getVideoTracks().isEmpty ?? true) {
+      renderer?.srcObject = stream;
+    } else {
+      await setScreenSrcObject(stream);
+    }
+
+    onChanged.call();
+  }
+
+  Future<void> setScreenSrcObject(MediaStream stream, {String? trackId}) async {
+    if (screenShareRenderer == null) {
+      screenShareRenderer = RTCVideoRenderer();
+      await screenShareRenderer?.initialize();
+    }
+
+    screenShareRenderer?.srcObject = stream;
   }
 
   Future<void> _initialRenderer() async {
     if (renderer != null) return;
 
     renderer = RTCVideoRenderer();
+
     await renderer?.initialize();
 
     if (kIsWeb) {

@@ -102,5 +102,10 @@ class SocketEmiterImpl extends SocketEmiter {
     _socket?.emit(SocketEvent.setScreenSharingCSS, {'isSharing': isSharing});
   }
 
+  @override
+  void sendNewSdp(String sdp) {
+    _socket?.emit(SocketEvent.publisherRenegotiationCSS, {'sdp': sdp});
+  }
+
   Socket? get _socket => getIt<SocketHandler>().socket;
 }

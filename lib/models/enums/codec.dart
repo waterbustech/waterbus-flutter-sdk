@@ -1,5 +1,4 @@
 // Project imports:
-import 'package:waterbus_sdk/constants/constants.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/method_channels/native_channel.dart';
 

@@ -33,7 +33,7 @@ dependencies:
     git:
       url: https://github.com/waterbustech/flutter-webrtc.git
       path: "."
-      ref: 0.9.48+8
+      ref: 0.10.3+1
 
   # Dependency Injection
   get_it: ^7.6.8
