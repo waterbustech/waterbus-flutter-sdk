@@ -1,5 +1,5 @@
 // Package imports:
-import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
+import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/helpers/logger/logger.dart';
 
 // Project imports:
@@ -11,7 +11,7 @@ import 'package:waterbus_sdk/models/enums/audio_level.dart';
 extension PeerX on RTCPeerConnection {
   Future<void> createScreenSharingTrack(
     MediaStreamTrack track, {
-    required String videoCodec,
+    required WebRTCCodec vCodec,
     required MediaStream stream,
     String kind = 'video',
   }) async {
@@ -38,14 +38,14 @@ extension PeerX on RTCPeerConnection {
       }
 
       final matchesVideoCodec =
-          codec.toLowerCase() == 'video/$videoCodec'.toLowerCase();
+          codec.toLowerCase() == 'video/${vCodec.codec}'.toLowerCase();
       if (!matchesVideoCodec) {
         unmatched.add(c);
         continue;
       }
       // for h264 codecs that have sdpFmtpLine available, use only if the
       // profile-level-id is 42e01f for cross-browser compatibility
-      if (videoCodec.toLowerCase() == 'h264') {
+      if (vCodec.codec == 'h264') {
         if (c.sdpFmtpLine != null &&
             c.sdpFmtpLine!.contains('profile-level-id=42e01f')) {
           matched.add(c);

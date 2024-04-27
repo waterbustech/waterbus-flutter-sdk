@@ -79,7 +79,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
 
       await _mParticipant!.peerConnection.createScreenSharingTrack(
         screenTrack,
-        videoCodec: _callSetting.preferedCodec.codec,
+        vCodec: _callSetting.preferedCodec,
         stream: _displayStream!,
       );
 
