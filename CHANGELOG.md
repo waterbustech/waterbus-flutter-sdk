@@ -1,3 +1,3 @@
-## 0.0.1
+## 1.3.8
 
-* TODO: Describe initial release.
+* Support Virtual Background for web - Chromium Only
