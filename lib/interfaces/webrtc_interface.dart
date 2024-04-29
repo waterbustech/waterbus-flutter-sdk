@@ -49,7 +49,7 @@ abstract class WaterbusWebRTCManager {
     required Uint8List backgroundImage,
     double thresholdConfidence = 0.7,
   });
-  Future<void> disableVirtualBackground();
+  Future<void> disableVirtualBackground({bool reset = false});
 
   CallState callState();
   Stream<CallbackPayload> get notifyChanged;

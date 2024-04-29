@@ -21,6 +21,7 @@ import 'package:waterbus_sdk/interfaces/socket_emiter_interface.dart';
 import 'package:waterbus_sdk/interfaces/webrtc_interface.dart';
 import 'package:waterbus_sdk/method_channels/native_channel.dart';
 import 'package:waterbus_sdk/method_channels/replaykit.dart';
+import 'package:waterbus_sdk/method_channels/virtual_background/index.dart';
 
 @LazySingleton(as: WaterbusWebRTCManager)
 class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
@@ -579,7 +580,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       _notify(CallbackEvents.meetingEnded);
 
       // Clear for next time
-      Helper.disableVirtualBackground();
+      disableVirtualBackground(reset: true);
     } catch (error) {
       WaterbusLogger().bug(error.toString());
     }
@@ -591,14 +592,19 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     required Uint8List backgroundImage,
     double thresholdConfidence = 0.7,
   }) async {
-    await Helper.enableVirtualBackground(
+    final MediaStream? segmentedStream = await startVirtualBackground(
       backgroundImage: backgroundImage,
+      textureId: _mParticipant?.renderer?.textureId.toString(),
     );
+
+    if (segmentedStream == null) return;
+
+    _replaceVideoTrack(segmentedStream.getVideoTracks().first);
   }
 
   @override
-  Future<void> disableVirtualBackground() async {
-    await Helper.disableVirtualBackground();
+  Future<void> disableVirtualBackground({bool reset = false}) async {
+    await stopVirtualBackground(reset: reset);
   }
 
   // MARK: Private methods
@@ -844,13 +850,17 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     List<RTCRtpSender>? sendersList,
   }) async {
     final List<RTCRtpSender> senders =
-        sendersList ?? await _mParticipant!.peerConnection.getSenders();
+        (sendersList ?? await _mParticipant!.peerConnection.getSenders())
+            .where(
+              (sender) => sender.track?.kind == 'video',
+            )
+            .toList();
 
-    for (final sender in senders) {
-      if (sender.track?.kind == 'video') {
-        sender.replaceTrack(track);
-      }
-    }
+    if (senders.isEmpty) return;
+
+    final sender = senders.first;
+
+    sender.replaceTrack(track);
 
     await _enableEncryption(_callSetting.e2eeEnabled);
   }
