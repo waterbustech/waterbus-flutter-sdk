@@ -9,6 +9,7 @@ import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 // Project imports:
 import 'package:waterbus_sdk/injection/injection_container.dart';
 import 'package:waterbus_sdk/interfaces/socket_handler_interface.dart';
+import 'package:waterbus_sdk/interfaces/webrtc_interface.dart';
 import 'package:waterbus_sdk/models/index.dart';
 import 'package:waterbus_sdk/sdk_core.dart';
 import 'package:waterbus_sdk/services/callkit/callkit_listener.dart';
@@ -32,16 +33,19 @@ class WaterbusSdk {
     required String waterbusUrl,
     String recordBenchmarkPath = '',
   }) {
-    // Init dependency injection
-    configureDependencies();
+    // Init dependency injection if needed
+    if (!getIt.isRegistered<WaterbusWebRTCManager>()) {
+      configureDependencies();
+
+      if (WebRTC.platformIsIOS) {
+        _callKitListener.listenerEvents();
+      }
+    }
 
     WaterbusSdk.waterbusUrl = waterbusUrl;
     WaterbusSdk.recordBenchmarkPath = recordBenchmarkPath;
 
-    if (WebRTC.platformIsIOS) {
-      _callKitListener.listenerEvents();
-    }
-
+    _socketHandler.disconnection();
     _socketHandler.establishConnection(accessToken: accessToken);
   }
 
