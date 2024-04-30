@@ -192,11 +192,11 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       }
     };
 
+    await _enableEncryption(_callSetting.e2eeEnabled);
+
     _localStream?.getTracks().forEach((track) {
       peerConnection.addTrack(track, _localStream!);
     });
-
-    await _enableEncryption(_callSetting.e2eeEnabled);
 
     String sdp = await _createOffer(peerConnection);
 
@@ -773,14 +773,14 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       audioStats: _audioStats,
     );
 
+    setE2eeEnabled(
+      targetId: targetId,
+      isEnabled: isE2eeEnabled,
+      isForce: true,
+    );
+
     rtcPeerConnection.onTrack = (track) {
       if (_subscribers[targetId] == null) return;
-
-      setE2eeEnabled(
-        targetId: targetId,
-        isEnabled: isE2eeEnabled,
-        isForce: true,
-      );
 
       if (track.streams.isEmpty) return;
 
