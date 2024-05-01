@@ -1,3 +1,6 @@
+> [!IMPORTANT]  
+> Waterbus is an open source video conferencing app built on latest WebRTC SDK. Currently, Waterbus is an early release that is subject to the following limitations: it may have limited support, changes may not be compatible with other pre-general availability versions, and availability may change without notice.
+
 # Flutter [Waterbus](https://docs.waterbus.tech) SDK
 
 <img src="./images/banner-3.png" width="100%"/>
@@ -142,26 +145,4 @@ If you have any questions or suggestions related to this application, please con
 
 ## License
 
-```terminal
-MIT License
-
-Copyright (c) 2023 lambiengcode
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
+Apache License 2.0

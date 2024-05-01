@@ -114,6 +114,13 @@ class WaterbusSdk {
     await _sdk.disableVirtualBackground();
   }
 
+  Future<void> setPiPEnabled({
+    required String textureId,
+    bool enabled = true,
+  }) async {
+    await _sdk.setPiPEnabled(textureId: textureId, enabled: enabled);
+  }
+
   Future<List<WebRTCCodec>> filterSupportedCodecs() async {
     final List<WebRTCCodec> supportedCodecs = [];
 

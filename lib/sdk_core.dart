@@ -10,6 +10,7 @@ import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/helpers/logger/logger.dart';
 import 'package:waterbus_sdk/helpers/replaykit/replaykit_helper.dart';
 import 'package:waterbus_sdk/interfaces/webrtc_interface.dart';
+import 'package:waterbus_sdk/method_channels/picture-in-picture/index.dart';
 import 'package:waterbus_sdk/method_channels/replaykit.dart';
 
 @Singleton()
@@ -123,6 +124,13 @@ class SdkCore {
 
   Future<void> disableVirtualBackground() async {
     await _rtcManager.disableVirtualBackground();
+  }
+
+  Future<void> setPiPEnabled({
+    required String textureId,
+    bool enabled = true,
+  }) async {
+    await setPictureInPictureEnabled(textureId: textureId);
   }
 
   CallState get callState => _rtcManager.callState();
