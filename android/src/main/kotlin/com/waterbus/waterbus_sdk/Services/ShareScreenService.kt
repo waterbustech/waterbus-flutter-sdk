@@ -1,15 +1,17 @@
 package com.waterbus.waterbus_sdk.Services
 
+import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
 import android.graphics.Color
 import android.os.Build
 import android.os.IBinder
 import android.os.Process
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.waterbus.waterbus_sdk.R
+import androidx.core.app.ServiceCompat
 
 class ShareScreenService : Service() {
     private val notificationId = 201
@@ -40,6 +42,7 @@ class ShareScreenService : Service() {
         }
     }
 
+    @SuppressLint("WrongConstant")
     private fun startForegroundService() {
         if (!isForegroundRunning) {
             isForegroundRunning = true
@@ -53,13 +56,18 @@ class ShareScreenService : Service() {
                 val builder = NotificationCompat.Builder(this, CHANNEL_ID)
                     .setSmallIcon(resources.getIdentifier("ic_screen_sharing", "drawable", packageName))
                     .setColor(Color.BLUE)
-                    .setContentTitle("Waterbus: Online Meeting")
+                    .setContentTitle("Waterbus: Online Meetings")
                     .setContentText("You are sharing your screen")
                     .setCategory(NotificationCompat.CATEGORY_SERVICE)
                     .setContentIntent(pendingIntent)
                     .setUsesChronometer(true)
                     .setOngoing(true)
-                startForeground(notificationId, builder.build())
+
+                if (Build.VERSION.SDK_INT >= 34) {
+                    ServiceCompat.startForeground(this, notificationId, builder.build(), FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION)
+                } else {
+                    startForeground(notificationId, builder.build())
+                }
             }
         }
     }
