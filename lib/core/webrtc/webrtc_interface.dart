@@ -1,0 +1,56 @@
+// Dart imports:
+import 'dart:typed_data';
+
+// Project imports:
+import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+
+abstract class WaterbusWebRTCManager {
+  Future<void> joinRoom({required String roomId, required int participantId});
+  Future<void> subscribe(List<String> targetIds);
+  Future<void> setPublisherRemoteSdp(String sdp);
+  Future<void> setSubscriberRemoteSdp({
+    required String targetId,
+    required String sdp,
+    required bool videoEnabled,
+    required bool audioEnabled,
+    required bool isScreenSharing,
+    required bool isE2eeEnabled,
+    required CameraType type,
+    required WebRTCCodec codec,
+  });
+  Future<void> handleSubscriberRenegotiation({
+    required String targetId,
+    required String sdp,
+  });
+  Future<void> addPublisherCandidate(RTCIceCandidate candidate);
+  Future<void> addSubscriberCandidate(
+    String targetId,
+    RTCIceCandidate candidate,
+  );
+  Future<void> newParticipant(Participant participant);
+  Future<void> participantHasLeft(String targetId);
+  Future<void> dispose();
+
+  // MARK: control
+  Future<void> applyCallSettings(CallSetting setting);
+  Future<void> prepareMedia();
+  Future<void> startScreenSharing({DesktopCapturerSource? source});
+  Future<void> stopScreenSharing({bool stayInRoom = true});
+  Future<void> toggleAudio({bool? forceValue});
+  Future<void> toggleSpeakerPhone({bool? forceValue});
+  Future<void> toggleVideo();
+  Future<void> switchCamera();
+  void setE2eeEnabled({required String targetId, required bool isEnabled});
+  void setVideoEnabled({required String targetId, required bool isEnabled});
+  void setCameraType({required String targetId, required CameraType type});
+  void setAudioEnabled({required String targetId, required bool isEnabled});
+  void setScreenSharing({required String targetId, required bool isSharing});
+  Future<void> enableVirtualBackground({
+    required Uint8List backgroundImage,
+    double thresholdConfidence = 0.7,
+  });
+  Future<void> disableVirtualBackground({bool reset = false});
+
+  CallState callState();
+  Stream<CallbackPayload> get notifyChanged;
+}

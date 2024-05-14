@@ -6,12 +6,12 @@ import 'package:injectable/injectable.dart';
 import 'package:wakelock/wakelock.dart';
 
 // Project imports:
+import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/helpers/logger/logger.dart';
-import 'package:waterbus_sdk/helpers/replaykit/replaykit_helper.dart';
-import 'package:waterbus_sdk/interfaces/webrtc_interface.dart';
-import 'package:waterbus_sdk/method_channels/picture-in-picture/index.dart';
-import 'package:waterbus_sdk/method_channels/replaykit.dart';
+import 'package:waterbus_sdk/native/picture-in-picture/index.dart';
+import 'package:waterbus_sdk/native/replaykit.dart';
+import 'package:waterbus_sdk/utils/logger/logger.dart';
+import 'package:waterbus_sdk/utils/replaykit/replaykit_helper.dart';
 
 @Singleton()
 class SdkCore {

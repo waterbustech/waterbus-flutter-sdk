@@ -7,20 +7,23 @@ import 'dart:typed_data';
 import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 
 // Project imports:
+import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
+import 'package:waterbus_sdk/core/websocket/interfaces/socket_handler_interface.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
-import 'package:waterbus_sdk/interfaces/socket_handler_interface.dart';
-import 'package:waterbus_sdk/interfaces/webrtc_interface.dart';
-import 'package:waterbus_sdk/models/index.dart';
 import 'package:waterbus_sdk/sdk_core.dart';
-import 'package:waterbus_sdk/services/callkit/callkit_listener.dart';
+import 'package:waterbus_sdk/types/index.dart';
+import 'package:waterbus_sdk/utils/callkit/callkit_listener.dart';
 
-export './models/index.dart';
+export 'types/index.dart';
 export './constants/constants.dart';
 export 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 
 class WaterbusSdk {
   static String recordBenchmarkPath = '';
-  static String waterbusUrl = '';
+  static String accessToken = '';
+  static String refreshToken = '';
+  static String apiWaterbusUrl = '';
+  static String wsWaterbusUrl = '';
   static Function(CallbackPayload)? onEventChanged;
 
   // ignore: use_setters_to_change_properties
@@ -42,7 +45,7 @@ class WaterbusSdk {
       }
     }
 
-    WaterbusSdk.waterbusUrl = waterbusUrl;
+    WaterbusSdk.wsWaterbusUrl = waterbusUrl;
     WaterbusSdk.recordBenchmarkPath = recordBenchmarkPath;
 
     _socketHandler.disconnection();
@@ -131,6 +134,11 @@ class WaterbusSdk {
     }
 
     return supportedCodecs;
+  }
+
+  static overrideToken(String accessToken, String refreshToken) {
+    WaterbusSdk.accessToken = accessToken;
+    WaterbusSdk.refreshToken = refreshToken;
   }
 
   CallState get callState => _sdk.callState;

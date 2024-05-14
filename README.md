@@ -3,7 +3,7 @@
 
 # Flutter [Waterbus](https://docs.waterbus.tech) SDK
 
-<img src="./images/banner-3.png" width="100%"/>
+<img src="./images/waterbus-sdk-banner.png" width="100%"/>
 
 Flutter plugin of [Waterbus](https://docs.waterbus.tech). Build video call or online meeting application with SFU model. Supports iOS, Android. [ExampleApp](https://github.com/lambiengcode/waterbus)
 
