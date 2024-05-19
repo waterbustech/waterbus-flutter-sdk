@@ -61,6 +61,7 @@ dev_dependencies:
   # Code Generator
   injectable_generator: ^2.6.1
   build_runner: ^2.4.9
+  mockito: ^5.4.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

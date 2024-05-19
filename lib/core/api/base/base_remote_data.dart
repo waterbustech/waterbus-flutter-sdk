@@ -8,12 +8,13 @@ import 'package:injectable/injectable.dart';
 
 // Project imports:
 import 'package:waterbus_sdk/constants/http_status_code.dart';
+import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
 import 'package:waterbus_sdk/core/api/base/dio_configuration.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
 
-@singleton
+@Singleton()
 class BaseRemoteData {
   Dio dio = Dio(
     BaseOptions(
@@ -217,14 +218,14 @@ class BaseRemoteData {
     return Options(
       validateStatus: (status) {
         if (status == StatusCode.notAcceptable &&
-            WaterbusSdk.accessToken.isNotEmpty) {
-          WaterbusSdk.accessToken = '';
+            AuthLocalDataSourceImpl().accessToken.isNotEmpty) {
+          AuthLocalDataSourceImpl().clearToken();
         }
 
         return true;
       },
       headers: {
-        'Authorization': 'Bearer ${WaterbusSdk.accessToken}',
+        'Authorization': 'Bearer ${AuthLocalDataSourceImpl().refreshToken}',
         'api_key': 'waterbus@2024',
         'Content-Type': 'application/json; charset=UTF-8',
         'Connection': 'keep-alive',
@@ -245,7 +246,7 @@ class BaseRemoteData {
 
   getHeaders() {
     return {
-      'Authorization': 'Bearer ${WaterbusSdk.accessToken}',
+      'Authorization': 'Bearer ${AuthLocalDataSourceImpl().accessToken}',
       'api_key': 'waterbus@2024',
       'Content-Type': 'application/json; charset=UTF-8',
       'Connection': 'keep-alive',
@@ -255,6 +256,15 @@ class BaseRemoteData {
   }
 
   initialize() async {
+    dio = Dio(
+      BaseOptions(
+        baseUrl: WaterbusSdk.apiWaterbusUrl,
+        connectTimeout: 10.seconds,
+        receiveTimeout: 10.seconds,
+        sendTimeout: 10.seconds,
+      ),
+    );
+
     await Future.wait([
       getIt<DioConfiguration>()
           .configuration(dio)

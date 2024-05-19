@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 // Project imports:
 import 'package:waterbus_sdk/constants/api_enpoints.dart';
 import 'package:waterbus_sdk/constants/http_status_code.dart';
+import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/types/error/failures.dart';
 import 'package:waterbus_sdk/types/models/auth_payload_model.dart';
@@ -19,19 +20,29 @@ abstract class AuthRemoteDataSource {
 @LazySingleton(as: AuthRemoteDataSource)
 class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   final BaseRemoteData _baseRemoteData;
+  final AuthLocalDataSource _localDataSource;
 
-  AuthRemoteDataSourceImpl(this._baseRemoteData);
+  AuthRemoteDataSourceImpl(this._baseRemoteData, this._localDataSource);
 
   @override
   Future<User?> signInWithSocial(AuthPayloadModel authPayload) async {
     final Map<String, dynamic> body = authPayload.toMap();
+
     final Response response = await _baseRemoteData.postRoute(
       ApiEndpoints.auth,
       body: body,
     );
 
     if (response.statusCode == StatusCode.created) {
-      return User.fromMap(response.data);
+      final String accessToken = response.data['token'];
+      final String refreshToken = response.data['refreshToken'];
+
+      _localDataSource.saveTokens(
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      );
+
+      return User.fromMap(response.data['user']);
     }
 
     return null;

@@ -9,15 +9,18 @@ import 'package:injectable/injectable.dart';
 // Project imports:
 import 'package:waterbus_sdk/constants/api_enpoints.dart';
 import 'package:waterbus_sdk/constants/http_status_code.dart';
+import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
 import 'package:waterbus_sdk/utils/queues/completer_queue.dart';
 
 @singleton
 class DioConfiguration {
   final BaseRemoteData _remoteData;
+  final AuthLocalDataSource _localDataSource;
 
-  DioConfiguration(this._remoteData);
+  DioConfiguration(this._remoteData, this._localDataSource);
 
   bool _isRefreshing = false;
   final CompleterQueue<(String, String)> _refreshTokenCompleters =
@@ -30,10 +33,10 @@ class DioConfiguration {
       RetryInterceptor(
         dio: dioClient,
         // logPrint: print, // specify log function (optional)
-        retryDelays: const [
+        retryDelays: [
           // set delays between retries (optional)
-          Duration(seconds: 1), // wait 1 sec before first retry
-          Duration(seconds: 2), // wait 2 sec before second retry
+          1.seconds, // wait 1 sec before first retry
+          2.seconds, // wait 2 sec before second retry
           // Duration(seconds: 3), // wait 3 sec before third retry
         ],
       ),
@@ -51,8 +54,8 @@ class DioConfiguration {
             if (isRefreshingToken) {
               handler.next(response);
               _logOut();
-            } else if (WaterbusSdk.accessToken.isNotEmpty &&
-                WaterbusSdk.refreshToken.isNotEmpty) {
+            } else if (_localDataSource.refreshToken != null &&
+                _localDataSource.accessToken != null) {
               try {
                 final String oldAccessToken =
                     response.requestOptions.headers['Authorization'];
@@ -94,8 +97,11 @@ class DioConfiguration {
       String refreshToken,
     )? callback,
   }) async {
-    if (oldAccessToken != 'Bearer ${WaterbusSdk.accessToken}') {
-      return (WaterbusSdk.accessToken, WaterbusSdk.refreshToken);
+    if (oldAccessToken != 'Bearer ${AuthLocalDataSourceImpl().accessToken}') {
+      return (
+        AuthLocalDataSourceImpl().accessToken,
+        AuthLocalDataSourceImpl().refreshToken
+      );
     }
 
     final completer = Completer<(String, String)>();
@@ -122,8 +128,8 @@ class DioConfiguration {
       String refreshToken,
     )? callback,
   }) async {
-    if (WaterbusSdk.refreshToken.isEmpty) {
-      if (WaterbusSdk.accessToken.isNotEmpty) {
+    if (AuthLocalDataSourceImpl().refreshToken.isEmpty) {
+      if (AuthLocalDataSourceImpl().accessToken.isNotEmpty) {
         _logOut();
       }
       return ("", "");
@@ -149,7 +155,6 @@ class DioConfiguration {
   }
 
   void _logOut() {
-    WaterbusSdk.accessToken = '';
-    WaterbusSdk.refreshToken = '';
+    AuthLocalDataSourceImpl().clearToken();
   }
 }

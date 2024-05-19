@@ -7,3 +7,6 @@ export 'stats.dart';
 export 'participant_model.dart';
 export 'member_model.dart';
 export 'meeting_model.dart';
+export 'user_model.dart';
+export 'avatar_model.dart';
+export 'beauty_filters.dart';
