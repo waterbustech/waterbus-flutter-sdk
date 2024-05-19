@@ -56,6 +56,17 @@ void main() {
         (realInvocation) => Future.value(user),
       );
 
+      // act
+      final Either<Failure, User> result = await repository.loginWithSocial(
+        authParams,
+      );
+
+      // assert
+      expect(
+        result.isRight(),
+        Right<Failure, User>(user).isRight(),
+      );
+
       verify(repository.loginWithSocial(authParams));
       verifyNever(
         mockAuthLocalDataSource.saveTokens(accessToken: '', refreshToken: ''),
