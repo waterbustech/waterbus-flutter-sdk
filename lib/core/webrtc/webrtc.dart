@@ -627,7 +627,6 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     );
 
     _localStream = await _getUserMedia();
-
     if (_localStream != null) {
       _mParticipant?.setSrcObject(_localStream!);
     }
@@ -638,7 +637,6 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       final MediaStream stream = await navigator.mediaDevices.getUserMedia(
         _callSetting.mediaConstraints,
       );
-
       // Microphone not granted or has been broken
       if (stream.getAudioTracks().isEmpty) {
         toggleAudio(forceValue: false);

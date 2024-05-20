@@ -4,20 +4,15 @@ library waterbus_sdk;
 import 'dart:typed_data';
 
 // Package imports:
-import 'package:dartz/dartz.dart';
 import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 
 // Project imports:
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
-import 'package:waterbus_sdk/core/api/auth/usecases/auth_usecases.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
-import 'package:waterbus_sdk/core/api/meetings/usecases/meeting_usecases.dart';
-import 'package:waterbus_sdk/core/api/user/usecases/use_usecases.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/socket_handler_interface.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
 import 'package:waterbus_sdk/sdk_core.dart';
-import 'package:waterbus_sdk/types/error/failures.dart';
 import 'package:waterbus_sdk/types/index.dart';
 import 'package:waterbus_sdk/types/models/auth_payload_model.dart';
 import 'package:waterbus_sdk/utils/callkit/callkit_listener.dart';
@@ -148,79 +143,91 @@ class WaterbusSdk {
   }
 
   // User
-  Future<Either<Failure, User>> getProfile() async {
-    return await _useUsecases.getProfile();
+  Future<User?> getProfile() async {
+    return await _sdk.getProfile();
   }
 
-  Future<Either<Failure, User>> updateProfile({required User user}) async {
-    return await _useUsecases.updateProfile(user);
+  Future<User?> updateProfile({required User user}) async {
+    return await _sdk.updateProfile(user: user);
   }
 
-  Future<Either<Failure, bool>> updateUsername({
+  Future<bool?> updateUsername({
     required String username,
   }) async {
-    return await _useUsecases.updateUsername(username);
+    return await _sdk.updateUsername(username: username);
   }
 
-  Future<Either<Failure, bool>> checkUsername({
+  Future<bool> checkUsername({
     required String username,
   }) async {
-    return await _useUsecases.checkUsername(username);
+    return await _sdk.checkUsername(username: username);
   }
 
-  Future<Either<Failure, String>> getPresignedUrl() async {
-    return await _useUsecases.getPresignedUrl();
+  Future<String?> getPresignedUrl() async {
+    return await _sdk.getPresignedUrl();
   }
 
-  Future<Either<Failure, String>> uploadAvatar({
+  Future<String?> uploadAvatar({
     required Uint8List image,
     required String uploadUrl,
   }) async {
-    return await _useUsecases.uploadAvatar(image, uploadUrl);
+    return await _sdk.uploadAvatar(image: image, uploadUrl: uploadUrl);
   }
 
   // Auth
-  Future<Either<Failure, User>> loginWithSocial({
+  Future<User?> loginWithSocial({
     required AuthPayloadModel payloadModel,
   }) async {
-    return await _authUsecases.loginWithSocial(payloadModel);
+    return await _sdk.loginWithSocial(payloadModel: payloadModel);
   }
 
-  Future<Either<Failure, bool>> logOut() async {
-    return await _authUsecases.logOut();
+  Future<bool> logOut() async {
+    return await _sdk.logOut();
   }
 
-  Future<Either<Failure, bool>> handleRefreshToken() async {
-    return await _authUsecases.refreshToken();
+  Future<bool?> handleRefreshToken() async {
+    return await _sdk.handleRefreshToken();
   }
 
   // Meeting
-  Future<Either<Failure, Meeting>> createMeeting({
+  Future<Meeting?> createMeeting({
     required Meeting meeting,
     required String password,
     required int? userId,
   }) async {
-    return await _meetingUsecases.createMeeting(meeting, password, userId);
+    return await _sdk.createMeeting(
+      meeting: meeting,
+      password: password,
+      userId: userId,
+    );
   }
 
-  Future<Either<Failure, Meeting>> joinMeeting({
+  Future<Meeting?> joinMeeting({
     required Meeting meeting,
     required String password,
     required int? userId,
   }) async {
-    return await _meetingUsecases.joinMeeting(meeting, password, userId);
+    return await _sdk.joinMeeting(
+      meeting: meeting,
+      password: password,
+      userId: userId,
+    );
   }
 
-  Future<Either<Failure, Meeting>> updateMeeting({
+  Future<Meeting?> updateMeeting({
     required Meeting meeting,
     required String password,
     required int? userId,
   }) async {
-    return await _meetingUsecases.updateMeeting(meeting, password, userId);
+    return await _sdk.updateMeeting(
+      meeting: meeting,
+      password: password,
+      userId: userId,
+    );
   }
 
-  Future<Either<Failure, Meeting>> getInfoMeeting({required int code}) async {
-    return await _meetingUsecases.getInfoMeeting(code);
+  Future<Meeting?> getInfoMeeting({required int code}) async {
+    return await _sdk.getInfoMeeting(code: code);
   }
 
   static overrideToken(String accessToken, String refreshToken) {
@@ -238,9 +245,6 @@ class WaterbusSdk {
   SdkCore get _sdk => getIt<SdkCore>();
   SocketHandler get _socketHandler => getIt<SocketHandler>();
   CallKitListener get _callKitListener => getIt<CallKitListener>();
-  UseUsecases get _useUsecases => getIt<UseUsecases>();
-  AuthUsecases get _authUsecases => getIt<AuthUsecases>();
-  MeetingUsecases get _meetingUsecases => getIt<MeetingUsecases>();
   BaseRemoteData get _baseRemoteData => getIt<BaseRemoteData>();
   AuthLocalDataSourceImpl get _authLocalDataSourceImpl =>
       AuthLocalDataSourceImpl();

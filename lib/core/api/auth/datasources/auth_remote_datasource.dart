@@ -7,12 +7,11 @@ import 'package:waterbus_sdk/constants/api_enpoints.dart';
 import 'package:waterbus_sdk/constants/http_status_code.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
-import 'package:waterbus_sdk/types/error/failures.dart';
 import 'package:waterbus_sdk/types/models/auth_payload_model.dart';
 import 'package:waterbus_sdk/types/models/user_model.dart';
 
 abstract class AuthRemoteDataSource {
-  Future<(String, String)> refreshToken();
+  Future<(String?, String?)> refreshToken();
   Future<User?> signInWithSocial(AuthPayloadModel authPayload);
   Future<bool> logOut();
 }
@@ -49,7 +48,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   }
 
   @override
-  Future<(String, String)> refreshToken() async {
+  Future<(String?, String?)> refreshToken() async {
     final Response response = await _baseRemoteData.dio.get(
       ApiEndpoints.auth,
       options: _baseRemoteData.getOptionsRefreshToken,
@@ -60,7 +59,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
       return (rawData['token'] as String, rawData['refreshToken'] as String);
     }
 
-    throw ServerFailure();
+    return (null, null);
   }
 
   @override

@@ -111,7 +111,7 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
   }
 
   @override
-  Future<bool?> checkUsername(String username) async {
+  Future<bool> checkUsername(String username) async {
     final Response response = await _remoteData.getRoute(
       "${ApiEndpoints.username}/$username",
     );
@@ -120,6 +120,6 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
       return response.data['isRegistered'] ?? false;
     }
 
-    return null;
+    return false;
   }
 }

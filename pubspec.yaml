@@ -26,7 +26,6 @@ dependencies:
   # Utils
   collection: '>=1.16.0'
   universal_io: ^2.2.2
-  dartz: ^0.10.1
   equatable: ^2.0.5
   logger: ^2.3.0
   wakelock: ^0.6.2

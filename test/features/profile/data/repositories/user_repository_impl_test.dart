@@ -2,7 +2,6 @@
 import 'dart:typed_data';
 
 // Package imports:
-import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -10,7 +9,6 @@ import 'package:mockito/mockito.dart';
 // Project imports:
 import 'package:waterbus_sdk/core/api/user/datasources/user_remote_datasource.dart';
 import 'package:waterbus_sdk/core/api/user/repositories/user_repository.dart';
-import 'package:waterbus_sdk/types/error/failures.dart';
 import 'package:waterbus_sdk/types/models/user_model.dart';
 import 'user_repository_impl_test.mocks.dart';
 
@@ -35,7 +33,7 @@ void main() {
       final result = await repository.getUserProfile();
 
       // Assert
-      expect(result, Right(testUser));
+      expect(result, testUser);
       verify(mockDataSource.getUserProfile());
       verifyNoMoreInteractions(mockDataSource);
     });
@@ -49,7 +47,7 @@ void main() {
       final result = await repository.getUserProfile();
 
       // Assert
-      expect(result, Left(NullValue()));
+      expect(result, null);
       verify(mockDataSource.getUserProfile());
       verifyNoMoreInteractions(mockDataSource);
     });
@@ -65,7 +63,7 @@ void main() {
       final result = await repository.updateUserProfile(testUser);
 
       // Assert
-      expect(result, Right(testUser));
+      expect(result, testUser);
       verify(mockDataSource.updateUserProfile(testUser));
       verifyNoMoreInteractions(mockDataSource);
     });
@@ -79,7 +77,7 @@ void main() {
       final result = await repository.updateUserProfile(testUser);
 
       // Assert
-      expect(result, Left(NullValue()));
+      expect(result, null);
       verify(mockDataSource.updateUserProfile(testUser));
       verifyNoMoreInteractions(mockDataSource);
     });
@@ -95,7 +93,7 @@ void main() {
       final result = await repository.updateUsername(testUser.userName);
 
       // Assert
-      expect(result, const Right(true));
+      expect(result, true);
       verify(mockDataSource.updateUsername(testUser.userName));
       verifyNoMoreInteractions(mockDataSource);
     });
@@ -109,7 +107,7 @@ void main() {
       final result = await repository.updateUsername(testUser.userName);
 
       // Assert
-      expect(result, Left(NullValue()));
+      expect(result, false);
       verify(mockDataSource.updateUsername(testUser.userName));
       verifyNoMoreInteractions(mockDataSource);
     });
@@ -125,7 +123,7 @@ void main() {
       final result = await repository.checkUsername(testUser.userName);
 
       // Assert
-      expect(result, const Right(true));
+      expect(result, true);
       verify(mockDataSource.checkUsername(testUser.userName));
       verifyNoMoreInteractions(mockDataSource);
     });
@@ -139,7 +137,7 @@ void main() {
       final result = await repository.checkUsername(testUser.userName);
 
       // Assert
-      expect(result, const Right(false));
+      expect(result, false);
       verify(mockDataSource.checkUsername(testUser.userName));
       verifyNoMoreInteractions(mockDataSource);
     });
@@ -153,7 +151,7 @@ void main() {
       final result = await repository.checkUsername(testUser.userName);
 
       // Assert
-      expect(result, Left(NullValue()));
+      expect(result, false);
       verify(mockDataSource.checkUsername(testUser.userName));
       verifyNoMoreInteractions(mockDataSource);
     });
@@ -169,7 +167,7 @@ void main() {
       final result = await repository.getPresignedUrl();
 
       // Assert
-      expect(result, const Right(testUrl));
+      expect(result, testUrl);
       verify(mockDataSource.getPresignedUrl());
       verifyNoMoreInteractions(mockDataSource);
     });
@@ -184,7 +182,7 @@ void main() {
       final result = await repository.getPresignedUrl();
 
       // Assert
-      expect(result, Left(NullValue()));
+      expect(result, null);
       verify(mockDataSource.getPresignedUrl());
       verifyNoMoreInteractions(mockDataSource);
     });
@@ -211,7 +209,7 @@ void main() {
       );
 
       // Assert
-      expect(result, const Right(testImageUrl));
+      expect(result, testImageUrl);
       verify(
         mockDataSource.uploadImageToS3(
           uploadUrl: testUploadUrl,
@@ -237,7 +235,7 @@ void main() {
       );
 
       // Assert
-      expect(result, Left(NullValue()));
+      expect(result, null);
       verify(
         mockDataSource.uploadImageToS3(
           uploadUrl: testUploadUrl,

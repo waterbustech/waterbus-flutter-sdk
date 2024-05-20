@@ -1,24 +1,21 @@
 // Package imports:
-import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 
 // Project imports:
 import 'package:waterbus_sdk/core/api/meetings/datasources/meeting_remote_datesource.dart';
-import 'package:waterbus_sdk/core/api/meetings/usecases/create_meeting.dart';
-import 'package:waterbus_sdk/core/api/meetings/usecases/get_info_meeting.dart';
-import 'package:waterbus_sdk/types/error/failures.dart';
 import 'package:waterbus_sdk/types/index.dart';
+import 'package:waterbus_sdk/types/models/create_meeting_params.dart';
 
 abstract class MeetingRepository {
-  Future<Either<Failure, Meeting>> createMeeting(CreateMeetingParams params);
-  Future<Either<Failure, Meeting>> updateMeeting(CreateMeetingParams params);
-  Future<Either<Failure, Meeting>> joinMeetingWithPassword(
+  Future<Meeting?> createMeeting(CreateMeetingParams params);
+  Future<Meeting?> updateMeeting(CreateMeetingParams params);
+  Future<Meeting?> joinMeetingWithPassword(
     CreateMeetingParams params,
   );
-  Future<Either<Failure, Meeting>> joinMeetingWithoutPassword(
+  Future<Meeting?> joinMeetingWithoutPassword(
     CreateMeetingParams params,
   );
-  Future<Either<Failure, Meeting>> getInfoMeeting(GetMeetingParams params);
+  Future<Meeting?> getInfoMeeting(int code);
 }
 
 @LazySingleton(as: MeetingRepository)
@@ -28,7 +25,7 @@ class MeetingRepositoryImpl extends MeetingRepository {
   MeetingRepositoryImpl(this._remoteDataSource);
 
   @override
-  Future<Either<Failure, Meeting>> createMeeting(
+  Future<Meeting?> createMeeting(
     CreateMeetingParams params,
   ) async {
     Meeting? meeting = await _remoteDataSource.createMeeting(
@@ -36,30 +33,24 @@ class MeetingRepositoryImpl extends MeetingRepository {
       password: params.password,
     );
 
-    if (meeting == null) {
-      return Left(NullValue());
-    }
+    if (meeting == null) return null;
 
     meeting = findMyParticipantObject(meeting, userId: params.userId);
 
-    return Right(meeting);
+    return meeting;
   }
 
   @override
-  Future<Either<Failure, Meeting>> getInfoMeeting(
-    GetMeetingParams params,
-  ) async {
-    final Meeting? meeting = await _remoteDataSource.getInfoMeeting(
-      params.code,
-    );
+  Future<Meeting?> getInfoMeeting(int code) async {
+    final Meeting? meeting = await _remoteDataSource.getInfoMeeting(code);
 
-    if (meeting == null) return Left(NullValue());
+    if (meeting == null) return null;
 
-    return Right(meeting);
+    return meeting;
   }
 
   @override
-  Future<Either<Failure, Meeting>> joinMeetingWithPassword(
+  Future<Meeting?> joinMeetingWithPassword(
     CreateMeetingParams params,
   ) async {
     Meeting? meeting = await _remoteDataSource.joinMeetingWithPassword(
@@ -67,33 +58,33 @@ class MeetingRepositoryImpl extends MeetingRepository {
       password: params.password,
     );
 
-    if (meeting == null) return Left(NullValue());
+    if (meeting == null) return null;
 
     meeting = findMyParticipantObject(meeting, userId: params.userId);
 
-    return Right(meeting);
+    return meeting;
   }
 
   @override
-  Future<Either<Failure, Meeting>> joinMeetingWithoutPassword(
+  Future<Meeting?> joinMeetingWithoutPassword(
     CreateMeetingParams params,
   ) async {
     Meeting? meeting = await _remoteDataSource.joinMeetingWithoutPassword(
       meeting: params.meeting,
     );
 
-    if (meeting == null) return Left(NullValue());
+    if (meeting == null) return null;
 
     meeting = findMyParticipantObject(
       meeting,
       userId: params.userId,
     );
 
-    return Right(meeting);
+    return meeting;
   }
 
   @override
-  Future<Either<Failure, Meeting>> updateMeeting(
+  Future<Meeting?> updateMeeting(
     CreateMeetingParams params,
   ) async {
     final bool isUpdateSucceed = await _remoteDataSource.updateMeeting(
@@ -101,12 +92,9 @@ class MeetingRepositoryImpl extends MeetingRepository {
       password: params.password,
     );
 
-    if (!isUpdateSucceed) return Left(NullValue());
+    if (!isUpdateSucceed) return null;
 
-    // Insert
-    // _localDataSource.insertOrUpdate(meeting);
-
-    return Right(params.meeting);
+    return params.meeting;
   }
 
   // MARK: private

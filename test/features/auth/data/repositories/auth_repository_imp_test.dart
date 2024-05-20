@@ -2,7 +2,6 @@
 import 'dart:convert';
 
 // Package imports:
-import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -11,8 +10,6 @@ import 'package:mockito/mockito.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_remote_datasource.dart';
 import 'package:waterbus_sdk/core/api/auth/repositories/auth_repository.dart';
-import 'package:waterbus_sdk/core/api/auth/usecases/login_with_social.dart';
-import 'package:waterbus_sdk/types/error/failures.dart';
 import 'package:waterbus_sdk/types/index.dart';
 import 'package:waterbus_sdk/types/models/auth_payload_model.dart';
 import '../../../../constants/sample_file_path.dart';
@@ -40,10 +37,7 @@ void main() {
   });
 
   group('logInWithSocial', () {
-    final AuthParams authParams = AuthParams(
-      payloadModel: AuthPayloadModel(fullName: ''),
-    );
-
+    final AuthPayloadModel authParams = AuthPayloadModel(fullName: '');
     test('login success', () async {
       // arrange
       final Map<String, dynamic> userJson = jsonDecode(
@@ -51,21 +45,17 @@ void main() {
       );
       final User user = User.fromMap(userJson);
 
-      when(mockAuthRemoteDataSource.signInWithSocial(authParams.payloadModel))
-          .thenAnswer(
+      when(mockAuthRemoteDataSource.signInWithSocial(authParams)).thenAnswer(
         (realInvocation) => Future.value(user),
       );
 
       // act
-      final Either<Failure, User> result = await repository.loginWithSocial(
+      final User? result = await repository.loginWithSocial(
         authParams,
       );
 
       // assert
-      expect(
-        result.isRight(),
-        Right<Failure, User>(user).isRight(),
-      );
+      expect(result, user);
 
       verify(repository.loginWithSocial(authParams));
       verifyNever(
@@ -82,10 +72,10 @@ void main() {
       );
 
       // act
-      final Either<Failure, bool> result = await repository.logOut();
+      final bool result = await repository.logOut();
 
       // assert
-      expect(result.isRight(), const Right<Failure, bool>(true).isRight());
+      expect(result, true);
 
       verify(mockAuthRemoteDataSource.logOut());
       verify(mockAuthLocalDataSource.clearToken());

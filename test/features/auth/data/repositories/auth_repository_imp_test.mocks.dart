@@ -9,11 +9,10 @@ import 'dart:async' as _i4;
 
 // Package imports:
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i5;
 
 // Project imports:
-import 'package:waterbus_sdk/types/models/auth_payload_model.dart' as _i7;
-import 'package:waterbus_sdk/types/models/user_model.dart' as _i6;
+import 'package:waterbus_sdk/types/models/auth_payload_model.dart' as _i6;
+import 'package:waterbus_sdk/types/models/user_model.dart' as _i5;
 
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart'
     as _i2;
@@ -71,55 +70,26 @@ class MockAuthLocalDataSource extends _i1.Mock
 class MockAuthRemoteDataSource extends _i1.Mock
     implements _i3.AuthRemoteDataSource {
   @override
-  _i4.Future<(String, String)> refreshToken() => (super.noSuchMethod(
+  _i4.Future<(String?, String?)> refreshToken() => (super.noSuchMethod(
         Invocation.method(
           #refreshToken,
           [],
         ),
-        returnValue: _i4.Future<(String, String)>.value((
-          _i5.dummyValue<String>(
-            this,
-            Invocation.method(
-              #refreshToken,
-              [],
-            ),
-          ),
-          _i5.dummyValue<String>(
-            this,
-            Invocation.method(
-              #refreshToken,
-              [],
-            ),
-          )
-        )),
-        returnValueForMissingStub: _i4.Future<(String, String)>.value((
-          _i5.dummyValue<String>(
-            this,
-            Invocation.method(
-              #refreshToken,
-              [],
-            ),
-          ),
-          _i5.dummyValue<String>(
-            this,
-            Invocation.method(
-              #refreshToken,
-              [],
-            ),
-          )
-        )),
-      ) as _i4.Future<(String, String)>);
+        returnValue: _i4.Future<(String?, String?)>.value((null, null)),
+        returnValueForMissingStub:
+            _i4.Future<(String?, String?)>.value((null, null)),
+      ) as _i4.Future<(String?, String?)>);
 
   @override
-  _i4.Future<_i6.User?> signInWithSocial(_i7.AuthPayloadModel? authPayload) =>
+  _i4.Future<_i5.User?> signInWithSocial(_i6.AuthPayloadModel? authPayload) =>
       (super.noSuchMethod(
         Invocation.method(
           #signInWithSocial,
           [authPayload],
         ),
-        returnValue: _i4.Future<_i6.User?>.value(),
-        returnValueForMissingStub: _i4.Future<_i6.User?>.value(),
-      ) as _i4.Future<_i6.User?>);
+        returnValue: _i4.Future<_i5.User?>.value(),
+        returnValueForMissingStub: _i4.Future<_i5.User?>.value(),
+      ) as _i4.Future<_i5.User?>);
 
   @override
   _i4.Future<bool> logOut() => (super.noSuchMethod(
