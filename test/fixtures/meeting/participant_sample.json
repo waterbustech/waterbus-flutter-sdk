@@ -1,0 +1,11 @@
+{
+    "id": 1,
+    "user": {
+        "id": 1,
+        "fullName": "Kai",
+        "userName": "lambiengcode",
+        "avatar": null,
+        "bio": ""
+    },
+    "isMe": false
+}
