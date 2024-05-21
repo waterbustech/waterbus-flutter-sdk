@@ -10,6 +10,7 @@ import 'package:waterbus_sdk/core/api/auth/repositories/auth_repository.dart';
 import 'package:waterbus_sdk/core/api/meetings/repositories/meeting_repository.dart';
 import 'package:waterbus_sdk/core/api/user/repositories/user_repository.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
+import 'package:waterbus_sdk/core/websocket/interfaces/socket_handler_interface.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/native/picture-in-picture/index.dart';
 import 'package:waterbus_sdk/native/replaykit.dart';
@@ -20,6 +21,7 @@ import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
 
 @Singleton(as: WaterbusSdkInterface)
 class SdkCore extends WaterbusSdkInterface {
+  final SocketHandler _webSocket;
   final WaterbusWebRTCManager _rtcManager;
   final ReplayKitChannel _replayKitChannel;
   final WaterbusLogger _logger;
@@ -27,6 +29,7 @@ class SdkCore extends WaterbusSdkInterface {
   final MeetingRepository _meetingRemoteDataSourceImpl;
   final UserRepository _userRemoteDataSourceImpl;
   SdkCore(
+    this._webSocket,
     this._rtcManager,
     this._replayKitChannel,
     this._logger,
@@ -64,6 +67,8 @@ class SdkCore extends WaterbusSdkInterface {
     required String password,
     required int? userId,
   }) async {
+    if (!(_webSocket.socket?.connected ?? false)) return null;
+
     late final Meeting? room;
 
     if (password.isEmpty) {

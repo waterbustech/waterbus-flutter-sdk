@@ -3,7 +3,7 @@
 
 # Flutter [Waterbus](https://docs.waterbus.tech) SDK
 
-<img src="./images/waterbus-sdk-banner.png" width="100%"/>
+<img src="/.github/waterbus-sdk-banner.png" width="100%"/>
 
 Flutter plugin of [Waterbus](https://docs.waterbus.tech). Build video call or online meeting application with SFU model. Supports iOS, Android. [ExampleApp](https://github.com/lambiengcode/waterbus)
 
@@ -11,7 +11,7 @@ Flutter plugin of [Waterbus](https://docs.waterbus.tech). Build video call or on
 | Codec | VP8 | VP9 | H264 | H265 | AV1 |
 | :-----: | :---------------: | :------------: | :------------: | :----------------: | :--------------------------------: |
 |   iOS   |        🟢         |       🟢       |       🟢       |         🟢         |         🟢        |
-| Android |        🟢         |       🟢       |       🟢       |                  |         🟢        |
+| Android |        🟢         |       🟢       |       🟢       |         🟢         |         🟢        |
 
 ## Features
 

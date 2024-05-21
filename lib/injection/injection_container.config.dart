@@ -25,9 +25,9 @@ import '../core/api/user/repositories/user_repository.dart' as _i19;
 import '../core/webrtc/webrtc.dart' as _i21;
 import '../core/webrtc/webrtc_interface.dart' as _i20;
 import '../core/websocket/interfaces/socket_emiter_interface.dart' as _i9;
-import '../core/websocket/interfaces/socket_handler_interface.dart' as _i25;
+import '../core/websocket/interfaces/socket_handler_interface.dart' as _i23;
 import '../core/websocket/socket_emiter.dart' as _i10;
-import '../core/websocket/socket_handler.dart' as _i26;
+import '../core/websocket/socket_handler.dart' as _i24;
 import '../e2ee/frame_crypto.dart' as _i15;
 import '../native/native_channel.dart' as _i3;
 import '../native/replaykit.dart' as _i6;
@@ -35,8 +35,8 @@ import '../stats/webrtc_audio_stats.dart' as _i7;
 import '../stats/webrtc_video_stats.dart' as _i8;
 import '../utils/callkit/callkit_listener.dart' as _i22;
 import '../utils/logger/logger.dart' as _i4;
-import '../waterbus_sdk_impl.dart' as _i24;
-import '../waterbus_sdk_interface.dart' as _i23;
+import '../waterbus_sdk_impl.dart' as _i26;
+import '../waterbus_sdk_interface.dart' as _i25;
 
 import '../core/api/meetings/datasources/meeting_remote_datesource.dart'
     as _i13;
@@ -97,17 +97,18 @@ _i1.GetIt $initGetIt(
         gh<_i4.WaterbusLogger>(),
         gh<_i20.WaterbusWebRTCManager>(),
       ));
-  gh.singleton<_i23.WaterbusSdkInterface>(() => _i24.SdkCore(
+  gh.singleton<_i23.SocketHandler>(() => _i24.SocketHandlerImpl(
+        gh<_i20.WaterbusWebRTCManager>(),
+        gh<_i4.WaterbusLogger>(),
+      ));
+  gh.singleton<_i25.WaterbusSdkInterface>(() => _i26.SdkCore(
+        gh<_i23.SocketHandler>(),
         gh<_i20.WaterbusWebRTCManager>(),
         gh<_i6.ReplayKitChannel>(),
         gh<_i4.WaterbusLogger>(),
         gh<_i16.AuthRepository>(),
         gh<_i18.MeetingRepository>(),
         gh<_i19.UserRepository>(),
-      ));
-  gh.singleton<_i25.SocketHandler>(() => _i26.SocketHandlerImpl(
-        gh<_i20.WaterbusWebRTCManager>(),
-        gh<_i4.WaterbusLogger>(),
       ));
   return getIt;
 }
