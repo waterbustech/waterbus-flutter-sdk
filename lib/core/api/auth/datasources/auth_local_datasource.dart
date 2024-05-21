@@ -1,8 +1,6 @@
-// Package imports:
 import 'package:hive/hive.dart';
 import 'package:injectable/injectable.dart';
 
-// Project imports:
 import 'package:waterbus_sdk/constants/storage_keys.dart';
 
 abstract class AuthLocalDataSource {

@@ -1,8 +1,6 @@
-// Package imports:
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
-// Project imports:
 import 'package:waterbus_sdk/constants/api_enpoints.dart';
 import 'package:waterbus_sdk/constants/http_status_code.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';

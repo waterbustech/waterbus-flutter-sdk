@@ -1,4 +1,3 @@
-// Project imports:
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/types/enums/audio_level.dart';
 

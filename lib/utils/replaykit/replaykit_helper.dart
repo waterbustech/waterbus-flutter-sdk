@@ -1,4 +1,3 @@
-// Package imports:
 import 'package:replay_kit_launcher/replay_kit_launcher.dart';
 
 class ReplayKitHelper {

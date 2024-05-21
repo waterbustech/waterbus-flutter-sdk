@@ -3,12 +3,10 @@
 @JS()
 library t;
 
-// Dart imports:
 import 'dart:convert';
 import 'dart:js_interop';
 import 'dart:typed_data';
 
-// Package imports:
 import 'package:dart_webrtc_plus/dart_webrtc_plus.dart' as rtc;
 import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 import 'package:web/web.dart' as web;

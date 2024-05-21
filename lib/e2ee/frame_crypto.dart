@@ -1,13 +1,9 @@
-// Dart imports:
 import 'dart:typed_data';
 
-// Flutter imports:
 import 'package:flutter/foundation.dart';
 
-// Package imports:
 import 'package:injectable/injectable.dart';
 
-// Project imports:
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 

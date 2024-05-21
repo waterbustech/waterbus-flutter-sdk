@@ -1,15 +1,12 @@
 // Package imports:
 // ignore_for_file: depend_on_referenced_packages
 
-// Dart imports:
 import 'dart:typed_data';
 
-// Package imports:
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
 
-// Project imports:
 import 'package:waterbus_sdk/constants/api_enpoints.dart';
 import 'package:waterbus_sdk/constants/http_status_code.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';

@@ -1,12 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
-// Flutter imports:
 import 'package:flutter/foundation.dart';
 
-// Package imports:
 import 'package:equatable/equatable.dart';
 
-// Project imports:
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/stats/webrtc_audio_stats.dart';
 import 'package:waterbus_sdk/stats/webrtc_video_stats.dart';

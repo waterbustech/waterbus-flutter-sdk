@@ -1,7 +1,5 @@
-// Package imports:
 import 'package:hive/hive.dart';
 
-// Project imports:
 import 'package:waterbus_sdk/constants/storage_keys.dart';
 import 'package:waterbus_sdk/utils/path_helper.dart';
 

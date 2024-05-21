@@ -1,12 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
-// Dart imports:
 import 'dart:convert';
 
-// Flutter imports:
 import 'package:flutter/foundation.dart';
 
-// Project imports:
 import 'package:waterbus_sdk/types/index.dart';
 
 class CallSetting {

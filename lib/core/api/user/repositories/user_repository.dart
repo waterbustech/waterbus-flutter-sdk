@@ -1,10 +1,7 @@
-// Dart imports:
 import 'dart:typed_data';
 
-// Package imports:
 import 'package:injectable/injectable.dart';
 
-// Project imports:
 import 'package:waterbus_sdk/core/api/user/datasources/user_remote_datasource.dart';
 import 'package:waterbus_sdk/types/models/user_model.dart';
 

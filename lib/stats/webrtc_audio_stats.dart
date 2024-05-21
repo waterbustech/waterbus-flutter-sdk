@@ -1,10 +1,7 @@
-// Dart imports:
 import 'dart:async';
 
-// Package imports:
 import 'package:injectable/injectable.dart';
 
-// Project imports:
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/types/enums/audio_level.dart';
 import 'package:waterbus_sdk/types/models/audio_stats_params.dart';

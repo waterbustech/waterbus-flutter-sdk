@@ -1,12 +1,9 @@
 library waterbus_sdk;
 
-// Dart imports:
 import 'dart:typed_data';
 
-// Package imports:
 import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 
-// Project imports:
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';

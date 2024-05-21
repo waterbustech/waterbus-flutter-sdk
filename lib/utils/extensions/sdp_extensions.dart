@@ -1,8 +1,6 @@
-// Package imports:
 import 'package:h264_profile_level_id/h264_profile_level_id.dart';
 import 'package:sdp_transform/sdp_transform.dart';
 
-// Project imports:
 import 'package:waterbus_sdk/types/enums/codec.dart';
 import 'package:waterbus_sdk/utils/codec_selector.dart';
 

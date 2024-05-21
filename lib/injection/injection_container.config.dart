@@ -9,11 +9,9 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 
-// Package imports:
 import 'package:get_it/get_it.dart' as _i1;
 import 'package:injectable/injectable.dart' as _i2;
 
-// Project imports:
 import '../core/api/auth/datasources/auth_local_datasource.dart' as _i11;
 import '../core/api/auth/datasources/auth_remote_datasource.dart' as _i14;
 import '../core/api/auth/repositories/auth_repository.dart' as _i16;

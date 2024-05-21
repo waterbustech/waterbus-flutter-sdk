@@ -1,12 +1,9 @@
-// Dart imports:
 import 'dart:typed_data';
 
-// Package imports:
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-// Project imports:
 import 'package:waterbus_sdk/core/api/user/datasources/user_remote_datasource.dart';
 import 'package:waterbus_sdk/core/api/user/repositories/user_repository.dart';
 import 'package:waterbus_sdk/types/models/user_model.dart';

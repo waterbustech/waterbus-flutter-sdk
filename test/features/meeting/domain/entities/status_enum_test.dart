@@ -1,7 +1,5 @@
-// Package imports:
 import 'package:flutter_test/flutter_test.dart';
 
-// Project imports:
 import 'package:waterbus_sdk/types/index.dart';
 
 void main() {

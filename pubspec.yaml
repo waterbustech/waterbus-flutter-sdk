@@ -74,3 +74,11 @@ flutter:
         pluginClass: WaterbusSdkPlugin
       ios:
         pluginClass: WaterbusSdkPlugin
+
+import_sorter:
+  comments: false
+  
+topics:
+  - webrtc
+  - sfu
+  - video conferencing

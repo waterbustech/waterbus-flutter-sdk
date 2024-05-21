@@ -1,13 +1,9 @@
-// Dart imports:
 import 'dart:convert';
 
-// Flutter imports:
 import 'package:flutter/foundation.dart';
 
-// Package imports:
 import 'package:equatable/equatable.dart';
 
-// Project imports:
 import 'package:waterbus_sdk/types/enums/meeting_role.dart';
 import 'package:waterbus_sdk/types/models/member_model.dart';
 import 'package:waterbus_sdk/types/models/participant_model.dart';

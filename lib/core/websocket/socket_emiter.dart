@@ -1,8 +1,6 @@
-// Package imports:
 import 'package:injectable/injectable.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
-// Project imports:
 import 'package:waterbus_sdk/constants/socket_events.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/socket_emiter_interface.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/socket_handler_interface.dart';

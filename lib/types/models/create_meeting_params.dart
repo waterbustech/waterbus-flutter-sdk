@@ -1,4 +1,3 @@
-// Project imports:
 import 'package:waterbus_sdk/types/index.dart';
 
 class CreateMeetingParams {

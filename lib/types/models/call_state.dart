@@ -1,10 +1,7 @@
-// Flutter imports:
 import 'package:flutter/foundation.dart';
 
-// Package imports:
 import 'package:equatable/equatable.dart';
 
-// Project imports:
 import 'package:waterbus_sdk/types/models/participant_sfu.dart';
 
 class CallState extends Equatable {

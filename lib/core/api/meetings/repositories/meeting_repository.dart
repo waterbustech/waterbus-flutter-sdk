@@ -1,7 +1,5 @@
-// Package imports:
 import 'package:injectable/injectable.dart';
 
-// Project imports:
 import 'package:waterbus_sdk/core/api/meetings/datasources/meeting_remote_datesource.dart';
 import 'package:waterbus_sdk/types/index.dart';
 import 'package:waterbus_sdk/types/models/create_meeting_params.dart';

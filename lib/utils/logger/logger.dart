@@ -1,7 +1,5 @@
-// Flutter imports:
 import 'package:flutter/foundation.dart';
 
-// Package imports:
 import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
 

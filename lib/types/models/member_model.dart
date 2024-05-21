@@ -1,12 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
-// Dart imports:
 import 'dart:convert';
 
-// Package imports:
 import 'package:equatable/equatable.dart';
 
-// Project imports:
 import 'package:waterbus_sdk/types/enums/meeting_role.dart';
 import 'package:waterbus_sdk/types/enums/status_enum.dart';
 import 'package:waterbus_sdk/types/models/user_model.dart';

@@ -1,7 +1,5 @@
-// Package imports:
 import 'package:injectable/injectable.dart';
 
-// Project imports:
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_remote_datasource.dart';
 import 'package:waterbus_sdk/types/models/auth_payload_model.dart';
