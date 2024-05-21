@@ -19,7 +19,8 @@ extension CodecX on WebRTCCodec {
     if (this == WebRTCCodec.av1) {
       final double platformVersion = await NativeService().getPlatformVersion();
 
-      if (WebRTC.platformIsAndroid && platformVersion >= kMinAV1AndroidSupported ||
+      if (WebRTC.platformIsAndroid &&
+              platformVersion >= kMinAV1AndroidSupported ||
           WebRTC.platformIsIOS && platformVersion >= kMinAV1iOSSupported) {
         return true;
       }

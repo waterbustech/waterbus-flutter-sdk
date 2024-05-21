@@ -12,7 +12,6 @@ import '../../../../fixtures/fixture_reader.dart';
 
 // Project imports:
 
-
 @GenerateNiceMocks([])
 void main() {
   group('Meeting entity', () {
