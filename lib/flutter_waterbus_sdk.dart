@@ -12,10 +12,9 @@ import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/socket_handler_interface.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
-import 'package:waterbus_sdk/sdk_core.dart';
 import 'package:waterbus_sdk/types/index.dart';
-import 'package:waterbus_sdk/types/models/auth_payload_model.dart';
 import 'package:waterbus_sdk/utils/callkit/callkit_listener.dart';
+import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
 
 export 'types/index.dart';
 export './constants/constants.dart';
@@ -27,8 +26,7 @@ class WaterbusSdk {
   static String wsWaterbusUrl = '';
   static Function(CallbackPayload)? onEventChanged;
 
-  // ignore: use_setters_to_change_properties
-  void onEventChangedRegister(Function(CallbackPayload) onEventChanged) {
+  set onEventChangedRegister(Function(CallbackPayload) onEventChanged) {
     WaterbusSdk.onEventChanged = onEventChanged;
   }
 
@@ -56,20 +54,49 @@ class WaterbusSdk {
     _socketHandler.establishConnection(
       accessToken: AuthLocalDataSourceImpl().accessToken,
     );
+
+    _sdk.initialize();
   }
 
-  Future<void> joinRoom({
-    required String roomId,
-    required int participantId,
+  // Meeting
+  Future<Meeting?> createRoom({
+    required Meeting meeting,
+    required String password,
+    required int? userId,
   }) async {
-    await _sdk.joinRoom(
-      roomId: roomId,
-      participantId: participantId,
+    return await _sdk.createRoom(
+      meeting: meeting,
+      password: password,
+      userId: userId,
     );
   }
 
-  Future<void> subscribe(List<String> targetIds) async {
-    await _sdk.subscribe(targetIds);
+  Future<Meeting?> joinRoom({
+    required Meeting meeting,
+    required String password,
+    required int? userId,
+  }) async {
+    return await _sdk.joinRoom(
+      meeting: meeting,
+      password: password,
+      userId: userId,
+    );
+  }
+
+  Future<Meeting?> updateRoom({
+    required Meeting meeting,
+    required String password,
+    required int? userId,
+  }) async {
+    return await _sdk.updateRoom(
+      meeting: meeting,
+      password: password,
+      userId: userId,
+    );
+  }
+
+  Future<Meeting?> getRoomInfo({required int code}) async {
+    return await _sdk.getRoomInfo(code);
   }
 
   Future<void> leaveRoom() async {
@@ -175,59 +202,16 @@ class WaterbusSdk {
   }
 
   // Auth
-  Future<User?> loginWithSocial({
-    required AuthPayloadModel payloadModel,
-  }) async {
-    return await _sdk.loginWithSocial(payloadModel: payloadModel);
+  Future<User?> createToken(AuthPayloadModel payload) async {
+    return await _sdk.createToken(payload: payload);
   }
 
-  Future<bool> logOut() async {
-    return await _sdk.logOut();
+  Future<bool> deleteToken() async {
+    return await _sdk.deleteToken();
   }
 
-  Future<bool?> handleRefreshToken() async {
-    return await _sdk.handleRefreshToken();
-  }
-
-  // Meeting
-  Future<Meeting?> createMeeting({
-    required Meeting meeting,
-    required String password,
-    required int? userId,
-  }) async {
-    return await _sdk.createMeeting(
-      meeting: meeting,
-      password: password,
-      userId: userId,
-    );
-  }
-
-  Future<Meeting?> joinMeeting({
-    required Meeting meeting,
-    required String password,
-    required int? userId,
-  }) async {
-    return await _sdk.joinMeeting(
-      meeting: meeting,
-      password: password,
-      userId: userId,
-    );
-  }
-
-  Future<Meeting?> updateMeeting({
-    required Meeting meeting,
-    required String password,
-    required int? userId,
-  }) async {
-    return await _sdk.updateMeeting(
-      meeting: meeting,
-      password: password,
-      userId: userId,
-    );
-  }
-
-  Future<Meeting?> getInfoMeeting({required int code}) async {
-    return await _sdk.getInfoMeeting(code: code);
+  Future<bool?> renewToken() async {
+    return await _sdk.refreshToken();
   }
 
   static overrideToken(String accessToken, String refreshToken) {
@@ -242,7 +226,7 @@ class WaterbusSdk {
   String get refreshToken => _authLocalDataSourceImpl.refreshToken;
 
   // Private
-  SdkCore get _sdk => getIt<SdkCore>();
+  WaterbusSdkInterface get _sdk => getIt<WaterbusSdkInterface>();
   SocketHandler get _socketHandler => getIt<SocketHandler>();
   CallKitListener get _callKitListener => getIt<CallKitListener>();
   BaseRemoteData get _baseRemoteData => getIt<BaseRemoteData>();

@@ -13,13 +13,13 @@ import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/native/picture-in-picture/index.dart';
 import 'package:waterbus_sdk/native/replaykit.dart';
-import 'package:waterbus_sdk/types/models/auth_payload_model.dart';
 import 'package:waterbus_sdk/types/models/create_meeting_params.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 import 'package:waterbus_sdk/utils/replaykit/replaykit_helper.dart';
+import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
 
-@Singleton()
-class SdkCore {
+@Singleton(as: WaterbusSdkInterface)
+class SdkCore extends WaterbusSdkInterface {
   final WaterbusWebRTCManager _rtcManager;
   final ReplayKitChannel _replayKitChannel;
   final WaterbusLogger _logger;
@@ -35,167 +35,16 @@ class SdkCore {
     this._userRemoteDataSourceImpl,
   );
 
-  bool _isListened = false;
-
-  Future<void> joinRoom({
-    required String roomId,
-    required int participantId,
-  }) async {
-    try {
-      if (!_isListened) {
-        _isListened = true;
-        _rtcManager.notifyChanged.listen((event) {
-          WaterbusSdk.onEventChanged?.call(event);
-        });
-      }
-
-      Wakelock.enable();
-
-      await _rtcManager.joinRoom(
-        roomId: roomId,
-        participantId: participantId,
-      );
-    } catch (error) {
-      _logger.bug(error.toString());
-    }
-  }
-
-  Future<void> subscribe(List<String> targetIds) async {
-    try {
-      _rtcManager.subscribe(targetIds);
-    } catch (error) {
-      _logger.bug(error.toString());
-    }
-  }
-
-  Future<void> leaveRoom() async {
-    try {
-      await _rtcManager.dispose();
-      Wakelock.disable();
-    } catch (error) {
-      _logger.bug(error.toString());
-    }
-  }
-
-  Future<void> prepareMedia() async {
-    await _rtcManager.prepareMedia();
-  }
-
-  Future<void> changeCallSettings(CallSetting setting) async {
-    await _rtcManager.applyCallSettings(setting);
-  }
-
-  Future<void> switchCamera() async {
-    await _rtcManager.switchCamera();
-  }
-
-  Future<void> toggleVideo() async {
-    await _rtcManager.toggleVideo();
-  }
-
-  Future<void> toggleAudio() async {
-    await _rtcManager.toggleAudio();
-  }
-
-  Future<void> toggleSpeakerPhone() async {
-    await _rtcManager.toggleSpeakerPhone();
-  }
-
-  Future<void> startScreenSharing({DesktopCapturerSource? source}) async {
-    if (WebRTC.platformIsIOS) {
-      ReplayKitHelper().openReplayKit();
-      _replayKitChannel.startReplayKit();
-      _replayKitChannel.listenEvents(_rtcManager);
-    } else {
-      await _rtcManager.startScreenSharing(source: source);
-    }
-  }
-
-  Future<void> stopScreenSharing() async {
-    try {
-      if (WebRTC.platformIsIOS) {
-        ReplayKitHelper().openReplayKit();
-      } else {
-        await _rtcManager.stopScreenSharing();
-      }
-    } catch (error) {
-      _logger.bug(error.toString());
-    }
-  }
-
-  Future<void> enableVirtualBackground({
-    required Uint8List backgroundImage,
-    double thresholdConfidence = 0.7,
-  }) async {
-    await _rtcManager.enableVirtualBackground(
-      backgroundImage: backgroundImage,
-      thresholdConfidence: thresholdConfidence,
-    );
-  }
-
-  Future<void> disableVirtualBackground() async {
-    await _rtcManager.disableVirtualBackground();
-  }
-
-  Future<void> setPiPEnabled({
-    required String textureId,
-    bool enabled = true,
-  }) async {
-    await setPictureInPictureEnabled(textureId: textureId);
-  }
-
-  // User
-  Future<User?> getProfile() async {
-    return await _userRemoteDataSourceImpl.getUserProfile();
-  }
-
-  Future<User?> updateProfile({required User user}) async {
-    return await _userRemoteDataSourceImpl.updateUserProfile(user);
-  }
-
-  Future<bool> updateUsername({
-    required String username,
-  }) async {
-    return await _userRemoteDataSourceImpl.updateUsername(username);
-  }
-
-  Future<bool> checkUsername({
-    required String username,
-  }) async {
-    return await _userRemoteDataSourceImpl.checkUsername(username);
-  }
-
-  Future<String?> getPresignedUrl() async {
-    return await _userRemoteDataSourceImpl.getPresignedUrl();
-  }
-
-  Future<String?> uploadAvatar({
-    required Uint8List image,
-    required String uploadUrl,
-  }) async {
-    return await _userRemoteDataSourceImpl.uploadImageToS3(
-      image: image,
-      uploadUrl: uploadUrl,
-    );
-  }
-
-  // Auth
-  Future<User?> loginWithSocial({
-    required AuthPayloadModel payloadModel,
-  }) async {
-    return await _authRemoteDataSourceImpl.loginWithSocial(payloadModel);
-  }
-
-  Future<bool> logOut() async {
-    return await _authRemoteDataSourceImpl.logOut();
-  }
-
-  Future<bool> handleRefreshToken() async {
-    return await _authRemoteDataSourceImpl.refreshToken();
+  @override
+  void initialize() {
+    _rtcManager.notifyChanged.listen((event) {
+      WaterbusSdk.onEventChanged?.call(event);
+    });
   }
 
   // Meeting
-  Future<Meeting?> createMeeting({
+  @override
+  Future<Meeting?> createRoom({
     required Meeting meeting,
     required String password,
     required int? userId,
@@ -209,15 +58,16 @@ class SdkCore {
     );
   }
 
-  Future<Meeting?> joinMeeting({
+  @override
+  Future<Meeting?> joinRoom({
     required Meeting meeting,
     required String password,
     required int? userId,
   }) async {
-    late final Meeting? response;
+    late final Meeting? room;
 
     if (password.isEmpty) {
-      response = await _meetingRemoteDataSourceImpl.joinMeetingWithoutPassword(
+      room = await _meetingRemoteDataSourceImpl.joinMeetingWithoutPassword(
         CreateMeetingParams(
           meeting: meeting,
           password: password,
@@ -225,7 +75,7 @@ class SdkCore {
         ),
       );
     } else {
-      response = await _meetingRemoteDataSourceImpl.joinMeetingWithPassword(
+      room = await _meetingRemoteDataSourceImpl.joinMeetingWithPassword(
         CreateMeetingParams(
           meeting: meeting,
           password: password,
@@ -234,10 +84,31 @@ class SdkCore {
       );
     }
 
-    return response;
+    if (room != null) {
+      final int mParticipantIndex = room.participants.lastIndexWhere(
+        (participant) => participant.isMe,
+      );
+
+      if (mParticipantIndex < 0) return null;
+
+      await _joinRoom(
+        roomId: room.code.toString(),
+        participantId: room.participants[mParticipantIndex].id,
+      );
+
+      final List<String> targetIds = room.participants
+          .where((participant) => !participant.isMe)
+          .map((participant) => participant.id.toString())
+          .toList();
+
+      _subscribe(targetIds);
+    }
+
+    return room;
   }
 
-  Future<Meeting?> updateMeeting({
+  @override
+  Future<Meeting?> updateRoom({
     required Meeting meeting,
     required String password,
     required int? userId,
@@ -251,9 +122,183 @@ class SdkCore {
     );
   }
 
-  Future<Meeting?> getInfoMeeting({required int code}) async {
+  @override
+  Future<Meeting?> getRoomInfo(int code) async {
     return await _meetingRemoteDataSourceImpl.getInfoMeeting(code);
   }
 
+  @override
+  Future<void> leaveRoom() async {
+    try {
+      await _rtcManager.dispose();
+      Wakelock.disable();
+    } catch (error) {
+      _logger.bug(error.toString());
+    }
+  }
+
+  @override
+  Future<void> prepareMedia() async {
+    await _rtcManager.prepareMedia();
+  }
+
+  @override
+  Future<void> changeCallSettings(CallSetting setting) async {
+    await _rtcManager.applyCallSettings(setting);
+  }
+
+  @override
+  Future<void> switchCamera() async {
+    await _rtcManager.switchCamera();
+  }
+
+  @override
+  Future<void> toggleVideo() async {
+    await _rtcManager.toggleVideo();
+  }
+
+  @override
+  Future<void> toggleAudio() async {
+    await _rtcManager.toggleAudio();
+  }
+
+  @override
+  Future<void> toggleSpeakerPhone() async {
+    await _rtcManager.toggleSpeakerPhone();
+  }
+
+  @override
+  Future<void> startScreenSharing({DesktopCapturerSource? source}) async {
+    if (WebRTC.platformIsIOS) {
+      ReplayKitHelper().openReplayKit();
+      _replayKitChannel.startReplayKit();
+      _replayKitChannel.listenEvents(_rtcManager);
+    } else {
+      await _rtcManager.startScreenSharing(source: source);
+    }
+  }
+
+  @override
+  Future<void> stopScreenSharing() async {
+    try {
+      if (WebRTC.platformIsIOS) {
+        ReplayKitHelper().openReplayKit();
+      } else {
+        await _rtcManager.stopScreenSharing();
+      }
+    } catch (error) {
+      _logger.bug(error.toString());
+    }
+  }
+
+  @override
+  Future<void> enableVirtualBackground({
+    required Uint8List backgroundImage,
+    double thresholdConfidence = 0.7,
+  }) async {
+    await _rtcManager.enableVirtualBackground(
+      backgroundImage: backgroundImage,
+      thresholdConfidence: thresholdConfidence,
+    );
+  }
+
+  @override
+  Future<void> disableVirtualBackground() async {
+    await _rtcManager.disableVirtualBackground();
+  }
+
+  @override
+  Future<void> setPiPEnabled({
+    required String textureId,
+    bool enabled = true,
+  }) async {
+    await setPictureInPictureEnabled(textureId: textureId);
+  }
+
+  // User
+
+  @override
+  Future<User?> getProfile() async {
+    return await _userRemoteDataSourceImpl.getUserProfile();
+  }
+
+  @override
+  Future<User?> updateProfile({required User user}) async {
+    return await _userRemoteDataSourceImpl.updateUserProfile(user);
+  }
+
+  @override
+  Future<bool> updateUsername({
+    required String username,
+  }) async {
+    return await _userRemoteDataSourceImpl.updateUsername(username);
+  }
+
+  @override
+  Future<bool> checkUsername({
+    required String username,
+  }) async {
+    return await _userRemoteDataSourceImpl.checkUsername(username);
+  }
+
+  @override
+  Future<String?> getPresignedUrl() async {
+    return await _userRemoteDataSourceImpl.getPresignedUrl();
+  }
+
+  @override
+  Future<String?> uploadAvatar({
+    required Uint8List image,
+    required String uploadUrl,
+  }) async {
+    return await _userRemoteDataSourceImpl.uploadImageToS3(
+      image: image,
+      uploadUrl: uploadUrl,
+    );
+  }
+
+  // Auth
+
+  @override
+  Future<User?> createToken({required AuthPayloadModel payload}) async {
+    return await _authRemoteDataSourceImpl.loginWithSocial(payload);
+  }
+
+  @override
+  Future<bool> deleteToken() async {
+    return await _authRemoteDataSourceImpl.logOut();
+  }
+
+  @override
+  Future<bool> refreshToken() async {
+    return await _authRemoteDataSourceImpl.refreshToken();
+  }
+
+  // MARK: Private
+  Future<void> _joinRoom({
+    required String roomId,
+    required int participantId,
+  }) async {
+    try {
+      Wakelock.enable();
+
+      await _rtcManager.joinRoom(
+        roomId: roomId,
+        participantId: participantId,
+      );
+    } catch (error) {
+      _logger.bug(error.toString());
+    }
+  }
+
+  Future<void> _subscribe(List<String> targetIds) async {
+    try {
+      _rtcManager.subscribe(targetIds);
+    } catch (error) {
+      _logger.bug(error.toString());
+    }
+  }
+
+  @override
   CallState get callState => _rtcManager.callState();
 }

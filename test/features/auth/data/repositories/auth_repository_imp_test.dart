@@ -11,7 +11,6 @@ import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dar
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_remote_datasource.dart';
 import 'package:waterbus_sdk/core/api/auth/repositories/auth_repository.dart';
 import 'package:waterbus_sdk/types/index.dart';
-import 'package:waterbus_sdk/types/models/auth_payload_model.dart';
 import '../../../../constants/sample_file_path.dart';
 import '../../../../fixtures/fixture_reader.dart';
 import 'auth_repository_imp_test.mocks.dart';

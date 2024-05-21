@@ -10,3 +10,4 @@ export 'meeting_model.dart';
 export 'user_model.dart';
 export 'avatar_model.dart';
 export 'beauty_filters.dart';
+export 'auth_payload_model.dart';
