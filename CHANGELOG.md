@@ -1,3 +1,9 @@
+## 1.3.13
+
+* Move api to sdk
+* Improvement join room
+* Add github workflows
+
 ## 1.3.10
 
 * fix(e2ee): too late to create encoded streams
