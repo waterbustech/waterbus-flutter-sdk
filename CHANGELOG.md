@@ -1,3 +1,9 @@
+## 1.3.14
+
+* Fix websocket connect fail because token expired
+* Replace `wakelock` with `wakelock_plus`
+* Update readme.md
+
 ## 1.3.13
 
 * Move api to sdk
