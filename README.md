@@ -1,4 +1,4 @@
-## Flutter [Waterbus](https://docs.waterbus.tech) SDK
+# Flutter [Waterbus](https://docs.waterbus.tech) SDK
 
 Flutter plugin of [Waterbus](https://docs.waterbus.tech). Build video call or online meeting application with SFU model. Supports iOS, Android. [ExampleApp](https://github.com/waterbustech/waterbus)
 
