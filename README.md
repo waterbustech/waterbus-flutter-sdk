@@ -36,7 +36,7 @@ $ flutter pub add waterbus_sdk
 The command above will add this to the `pubspec.yaml` file in your project (you can do this manually):
 ```yaml
 dependencies:
-    waterbus_sdk: ^1.3.13
+    waterbus_sdk: ^1.3.14
 ```
 
 ## Usage
