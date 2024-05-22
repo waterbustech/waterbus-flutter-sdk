@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 import 'package:waterbus_sdk/constants/socket_events.dart';
+import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/socket_handler_interface.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
@@ -13,18 +14,17 @@ import 'package:waterbus_sdk/utils/logger/logger.dart';
 class SocketHandlerImpl extends SocketHandler {
   final WaterbusWebRTCManager _rtcManager;
   final WaterbusLogger _logger;
+  final AuthLocalDataSource _authLocal;
   SocketHandlerImpl(
     this._rtcManager,
     this._logger,
+    this._authLocal,
   );
 
   Socket? _socket;
 
   @override
-  void establishConnection({
-    required String accessToken,
-    bool forceConnection = false,
-  }) {
+  void establishConnection({bool forceConnection = false}) {
     if (_socket != null && !forceConnection) return;
 
     _socket = io(
@@ -34,14 +34,14 @@ class SocketHandlerImpl extends SocketHandler {
           .enableReconnection()
           .enableForceNew()
           .setExtraHeaders({
-        'Authorization': 'Bearer $accessToken',
+        'Authorization': 'Bearer ${_authLocal.accessToken}',
       }).build(),
     );
 
     _socket?.connect();
 
     _socket?.onError((data) async {
-      establishConnection(accessToken: accessToken);
+      establishConnection();
     });
 
     _socket?.onConnect((_) async {

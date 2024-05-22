@@ -15,9 +15,9 @@ import 'package:waterbus_sdk/utils/queues/completer_queue.dart';
 @singleton
 class DioConfiguration {
   final BaseRemoteData _remoteData;
-  final AuthLocalDataSource _localDataSource;
+  final AuthLocalDataSource _authLocal;
 
-  DioConfiguration(this._remoteData, this._localDataSource);
+  DioConfiguration(this._remoteData, this._authLocal);
 
   bool _isRefreshing = false;
   final CompleterQueue<(String, String)> _refreshTokenCompleters =
@@ -51,8 +51,8 @@ class DioConfiguration {
             if (isRefreshingToken) {
               handler.next(response);
               _logOut();
-            } else if (_localDataSource.refreshToken != null &&
-                _localDataSource.accessToken != null) {
+            } else if (_authLocal.refreshToken.isNotEmpty &&
+                _authLocal.accessToken.isNotEmpty) {
               try {
                 final String oldAccessToken =
                     response.requestOptions.headers['Authorization'];

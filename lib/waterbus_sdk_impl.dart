@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:injectable/injectable.dart';
-import 'package:wakelock/wakelock.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import 'package:waterbus_sdk/core/api/auth/repositories/auth_repository.dart';
 import 'package:waterbus_sdk/core/api/meetings/repositories/meeting_repository.dart';
@@ -133,7 +133,7 @@ class SdkCore extends WaterbusSdkInterface {
   Future<void> leaveRoom() async {
     try {
       await _rtcManager.dispose();
-      Wakelock.disable();
+      WakelockPlus.disable();
     } catch (error) {
       _logger.bug(error.toString());
     }
@@ -282,7 +282,7 @@ class SdkCore extends WaterbusSdkInterface {
     required int participantId,
   }) async {
     try {
-      Wakelock.enable();
+      WakelockPlus.enable();
 
       await _rtcManager.joinRoom(
         roomId: roomId,

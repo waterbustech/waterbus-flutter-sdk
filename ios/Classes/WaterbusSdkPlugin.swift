@@ -1,6 +1,6 @@
 import Flutter
 import UIKit
-import flutter_callkit_incoming
+import waterbus_callkit_incoming
 
 public class WaterbusSdkPlugin: NSObject, FlutterPlugin {
   var uuidCall: String = ""
@@ -28,7 +28,7 @@ public class WaterbusSdkPlugin: NSObject, FlutterPlugin {
       info["handle"] = "0123456789"
       info["type"] = 1
       
-      SwiftFlutterCallkitIncomingPlugin.sharedInstance?.startCall(flutter_callkit_incoming.Data(args: info), fromPushKit: true)
+      SwiftFlutterCallkitIncomingPlugin.sharedInstance?.startCall(waterbus_callkit_incoming.Data(args: info), fromPushKit: true)
       result(true)
       break
     case "getCurrentUuid":

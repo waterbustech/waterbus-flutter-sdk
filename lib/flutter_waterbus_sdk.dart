@@ -48,9 +48,7 @@ class WaterbusSdk {
     await _baseRemoteData.initialize();
 
     _socketHandler.disconnection();
-    _socketHandler.establishConnection(
-      accessToken: AuthLocalDataSourceImpl().accessToken,
-    );
+    _socketHandler.establishConnection();
 
     _sdk.initialize();
   }

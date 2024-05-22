@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 
-import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:injectable/injectable.dart';
+import 'package:waterbus_callkit_incoming/waterbus_callkit_incoming.dart';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 

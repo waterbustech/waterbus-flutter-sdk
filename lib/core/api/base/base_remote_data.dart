@@ -13,6 +13,10 @@ import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
 
 @Singleton()
 class BaseRemoteData {
+  final AuthLocalDataSource _authLocal;
+
+  BaseRemoteData(this._authLocal);
+
   Dio dio = Dio(
     BaseOptions(
       baseUrl: WaterbusSdk.apiWaterbusUrl,
@@ -215,14 +219,14 @@ class BaseRemoteData {
     return Options(
       validateStatus: (status) {
         if (status == StatusCode.notAcceptable &&
-            AuthLocalDataSourceImpl().accessToken.isNotEmpty) {
-          AuthLocalDataSourceImpl().clearToken();
+            _authLocal.accessToken.isNotEmpty) {
+          _authLocal.clearToken();
         }
 
         return true;
       },
       headers: {
-        'Authorization': 'Bearer ${AuthLocalDataSourceImpl().refreshToken}',
+        'Authorization': 'Bearer ${_authLocal.refreshToken}',
         'api_key': 'waterbus@2024',
         'Content-Type': 'application/json; charset=UTF-8',
         'Connection': 'keep-alive',
@@ -243,7 +247,7 @@ class BaseRemoteData {
 
   getHeaders() {
     return {
-      'Authorization': 'Bearer ${AuthLocalDataSourceImpl().accessToken}',
+      'Authorization': 'Bearer ${_authLocal.accessToken}',
       'api_key': 'waterbus@2024',
       'Content-Type': 'application/json; charset=UTF-8',
       'Connection': 'keep-alive',

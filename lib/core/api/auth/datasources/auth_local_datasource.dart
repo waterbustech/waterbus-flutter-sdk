@@ -9,8 +9,8 @@ abstract class AuthLocalDataSource {
     required String? refreshToken,
   });
   void clearToken();
-  String? get accessToken;
-  String? get refreshToken;
+  String get accessToken;
+  String get refreshToken;
 }
 
 @LazySingleton(as: AuthLocalDataSource)
