@@ -1,3 +1,8 @@
+## 1.3.15
+
+* Update `repository`, `issue_tracker`
+* Fix banner image
+
 ## 1.3.14
 
 * Fix websocket connect fail because token expired
