@@ -1,3 +1,7 @@
+## 1.3.16
+
+* Refactor: websocket connection
+
 ## 1.3.15
 
 * Update `repository`, `issue_tracker`
