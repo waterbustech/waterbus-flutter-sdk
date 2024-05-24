@@ -4,10 +4,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 
-import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
-import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
-import 'package:waterbus_sdk/core/websocket/interfaces/socket_handler_interface.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
 import 'package:waterbus_sdk/types/index.dart';
 import 'package:waterbus_sdk/utils/callkit/callkit_listener.dart';
@@ -18,9 +15,8 @@ export './constants/constants.dart';
 export 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 
 class WaterbusSdk {
-  static String recordBenchmarkPath = '';
-  static String apiWaterbusUrl = '';
-  static String wsWaterbusUrl = '';
+  static String apiUrl = '';
+  static String wsUrl = '';
   static Function(CallbackPayload)? onEventChanged;
 
   set onEventChangedRegister(Function(CallbackPayload) onEventChanged) {
@@ -28,10 +24,12 @@ class WaterbusSdk {
   }
 
   Future<void> initial({
-    required String waterbusUrl,
-    required String apiWaterbusUrl,
-    String recordBenchmarkPath = '',
+    required String wsUrl,
+    required String apiUrl,
   }) async {
+    WaterbusSdk.wsUrl = wsUrl;
+    WaterbusSdk.apiUrl = apiUrl;
+
     // Init dependency injection if needed
     if (!getIt.isRegistered<WaterbusWebRTCManager>()) {
       configureDependencies();
@@ -41,16 +39,7 @@ class WaterbusSdk {
       }
     }
 
-    WaterbusSdk.wsWaterbusUrl = waterbusUrl;
-    WaterbusSdk.apiWaterbusUrl = apiWaterbusUrl;
-    WaterbusSdk.recordBenchmarkPath = recordBenchmarkPath;
-
-    await _baseRemoteData.initialize();
-
-    _socketHandler.disconnection();
-    _socketHandler.establishConnection();
-
-    _sdk.initialize();
+    await _sdk.initialize();
   }
 
   // Meeting
@@ -209,24 +198,11 @@ class WaterbusSdk {
     return await _sdk.refreshToken();
   }
 
-  static overrideToken(String accessToken, String refreshToken) {
-    AuthLocalDataSourceImpl()
-        .saveTokens(accessToken: accessToken, refreshToken: refreshToken);
-  }
-
   CallState get callState => _sdk.callState;
-
-  String get accessToken => _authLocalDataSourceImpl.accessToken;
-
-  String get refreshToken => _authLocalDataSourceImpl.refreshToken;
 
   // Private
   WaterbusSdkInterface get _sdk => getIt<WaterbusSdkInterface>();
-  SocketHandler get _socketHandler => getIt<SocketHandler>();
   CallKitListener get _callKitListener => getIt<CallKitListener>();
-  BaseRemoteData get _baseRemoteData => getIt<BaseRemoteData>();
-  AuthLocalDataSourceImpl get _authLocalDataSourceImpl =>
-      AuthLocalDataSourceImpl();
 
   ///Singleton factory
   static final WaterbusSdk instance = WaterbusSdk._internal();

@@ -4,6 +4,8 @@ import 'package:injectable/injectable.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import 'package:waterbus_sdk/core/api/auth/repositories/auth_repository.dart';
+import 'package:waterbus_sdk/core/api/base/base_local_storage.dart';
+import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/core/api/meetings/repositories/meeting_repository.dart';
 import 'package:waterbus_sdk/core/api/user/repositories/user_repository.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
@@ -21,22 +23,32 @@ class SdkCore extends WaterbusSdkInterface {
   final SocketHandler _webSocket;
   final WaterbusWebRTCManager _rtcManager;
   final ReplayKitChannel _replayKitChannel;
+
+  final BaseLocalData _baseLocalData;
+  final BaseRemoteData _baseRepository;
+  final AuthRepository _authRepository;
+  final MeetingRepository _meetingRepository;
+  final UserRepository _userRepository;
   final WaterbusLogger _logger;
-  final AuthRepository _authRemoteDataSourceImpl;
-  final MeetingRepository _meetingRemoteDataSourceImpl;
-  final UserRepository _userRemoteDataSourceImpl;
   SdkCore(
     this._webSocket,
     this._rtcManager,
     this._replayKitChannel,
+    this._baseLocalData,
+    this._baseRepository,
+    this._authRepository,
+    this._meetingRepository,
+    this._userRepository,
     this._logger,
-    this._authRemoteDataSourceImpl,
-    this._meetingRemoteDataSourceImpl,
-    this._userRemoteDataSourceImpl,
   );
 
   @override
-  void initialize() {
+  Future<void> initialize() async {
+    await _baseLocalData.initialize();
+    await _baseRepository.initialize();
+
+    _webSocket.establishConnection();
+
     _rtcManager.notifyChanged.listen((event) {
       WaterbusSdk.onEventChanged?.call(event);
     });
@@ -49,7 +61,7 @@ class SdkCore extends WaterbusSdkInterface {
     required String password,
     required int? userId,
   }) async {
-    return await _meetingRemoteDataSourceImpl.createMeeting(
+    return await _meetingRepository.createMeeting(
       CreateMeetingParams(
         meeting: meeting,
         password: password,
@@ -69,7 +81,7 @@ class SdkCore extends WaterbusSdkInterface {
     late final Meeting? room;
 
     if (password.isEmpty) {
-      room = await _meetingRemoteDataSourceImpl.joinMeetingWithoutPassword(
+      room = await _meetingRepository.joinMeetingWithoutPassword(
         CreateMeetingParams(
           meeting: meeting,
           password: password,
@@ -77,7 +89,7 @@ class SdkCore extends WaterbusSdkInterface {
         ),
       );
     } else {
-      room = await _meetingRemoteDataSourceImpl.joinMeetingWithPassword(
+      room = await _meetingRepository.joinMeetingWithPassword(
         CreateMeetingParams(
           meeting: meeting,
           password: password,
@@ -115,7 +127,7 @@ class SdkCore extends WaterbusSdkInterface {
     required String password,
     required int? userId,
   }) async {
-    return await _meetingRemoteDataSourceImpl.updateMeeting(
+    return await _meetingRepository.updateMeeting(
       CreateMeetingParams(
         meeting: meeting,
         password: password,
@@ -126,7 +138,7 @@ class SdkCore extends WaterbusSdkInterface {
 
   @override
   Future<Meeting?> getRoomInfo(int code) async {
-    return await _meetingRemoteDataSourceImpl.getInfoMeeting(code);
+    return await _meetingRepository.getInfoMeeting(code);
   }
 
   @override
@@ -221,31 +233,31 @@ class SdkCore extends WaterbusSdkInterface {
 
   @override
   Future<User?> getProfile() async {
-    return await _userRemoteDataSourceImpl.getUserProfile();
+    return await _userRepository.getUserProfile();
   }
 
   @override
   Future<User?> updateProfile({required User user}) async {
-    return await _userRemoteDataSourceImpl.updateUserProfile(user);
+    return await _userRepository.updateUserProfile(user);
   }
 
   @override
   Future<bool> updateUsername({
     required String username,
   }) async {
-    return await _userRemoteDataSourceImpl.updateUsername(username);
+    return await _userRepository.updateUsername(username);
   }
 
   @override
   Future<bool> checkUsername({
     required String username,
   }) async {
-    return await _userRemoteDataSourceImpl.checkUsername(username);
+    return await _userRepository.checkUsername(username);
   }
 
   @override
   Future<String?> getPresignedUrl() async {
-    return await _userRemoteDataSourceImpl.getPresignedUrl();
+    return await _userRepository.getPresignedUrl();
   }
 
   @override
@@ -253,7 +265,7 @@ class SdkCore extends WaterbusSdkInterface {
     required Uint8List image,
     required String uploadUrl,
   }) async {
-    return await _userRemoteDataSourceImpl.uploadImageToS3(
+    return await _userRepository.uploadImageToS3(
       image: image,
       uploadUrl: uploadUrl,
     );
@@ -263,17 +275,25 @@ class SdkCore extends WaterbusSdkInterface {
 
   @override
   Future<User?> createToken({required AuthPayloadModel payload}) async {
-    return await _authRemoteDataSourceImpl.loginWithSocial(payload);
+    final User? user = await _authRepository.loginWithSocial(payload);
+
+    if (user != null) {
+      _webSocket.establishConnection(forceConnection: true);
+    }
+
+    return user;
   }
 
   @override
   Future<bool> deleteToken() async {
-    return await _authRemoteDataSourceImpl.logOut();
+    _webSocket.disconnection();
+
+    return await _authRepository.logOut();
   }
 
   @override
   Future<bool> refreshToken() async {
-    return await _authRemoteDataSourceImpl.refreshToken();
+    return await _authRepository.refreshToken();
   }
 
   // MARK: Private

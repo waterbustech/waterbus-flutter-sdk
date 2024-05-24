@@ -5,7 +5,7 @@ Flutter plugin of [Waterbus](https://docs.waterbus.tech). Build video call or on
 <img src="https://github.com/waterbustech/waterbus-flutter-sdk/blob/migration/v2/.github/waterbus-sdk-banner.png?raw=true" width="100%"/>
 
 <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg"/></a>
-<img src="https://img.shields.io/github/issues/waterbustech/waterbus-flutter-sdk" alt="GitHub issues"><a href="https://chromium.googlesource.com/external/webrtc/+/branch-heads/6099"><img src="https://img.shields.io/badge/libwebrtc-122.6261.01-yellow.svg" alt="libwebrtc"></a><img src="https://img.shields.io/cocoapods/v/KaiRTC" alt="Cocoapods Version"><a href="https://github.com/lambiengcode"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat&amp;logo=github" alt="PRs Welcome"></a>
+<img src="https://img.shields.io/github/issues/waterbustech/waterbus-flutter-sdk" alt="GitHub issues"><a href="https://chromium.googlesource.com/external/webrtc/+/branch-heads/6099"><img src="https://img.shields.io/badge/libwebrtc-124.6367.01-yellow.svg" alt="libwebrtc"></a><img src="https://img.shields.io/cocoapods/v/KaiRTC" alt="Cocoapods Version"><a href="https://github.com/lambiengcode"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat&amp;logo=github" alt="PRs Welcome"></a>
 
 ## ⚡ Current supported features
 
@@ -47,9 +47,8 @@ Firstly, call `WaterbusSdk.instance.initial` to set your server url and sdk conn
 
 ```dart
 await WaterbusSdk.instance.initial(
-  waterbusUrl: ApiEndpoints.wsUrl,
-  apiWaterbusUrl: ApiEndpoints.baseUrl,
-  recordBenchmarkPath: '',
+  apiUrl: 'https://service.waterbus.tech/busapi/v1/',
+  wsUrl: 'wss://sfu.waterbus.tech',
 );
 ```
 
@@ -194,7 +193,7 @@ If you have any questions or suggestions related to this application, please con
 
 ## Reference
 
-- [flutter_webrtc](https://github.com/flutter-webrtc/flutter-webrtc)
+[flutter_webrtc](https://github.com/flutter-webrtc/flutter-webrtc)
 
 ## License
 

@@ -8,7 +8,6 @@ import 'package:waterbus_sdk/constants/api_enpoints.dart';
 import 'package:waterbus_sdk/constants/http_status_code.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
-import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
 import 'package:waterbus_sdk/utils/queues/completer_queue.dart';
 
@@ -94,11 +93,8 @@ class DioConfiguration {
       String refreshToken,
     )? callback,
   }) async {
-    if (oldAccessToken != 'Bearer ${AuthLocalDataSourceImpl().accessToken}') {
-      return (
-        AuthLocalDataSourceImpl().accessToken,
-        AuthLocalDataSourceImpl().refreshToken
-      );
+    if (oldAccessToken != 'Bearer ${_authLocal.accessToken}') {
+      return (_authLocal.accessToken, _authLocal.refreshToken);
     }
 
     final completer = Completer<(String, String)>();
@@ -125,8 +121,8 @@ class DioConfiguration {
       String refreshToken,
     )? callback,
   }) async {
-    if (AuthLocalDataSourceImpl().refreshToken.isEmpty) {
-      if (AuthLocalDataSourceImpl().accessToken.isNotEmpty) {
+    if (_authLocal.refreshToken.isEmpty) {
+      if (_authLocal.accessToken.isNotEmpty) {
         _logOut();
       }
       return ("", "");
@@ -141,7 +137,10 @@ class DioConfiguration {
       final String accessToken = response.data['token'];
       final String refreshToken = response.data['refreshToken'];
 
-      WaterbusSdk.overrideToken(accessToken, refreshToken);
+      _authLocal.saveTokens(
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      );
 
       callback?.call(accessToken, refreshToken);
 
@@ -152,6 +151,6 @@ class DioConfiguration {
   }
 
   void _logOut() {
-    AuthLocalDataSourceImpl().clearToken();
+    _authLocal.clearToken();
   }
 }

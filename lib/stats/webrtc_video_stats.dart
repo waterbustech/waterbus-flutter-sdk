@@ -9,6 +9,7 @@ import 'package:injectable/injectable.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
+import 'package:waterbus_sdk/utils/path_helper.dart';
 
 @singleton
 class WebRTCVideoStats {
@@ -267,13 +268,14 @@ class WebRTCVideoStats {
   }
 
   Future<void> _writeStatsToFile() async {
-    if (WaterbusSdk.recordBenchmarkPath.isNotEmpty) {
+    final Directory? appDir = await PathHelper.appDir;
+    if (appDir != null) {
       String stats = '''''';
       for (int index = 1; index <= _statsBenchmark.length; index++) {
         stats += '''${index * 2} ${_statsBenchmark[index - 1].toString()}\n''';
       }
 
-      final filePath = File(WaterbusSdk.recordBenchmarkPath);
+      final filePath = File('${appDir.path}/benchmark.txt');
 
       // Write the asset content to the local file
       try {

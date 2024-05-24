@@ -19,7 +19,7 @@ class BaseRemoteData {
 
   Dio dio = Dio(
     BaseOptions(
-      baseUrl: WaterbusSdk.apiWaterbusUrl,
+      baseUrl: WaterbusSdk.apiUrl,
       connectTimeout: 10.seconds,
       receiveTimeout: 10.seconds,
       sendTimeout: 10.seconds,
@@ -259,7 +259,7 @@ class BaseRemoteData {
   initialize() async {
     dio = Dio(
       BaseOptions(
-        baseUrl: WaterbusSdk.apiWaterbusUrl,
+        baseUrl: WaterbusSdk.apiUrl,
         connectTimeout: 10.seconds,
         receiveTimeout: 10.seconds,
         sendTimeout: 10.seconds,
