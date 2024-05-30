@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 
 abstract class WaterbusSdkInterface {
-  Future<void> initialize();
+  Future<void> initializeApp();
 
   // Auth
   Future<User?> createToken({required AuthPayloadModel payload});

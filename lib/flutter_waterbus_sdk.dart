@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 
+import 'package:waterbus_sdk/core/api/base/base_local_storage.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
 import 'package:waterbus_sdk/types/index.dart';
@@ -23,7 +24,7 @@ class WaterbusSdk {
     WaterbusSdk.onEventChanged = onEventChanged;
   }
 
-  Future<void> initial({
+  Future<void> initializeApp({
     required String wsUrl,
     required String apiUrl,
   }) async {
@@ -32,6 +33,8 @@ class WaterbusSdk {
 
     // Init dependency injection if needed
     if (!getIt.isRegistered<WaterbusWebRTCManager>()) {
+      await BaseLocalData.initialize();
+
       configureDependencies();
 
       if (WebRTC.platformIsIOS) {
@@ -39,7 +42,7 @@ class WaterbusSdk {
       }
     }
 
-    await _sdk.initialize();
+    await _sdk.initializeApp();
   }
 
   // Meeting

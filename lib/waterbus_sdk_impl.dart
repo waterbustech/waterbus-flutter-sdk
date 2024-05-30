@@ -4,7 +4,6 @@ import 'package:injectable/injectable.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import 'package:waterbus_sdk/core/api/auth/repositories/auth_repository.dart';
-import 'package:waterbus_sdk/core/api/base/base_local_storage.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/core/api/meetings/repositories/meeting_repository.dart';
 import 'package:waterbus_sdk/core/api/user/repositories/user_repository.dart';
@@ -24,7 +23,6 @@ class SdkCore extends WaterbusSdkInterface {
   final WaterbusWebRTCManager _rtcManager;
   final ReplayKitChannel _replayKitChannel;
 
-  final BaseLocalData _baseLocalData;
   final BaseRemoteData _baseRepository;
   final AuthRepository _authRepository;
   final MeetingRepository _meetingRepository;
@@ -34,7 +32,6 @@ class SdkCore extends WaterbusSdkInterface {
     this._webSocket,
     this._rtcManager,
     this._replayKitChannel,
-    this._baseLocalData,
     this._baseRepository,
     this._authRepository,
     this._meetingRepository,
@@ -43,8 +40,7 @@ class SdkCore extends WaterbusSdkInterface {
   );
 
   @override
-  Future<void> initialize() async {
-    await _baseLocalData.initialize();
+  Future<void> initializeApp() async {
     await _baseRepository.initialize();
 
     _webSocket.establishConnection(forceConnection: true);
