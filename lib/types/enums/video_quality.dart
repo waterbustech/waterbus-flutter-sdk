@@ -13,12 +13,12 @@ extension VideoQualityX on VideoQuality {
       // VGA
       case VideoQuality.low:
         return {
-          'minHeight': '480',
-          'minWidth': '640',
+          'minHeight': '360',
+          'minWidth': '480',
           'minFrameRate': '15',
           'frameRate': '15',
-          'height': '720',
-          'width': '1280',
+          'height': '480',
+          'width': '800',
         };
       // SVGA
       case VideoQuality.auto:

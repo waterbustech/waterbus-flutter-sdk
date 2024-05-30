@@ -11,6 +11,11 @@ import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
 import 'package:waterbus_sdk/utils/queues/completer_queue.dart';
 
+typedef TokensCallback = Function(
+  String accessToken,
+  String refreshToken,
+);
+
 @singleton
 class DioConfiguration {
   final BaseRemoteData _remoteData;
@@ -56,8 +61,9 @@ class DioConfiguration {
                 final String oldAccessToken =
                     response.requestOptions.headers['Authorization'];
 
-                final (String accessToken, String _) =
-                    await onRefreshToken(oldAccessToken: oldAccessToken);
+                final (String accessToken, String _) = await onRefreshToken(
+                  oldAccessToken: oldAccessToken.split(' ').last,
+                );
 
                 response.requestOptions.headers['Authorization'] =
                     'Bearer $accessToken';
@@ -88,12 +94,9 @@ class DioConfiguration {
 
   Future<(String, String)> onRefreshToken({
     String oldAccessToken = '',
-    Function(
-      String accessToken,
-      String refreshToken,
-    )? callback,
+    TokensCallback? callback,
   }) async {
-    if (oldAccessToken != 'Bearer ${_authLocal.accessToken}') {
+    if (oldAccessToken != _authLocal.accessToken) {
       return (_authLocal.accessToken, _authLocal.refreshToken);
     }
 
@@ -116,10 +119,7 @@ class DioConfiguration {
 
   // MARK: Private methods
   Future<(String, String)> _performRefreshToken({
-    Function(
-      String accessToken,
-      String refreshToken,
-    )? callback,
+    TokensCallback? callback,
   }) async {
     if (_authLocal.refreshToken.isEmpty) {
       if (_authLocal.accessToken.isNotEmpty) {

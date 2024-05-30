@@ -34,9 +34,9 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
   @override
   String get accessToken =>
-      _hiveBox.get(StorageKeys.accessToken, defaultValue: null) ?? "";
+      _hiveBox.get(StorageKeys.accessToken, defaultValue: "");
 
   @override
   String get refreshToken =>
-      _hiveBox.get(StorageKeys.refreshToken, defaultValue: null) ?? "";
+      _hiveBox.get(StorageKeys.refreshToken, defaultValue: "");
 }

@@ -216,7 +216,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       participant: _mParticipant!,
     );
 
-    _nativeService.startCallKit(roomId);
+    _nativeService.startCallKit(roomId.roomCodeFormatted);
     _stats.initialize();
     _audioStats.initialize();
   }

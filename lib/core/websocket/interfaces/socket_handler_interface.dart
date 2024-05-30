@@ -5,4 +5,6 @@ abstract class SocketHandler {
   void disconnection();
 
   Socket? get socket;
+
+  bool get isConnected;
 }

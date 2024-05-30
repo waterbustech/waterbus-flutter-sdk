@@ -47,7 +47,7 @@ class SdkCore extends WaterbusSdkInterface {
     await _baseLocalData.initialize();
     await _baseRepository.initialize();
 
-    _webSocket.establishConnection();
+    _webSocket.establishConnection(forceConnection: true);
 
     _rtcManager.notifyChanged.listen((event) {
       WaterbusSdk.onEventChanged?.call(event);
@@ -76,7 +76,7 @@ class SdkCore extends WaterbusSdkInterface {
     required String password,
     required int? userId,
   }) async {
-    if (!(_webSocket.socket?.connected ?? false)) return null;
+    if (!_webSocket.isConnected) return null;
 
     late final Meeting? room;
 

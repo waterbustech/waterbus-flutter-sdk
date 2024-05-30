@@ -27,13 +27,18 @@ class SocketHandlerImpl extends SocketHandler {
   Socket? _socket;
 
   @override
-  void establishConnection({bool forceConnection = false}) {
+  void establishConnection({
+    bool forceConnection = false,
+    String? forceAccessToken,
+  }) {
     if (_authLocal.accessToken.isEmpty ||
         (_socket != null && !forceConnection)) {
       return;
     }
 
-    final String mAccessToken = _authLocal.accessToken;
+    disconnection();
+
+    final String mAccessToken = forceAccessToken ?? _authLocal.accessToken;
 
     _socket = io(
       WaterbusSdk.wsUrl,
@@ -51,10 +56,14 @@ class SocketHandlerImpl extends SocketHandler {
     _socket?.onError((data) async {
       if (_authLocal.accessToken.isEmpty) return;
 
-      final (_, _) =
-          await _dioConfig.onRefreshToken(oldAccessToken: mAccessToken);
+      final (String newAccessToken, _) = await _dioConfig.onRefreshToken(
+        oldAccessToken: mAccessToken,
+      );
 
-      establishConnection();
+      establishConnection(
+        forceConnection: true,
+        forceAccessToken: newAccessToken,
+      );
     });
 
     _socket?.onConnect((_) async {
@@ -241,4 +250,7 @@ class SocketHandlerImpl extends SocketHandler {
 
   @override
   Socket? get socket => _socket;
+
+  @override
+  bool get isConnected => _socket != null && _socket!.connected;
 }

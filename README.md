@@ -11,7 +11,7 @@ Flutter plugin of [Waterbus](https://docs.waterbus.tech). Build video call or on
 
 | Feature            | Subscribe/Publish | Screen Sharing | Picture in Picture | Virtual Background | Beauty Filters | End to End Encryption |
 | ------------------ | ----------------- | -------------- | ------------------ | ------------------ | -------------- | --------------------- |
-| Android            |         🟢         |        🟢      |          🟢         |          🟢         |       🟡        |           🟢          | 
+| Android            |         🟢         |        🟢      |          🟢         |          🟢         |       🟢        |           🟢          | 
 | iOS                |         🟢         |        🟢      |          🟢         |          🟢         |       🟢       |           🟢          |  
 | MacOS              |         🟢         |        🟢      |          🔴         |          🟢         |       🟢       |           🟢          |      
 | Web                |         🟢         |        🟢      |          🟢         |          🟢         |       🟡       |           🟢          |    

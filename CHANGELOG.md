@@ -1,3 +1,8 @@
+## 1.3.17
+
+* Upgrade flutter_webrtc to support GPUPixel on Android
+* Fix socket connection
+
 ## 1.3.16
 
 * Refactor: websocket connection
