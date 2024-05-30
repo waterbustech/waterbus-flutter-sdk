@@ -1,3 +1,7 @@
+## 1.3.18
+
+* Fix(Hive): Open box before create getIt
+
 ## 1.3.17
 
 * Upgrade flutter_webrtc to support GPUPixel on Android
