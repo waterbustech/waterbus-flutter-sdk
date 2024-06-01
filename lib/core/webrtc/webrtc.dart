@@ -80,13 +80,13 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
         stream: _displayStream!,
       );
 
-      await _mParticipant?.setScreenSrcObject(_displayStream!);
+      await _mParticipant?.setSrcObject(_displayStream!, isDisplayStream: true);
 
       _displayStream?.getVideoTracks().first.onEnded = () {
         stopScreenSharing();
       };
 
-      _mParticipant?.isSharingScreen = true;
+      _mParticipant?.setScreenSharing(true);
 
       _notify(CallbackEvents.shouldBeUpdateState);
       _socketEmiter.setScreenSharing(true);
@@ -99,7 +99,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   Future<void> stopScreenSharing({bool stayInRoom = true}) async {
     if (!(_mParticipant?.isSharingScreen ?? true)) return;
 
-    _mParticipant?.isSharingScreen = false;
+    _mParticipant?.setScreenSharing(false);
 
     if (_mParticipant == null) return;
 
@@ -132,7 +132,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       track.stop();
     }
 
-    _mParticipant?.isSharingScreen = false;
+    _mParticipant?.setScreenSharing(false);
     _displayStream?.dispose();
     _displayStream = null;
 
@@ -534,7 +534,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
 
   @override
   void setScreenSharing({required String targetId, required bool isSharing}) {
-    _subscribers[targetId]?.isSharingScreen = isSharing;
+    _subscribers[targetId]?.setScreenSharing(isSharing);
     _notify(CallbackEvents.shouldBeUpdateState);
   }
 
@@ -590,7 +590,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   }) async {
     final MediaStream? segmentedStream = await startVirtualBackground(
       backgroundImage: backgroundImage,
-      textureId: _mParticipant?.renderer?.textureId.toString(),
+      textureId: _mParticipant?.cameraSource?.textureId.toString(),
     );
 
     if (segmentedStream == null) return;
@@ -614,7 +614,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     _mParticipant = ParticipantSFU(
       ownerId: kIsMine,
       peerConnection: peerConnection,
-      onChanged: () => _notify(CallbackEvents.shouldBeUpdateState),
+      onFirstFrameRendered: () => _notify(CallbackEvents.shouldBeUpdateState),
       videoCodec: _callSetting.preferedCodec,
       isE2eeEnabled: _callSetting.e2eeEnabled,
       stats: _stats,
@@ -756,7 +756,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     _subscribers[targetId] = ParticipantSFU(
       ownerId: targetId,
       peerConnection: rtcPeerConnection,
-      onChanged: () => _notify(CallbackEvents.shouldBeUpdateState),
+      onFirstFrameRendered: () => _notify(CallbackEvents.shouldBeUpdateState),
       isAudioEnabled: audioEnabled,
       isVideoEnabled: videoEnabled,
       isSharingScreen: isScreenSharing,

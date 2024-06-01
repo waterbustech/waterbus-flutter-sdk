@@ -1,3 +1,7 @@
+## 1.3.19
+
+* Refactor: use PlatformView for iOS
+
 ## 1.3.18
 
 * Fix(Hive): Open box before create getIt
