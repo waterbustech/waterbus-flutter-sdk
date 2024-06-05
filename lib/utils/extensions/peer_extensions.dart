@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/stats/webrtc_audio_stats.dart';
 import 'package:waterbus_sdk/stats/webrtc_video_stats.dart';
@@ -20,6 +21,8 @@ extension PeerX on RTCPeerConnection {
         streams: [stream],
       ),
     );
+
+    if (!kIsWeb) return;
 
     final caps = await getRtpReceiverCapabilities(kind);
     if (caps.codecs == null) return;

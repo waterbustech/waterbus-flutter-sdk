@@ -1,3 +1,8 @@
+## 1.4.0
+
+* Vendor: Upgrade WebRTC SDK to M125.6422
+* Fix: transceiver setCodecPreferences
+
 ## 1.3.19
 
 * Refactor: use PlatformView for iOS
