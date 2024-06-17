@@ -1,3 +1,21 @@
+## 1.4.0
+
+* Vendor: Upgrade WebRTC SDK to M125.6422
+* Fix: transceiver setCodecPreferences
+
+## 1.3.19
+
+* Refactor: use PlatformView for iOS
+
+## 1.3.18
+
+* Fix(Hive): Open box before create getIt
+
+## 1.3.17
+
+* Upgrade flutter_webrtc to support GPUPixel on Android
+* Fix socket connection
+
 ## 1.3.16
 
 * Refactor: websocket connection

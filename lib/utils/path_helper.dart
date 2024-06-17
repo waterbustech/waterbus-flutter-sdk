@@ -16,6 +16,8 @@ class PathHelper {
   }
 
   static Future<void> createDirWaterbus() async {
+    if (kIsWeb) return;
+
     final String? tempWaterbusDir = await tempDirWaterbus;
     final String? localStoreWaterbusDir = await localStoreDirWaterbus;
     if (tempWaterbusDir == null || localStoreWaterbusDir == null) return;

@@ -14,3 +14,4 @@ export 'auth_payload_model.dart';
 export 'status_message.dart';
 export 'status_seen_message.dart';
 export 'message_model.dart';
+export 'media_source.dart';

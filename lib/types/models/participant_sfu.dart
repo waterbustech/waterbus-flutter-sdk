@@ -1,7 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-
-import 'package:flutter/foundation.dart';
-
 import 'package:equatable/equatable.dart';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
@@ -19,37 +15,36 @@ class ParticipantSFU extends Equatable {
   bool isE2eeEnabled;
   bool isSpeakerPhoneEnabled;
   bool isSharingScreen;
-  bool hasFirstFrameRendered;
   CameraType cameraType;
   AudioLevel audioLevel;
-  RTCVideoRenderer? renderer;
-  RTCVideoRenderer? screenShareRenderer;
-  MediaStream? mediaStream;
+  MediaSource? cameraSource;
+  MediaSource? screenSource;
   final RTCPeerConnection peerConnection;
   final WebRTCCodec videoCodec;
-  final Function() onChanged;
+  final Function()? onFirstFrameRendered;
   ParticipantSFU({
     required this.ownerId,
     this.isVideoEnabled = true,
     this.isAudioEnabled = true,
     this.isSharingScreen = false,
-    this.hasFirstFrameRendered = false,
     this.isE2eeEnabled = false,
     this.isSpeakerPhoneEnabled = true,
     this.cameraType = CameraType.front,
     this.audioLevel = AudioLevel.kSilence,
-    this.mediaStream,
-    this.renderer,
-    this.screenShareRenderer,
     required this.peerConnection,
-    required this.onChanged,
+    required this.onFirstFrameRendered,
     required this.videoCodec,
     // use only one time
     WebRTCVideoStats? stats,
     WebRTCAudioStats? audioStats,
     bool isMe = false,
+    this.cameraSource,
+    this.screenSource,
   }) {
-    _initialRenderer();
+    if (cameraSource != null || screenSource != null) return;
+
+    cameraSource = MediaSource(onFirstFrameRendered: onFirstFrameRendered);
+    screenSource = MediaSource(onFirstFrameRendered: onFirstFrameRendered);
 
     if (stats != null && audioStats != null) {
       peerConnection.monitorStats(
@@ -61,7 +56,7 @@ class ParticipantSFU extends Equatable {
           if (level == audioLevel) return;
 
           audioLevel = level;
-          onChanged();
+          onFirstFrameRendered?.call();
         },
       );
     }
@@ -69,7 +64,7 @@ class ParticipantSFU extends Equatable {
 
   @override
   String toString() {
-    return 'ParticipantSFU(isMicEnabled: $isVideoEnabled, isCamEnabled: $isAudioEnabled, isSharingScreen: $isSharingScreen, peerConnection: $peerConnection, renderer: $renderer)';
+    return 'ParticipantSFU(isMicEnabled: $isVideoEnabled, isCamEnabled: $isAudioEnabled, isSharingScreen: $isSharingScreen, peerConnection: $peerConnection)';
   }
 
   @override
@@ -80,8 +75,8 @@ class ParticipantSFU extends Equatable {
         other.isAudioEnabled == isAudioEnabled &&
         other.isSharingScreen == isSharingScreen &&
         other.peerConnection == peerConnection &&
-        other.hasFirstFrameRendered == hasFirstFrameRendered &&
-        other.renderer == renderer;
+        other.cameraSource == cameraSource &&
+        other.screenSource == screenSource;
   }
 
   @override
@@ -89,9 +84,9 @@ class ParticipantSFU extends Equatable {
     return isVideoEnabled.hashCode ^
         isAudioEnabled.hashCode ^
         isSharingScreen.hashCode ^
-        hasFirstFrameRendered.hashCode ^
         peerConnection.hashCode ^
-        renderer.hashCode;
+        cameraSource.hashCode ^
+        screenSource.hashCode;
   }
 
   @override
@@ -102,12 +97,10 @@ class ParticipantSFU extends Equatable {
       isE2eeEnabled,
       isSpeakerPhoneEnabled,
       isSharingScreen,
-      hasFirstFrameRendered,
       cameraType,
       audioLevel,
       peerConnection,
       videoCodec,
-      onChanged,
     ];
   }
 
@@ -118,14 +111,13 @@ class ParticipantSFU extends Equatable {
     bool? isE2eeEnabled,
     bool? isSpeakerPhoneEnabled,
     bool? isSharingScreen,
-    bool? hasFirstFrameRendered,
     CameraType? cameraType,
     AudioLevel? audioLevel,
-    RTCVideoRenderer? renderer,
-    RTCVideoRenderer? screenShareRenderer,
     RTCPeerConnection? peerConnection,
     WebRTCCodec? videoCodec,
-    Function()? onChanged,
+    Function()? onFirstFrameRendered,
+    MediaSource? cameraSource,
+    MediaSource? screenSource,
   }) {
     return ParticipantSFU(
       ownerId: ownerId ?? this.ownerId,
@@ -135,25 +127,18 @@ class ParticipantSFU extends Equatable {
       isSpeakerPhoneEnabled:
           isSpeakerPhoneEnabled ?? this.isSpeakerPhoneEnabled,
       isSharingScreen: isSharingScreen ?? this.isSharingScreen,
-      hasFirstFrameRendered:
-          hasFirstFrameRendered ?? this.hasFirstFrameRendered,
       cameraType: cameraType ?? this.cameraType,
       audioLevel: audioLevel ?? this.audioLevel,
-      renderer: renderer ?? this.renderer,
-      screenShareRenderer: screenShareRenderer ?? this.screenShareRenderer,
       peerConnection: peerConnection ?? this.peerConnection,
       videoCodec: videoCodec ?? this.videoCodec,
-      onChanged: onChanged ?? this.onChanged,
+      onFirstFrameRendered: onFirstFrameRendered ?? this.onFirstFrameRendered,
+      cameraSource: cameraSource ?? this.cameraSource,
+      screenSource: screenSource ?? this.screenSource,
     );
   }
 }
 
 extension ParticipantSFUX on ParticipantSFU {
-  Future<void> dispose() async {
-    renderer?.dispose();
-    peerConnection.close();
-  }
-
   Future<void> addCandidate(RTCIceCandidate candidate) async {
     await peerConnection.addCandidate(candidate);
   }
@@ -174,48 +159,40 @@ extension ParticipantSFUX on ParticipantSFU {
     }
   }
 
-  Future<void> setSrcObject(MediaStream stream) async {
+  Future<void> setSrcObject(
+    MediaStream stream, {
+    bool isDisplayStream = false,
+  }) async {
     if (ownerId == kIsMine) {
-      renderer?.srcObject = stream;
-      onChanged.call();
+      if (isDisplayStream) {
+        screenSource?.setSrcObject(stream);
+      } else {
+        cameraSource?.setSrcObject(stream);
+      }
       return;
     }
 
-    if (renderer?.srcObject?.getVideoTracks().isEmpty ?? true) {
-      renderer?.srcObject = stream;
+    if (cameraSource?.stream?.getVideoTracks().isEmpty ?? true) {
+      // Set src camera
+      cameraSource?.setSrcObject(stream);
     } else {
-      await setScreenSrcObject(stream);
+      // Set src screen
+      screenSource?.setSrcObject(stream);
     }
-
-    onChanged.call();
   }
 
-  Future<void> setScreenSrcObject(MediaStream stream, {String? trackId}) async {
-    if (screenShareRenderer == null) {
-      screenShareRenderer = RTCVideoRenderer();
-      await screenShareRenderer?.initialize();
-    }
+  Future<void> setScreenSharing(bool isSharing) async {
+    isSharingScreen = isSharing;
 
-    screenShareRenderer?.srcObject = stream;
+    if (!isSharing) {
+      screenSource?.dispose();
+      screenSource = null;
+    }
   }
 
-  Future<void> _initialRenderer() async {
-    if (renderer != null) return;
-
-    renderer = RTCVideoRenderer();
-
-    await renderer?.initialize();
-
-    if (kIsWeb) {
-      hasFirstFrameRendered = true;
-
-      onChanged.call();
-    }
-
-    renderer?.onFirstFrameRendered = () {
-      hasFirstFrameRendered = true;
-
-      onChanged.call();
-    };
+  Future<void> dispose() async {
+    setScreenSharing(false);
+    cameraSource?.dispose();
+    peerConnection.close();
   }
 }
