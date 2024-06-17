@@ -11,3 +11,6 @@ export 'user_model.dart';
 export 'avatar_model.dart';
 export 'beauty_filters.dart';
 export 'auth_payload_model.dart';
+export 'status_message.dart';
+export 'status_seen_message.dart';
+export 'message_model.dart';

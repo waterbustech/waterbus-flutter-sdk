@@ -73,6 +73,18 @@ class MockUserRemoteDataSource extends _i1.Mock
       ) as _i3.Future<bool?>);
 
   @override
+  _i3.Future<List<_i4.User>> searchUsers(String? keyword) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #searchUsers,
+          [keyword],
+        ),
+        returnValue: _i3.Future<List<_i4.User>>.value(<_i4.User>[]),
+        returnValueForMissingStub:
+            _i3.Future<List<_i4.User>>.value(<_i4.User>[]),
+      ) as _i3.Future<List<_i4.User>>);
+
+  @override
   _i3.Future<String?> getPresignedUrl() => (super.noSuchMethod(
         Invocation.method(
           #getPresignedUrl,

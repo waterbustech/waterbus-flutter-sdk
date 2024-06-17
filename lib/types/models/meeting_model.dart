@@ -5,8 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:equatable/equatable.dart';
 
 import 'package:waterbus_sdk/types/enums/meeting_role.dart';
-import 'package:waterbus_sdk/types/models/member_model.dart';
-import 'package:waterbus_sdk/types/models/participant_model.dart';
+import 'package:waterbus_sdk/types/models/chat_status_enum.dart';
+import 'package:waterbus_sdk/types/models/index.dart';
 
 class Meeting extends Equatable {
   final int id;
@@ -16,6 +16,8 @@ class Meeting extends Equatable {
   final int code;
   final DateTime? createdAt;
   final DateTime? latestJoinedAt;
+  final ChatStatusEnum status;
+
   const Meeting({
     this.id = -1,
     required this.title,
@@ -24,6 +26,7 @@ class Meeting extends Equatable {
     this.code = -1,
     this.createdAt,
     this.latestJoinedAt,
+    this.status = ChatStatusEnum.join,
   });
 
   Meeting copyWith({
@@ -34,6 +37,7 @@ class Meeting extends Equatable {
     int? code,
     DateTime? createdAt,
     DateTime? latestJoinedAt,
+    ChatStatusEnum? status,
   }) {
     return Meeting(
       id: id ?? this.id,
@@ -43,6 +47,7 @@ class Meeting extends Equatable {
       code: code ?? this.code,
       createdAt: createdAt ?? this.createdAt,
       latestJoinedAt: latestJoinedAt ?? this.latestJoinedAt,
+      status: status ?? this.status,
     );
   }
 
@@ -55,6 +60,7 @@ class Meeting extends Equatable {
       'code': code,
       'createdAt': createdAt.toString(),
       'latestJoinedAt': latestJoinedAt.toString(),
+      'status': status,
     };
   }
 
@@ -81,6 +87,7 @@ class Meeting extends Equatable {
         ),
       ),
       code: map['code'],
+      status: (int.tryParse(map['status'].toString()) ?? 0).getChatStatusEnum,
       createdAt: DateTime.parse(map['createdAt']).toLocal(),
       latestJoinedAt: DateTime.parse(
         map['latestJoinedAt'] ?? map['createdAt'],
@@ -100,6 +107,7 @@ class Meeting extends Equatable {
     return other.id == id &&
         other.title == title &&
         other.createdAt == createdAt &&
+        other.status == status &&
         other.latestJoinedAt == latestJoinedAt &&
         listEquals(other.participants, participants) &&
         listEquals(other.members, members) &&
@@ -112,6 +120,7 @@ class Meeting extends Equatable {
         title.hashCode ^
         participants.hashCode ^
         members.hashCode ^
+        status.hashCode ^
         code.hashCode ^
         createdAt.hashCode ^
         latestJoinedAt.hashCode;
@@ -167,4 +176,12 @@ extension MeetingX on Meeting {
 
     return indexOfHost != -1;
   }
+
+  bool get isGroup => participants.length > 2;
+
+  StatusSeenMessage get statusLastedMessage => StatusSeenMessage.seen;
+
+  StatusMessage get statusMessage => StatusMessage.none;
+
+  int get countUnreadMessage => 10;
 }

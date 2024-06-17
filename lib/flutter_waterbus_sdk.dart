@@ -185,6 +185,39 @@ class WaterbusSdk {
     return await _sdk.uploadAvatar(image: image, uploadUrl: uploadUrl);
   }
 
+  Future<List<User>> searchUsers(String keyword) async {
+    return await _sdk.searchUsers(keyword);
+  }
+
+  // Chat
+  Future<bool> addMember(int code, int userId) async {
+    return await _sdk.addMember(code: code, userId: userId);
+  }
+
+  Future<Meeting?> deleteMember(int code, int userId) async {
+    return await _sdk.deleteMember(code: code, userId: userId);
+  }
+
+  Future<Meeting?> acceptInvite(int code) async {
+    return await _sdk.acceptInvite(code: code);
+  }
+
+  Future<bool> deleteConversation(int conversationId) async {
+    return await _sdk.deleteConversation(conversationId);
+  }
+
+  Future<List<Meeting>> getConversations({
+    required int skip,
+    int limit = 10,
+    int status = 2,
+  }) async {
+    return await _sdk.getConversations(
+      status: status,
+      limit: limit,
+      skip: skip,
+    );
+  }
+
   // Auth
   Future<User?> createToken(AuthPayloadModel payload) async {
     return await _sdk.createToken(payload: payload);

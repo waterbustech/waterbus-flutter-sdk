@@ -20,7 +20,32 @@ abstract class WaterbusSdkInterface {
     required Uint8List image,
     required String uploadUrl,
   });
+  Future<List<User>> searchUsers(String keyword);
 
+  // Chat
+  Future<List<Meeting>> getConversations({
+    int status = 2,
+    int limit = 10,
+    required int skip,
+  });
+  Future<bool> deleteConversation(int conversationId);
+  Future<bool> addMember({required int code, required int userId});
+  Future<Meeting?> deleteMember({required int code, required int userId});
+  Future<Meeting?> acceptInvite({required int code});
+
+  // Messages
+  Future<List<MessageModel>> getMessageByRoom({
+    required int skip,
+    required int meetingId,
+    int limit = 10,
+  });
+
+  Future<MessageModel?> sendMessage({
+    required int meetingId,
+    required String data,
+  });
+  Future<bool> editMessage({required int meetingId, required String data});
+  Future<bool> deleteMessage({required int meetingId});
   // Meeting
   Future<Meeting?> createRoom({
     required Meeting meeting,

@@ -15,6 +15,7 @@ abstract class UserRepository {
     required String uploadUrl,
     required Uint8List image,
   });
+  Future<List<User>> searchUsers(String keyword);
 }
 
 @LazySingleton(as: UserRepository)
@@ -74,5 +75,12 @@ class UserRepositoryImpl extends UserRepository {
     final bool? isRegistered = await _remoteDataSource.checkUsername(username);
 
     return isRegistered ?? false;
+  }
+
+  @override
+  Future<List<User>> searchUsers(String keyword) async {
+    final List<User> users = await _remoteDataSource.searchUsers(keyword);
+
+    return users;
   }
 }
