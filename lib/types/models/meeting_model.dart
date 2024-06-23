@@ -1,14 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-
-import 'package:equatable/equatable.dart';
-
 import 'package:waterbus_sdk/types/enums/meeting_role.dart';
 import 'package:waterbus_sdk/types/models/chat_status_enum.dart';
 import 'package:waterbus_sdk/types/models/index.dart';
 
-class Meeting extends Equatable {
+class Meeting {
   final int id;
   final String title;
   final List<Participant> participants;
@@ -17,8 +14,9 @@ class Meeting extends Equatable {
   final DateTime? createdAt;
   final DateTime? latestJoinedAt;
   final ChatStatusEnum status;
+  MessageModel? latestMessage;
 
-  const Meeting({
+  Meeting({
     this.id = -1,
     required this.title,
     this.participants = const [],
@@ -27,6 +25,7 @@ class Meeting extends Equatable {
     this.createdAt,
     this.latestJoinedAt,
     this.status = ChatStatusEnum.join,
+    this.latestMessage,
   });
 
   Meeting copyWith({
@@ -38,6 +37,7 @@ class Meeting extends Equatable {
     DateTime? createdAt,
     DateTime? latestJoinedAt,
     ChatStatusEnum? status,
+    MessageModel? latestMessage,
   }) {
     return Meeting(
       id: id ?? this.id,
@@ -48,6 +48,7 @@ class Meeting extends Equatable {
       createdAt: createdAt ?? this.createdAt,
       latestJoinedAt: latestJoinedAt ?? this.latestJoinedAt,
       status: status ?? this.status,
+      latestMessage: latestMessage ?? this.latestMessage,
     );
   }
 
@@ -61,6 +62,7 @@ class Meeting extends Equatable {
       'createdAt': createdAt.toString(),
       'latestJoinedAt': latestJoinedAt.toString(),
       'status': status,
+      'latestMessage': latestMessage?.toMap(),
     };
   }
 
@@ -89,9 +91,12 @@ class Meeting extends Equatable {
       code: map['code'],
       status: (int.tryParse(map['status'].toString()) ?? 0).getChatStatusEnum,
       createdAt: DateTime.parse(map['createdAt']).toLocal(),
-      latestJoinedAt: DateTime.parse(
-        map['latestJoinedAt'] ?? map['createdAt'],
-      ).toLocal(),
+      latestJoinedAt:
+          DateTime.parse(map['latestJoinedAt'] ?? map['createdAt']).toLocal(),
+      latestMessage: map['latestMessage'] != null &&
+              map['latestMessage'] is Map<String, dynamic>
+          ? MessageModel.fromMap(map['latestMessage'])
+          : null,
     );
   }
 
@@ -109,9 +114,15 @@ class Meeting extends Equatable {
         other.createdAt == createdAt &&
         other.status == status &&
         other.latestJoinedAt == latestJoinedAt &&
+        other.latestMessage == latestMessage &&
         listEquals(other.participants, participants) &&
         listEquals(other.members, members) &&
         other.code == code;
+  }
+
+  @override
+  String toString() {
+    return 'MessageModel(id: $id, title: $title, createdAt: $createdAt, status: $status, latestJoinedAt: $latestJoinedAt, participants: $participants, members: $members, status: $status, code: $code, latestMessage: $latestMessage)';
   }
 
   @override
@@ -123,22 +134,9 @@ class Meeting extends Equatable {
         status.hashCode ^
         code.hashCode ^
         createdAt.hashCode ^
+        latestMessage.hashCode ^
         latestJoinedAt.hashCode;
   }
-
-  @override
-  List<Object?> get props => [
-        id,
-        participants,
-        members,
-        code,
-        createdAt,
-        title,
-        latestJoinedAt,
-      ];
-
-  @override
-  bool get stringify => true;
 }
 
 extension MeetingX on Meeting {
@@ -149,14 +147,14 @@ extension MeetingX on Meeting {
   String? get participantsOnlineTile {
     if (participants.isEmpty) return null;
 
-    final n = participants.length;
+    final int numberOfPaticipants = participants.length;
 
-    if (n == 1) {
+    if (numberOfPaticipants == 1) {
       return '${participants[0].user.fullName} is in the room';
-    } else if (n == 2) {
+    } else if (numberOfPaticipants == 2) {
       return '${participants[0].user.fullName} and ${participants[1].user.fullName} are in the room';
     } else {
-      final int otherParticipants = n - 2;
+      final int otherParticipants = numberOfPaticipants - 2;
       final String participantList = participants
           .sublist(0, 2)
           .map<String>((participant) => participant.user.fullName)

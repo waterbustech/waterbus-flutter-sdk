@@ -221,6 +221,37 @@ class WaterbusSdk {
     );
   }
 
+  // Messages
+  Future<List<MessageModel>> getMessageByRoom({
+    required int meetingId,
+    required int skip,
+    int limit = 10,
+  }) async {
+    return await _sdk.getMessageByRoom(
+      meetingId: meetingId,
+      limit: limit,
+      skip: skip,
+    );
+  }
+
+  Future<MessageModel?> sendMessage({
+    required int meetingId,
+    required String data,
+  }) async {
+    return await _sdk.sendMessage(meetingId: meetingId, data: data);
+  }
+
+  Future<bool> editMessage({
+    required int messageId,
+    required String data,
+  }) async {
+    return await _sdk.editMessage(messageId: messageId, data: data);
+  }
+
+  Future<bool> deleteMessage({required int messageId}) async {
+    return await _sdk.deleteMessage(messageId: messageId);
+  }
+
   // Auth
   Future<User?> createToken(AuthPayloadModel payload) async {
     return await _sdk.createToken(payload: payload);

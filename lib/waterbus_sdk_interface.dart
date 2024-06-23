@@ -44,8 +44,9 @@ abstract class WaterbusSdkInterface {
     required int meetingId,
     required String data,
   });
-  Future<bool> editMessage({required int meetingId, required String data});
-  Future<bool> deleteMessage({required int meetingId});
+  Future<bool> editMessage({required int messageId, required String data});
+  Future<bool> deleteMessage({required int messageId});
+
   // Meeting
   Future<Meeting?> createRoom({
     required Meeting meeting,

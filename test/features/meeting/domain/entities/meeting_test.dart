@@ -100,7 +100,7 @@ void main() {
 
     test('toMapCreate - should return a map for creating a Meeting', () {
       // Arrange
-      const Meeting meeting = Meeting(title: 'Sample Meeting');
+      final Meeting meeting = Meeting(title: 'Sample Meeting');
       const String password = 'sample_password';
 
       // Act
@@ -174,7 +174,7 @@ void main() {
       participants: [participant1, participant2, participant3],
     );
 
-    const meetingWithoutParticipants = Meeting(
+    final meetingWithoutParticipants = Meeting(
       title: "Meeting with Kai",
     );
 
@@ -194,7 +194,7 @@ void main() {
     });
 
     test('inviteLink - should return the invite link', () {
-      const meeting = Meeting(code: 123, title: '1');
+      final meeting = Meeting(code: 123, title: '1');
       expect(meeting.inviteLink, 'https:/waterbus.tech/meeting/123');
     });
 
@@ -327,48 +327,5 @@ void main() {
         expect(meeting.createdAt, isNull);
       });
     });
-  });
-
-  test('should have correct props', () {
-    // Arrange
-    final meeting1 = Meeting(
-      title: '1',
-      participants: [
-        Participant(
-          id: 1,
-          user: User(
-            id: 1,
-            fullName: 'Alice',
-            userName: 'alice',
-          ),
-        ),
-      ],
-    );
-    final meeting2 = Meeting(
-      title: '2',
-      participants: [
-        Participant(
-          id: 2,
-          user: User(
-            id: 1,
-            fullName: 'Bob',
-            userName: 'bob',
-          ),
-        ),
-      ],
-    );
-
-    // Act & Assert
-    expect(meeting1.props, [
-      meeting1.id,
-      meeting1.participants,
-      meeting1.members,
-      meeting1.code,
-      meeting1.createdAt,
-      meeting1.title,
-      meeting1.latestJoinedAt,
-    ]);
-
-    expect(meeting1.props, isNot(equals(meeting2.props)));
   });
 }

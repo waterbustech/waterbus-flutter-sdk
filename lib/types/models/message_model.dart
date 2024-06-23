@@ -1,27 +1,37 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
 import 'dart:convert';
+import 'package:waterbus_sdk/types/index.dart';
 
 class MessageModel {
   final int id;
-  final String data;
+  String data;
   final int meeting;
-  final int createdBy;
+  final User? createdBy;
   final int status;
+  final int type;
+  final DateTime createdAt;
+  final DateTime updatedAt;
   MessageModel({
     required this.id,
     required this.data,
     required this.meeting,
     required this.createdBy,
     required this.status,
+    required this.type,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   MessageModel copyWith({
     int? id,
     String? data,
     int? meeting,
-    int? createdBy,
+    User? createdBy,
     int? status,
+    int? type,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return MessageModel(
       id: id ?? this.id,
@@ -29,6 +39,9 @@ class MessageModel {
       meeting: meeting ?? this.meeting,
       createdBy: createdBy ?? this.createdBy,
       status: status ?? this.status,
+      type: type ?? this.type,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -39,16 +52,27 @@ class MessageModel {
       'meeting': meeting,
       'createdBy': createdBy,
       'status': status,
+      'type': type,
+      'createdAt': createdAt.toString(),
+      'updatedAt': updatedAt.toString(),
     };
   }
 
   factory MessageModel.fromMap(Map<String, dynamic> map) {
     return MessageModel(
-      id: map['_id'] as int,
-      data: map['data'] as String,
-      meeting: map['meeting'] as int,
-      createdBy: map['createdBy'] as int,
-      status: map['status'] as int,
+      id: map['id'] ?? 0,
+      data: map['data'] ?? "",
+      meeting: map['meeting']?['id'] ?? 0,
+      createdBy:
+          map['createdBy'] != null && map['createdBy'] is Map<String, dynamic>
+              ? User.fromMap(map['createdBy'])
+              : null,
+      status: map['status'] ?? 0,
+      type: map['type'] ?? 0,
+      createdAt:
+          DateTime.parse((map['createdAt'] ?? DateTime.now()).toString()),
+      updatedAt:
+          DateTime.parse((map['updatedAt'] ?? DateTime.now()).toString()),
     );
   }
 
@@ -59,7 +83,7 @@ class MessageModel {
 
   @override
   String toString() {
-    return 'MessageModel(id: $id, data: $data, meeting: $meeting, createdBy: $createdBy, status: $status)';
+    return 'MessageModel(id: $id, data: $data, meeting: $meeting, type: $type, createdAt: $createdAt, updatedAt: $updatedAt, createdBy: $createdBy, status: $status)';
   }
 
   @override
@@ -70,6 +94,9 @@ class MessageModel {
         other.data == data &&
         other.meeting == meeting &&
         other.createdBy == createdBy &&
+        other.type == type &&
+        other.updatedAt == updatedAt &&
+        other.createdAt == createdAt &&
         other.status == status;
   }
 
@@ -79,6 +106,9 @@ class MessageModel {
         data.hashCode ^
         meeting.hashCode ^
         createdBy.hashCode ^
+        type.hashCode ^
+        updatedAt.hashCode ^
+        createdAt.hashCode ^
         status.hashCode;
   }
 }

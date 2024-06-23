@@ -268,6 +268,47 @@ class SdkCore extends WaterbusSdkInterface {
     return await _chatRepository.deleteMember(code: code, userId: userId);
   }
 
+  // Messages
+  @override
+  Future<List<MessageModel>> getMessageByRoom({
+    required int meetingId,
+    required int skip,
+    int limit = 10,
+  }) async {
+    return await _messageRepository.getMessageByRoom(
+      meetingId: meetingId,
+      limit: limit,
+      skip: skip,
+    );
+  }
+
+  @override
+  Future<MessageModel?> sendMessage({
+    required int meetingId,
+    required String data,
+  }) async {
+    return await _messageRepository.sendMessage(
+      meetingId: meetingId,
+      data: data,
+    );
+  }
+
+  @override
+  Future<bool> editMessage({
+    required int messageId,
+    required String data,
+  }) async {
+    return await _messageRepository.editMessage(
+      messageId: messageId,
+      data: data,
+    );
+  }
+
+  @override
+  Future<bool> deleteMessage({required int messageId}) async {
+    return await _messageRepository.deleteMessage(messageId: messageId);
+  }
+
   // User
   @override
   Future<User?> getProfile() async {
@@ -365,44 +406,4 @@ class SdkCore extends WaterbusSdkInterface {
 
   @override
   CallState get callState => _rtcManager.callState();
-
-  @override
-  Future<bool> deleteMessage({required int meetingId}) async {
-    return await _messageRepository.deleteMessage(meetingId: meetingId);
-  }
-
-  @override
-  Future<bool> editMessage({
-    required int meetingId,
-    required String data,
-  }) async {
-    return await _messageRepository.editMessage(
-      meetingId: meetingId,
-      data: data,
-    );
-  }
-
-  @override
-  Future<List<MessageModel>> getMessageByRoom({
-    required int meetingId,
-    required int skip,
-    int limit = 10,
-  }) async {
-    return await _messageRepository.getMessageByRoom(
-      meetingId: meetingId,
-      limit: limit,
-      skip: skip,
-    );
-  }
-
-  @override
-  Future<MessageModel?> sendMessage({
-    required int meetingId,
-    required String data,
-  }) async {
-    return await _messageRepository.sendMessage(
-      meetingId: meetingId,
-      data: data,
-    );
-  }
 }
