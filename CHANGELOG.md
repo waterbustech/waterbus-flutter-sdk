@@ -1,3 +1,7 @@
+## 1.4.2
+
+* Style: change api_key to api-key
+
 ## 1.4.1
 
 * Fix: memory leaks on Android and iOS
