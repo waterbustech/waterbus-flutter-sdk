@@ -10,6 +10,7 @@ import 'package:waterbus_sdk/core/api/user/repositories/user_repository.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/socket_handler_interface.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/injection/injection_container.dart';
 import 'package:waterbus_sdk/native/picture-in-picture/index.dart';
 import 'package:waterbus_sdk/native/replaykit.dart';
 import 'package:waterbus_sdk/types/models/create_meeting_params.dart';
@@ -20,7 +21,6 @@ import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
 @Singleton(as: WaterbusSdkInterface)
 class SdkCore extends WaterbusSdkInterface {
   final SocketHandler _webSocket;
-  final WaterbusWebRTCManager _rtcManager;
   final ReplayKitChannel _replayKitChannel;
 
   final BaseRemoteData _baseRepository;
@@ -30,7 +30,6 @@ class SdkCore extends WaterbusSdkInterface {
   final WaterbusLogger _logger;
   SdkCore(
     this._webSocket,
-    this._rtcManager,
     this._replayKitChannel,
     this._baseRepository,
     this._authRepository,
@@ -39,15 +38,13 @@ class SdkCore extends WaterbusSdkInterface {
     this._logger,
   );
 
+  WaterbusWebRTCManager? _rtcManager;
+
   @override
   Future<void> initializeApp() async {
     await _baseRepository.initialize();
 
     _webSocket.establishConnection(forceConnection: true);
-
-    _rtcManager.notifyChanged.listen((event) {
-      WaterbusSdk.onEventChanged?.call(event);
-    });
   }
 
   // Meeting
@@ -140,7 +137,9 @@ class SdkCore extends WaterbusSdkInterface {
   @override
   Future<void> leaveRoom() async {
     try {
-      await _rtcManager.dispose();
+      await _rtcManager?.dispose();
+      _rtcManager = null;
+
       WakelockPlus.disable();
     } catch (error) {
       _logger.bug(error.toString());
@@ -149,42 +148,46 @@ class SdkCore extends WaterbusSdkInterface {
 
   @override
   Future<void> prepareMedia() async {
-    await _rtcManager.prepareMedia();
+    _initRtcManager();
+
+    await _rtcManager?.prepareMedia();
   }
 
   @override
   Future<void> changeCallSettings(CallSetting setting) async {
-    await _rtcManager.applyCallSettings(setting);
+    await _rtcManager?.applyCallSettings(setting);
   }
 
   @override
   Future<void> switchCamera() async {
-    await _rtcManager.switchCamera();
+    await _rtcManager?.switchCamera();
   }
 
   @override
   Future<void> toggleVideo() async {
-    await _rtcManager.toggleVideo();
+    await _rtcManager?.toggleVideo();
   }
 
   @override
   Future<void> toggleAudio() async {
-    await _rtcManager.toggleAudio();
+    await _rtcManager?.toggleAudio();
   }
 
   @override
   Future<void> toggleSpeakerPhone() async {
-    await _rtcManager.toggleSpeakerPhone();
+    await _rtcManager?.toggleSpeakerPhone();
   }
 
   @override
   Future<void> startScreenSharing({DesktopCapturerSource? source}) async {
+    if (_rtcManager == null) return;
+
     if (WebRTC.platformIsIOS) {
       ReplayKitHelper().openReplayKit();
       _replayKitChannel.startReplayKit();
-      _replayKitChannel.listenEvents(_rtcManager);
+      _replayKitChannel.listenEvents(_rtcManager!);
     } else {
-      await _rtcManager.startScreenSharing(source: source);
+      await _rtcManager?.startScreenSharing(source: source);
     }
   }
 
@@ -194,7 +197,7 @@ class SdkCore extends WaterbusSdkInterface {
       if (WebRTC.platformIsIOS) {
         ReplayKitHelper().openReplayKit();
       } else {
-        await _rtcManager.stopScreenSharing();
+        await _rtcManager?.stopScreenSharing();
       }
     } catch (error) {
       _logger.bug(error.toString());
@@ -206,7 +209,7 @@ class SdkCore extends WaterbusSdkInterface {
     required Uint8List backgroundImage,
     double thresholdConfidence = 0.7,
   }) async {
-    await _rtcManager.enableVirtualBackground(
+    await _rtcManager?.enableVirtualBackground(
       backgroundImage: backgroundImage,
       thresholdConfidence: thresholdConfidence,
     );
@@ -214,7 +217,7 @@ class SdkCore extends WaterbusSdkInterface {
 
   @override
   Future<void> disableVirtualBackground() async {
-    await _rtcManager.disableVirtualBackground();
+    await _rtcManager?.disableVirtualBackground();
   }
 
   @override
@@ -300,7 +303,8 @@ class SdkCore extends WaterbusSdkInterface {
     try {
       WakelockPlus.enable();
 
-      await _rtcManager.joinRoom(
+      _initRtcManager();
+      await _rtcManager?.joinRoom(
         roomId: roomId,
         participantId: participantId,
       );
@@ -311,12 +315,22 @@ class SdkCore extends WaterbusSdkInterface {
 
   Future<void> _subscribe(List<String> targetIds) async {
     try {
-      _rtcManager.subscribe(targetIds);
+      _rtcManager?.subscribe(targetIds);
     } catch (error) {
       _logger.bug(error.toString());
     }
   }
 
+  void _initRtcManager() {
+    if (_rtcManager != null) return;
+
+    _rtcManager = getIt.get<WaterbusWebRTCManager>();
+
+    _rtcManager?.notifyChanged.listen((event) {
+      WaterbusSdk.onEventChanged?.call(event);
+    });
+  }
+
   @override
-  CallState get callState => _rtcManager.callState();
+  CallState? get callState => _rtcManager?.callState();
 }

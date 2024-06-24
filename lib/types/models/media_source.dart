@@ -57,8 +57,10 @@ class MediaSource {
   Future<void> dispose() async {
     await renderer?.dispose();
     await viewController?.dispose();
+    await stream?.dispose();
     renderer = null;
     viewController = null;
+    stream = null;
   }
 
   int? get textureId => renderer?.textureId;

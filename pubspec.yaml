@@ -39,7 +39,7 @@ dependencies:
   sdp_transform: ^0.3.2
   h264_profile_level_id: ^0.2.1
   dart_webrtc_plus: ^1.4.4+2
-  flutter_webrtc_plus: ^0.10.7+4
+  flutter_webrtc_plus: ^0.10.7+5
   # flutter_webrtc_plus:
   #   path: /Users/lambiengcode/Documents/webrtc/flutter-webrtc
     
