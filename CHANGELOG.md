@@ -1,3 +1,7 @@
+## 1.4.1
+
+* Fix: memory leaks on Android and iOS
+
 ## 1.4.0
 
 * Vendor: Upgrade WebRTC SDK to M125.6422
