@@ -62,14 +62,15 @@ _i1.GetIt $initGetIt(
       () => _i11.WebRTCFrameCrypto(gh<_i4.WaterbusLogger>()));
   gh.singleton<_i12.BaseRemoteData>(
       () => _i12.BaseRemoteData(gh<_i10.AuthLocalDataSource>()));
-  gh.factory<_i13.WaterbusWebRTCManager>(() => _i14.WaterbusWebRTCManagerIpml(
-        gh<_i11.WebRTCFrameCrypto>(),
-        gh<_i8.SocketEmiter>(),
-        gh<_i5.ReplayKitChannel>(),
-        gh<_i3.NativeService>(),
-        gh<_i7.WebRTCVideoStats>(),
-        gh<_i6.WebRTCAudioStats>(),
-      ));
+  gh.lazySingleton<_i13.WaterbusWebRTCManager>(
+      () => _i14.WaterbusWebRTCManagerIpml(
+            gh<_i11.WebRTCFrameCrypto>(),
+            gh<_i8.SocketEmiter>(),
+            gh<_i5.ReplayKitChannel>(),
+            gh<_i3.NativeService>(),
+            gh<_i7.WebRTCVideoStats>(),
+            gh<_i6.WebRTCAudioStats>(),
+          ));
   gh.lazySingleton<_i15.UserRemoteDataSource>(
       () => _i15.UserRemoteDataSourceImpl(gh<_i12.BaseRemoteData>()));
   gh.lazySingleton<_i16.MeetingRemoteDataSource>(
@@ -103,6 +104,7 @@ _i1.GetIt $initGetIt(
       ));
   gh.singleton<_i25.WaterbusSdkInterface>(() => _i26.SdkCore(
         gh<_i23.SocketHandler>(),
+        gh<_i13.WaterbusWebRTCManager>(),
         gh<_i5.ReplayKitChannel>(),
         gh<_i12.BaseRemoteData>(),
         gh<_i20.AuthRepository>(),

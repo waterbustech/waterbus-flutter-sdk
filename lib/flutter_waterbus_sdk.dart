@@ -204,7 +204,7 @@ class WaterbusSdk {
     return await _sdk.refreshToken();
   }
 
-  CallState? get callState => _sdk.callState;
+  CallState get callState => _sdk.callState;
 
   // Private
   WaterbusSdkInterface get _sdk => getIt<WaterbusSdkInterface>();

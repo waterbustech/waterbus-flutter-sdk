@@ -19,7 +19,7 @@ import 'package:waterbus_sdk/utils/extensions/peer_extensions.dart';
 import 'package:waterbus_sdk/utils/extensions/sdp_extensions.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
-@Injectable(as: WaterbusWebRTCManager)
+@LazySingleton(as: WaterbusWebRTCManager)
 class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   final WebRTCFrameCrypto _frameCryptor;
   final SocketEmiter _socketEmiter;
@@ -549,7 +549,6 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
 
       _roomId = null;
       _participantId = null;
-
       _queuePublisherCandidates.clear();
       _queueRemoteSubCandidates.clear();
       _flagPublisherCanAddCandidate = false;

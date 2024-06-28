@@ -1,3 +1,7 @@
+## 1.4.3
+
+* Fix: join room not success
+
 ## 1.4.2
 
 * Style: change api_key to api-key
