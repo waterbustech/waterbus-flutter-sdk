@@ -9,6 +9,7 @@ import 'package:waterbus_sdk/core/api/base/dio_configuration.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/socket_handler_interface.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 @Singleton(as: SocketHandler)
@@ -29,6 +30,7 @@ class SocketHandlerImpl extends SocketHandler {
   @override
   void establishConnection({
     bool forceConnection = false,
+    int numberOfRetries = 3,
     String? forceAccessToken,
   }) {
     if (_authLocal.accessToken.isEmpty ||
@@ -54,16 +56,19 @@ class SocketHandlerImpl extends SocketHandler {
     _socket?.connect();
 
     _socket?.onError((data) async {
-      if (_authLocal.accessToken.isEmpty) return;
+      if (_authLocal.accessToken.isEmpty || numberOfRetries == 0) return;
 
       final (String newAccessToken, _) = await _dioConfig.onRefreshToken(
         oldAccessToken: mAccessToken,
       );
 
-      establishConnection(
-        forceConnection: true,
-        forceAccessToken: newAccessToken,
-      );
+      Future.delayed(1.seconds, () {
+        establishConnection(
+          forceConnection: true,
+          forceAccessToken: newAccessToken,
+          numberOfRetries: numberOfRetries - 1,
+        );
+      });
     });
 
     _socket?.onConnect((_) async {

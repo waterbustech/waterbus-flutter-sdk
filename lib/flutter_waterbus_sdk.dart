@@ -18,6 +18,7 @@ export 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 class WaterbusSdk {
   static String apiUrl = '';
   static String wsUrl = '';
+  static String apiKey = '';
   static Function(CallbackPayload)? onEventChanged;
 
   set onEventChangedRegister(Function(CallbackPayload) onEventChanged) {
@@ -27,9 +28,11 @@ class WaterbusSdk {
   Future<void> initializeApp({
     required String wsUrl,
     required String apiUrl,
+    String apiKey = 'waterbus@2024',
   }) async {
     WaterbusSdk.wsUrl = wsUrl;
     WaterbusSdk.apiUrl = apiUrl;
+    WaterbusSdk.apiKey = apiKey;
 
     // Init dependency injection if needed
     if (!getIt.isRegistered<WaterbusWebRTCManager>()) {

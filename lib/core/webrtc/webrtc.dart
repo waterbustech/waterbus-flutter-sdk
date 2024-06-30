@@ -545,10 +545,10 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
 
       if (_roomId != null) {
         _socketEmiter.leaveRoom(_roomId!);
-        _roomId = null;
-        _participantId = null;
       }
 
+      _roomId = null;
+      _participantId = null;
       _queuePublisherCandidates.clear();
       _queueRemoteSubCandidates.clear();
       _flagPublisherCanAddCandidate = false;

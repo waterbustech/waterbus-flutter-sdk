@@ -100,7 +100,7 @@ class DioConfiguration {
       return (_authLocal.accessToken, _authLocal.refreshToken);
     }
 
-    final completer = Completer<(String, String)>();
+    final Completer<(String, String)> completer = Completer<(String, String)>();
     _refreshTokenCompleters.add(completer);
 
     if (!_isRefreshing) {
