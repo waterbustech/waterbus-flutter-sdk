@@ -1,3 +1,7 @@
+## 1.4.4
+
+* Chore: upgrade webrtc sdk
+
 ## 1.4.3
 
 * Fix: join room not success

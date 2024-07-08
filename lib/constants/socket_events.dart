@@ -21,6 +21,8 @@ class SocketEvent {
   static const String setAudioEnabledSSC = "SET_AUDIO_ENABLED_SSC";
   static const String setScreenSharingSSC = "SET_SCREEN_SHARING_SSC";
   static const String setScreenSharingCSS = "SET_SCREEN_SHARING_CSS";
+  static const String subtitleSSC = 'SUBTITLE_SSC';
+  static const String setSubscribeSubtitleCSS = 'SET_SUBSCRIBE_SUBTITLE_CSS';
 
   static const String publisherRenegotiationCSS = 'PUBLISHER_RENEGOTIATION_CSS';
   static const String publisherRenegotiationSSC = 'PUBLISHER_RENEGOTIATION_SSC';
