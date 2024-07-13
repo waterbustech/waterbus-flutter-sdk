@@ -1,3 +1,7 @@
+## 1.4.6
+
+* Feat: expose callback sender stats
+
 ## 1.4.5
 
 * [Android] Improve performance when convert Bitmap to VideoFrame

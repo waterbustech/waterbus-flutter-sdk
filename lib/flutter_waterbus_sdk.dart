@@ -20,9 +20,14 @@ class WaterbusSdk {
   static String wsUrl = '';
   static String apiKey = '';
   static Function(CallbackPayload)? onEventChanged;
+  static Function(VideoSenderStats)? onStatsChanged;
 
   set onEventChangedRegister(Function(CallbackPayload) onEventChanged) {
     WaterbusSdk.onEventChanged = onEventChanged;
+  }
+
+  setStatsChanged(Function(VideoSenderStats)? onStatsChanged) {
+    WaterbusSdk.onStatsChanged = onStatsChanged;
   }
 
   Future<void> initializeApp({
