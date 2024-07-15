@@ -12,3 +12,4 @@ export 'avatar_model.dart';
 export 'beauty_filters.dart';
 export 'auth_payload_model.dart';
 export 'media_source.dart';
+export 'subtitle.dart';

@@ -242,6 +242,17 @@ class SocketHandlerImpl extends SocketHandler {
           sdp: sdp,
         );
       });
+
+      _socket?.on(SocketEvent.subtitleSSC, (data) {
+        if (data == null) return;
+
+        final participantId = data['participantId'];
+        final content = data['transcription'];
+
+        WaterbusSdk.onSubtitle?.call(
+          Subtitle(participant: participantId, content: content),
+        );
+      });
     });
   }
 

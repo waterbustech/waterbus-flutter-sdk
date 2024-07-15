@@ -104,6 +104,7 @@ _i1.GetIt $initGetIt(
       ));
   gh.singleton<_i25.WaterbusSdkInterface>(() => _i26.SdkCore(
         gh<_i23.SocketHandler>(),
+        gh<_i8.SocketEmiter>(),
         gh<_i13.WaterbusWebRTCManager>(),
         gh<_i5.ReplayKitChannel>(),
         gh<_i12.BaseRemoteData>(),
