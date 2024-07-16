@@ -1,3 +1,15 @@
+## 1.4.6
+
+* Feat: expose callback sender stats
+
+## 1.4.5
+
+* [Android] Improve performance when convert Bitmap to VideoFrame
+
+## 1.4.4
+
+* Chore: upgrade webrtc sdk
+
 ## 1.4.3
 
 * Fix: join room not success

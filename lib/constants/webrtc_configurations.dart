@@ -3,8 +3,6 @@ class WebRTCConfigurations {
     'iceServers': [
       {
         "urls": "stun:turn.waterbus.tech:3478",
-        "username": "waterbus",
-        "credential": "waterbus",
       },
       {
         "urls": "turn:turn.waterbus.tech:3478?transport=udp",
@@ -12,9 +10,7 @@ class WebRTCConfigurations {
         "credential": "waterbus",
       }
     ],
-    'iceTransportPolicy': 'all',
     'sdpSemantics': 'unified-plan',
-    'encodedInsertableStreams': true,
   };
 
   static const Map<String, dynamic> offerPublisherSdpConstraints = {

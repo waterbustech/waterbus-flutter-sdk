@@ -184,6 +184,8 @@ class WebRTCVideoStats {
 
           // Monitor latency & jitter
           WaterbusLogger().log(vs.toString());
+
+          WaterbusSdk.onStatsChanged?.call(vs);
         }
         final c = stats.firstWhereOrNull((element) => element.type == 'codec');
         if (c != null) {
