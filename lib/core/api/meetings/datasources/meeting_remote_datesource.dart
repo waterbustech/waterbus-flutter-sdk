@@ -137,10 +137,6 @@ class MeetingRemoteDataSourceImpl extends MeetingRemoteDataSource {
       meeting.toMapCreate(password),
     );
 
-    if (response.statusCode == StatusCode.ok) {
-      return true;
-    }
-
-    return false;
+    return response.statusCode == StatusCode.ok;
   }
 }

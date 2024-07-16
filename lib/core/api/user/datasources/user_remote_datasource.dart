@@ -87,11 +87,7 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
       user.toMap(),
     );
 
-    if (response.statusCode == StatusCode.ok) {
-      return true;
-    }
-
-    return false;
+    return response.statusCode == StatusCode.ok;
   }
 
   @override
@@ -101,11 +97,7 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
       {},
     );
 
-    if (response.statusCode == StatusCode.ok) {
-      return true;
-    }
-
-    return false;
+    return response.statusCode == StatusCode.ok;
   }
 
   @override

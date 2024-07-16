@@ -50,11 +50,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
       "${ApiEndpoints.chatsConversations}/$meetingId",
     );
 
-    if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
-      return true;
-    }
-
-    return false;
+    return [StatusCode.ok, StatusCode.created].contains(response.statusCode);
   }
 
   @override
@@ -77,11 +73,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
       body: {"userId": userId},
     );
 
-    if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
-      return true;
-    }
-
-    return false;
+    return [StatusCode.ok, StatusCode.created].contains(response.statusCode);
   }
 
   @override

@@ -79,11 +79,7 @@ class MessageRemoteDataSourceImpl extends MessageRemoteDataSource {
       {"data": data},
     );
 
-    if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
-      return true;
-    }
-
-    return false;
+    return [StatusCode.ok, StatusCode.created].contains(response.statusCode);
   }
 
   @override
@@ -92,10 +88,6 @@ class MessageRemoteDataSourceImpl extends MessageRemoteDataSource {
       "${ApiEndpoints.chats}/$messageId",
     );
 
-    if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
-      return true;
-    }
-
-    return false;
+    return [StatusCode.ok, StatusCode.created].contains(response.statusCode);
   }
 }

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:waterbus_sdk/types/enums/meeting_role.dart';
+
 import 'package:waterbus_sdk/types/models/chat_status_enum.dart';
 import 'package:waterbus_sdk/types/models/index.dart';
 
@@ -137,9 +137,7 @@ class Meeting {
         latestMessage.hashCode ^
         latestJoinedAt.hashCode;
   }
-}
 
-extension MeetingX on Meeting {
   bool get isNoOneElse => participants.length < 2;
 
   String get inviteLink => 'https:/waterbus.tech/meeting/$code';
@@ -167,15 +165,7 @@ extension MeetingX on Meeting {
     return latestJoinedAt ?? createdAt ?? DateTime.now();
   }
 
-  bool get isHost {
-    final int indexOfHost = members.indexWhere(
-      (member) => member.role == MeetingRole.host && member.user.id == 1,
-    );
-
-    return indexOfHost != -1;
-  }
-
-  bool get isGroup => participants.length > 2;
+  bool get isGroup => members.length > 2;
 
   StatusSeenMessage get statusLastedMessage => StatusSeenMessage.seen;
 
