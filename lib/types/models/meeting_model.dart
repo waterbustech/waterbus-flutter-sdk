@@ -61,7 +61,7 @@ class Meeting {
       'code': code,
       'createdAt': createdAt.toString(),
       'latestJoinedAt': latestJoinedAt.toString(),
-      'status': status,
+      'status': status.status,
       'latestMessage': latestMessage?.toMap(),
     };
   }

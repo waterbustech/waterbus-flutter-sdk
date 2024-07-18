@@ -62,7 +62,10 @@ class MessageModel {
     return MessageModel(
       id: map['id'] ?? 0,
       data: map['data'] ?? "",
-      meeting: map['meeting']?['id'] ?? 0,
+      meeting: (map['meeting'] is Map<String, dynamic>
+              ? map['meeting']['id']
+              : map['meeting']) ??
+          0,
       createdBy:
           map['createdBy'] != null && map['createdBy'] is Map<String, dynamic>
               ? User.fromMap(map['createdBy'])
