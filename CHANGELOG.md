@@ -1,3 +1,7 @@
+## 1.4.7
+
+* Feat: subtitle
+
 ## 1.4.6
 
 * Feat: expose callback sender stats
