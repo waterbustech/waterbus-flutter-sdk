@@ -19,6 +19,4 @@ class ApiEndpoints {
   // Chats
   static const String chats = 'chats';
   static const String chatsConversations = 'chats/conversations';
-
-  // Messages
 }

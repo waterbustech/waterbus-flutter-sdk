@@ -23,10 +23,6 @@ abstract class MeetingRemoteDataSource {
     required Meeting meeting,
   });
   Future<Meeting?> getInfoMeeting(int code);
-  Future<Meeting?> leaveMeeting({
-    required int code,
-    required int participantId,
-  });
 }
 
 @LazySingleton(as: MeetingRemoteDataSource)
@@ -102,26 +98,6 @@ class MeetingRemoteDataSourceImpl extends MeetingRemoteDataSource {
       return Meeting.fromMap(rawData).copyWith(
         latestJoinedAt: DateTime.now(),
       );
-    }
-
-    return null;
-  }
-
-  @override
-  Future<Meeting?> leaveMeeting({
-    required int code,
-    required int participantId,
-  }) async {
-    final Response response = await _remoteData.deleteRoute(
-      '${ApiEndpoints.meetings}/$code',
-      body: {
-        'participantId': participantId,
-      },
-    );
-
-    if (response.statusCode == StatusCode.ok) {
-      final Map<String, dynamic> rawData = response.data;
-      return Meeting.fromMap(rawData);
     }
 
     return null;

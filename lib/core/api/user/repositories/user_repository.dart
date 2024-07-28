@@ -15,7 +15,11 @@ abstract class UserRepository {
     required String uploadUrl,
     required Uint8List image,
   });
-  Future<List<User>> searchUsers(String keyword);
+  Future<List<User>> searchUsers({
+    required String keyword,
+    required int skip,
+    required int limit,
+  });
 }
 
 @LazySingleton(as: UserRepository)
@@ -78,8 +82,16 @@ class UserRepositoryImpl extends UserRepository {
   }
 
   @override
-  Future<List<User>> searchUsers(String keyword) async {
-    final List<User> users = await _remoteDataSource.searchUsers(keyword);
+  Future<List<User>> searchUsers({
+    required String keyword,
+    required int skip,
+    required int limit,
+  }) async {
+    final List<User> users = await _remoteDataSource.searchUsers(
+      keyword: keyword,
+      limit: limit,
+      skip: skip,
+    );
 
     return users;
   }

@@ -256,8 +256,13 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<bool> addMember({required int code, required int userId}) async {
+  Future<Meeting?> addMember({required int code, required int userId}) async {
     return await _chatRepository.addMember(code: code, userId: userId);
+  }
+
+  @override
+  Future<Meeting?> leaveConversation({required int code}) async {
+    return await _chatRepository.leaveConversation(code: code);
   }
 
   @override
@@ -351,8 +356,16 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<List<User>> searchUsers(String keyword) async {
-    return await _userRepository.searchUsers(keyword);
+  Future<List<User>> searchUsers({
+    required String keyword,
+    required int skip,
+    required int limit,
+  }) async {
+    return await _userRepository.searchUsers(
+      keyword: keyword,
+      skip: skip,
+      limit: limit,
+    );
   }
 
   // Auth

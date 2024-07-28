@@ -10,7 +10,8 @@ abstract class ChatRepository {
     required int skip,
   });
   Future<bool> deleteConversation(int meetingId);
-  Future<bool> addMember({required int code, required int userId});
+  Future<Meeting?> leaveConversation({required int code});
+  Future<Meeting?> addMember({required int code, required int userId});
   Future<Meeting?> deleteMember({required int code, required int userId});
   Future<Meeting?> acceptInvite({required int code});
 }
@@ -49,22 +50,31 @@ class ChatRepositoryImpl extends ChatRepository {
   }
 
   @override
-  Future<Meeting?> acceptInvite({required int code}) async {
-    final Meeting? isSucceed = await _remoteDataSource.acceptInvite(
+  Future<Meeting?> leaveConversation({required int code}) async {
+    final Meeting? meeting = await _remoteDataSource.leaveConversation(
       code: code,
     );
 
-    return isSucceed;
+    return meeting;
   }
 
   @override
-  Future<bool> addMember({required int code, required int userId}) async {
-    final bool isSucceed = await _remoteDataSource.addMember(
+  Future<Meeting?> acceptInvite({required int code}) async {
+    final Meeting? meeting = await _remoteDataSource.acceptInvite(
+      code: code,
+    );
+
+    return meeting;
+  }
+
+  @override
+  Future<Meeting?> addMember({required int code, required int userId}) async {
+    final Meeting? member = await _remoteDataSource.addMember(
       code: code,
       userId: userId,
     );
 
-    return isSucceed;
+    return member;
   }
 
   @override

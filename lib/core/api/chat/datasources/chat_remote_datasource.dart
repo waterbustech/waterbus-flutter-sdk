@@ -13,7 +13,8 @@ abstract class ChatRemoteDataSource {
     required int status,
   });
   Future<bool> deleteConversation({required int meetingId});
-  Future<bool> addMember({required int code, required int userId});
+  Future<Meeting?> leaveConversation({required int code});
+  Future<Meeting?> addMember({required int code, required int userId});
   Future<Meeting?> deleteMember({required int code, required int userId});
   Future<Meeting?> acceptInvite({required int code});
 }
@@ -33,7 +34,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
   }) async {
     final Response response = await _remoteData.getRoute(
       "${ApiEndpoints.meetingConversations}/$status",
-      query: "limit=$limit&status=$status",
+      query: "limit=$limit&skip=$skip",
     );
 
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
@@ -54,6 +55,20 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
   }
 
   @override
+  Future<Meeting?> leaveConversation({required int code}) async {
+    final Response response = await _remoteData.deleteRoute(
+      '${ApiEndpoints.meetings}/$code',
+    );
+
+    if (response.statusCode == StatusCode.ok) {
+      final Map<String, dynamic> rawData = response.data;
+      return Meeting.fromMap(rawData);
+    }
+
+    return null;
+  }
+
+  @override
   Future<Meeting?> acceptInvite({required int code}) async {
     final Response response = await _remoteData.postRoute(
       '${ApiEndpoints.acceptInvite}/$code',
@@ -67,13 +82,17 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
   }
 
   @override
-  Future<bool> addMember({required int code, required int userId}) async {
+  Future<Meeting?> addMember({required int code, required int userId}) async {
     final Response response = await _remoteData.postRoute(
       '${ApiEndpoints.meetingMembers}/$code',
       body: {"userId": userId},
     );
 
-    return [StatusCode.ok, StatusCode.created].contains(response.statusCode);
+    if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
+      return Meeting.fromMap(response.data);
+    }
+
+    return null;
   }
 
   @override

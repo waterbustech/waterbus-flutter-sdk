@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
+import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/types/models/chat_status_enum.dart';
-import 'package:waterbus_sdk/types/models/index.dart';
 
 class Meeting {
   final int id;
@@ -165,11 +165,18 @@ class Meeting {
     return latestJoinedAt ?? createdAt ?? DateTime.now();
   }
 
-  bool get isGroup => members.length > 2;
+  bool get isGroup => memberJoined.length > 2;
 
   StatusSeenMessage get statusLastedMessage => StatusSeenMessage.seen;
+
+  List<Member> get memberJoined => members
+      .where((member) => member.status == MemberStatusEnum.joined)
+      .toList();
 
   StatusMessage get statusMessage => StatusMessage.none;
 
   int get countUnreadMessage => 10;
+
+  DateTime get updatedAt =>
+      (latestMessage?.updatedAt ?? createdAt ?? DateTime.now()).toLocal();
 }

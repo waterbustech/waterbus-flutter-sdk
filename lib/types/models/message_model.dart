@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
 import 'dart:convert';
+
 import 'package:waterbus_sdk/types/index.dart';
 
 class MessageModel {
@@ -72,10 +73,10 @@ class MessageModel {
               : null,
       status: map['status'] ?? 0,
       type: map['type'] ?? 0,
-      createdAt:
-          DateTime.parse((map['createdAt'] ?? DateTime.now()).toString()),
-      updatedAt:
-          DateTime.parse((map['updatedAt'] ?? DateTime.now()).toString()),
+      createdAt: DateTime.parse((map['createdAt'] ?? DateTime.now()).toString())
+          .toLocal(),
+      updatedAt: DateTime.parse((map['updatedAt'] ?? DateTime.now()).toString())
+          .toLocal(),
     );
   }
 

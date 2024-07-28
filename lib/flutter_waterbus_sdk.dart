@@ -196,12 +196,16 @@ class WaterbusSdk {
     return await _sdk.uploadAvatar(image: image, uploadUrl: uploadUrl);
   }
 
-  Future<List<User>> searchUsers(String keyword) async {
-    return await _sdk.searchUsers(keyword);
+  Future<List<User>> searchUsers({
+    required String keyword,
+    required int skip,
+    int limit = 10,
+  }) async {
+    return await _sdk.searchUsers(keyword: keyword, skip: skip, limit: limit);
   }
 
   // Chat
-  Future<bool> addMember(int code, int userId) async {
+  Future<Meeting?> addMember(int code, int userId) async {
     return await _sdk.addMember(code: code, userId: userId);
   }
 
@@ -211,6 +215,10 @@ class WaterbusSdk {
 
   Future<Meeting?> acceptInvite(int code) async {
     return await _sdk.acceptInvite(code: code);
+  }
+
+  Future<Meeting?> leaveConversation(int code) async {
+    return await _sdk.leaveConversation(code: code);
   }
 
   Future<bool> deleteConversation(int conversationId) async {

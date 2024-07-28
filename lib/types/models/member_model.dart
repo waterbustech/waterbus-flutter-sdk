@@ -11,7 +11,7 @@ import 'package:waterbus_sdk/types/models/user_model.dart';
 class Member extends Equatable {
   final int id;
   final MeetingRole role;
-  final StatusEnum status;
+  final MemberStatusEnum status;
   final User user;
   final bool isMe;
   const Member({
@@ -19,7 +19,7 @@ class Member extends Equatable {
     required this.role,
     required this.user,
     this.isMe = false,
-    this.status = StatusEnum.joined,
+    this.status = MemberStatusEnum.joined,
   });
 
   Member copyWith({
@@ -27,7 +27,7 @@ class Member extends Equatable {
     MeetingRole? role,
     User? user,
     bool? isMe,
-    StatusEnum? status,
+    MemberStatusEnum? status,
   }) {
     return Member(
       id: id ?? this.id,
@@ -54,7 +54,9 @@ class Member extends Equatable {
       role: MeetingRoleX.fromValue(map['role'] ?? MeetingRole.attendee.value),
       user: User.fromMap(map['user'] as Map<String, dynamic>),
       isMe: map['isMe'] ?? false,
-      status: StatusX.fromValue(map['status'] ?? StatusEnum.inviting.value),
+      status: MemberStatusEnum.fromValue(
+        map['status'] ?? MemberStatusEnum.inviting.value,
+      ),
     );
   }
 
@@ -64,7 +66,8 @@ class Member extends Equatable {
       Member.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() => 'Participant(id: $id, role: $role, user: $user)';
+  String toString() =>
+      'Participant(id: $id, role: $role, user: $user, status: $status)';
 
   @override
   bool operator ==(covariant Member other) {
@@ -87,12 +90,6 @@ class Member extends Equatable {
 
   @override
   List<Object> get props {
-    return [
-      id,
-      role,
-      status,
-      user,
-      isMe,
-    ];
+    return [id, role, status, user, isMe];
   }
 }

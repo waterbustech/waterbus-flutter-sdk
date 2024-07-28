@@ -17,7 +17,11 @@ abstract class UserRemoteDataSource {
   Future<bool> updateUserProfile(User user);
   Future<bool> updateUsername(String username);
   Future<bool?> checkUsername(String username);
-  Future<List<User>> searchUsers(String keyword);
+  Future<List<User>> searchUsers({
+    required String keyword,
+    required int skip,
+    required int limit,
+  });
   Future<String?> getPresignedUrl();
   Future<String?> uploadImageToS3({
     required String uploadUrl,
@@ -114,10 +118,14 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
   }
 
   @override
-  Future<List<User>> searchUsers(String keyword) async {
+  Future<List<User>> searchUsers({
+    required String keyword,
+    required int skip,
+    required int limit,
+  }) async {
     final Response response = await _remoteData.getRoute(
       ApiEndpoints.searchUsers,
-      query: "q=$keyword&limit=10&skip=0",
+      query: "q=$keyword&limit=$limit&skip=$skip",
     );
 
     if (response.statusCode == StatusCode.ok) {

@@ -9,15 +9,26 @@ void main() {
       const invisibleValue = 1;
       const joinedValue = 2;
 
-      expect(StatusX.fromValue(inviting), equals(StatusEnum.inviting));
-      expect(StatusX.fromValue(invisibleValue), equals(StatusEnum.invisible));
-      expect(StatusX.fromValue(joinedValue), equals(StatusEnum.joined));
+      expect(
+        MemberStatusEnum.fromValue(inviting),
+        equals(MemberStatusEnum.inviting),
+      );
+      expect(
+        MemberStatusEnum.fromValue(invisibleValue),
+        equals(
+          MemberStatusEnum.invisible,
+        ),
+      );
+      expect(
+        MemberStatusEnum.fromValue(joinedValue),
+        equals(MemberStatusEnum.joined),
+      );
     });
 
     test('StatusEnum.fromValue throws exception for unknown value', () {
       const unknownValue = 3;
 
-      expect(() => StatusX.fromValue(unknownValue), throwsException);
+      expect(() => MemberStatusEnum.fromValue(unknownValue), throwsException);
     });
   });
 }
