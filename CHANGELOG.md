@@ -1,3 +1,7 @@
+## 1.4.8
+
+* Feat: support flutter wasm
+
 ## 1.4.7
 
 * Feat: subtitle

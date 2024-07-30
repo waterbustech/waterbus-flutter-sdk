@@ -156,6 +156,16 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
 
     if (_mParticipant?.peerConnection == null) return;
 
+    if (WebRTC.platformIsMobile) {
+      if (WebRTC.platformIsIOS) {
+        await Helper.setAppleAudioIOMode(
+          AppleAudioIOMode.localAndRemote,
+          preferSpeakerOutput: true,
+        );
+      }
+      await toggleSpeakerPhone(forceValue: true);
+    }
+
     _roomId = roomId;
     _participantId = participantId.toString();
 
@@ -473,7 +483,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     if (_mParticipant == null) return;
 
     if (WebRTC.platformIsMobile) {
-      Helper.setSpeakerphoneOn(
+      await Helper.setSpeakerphoneOn(
         forceValue ?? !_mParticipant!.isSpeakerPhoneEnabled,
       );
     }
@@ -646,10 +656,6 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       if (stream.getTracks().isEmpty) return null;
 
       if (onlyStream) return stream;
-
-      if (WebRTC.platformIsMobile) {
-        await toggleSpeakerPhone(forceValue: true);
-      }
 
       if (_callSetting.isAudioMuted) {
         toggleAudio(forceValue: false);
