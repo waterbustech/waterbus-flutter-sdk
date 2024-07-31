@@ -1,3 +1,7 @@
+## 1.4.9
+
+* Chore: remove dependency_overrides
+
 ## 1.4.8
 
 * Feat: support flutter wasm
