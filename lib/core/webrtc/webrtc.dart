@@ -226,6 +226,8 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       participant: _mParticipant!,
     );
 
+    if (WebRTC.platformIsLinux) return;
+
     _nativeService.startCallKit(roomId.roomCodeFormatted);
     _stats.initialize();
     _audioStats.initialize();
@@ -681,6 +683,13 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       mediaConstraints = {
         "video": true,
         "audio": false,
+      };
+    } else if (WebRTC.platformIsLinux) {
+      mediaConstraints = {
+        'video': {
+          'deviceId': {'exact': source?.id},
+          'mandatory': {'frameRate': 30.0},
+        },
       };
     } else {
       mediaConstraints = <String, dynamic>{
