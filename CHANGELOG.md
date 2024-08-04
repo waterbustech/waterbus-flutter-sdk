@@ -1,3 +1,8 @@
+## 1.4.10
+
+* [Linux]: Fix crash app when joinRoom
+* [Linux]: Fix can not get display media
+
 ## 1.4.9
 
 * Chore: remove dependency_overrides
