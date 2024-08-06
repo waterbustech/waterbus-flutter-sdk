@@ -1,3 +1,7 @@
+## 1.4.10
+
+* Feat: add reconnect func
+
 ## 1.4.9
 
 * Chore: remove dependency_overrides
