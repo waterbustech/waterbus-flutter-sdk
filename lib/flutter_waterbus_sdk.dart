@@ -104,6 +104,8 @@ class WaterbusSdk {
   }
 
   // Related to local media
+  Future<void> reconnect() async => await _sdk.reconnect();
+
   Future<void> prepareMedia() async {
     await _sdk.prepareMedia();
   }
