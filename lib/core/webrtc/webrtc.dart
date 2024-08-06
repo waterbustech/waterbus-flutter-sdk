@@ -171,8 +171,6 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
 
     await _establishBroadcastConnection();
 
-    if (WebRTC.platformIsLinux) return;
-
     _nativeService.startCallKit(roomId.roomCodeFormatted);
   }
 
@@ -730,6 +728,8 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       participantId: _participantId!,
       participant: _mParticipant!,
     );
+
+    if (WebRTC.platformIsLinux) return;
 
     _stats.initialize();
     _audioStats.initialize();
