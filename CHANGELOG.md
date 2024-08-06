@@ -1,6 +1,11 @@
+## 1.4.11
+
+* [Feat]: Add reconnect func
+
 ## 1.4.10
 
-* Feat: add reconnect func
+* [Linux]: Fix crash app when joinRoom
+* [Linux]: Fix can not get display media
 
 ## 1.4.9
 
