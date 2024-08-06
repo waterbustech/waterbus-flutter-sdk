@@ -151,6 +151,16 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
+  Future<void> reconnect() async {
+    _socketEmiter.reconnect();
+    _webSocket.reconnect(
+      callbackConnected: () async {
+        await _rtcManager.reconnect();
+      },
+    );
+  }
+
+  @override
   Future<void> prepareMedia() async {
     await _rtcManager.prepareMedia();
   }

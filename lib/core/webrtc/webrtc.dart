@@ -169,66 +169,26 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     _roomId = roomId;
     _participantId = participantId.toString();
 
-    final RTCPeerConnection peerConnection = _mParticipant!.peerConnection;
-
-    peerConnection.onRenegotiationNeeded = () async {
-      String sdp = await _createOffer(peerConnection);
-
-      if (_localStream?.getVideoTracks().isNotEmpty ?? false) {
-        sdp = sdp.enableAudioDTX().setPreferredCodec(
-              codec: _callSetting.preferedCodec,
-            );
-      }
-
-      final RTCSessionDescription description = RTCSessionDescription(
-        sdp,
-        DescriptionType.offer.type,
-      );
-
-      await peerConnection.setLocalDescription(description);
-
-      _socketEmiter.sendNewSdp(sdp);
-    };
-
-    peerConnection.onIceCandidate = (candidate) {
-      if (_flagPublisherCanAddCandidate) {
-        _socketEmiter.sendBroadcastCandidate(candidate);
-      } else {
-        _queuePublisherCandidates.add(candidate);
-      }
-    };
-
-    await _enableEncryption(_callSetting.e2eeEnabled);
-
-    _localStream?.getTracks().forEach((track) {
-      peerConnection.addTrack(track, _localStream!);
-    });
-
-    String sdp = await _createOffer(peerConnection);
-
-    if (_localStream?.getVideoTracks().isNotEmpty ?? false) {
-      sdp = sdp.enableAudioDTX().setPreferredCodec(
-            codec: _callSetting.preferedCodec,
-          );
-    }
-
-    final RTCSessionDescription description = RTCSessionDescription(
-      sdp,
-      DescriptionType.offer.type,
-    );
-
-    await peerConnection.setLocalDescription(description);
-
-    _socketEmiter.establishBroadcast(
-      sdp: sdp,
-      roomId: _roomId!,
-      participantId: participantId.toString(),
-      participant: _mParticipant!,
-    );
+    await _establishBroadcastConnection();
 
     _nativeService.startCallKit(roomId.roomCodeFormatted);
-    _stats.initialize();
-    _audioStats.initialize();
+  }
+
+  @override
+  Future<void> reconnect() async {
+    if (_mParticipant == null) return;
+
+    _stats.dispose();
+    _audioStats.dispose();
+    await _mParticipant?.peerConnection.close();
+
+    final RTCPeerConnection peerConnection = await _createPeerConnection(
+      WebRTCConfigurations.offerPublisherSdpConstraints,
+    );
+
+    _mParticipant = _mParticipant?.copyWith(peerConnection: peerConnection);
+
+    await _establishBroadcastConnection();
   }
 
   @override
@@ -682,6 +642,13 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
         "video": true,
         "audio": false,
       };
+    } else if (WebRTC.platformIsLinux) {
+      mediaConstraints = {
+        'video': {
+          'deviceId': {'exact': source?.id},
+          'mandatory': {'frameRate': 30.0},
+        },
+      };
     } else {
       mediaConstraints = <String, dynamic>{
         'audio': false,
@@ -702,6 +669,70 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     );
 
     return stream;
+  }
+
+  Future<void> _establishBroadcastConnection() async {
+    final RTCPeerConnection peerConnection = _mParticipant!.peerConnection;
+
+    peerConnection.onRenegotiationNeeded = () async {
+      String sdp = await _createOffer(peerConnection);
+
+      if (_localStream?.getVideoTracks().isNotEmpty ?? false) {
+        sdp = sdp.enableAudioDTX().setPreferredCodec(
+              codec: _callSetting.preferedCodec,
+            );
+      }
+
+      final RTCSessionDescription description = RTCSessionDescription(
+        sdp,
+        DescriptionType.offer.type,
+      );
+
+      await peerConnection.setLocalDescription(description);
+
+      _socketEmiter.sendNewSdp(sdp);
+    };
+
+    peerConnection.onIceCandidate = (candidate) {
+      if (_flagPublisherCanAddCandidate) {
+        _socketEmiter.sendBroadcastCandidate(candidate);
+      } else {
+        _queuePublisherCandidates.add(candidate);
+      }
+    };
+
+    await _enableEncryption(_callSetting.e2eeEnabled);
+
+    _localStream?.getTracks().forEach((track) {
+      peerConnection.addTrack(track, _localStream!);
+    });
+
+    String sdp = await _createOffer(peerConnection);
+
+    if (_localStream?.getVideoTracks().isNotEmpty ?? false) {
+      sdp = sdp.enableAudioDTX().setPreferredCodec(
+            codec: _callSetting.preferedCodec,
+          );
+    }
+
+    final RTCSessionDescription description = RTCSessionDescription(
+      sdp,
+      DescriptionType.offer.type,
+    );
+
+    await peerConnection.setLocalDescription(description);
+
+    _socketEmiter.establishBroadcast(
+      sdp: sdp,
+      roomId: _roomId!,
+      participantId: _participantId!,
+      participant: _mParticipant!,
+    );
+
+    if (WebRTC.platformIsLinux) return;
+
+    _stats.initialize();
+    _audioStats.initialize();
   }
 
   Future<RTCPeerConnection> _createPeerConnection([
@@ -904,4 +935,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       participants: _subscribers,
     );
   }
+
+  @override
+  String? get roomId => _roomId;
 }

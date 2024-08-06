@@ -19,7 +19,7 @@ class ParticipantSFU extends Equatable {
   AudioLevel audioLevel;
   MediaSource? cameraSource;
   MediaSource? screenSource;
-  final RTCPeerConnection peerConnection;
+  RTCPeerConnection peerConnection;
   final WebRTCCodec videoCodec;
   final Function()? onFirstFrameRendered;
   ParticipantSFU({

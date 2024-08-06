@@ -4,6 +4,7 @@ import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 
 abstract class WaterbusWebRTCManager {
   Future<void> joinRoom({required String roomId, required int participantId});
+  Future<void> reconnect();
   Future<void> subscribe(List<String> targetIds);
   Future<void> setPublisherRemoteSdp(String sdp);
   Future<void> setSubscriberRemoteSdp({
@@ -49,6 +50,8 @@ abstract class WaterbusWebRTCManager {
   });
   Future<void> disableVirtualBackground({bool reset = false});
 
+  // Getter
   CallState callState();
   Stream<CallbackPayload> get notifyChanged;
+  String? get roomId;
 }

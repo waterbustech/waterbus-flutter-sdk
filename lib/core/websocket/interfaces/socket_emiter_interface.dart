@@ -29,4 +29,6 @@ abstract class SocketEmiter {
   void sendNewSdp(String sdp);
   void leaveRoom(String roomId);
   void setSubtitle(bool isEnabled);
+
+  void reconnect();
 }
