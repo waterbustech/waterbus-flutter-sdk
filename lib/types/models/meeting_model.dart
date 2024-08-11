@@ -165,7 +165,7 @@ class Meeting {
     return latestJoinedAt ?? createdAt ?? DateTime.now();
   }
 
-  bool get isGroup => memberJoined.length > 2;
+  bool get isGroup => memberJoined.length >= 2;
 
   StatusSeenMessage get statusLastedMessage => StatusSeenMessage.seen;
 

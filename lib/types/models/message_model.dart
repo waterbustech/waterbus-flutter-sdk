@@ -3,13 +3,14 @@
 import 'dart:convert';
 
 import 'package:waterbus_sdk/types/index.dart';
+import 'package:waterbus_sdk/types/models/message_status_enum.dart';
 
 class MessageModel {
   final int id;
   String data;
   final int meeting;
   final User? createdBy;
-  final int status;
+  MessageStatusEnum status;
   final int type;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -18,7 +19,7 @@ class MessageModel {
     required this.data,
     required this.meeting,
     required this.createdBy,
-    required this.status,
+    this.status = MessageStatusEnum.sent,
     required this.type,
     required this.createdAt,
     required this.updatedAt,
@@ -29,7 +30,7 @@ class MessageModel {
     String? data,
     int? meeting,
     User? createdBy,
-    int? status,
+    MessageStatusEnum? status,
     int? type,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -71,12 +72,33 @@ class MessageModel {
           map['createdBy'] != null && map['createdBy'] is Map<String, dynamic>
               ? User.fromMap(map['createdBy'])
               : null,
-      status: map['status'] ?? 0,
       type: map['type'] ?? 0,
       createdAt: DateTime.parse((map['createdAt'] ?? DateTime.now()).toString())
           .toLocal(),
       updatedAt: DateTime.parse((map['updatedAt'] ?? DateTime.now()).toString())
           .toLocal(),
+    );
+  }
+
+  factory MessageModel.fromMapSocket(Map<String, dynamic> map) {
+    return MessageModel(
+      id: map['id'] ?? 0,
+      data: map['data'] ?? "",
+      meeting: (map['meeting'] is Map<String, dynamic>
+              ? map['meeting']['id']
+              : map['meeting']) ??
+          0,
+      createdBy:
+          map['createdBy'] != null && map['createdBy'] is Map<String, dynamic>
+              ? User.fromMap(map['createdBy'])
+              : null,
+      type: map['type'] ?? 0,
+      createdAt:
+          DateTime.fromMillisecondsSinceEpoch(int.parse(map['createdAt']))
+              .toLocal(),
+      updatedAt:
+          DateTime.fromMillisecondsSinceEpoch(int.parse(map['updatedAt']))
+              .toLocal(),
     );
   }
 
