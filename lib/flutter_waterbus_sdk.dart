@@ -21,13 +21,18 @@ class WaterbusSdk {
   static String apiKey = '';
   static Function(CallbackPayload)? onEventChanged;
   static Function(VideoSenderStats)? onStatsChanged;
+  static Function(Subtitle)? onSubtitle;
 
   set onEventChangedRegister(Function(CallbackPayload) onEventChanged) {
     WaterbusSdk.onEventChanged = onEventChanged;
   }
 
-  setStatsChanged(Function(VideoSenderStats)? onStatsChanged) {
+  set setStatsChanged(Function(VideoSenderStats)? onStatsChanged) {
     WaterbusSdk.onStatsChanged = onStatsChanged;
+  }
+
+  set setOnSubtitle(Function(Subtitle)? onSubtitle) {
+    WaterbusSdk.onSubtitle = onSubtitle;
   }
 
   Future<void> initializeApp({
@@ -99,6 +104,8 @@ class WaterbusSdk {
   }
 
   // Related to local media
+  Future<void> reconnect() async => await _sdk.reconnect();
+
   Future<void> prepareMedia() async {
     await _sdk.prepareMedia();
   }
@@ -125,6 +132,10 @@ class WaterbusSdk {
 
   Future<void> toggleSpeakerPhone() async {
     await _sdk.toggleSpeakerPhone();
+  }
+
+  void setSubscribeSubtitle({bool isEnabled = true}) {
+    _sdk.setSubscribeSubtitle(isEnabled);
   }
 
   Future<void> changeCallSetting(CallSetting setting) async {

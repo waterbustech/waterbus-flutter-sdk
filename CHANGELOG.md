@@ -1,3 +1,15 @@
+## 1.4.9
+
+* Chore: remove dependency_overrides
+
+## 1.4.8
+
+* Feat: support flutter wasm
+
+## 1.4.7
+
+* Feat: subtitle
+
 ## 1.4.6
 
 * Feat: expose callback sender stats

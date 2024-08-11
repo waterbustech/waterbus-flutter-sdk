@@ -28,4 +28,7 @@ abstract class SocketEmiter {
   void setScreenSharing(bool isSharing);
   void sendNewSdp(String sdp);
   void leaveRoom(String roomId);
+  void setSubtitle(bool isEnabled);
+
+  void reconnect();
 }

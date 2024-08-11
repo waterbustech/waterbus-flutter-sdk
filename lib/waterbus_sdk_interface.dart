@@ -72,12 +72,14 @@ abstract class WaterbusSdkInterface {
   Future<void> leaveRoom();
 
   // WebRTC
+  Future<void> reconnect();
   Future<void> prepareMedia();
   Future<void> changeCallSettings(CallSetting setting);
   Future<void> switchCamera();
   Future<void> toggleVideo();
   Future<void> toggleAudio();
   Future<void> toggleSpeakerPhone();
+  void setSubscribeSubtitle(bool isEnabled);
   Future<void> startScreenSharing({DesktopCapturerSource? source});
   Future<void> stopScreenSharing();
   Future<void> enableVirtualBackground({

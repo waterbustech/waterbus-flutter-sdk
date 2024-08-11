@@ -28,4 +28,8 @@ class SocketEvent {
   static const String publisherRenegotiationSSC = 'PUBLISHER_RENEGOTIATION_SSC';
   static const String subscriberRenegotiationSSC =
       'SUBSCRIBER_RENEGOTIATION_SSC';
+
+  static const String sendPodNameSSC = 'SEND_POD_NAME_SSC';
+  static const String reconnect = 'reconnect_CSS';
+  static const String destroy = 'destroy';
 }

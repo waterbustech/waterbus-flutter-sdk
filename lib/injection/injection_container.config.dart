@@ -9,123 +9,124 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 
-import 'package:get_it/get_it.dart' as _i1;
-import 'package:injectable/injectable.dart' as _i2;
+import 'package:get_it/get_it.dart' as _i174;
+import 'package:injectable/injectable.dart' as _i526;
 
-import '../core/api/auth/datasources/auth_local_datasource.dart' as _i10;
-import '../core/api/auth/datasources/auth_remote_datasource.dart' as _i20;
-import '../core/api/auth/repositories/auth_repository.dart' as _i22;
-import '../core/api/base/base_remote_data.dart' as _i12;
-import '../core/api/base/dio_configuration.dart' as _i18;
-import '../core/api/chat/datasources/chat_remote_datasource.dart' as _i21;
-import '../core/api/chat/repositories/chat_repository.dart' as _i26;
-import '../core/api/meetings/repositories/meeting_repository.dart' as _i23;
-import '../core/api/messages/repositories/message_repository.dart' as _i24;
-import '../core/api/user/datasources/user_remote_datasource.dart' as _i15;
-import '../core/api/user/repositories/user_repository.dart' as _i25;
-import '../core/webrtc/webrtc.dart' as _i14;
-import '../core/webrtc/webrtc_interface.dart' as _i13;
-import '../core/websocket/interfaces/socket_emiter_interface.dart' as _i8;
-import '../core/websocket/interfaces/socket_handler_interface.dart' as _i27;
-import '../core/websocket/socket_emiter.dart' as _i9;
-import '../core/websocket/socket_handler.dart' as _i28;
-import '../e2ee/frame_crypto.dart' as _i11;
-import '../native/native_channel.dart' as _i3;
-import '../native/replaykit.dart' as _i5;
-import '../stats/webrtc_audio_stats.dart' as _i6;
-import '../stats/webrtc_video_stats.dart' as _i7;
-import '../utils/callkit/callkit_listener.dart' as _i19;
-import '../utils/logger/logger.dart' as _i4;
-import '../waterbus_sdk_impl.dart' as _i30;
-import '../waterbus_sdk_interface.dart' as _i29;
+import '../core/api/auth/datasources/auth_local_datasource.dart' as _i828;
+import '../core/api/auth/datasources/auth_remote_datasource.dart' as _i997;
+import '../core/api/auth/repositories/auth_repository.dart' as _i824;
+import '../core/api/base/base_remote_data.dart' as _i182;
+import '../core/api/base/dio_configuration.dart' as _i314;
+import '../core/api/chat/datasources/chat_remote_datasource.dart' as _i712;
+import '../core/api/chat/repositories/chat_repository.dart' as _i613;
+import '../core/api/meetings/repositories/meeting_repository.dart' as _i1023;
+import '../core/api/messages/repositories/message_repository.dart' as _i575;
+import '../core/api/user/datasources/user_remote_datasource.dart' as _i1054;
+import '../core/api/user/repositories/user_repository.dart' as _i895;
+import '../core/webrtc/webrtc.dart' as _i388;
+import '../core/webrtc/webrtc_interface.dart' as _i413;
+import '../core/websocket/interfaces/socket_emiter_interface.dart' as _i530;
+import '../core/websocket/interfaces/socket_handler_interface.dart' as _i976;
+import '../core/websocket/socket_emiter.dart' as _i515;
+import '../core/websocket/socket_handler.dart' as _i1068;
+import '../e2ee/frame_crypto.dart' as _i602;
+import '../native/native_channel.dart' as _i235;
+import '../native/replaykit.dart' as _i124;
+import '../stats/webrtc_audio_stats.dart' as _i245;
+import '../stats/webrtc_video_stats.dart' as _i232;
+import '../utils/callkit/callkit_listener.dart' as _i324;
+import '../utils/logger/logger.dart' as _i944;
+import '../waterbus_sdk_impl.dart' as _i1039;
+import '../waterbus_sdk_interface.dart' as _i513;
 
 import '../core/api/meetings/datasources/meeting_remote_datesource.dart'
-    as _i16;
+    as _i377;
 import '../core/api/messages/datasources/message_remote_datasource.dart'
-    as _i17;
+    as _i242;
 
 // initializes the registration of main-scope dependencies inside of GetIt
-_i1.GetIt $initGetIt(
-  _i1.GetIt getIt, {
+_i174.GetIt $initGetIt(
+  _i174.GetIt getIt, {
   String? environment,
-  _i2.EnvironmentFilter? environmentFilter,
+  _i526.EnvironmentFilter? environmentFilter,
 }) {
-  final gh = _i2.GetItHelper(
+  final gh = _i526.GetItHelper(
     getIt,
     environment,
     environmentFilter,
   );
-  gh.factory<_i3.NativeService>(() => _i3.NativeService());
-  gh.factory<_i4.WaterbusLogger>(() => _i4.WaterbusLogger());
-  gh.singleton<_i5.ReplayKitChannel>(() => _i5.ReplayKitChannel());
-  gh.singleton<_i6.WebRTCAudioStats>(() => _i6.WebRTCAudioStats());
-  gh.singleton<_i7.WebRTCVideoStats>(() => _i7.WebRTCVideoStats());
-  gh.factory<_i8.SocketEmiter>(() => _i9.SocketEmiterImpl());
-  gh.lazySingleton<_i10.AuthLocalDataSource>(
-      () => _i10.AuthLocalDataSourceImpl());
-  gh.singleton<_i11.WebRTCFrameCrypto>(
-      () => _i11.WebRTCFrameCrypto(gh<_i4.WaterbusLogger>()));
-  gh.singleton<_i12.BaseRemoteData>(
-      () => _i12.BaseRemoteData(gh<_i10.AuthLocalDataSource>()));
-  gh.lazySingleton<_i13.WaterbusWebRTCManager>(
-      () => _i14.WaterbusWebRTCManagerIpml(
-            gh<_i11.WebRTCFrameCrypto>(),
-            gh<_i8.SocketEmiter>(),
-            gh<_i5.ReplayKitChannel>(),
-            gh<_i3.NativeService>(),
-            gh<_i7.WebRTCVideoStats>(),
-            gh<_i6.WebRTCAudioStats>(),
+  gh.factory<_i235.NativeService>(() => _i235.NativeService());
+  gh.factory<_i944.WaterbusLogger>(() => _i944.WaterbusLogger());
+  gh.singleton<_i124.ReplayKitChannel>(() => _i124.ReplayKitChannel());
+  gh.singleton<_i245.WebRTCAudioStats>(() => _i245.WebRTCAudioStats());
+  gh.singleton<_i232.WebRTCVideoStats>(() => _i232.WebRTCVideoStats());
+  gh.factory<_i530.SocketEmiter>(() => _i515.SocketEmiterImpl());
+  gh.lazySingleton<_i828.AuthLocalDataSource>(
+      () => _i828.AuthLocalDataSourceImpl());
+  gh.singleton<_i602.WebRTCFrameCrypto>(
+      () => _i602.WebRTCFrameCrypto(gh<_i944.WaterbusLogger>()));
+  gh.singleton<_i182.BaseRemoteData>(
+      () => _i182.BaseRemoteData(gh<_i828.AuthLocalDataSource>()));
+  gh.lazySingleton<_i413.WaterbusWebRTCManager>(
+      () => _i388.WaterbusWebRTCManagerIpml(
+            gh<_i602.WebRTCFrameCrypto>(),
+            gh<_i530.SocketEmiter>(),
+            gh<_i124.ReplayKitChannel>(),
+            gh<_i235.NativeService>(),
+            gh<_i232.WebRTCVideoStats>(),
+            gh<_i245.WebRTCAudioStats>(),
           ));
-  gh.lazySingleton<_i15.UserRemoteDataSource>(
-      () => _i15.UserRemoteDataSourceImpl(gh<_i12.BaseRemoteData>()));
-  gh.lazySingleton<_i16.MeetingRemoteDataSource>(
-      () => _i16.MeetingRemoteDataSourceImpl(gh<_i12.BaseRemoteData>()));
-  gh.lazySingleton<_i17.MessageRemoteDataSource>(
-      () => _i17.MessageRemoteDataSourceImpl(gh<_i12.BaseRemoteData>()));
-  gh.singleton<_i18.DioConfiguration>(() => _i18.DioConfiguration(
-        gh<_i12.BaseRemoteData>(),
-        gh<_i10.AuthLocalDataSource>(),
+  gh.lazySingleton<_i1054.UserRemoteDataSource>(
+      () => _i1054.UserRemoteDataSourceImpl(gh<_i182.BaseRemoteData>()));
+  gh.lazySingleton<_i377.MeetingRemoteDataSource>(
+      () => _i377.MeetingRemoteDataSourceImpl(gh<_i182.BaseRemoteData>()));
+  gh.lazySingleton<_i242.MessageRemoteDataSource>(
+      () => _i242.MessageRemoteDataSourceImpl(gh<_i182.BaseRemoteData>()));
+  gh.singleton<_i314.DioConfiguration>(() => _i314.DioConfiguration(
+        gh<_i182.BaseRemoteData>(),
+        gh<_i828.AuthLocalDataSource>(),
       ));
-  gh.singleton<_i19.CallKitListener>(() => _i19.CallKitListener(
-        gh<_i4.WaterbusLogger>(),
-        gh<_i13.WaterbusWebRTCManager>(),
+  gh.singleton<_i324.CallKitListener>(() => _i324.CallKitListener(
+        gh<_i944.WaterbusLogger>(),
+        gh<_i413.WaterbusWebRTCManager>(),
       ));
-  gh.lazySingleton<_i20.AuthRemoteDataSource>(
-      () => _i20.AuthRemoteDataSourceImpl(
-            gh<_i12.BaseRemoteData>(),
-            gh<_i10.AuthLocalDataSource>(),
+  gh.lazySingleton<_i997.AuthRemoteDataSource>(
+      () => _i997.AuthRemoteDataSourceImpl(
+            gh<_i182.BaseRemoteData>(),
+            gh<_i828.AuthLocalDataSource>(),
           ));
-  gh.lazySingleton<_i21.ChatRemoteDataSource>(
-      () => _i21.ChatRemoteDataSourceImpl(gh<_i12.BaseRemoteData>()));
-  gh.lazySingleton<_i22.AuthRepository>(() => _i22.AuthRepositoryImpl(
-        gh<_i10.AuthLocalDataSource>(),
-        gh<_i20.AuthRemoteDataSource>(),
+  gh.lazySingleton<_i712.ChatRemoteDataSource>(
+      () => _i712.ChatRemoteDataSourceImpl(gh<_i182.BaseRemoteData>()));
+  gh.lazySingleton<_i824.AuthRepository>(() => _i824.AuthRepositoryImpl(
+        gh<_i828.AuthLocalDataSource>(),
+        gh<_i997.AuthRemoteDataSource>(),
       ));
-  gh.lazySingleton<_i23.MeetingRepository>(
-      () => _i23.MeetingRepositoryImpl(gh<_i16.MeetingRemoteDataSource>()));
-  gh.lazySingleton<_i24.MessageRepository>(
-      () => _i24.MessageRepositoryImpl(gh<_i17.MessageRemoteDataSource>()));
-  gh.lazySingleton<_i25.UserRepository>(
-      () => _i25.UserRepositoryImpl(gh<_i15.UserRemoteDataSource>()));
-  gh.lazySingleton<_i26.ChatRepository>(
-      () => _i26.ChatRepositoryImpl(gh<_i21.ChatRemoteDataSource>()));
-  gh.singleton<_i27.SocketHandler>(() => _i28.SocketHandlerImpl(
-        gh<_i13.WaterbusWebRTCManager>(),
-        gh<_i4.WaterbusLogger>(),
-        gh<_i10.AuthLocalDataSource>(),
-        gh<_i18.DioConfiguration>(),
+  gh.lazySingleton<_i1023.MeetingRepository>(
+      () => _i1023.MeetingRepositoryImpl(gh<_i377.MeetingRemoteDataSource>()));
+  gh.lazySingleton<_i575.MessageRepository>(
+      () => _i575.MessageRepositoryImpl(gh<_i242.MessageRemoteDataSource>()));
+  gh.lazySingleton<_i895.UserRepository>(
+      () => _i895.UserRepositoryImpl(gh<_i1054.UserRemoteDataSource>()));
+  gh.lazySingleton<_i613.ChatRepository>(
+      () => _i613.ChatRepositoryImpl(gh<_i712.ChatRemoteDataSource>()));
+  gh.singleton<_i976.SocketHandler>(() => _i1068.SocketHandlerImpl(
+        gh<_i413.WaterbusWebRTCManager>(),
+        gh<_i944.WaterbusLogger>(),
+        gh<_i828.AuthLocalDataSource>(),
+        gh<_i314.DioConfiguration>(),
       ));
-  gh.singleton<_i29.WaterbusSdkInterface>(() => _i30.SdkCore(
-        gh<_i27.SocketHandler>(),
-        gh<_i13.WaterbusWebRTCManager>(),
-        gh<_i5.ReplayKitChannel>(),
-        gh<_i12.BaseRemoteData>(),
-        gh<_i22.AuthRepository>(),
-        gh<_i23.MeetingRepository>(),
-        gh<_i25.UserRepository>(),
-        gh<_i26.ChatRepository>(),
-        gh<_i24.MessageRepository>(),
-        gh<_i4.WaterbusLogger>(),
+  gh.singleton<_i513.WaterbusSdkInterface>(() => _i1039.SdkCore(
+        gh<_i976.SocketHandler>(),
+        gh<_i530.SocketEmiter>(),
+        gh<_i413.WaterbusWebRTCManager>(),
+        gh<_i124.ReplayKitChannel>(),
+        gh<_i182.BaseRemoteData>(),
+        gh<_i824.AuthRepository>(),
+        gh<_i1023.MeetingRepository>(),
+        gh<_i895.UserRepository>(),
+        gh<_i613.ChatRepository>(),
+        gh<_i575.MessageRepository>(),
+        gh<_i944.WaterbusLogger>(),
       ));
   return getIt;
 }

@@ -10,6 +10,7 @@ import 'package:waterbus_sdk/core/api/meetings/repositories/meeting_repository.d
 import 'package:waterbus_sdk/core/api/messages/repositories/message_repository.dart';
 import 'package:waterbus_sdk/core/api/user/repositories/user_repository.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
+import 'package:waterbus_sdk/core/websocket/interfaces/socket_emiter_interface.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/socket_handler_interface.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/native/picture-in-picture/index.dart';
@@ -22,6 +23,7 @@ import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
 @Singleton(as: WaterbusSdkInterface)
 class SdkCore extends WaterbusSdkInterface {
   final SocketHandler _webSocket;
+  final SocketEmiter _socketEmiter;
   final WaterbusWebRTCManager _rtcManager;
   final ReplayKitChannel _replayKitChannel;
   final BaseRemoteData _baseRepository;
@@ -34,6 +36,7 @@ class SdkCore extends WaterbusSdkInterface {
 
   SdkCore(
     this._webSocket,
+    this._socketEmiter,
     this._rtcManager,
     this._replayKitChannel,
     this._baseRepository,
@@ -154,6 +157,16 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
+  Future<void> reconnect() async {
+    _socketEmiter.reconnect();
+    _webSocket.reconnect(
+      callbackConnected: () async {
+        await _rtcManager.reconnect();
+      },
+    );
+  }
+
+  @override
   Future<void> prepareMedia() async {
     await _rtcManager.prepareMedia();
   }
@@ -181,6 +194,11 @@ class SdkCore extends WaterbusSdkInterface {
   @override
   Future<void> toggleSpeakerPhone() async {
     await _rtcManager.toggleSpeakerPhone();
+  }
+
+  @override
+  void setSubscribeSubtitle(bool isEnabled) {
+    _socketEmiter.setSubtitle(isEnabled);
   }
 
   @override

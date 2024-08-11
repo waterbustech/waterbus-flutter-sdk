@@ -105,5 +105,15 @@ class SocketEmiterImpl extends SocketEmiter {
     _socket?.emit(SocketEvent.publisherRenegotiationCSS, {'sdp': sdp});
   }
 
+  @override
+  void setSubtitle(bool isEnabled) {
+    _socket?.emit(SocketEvent.setSubscribeSubtitleCSS, {'enabled': isEnabled});
+  }
+
+  @override
+  void reconnect() {
+    _socket?.emit(SocketEvent.reconnect);
+  }
+
   Socket? get _socket => getIt<SocketHandler>().socket;
 }

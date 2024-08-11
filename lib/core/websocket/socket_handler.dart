@@ -26,12 +26,14 @@ class SocketHandlerImpl extends SocketHandler {
   );
 
   Socket? _socket;
+  String _podName = '';
 
   @override
   void establishConnection({
     bool forceConnection = false,
     int numberOfRetries = 3,
     String? forceAccessToken,
+    Function? callbackConnected,
   }) {
     if (_authLocal.accessToken.isEmpty ||
         (_socket != null && !forceConnection)) {
@@ -72,6 +74,8 @@ class SocketHandlerImpl extends SocketHandler {
     });
 
     _socket?.onConnect((_) async {
+      callbackConnected?.call();
+
       _logger.log('established connection - sid: ${_socket?.id}');
 
       _socket?.on(SocketEvent.publishSSC, (data) {
@@ -242,6 +246,37 @@ class SocketHandlerImpl extends SocketHandler {
           sdp: sdp,
         );
       });
+
+      _socket?.on(SocketEvent.subtitleSSC, (data) {
+        if (data == null) return;
+
+        final participantId = data['participantId'];
+        final content = data['transcription'];
+
+        WaterbusSdk.onSubtitle?.call(
+          Subtitle(participant: participantId, content: content),
+        );
+      });
+
+      _socket?.on(SocketEvent.sendPodNameSSC, (data) {
+        if (data == null) return;
+
+        _podName = data['podName'];
+      });
+
+      _socket?.on(SocketEvent.destroy, (data) {
+        if (data == null) return;
+
+        final String podName = data['podName'];
+
+        if (_podName == podName && _rtcManager.roomId != null) {
+          reconnect(
+            callbackConnected: () {
+              _rtcManager.reconnect();
+            },
+          );
+        }
+      });
     });
   }
 
@@ -251,6 +286,16 @@ class SocketHandlerImpl extends SocketHandler {
 
     _socket?.disconnect();
     _socket = null;
+    _podName = '';
+  }
+
+  @override
+  void reconnect({required Function callbackConnected}) {
+    disconnection();
+    establishConnection(
+      forceConnection: true,
+      callbackConnected: callbackConnected,
+    );
   }
 
   @override
