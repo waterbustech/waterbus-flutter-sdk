@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:rhttp/rhttp.dart';
+
 import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
 
 class RhttpAdapter implements HttpClientAdapter {

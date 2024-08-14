@@ -2,8 +2,10 @@ library dio_flutter_transformer;
 
 import 'dart:async';
 import 'dart:convert';
-import 'package:dio/dio.dart';
+
 import 'package:flutter/foundation.dart';
+
+import 'package:dio/dio.dart';
 
 /// FlutterTransformer optimized for performance.
 /// JSON decoding/encoding will only be offloaded to a separate isolate
