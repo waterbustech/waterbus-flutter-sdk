@@ -1,3 +1,7 @@
+## 1.4.12
+
+* [Feat]: Using rhttp + dio
+
 ## 1.4.11
 
 * [Feat]: Add reconnect func
