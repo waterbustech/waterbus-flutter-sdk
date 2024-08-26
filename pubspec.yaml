@@ -16,6 +16,7 @@ dependencies:
   # Network
   connectivity_plus: ^6.0.5
   rhttp: ^0.6.1
+  http: ^1.2.2
   dio: ^5.6.0
   dio_smart_retry: ^6.0.0
   dio_cache_interceptor: ^3.5.0

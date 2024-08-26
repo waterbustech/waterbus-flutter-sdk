@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:dio_compatibility_layer/dio_compatibility_layer.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:dio/dio.dart';
+import 'package:dio_compatibility_layer/dio_compatibility_layer.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart' as rt;
 import 'package:injectable/injectable.dart';
 import 'package:rhttp/rhttp.dart';
