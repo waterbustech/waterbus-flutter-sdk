@@ -1,3 +1,7 @@
+## 1.4.13
+
+* [Feat]: Using dio_compatibility_layer
+
 ## 1.4.12
 
 * [Feat]: Using rhttp + dio
