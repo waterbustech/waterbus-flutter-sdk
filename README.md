@@ -26,6 +26,8 @@ Flutter plugin of [Waterbus](https://docs.waterbus.tech). Build video call or on
 
 ## Installation
 
+### Install Rust via [rustup](https://rustup.rs/).
+
 ### Add dependency
 
 Add the dependency from command-line

@@ -1,3 +1,7 @@
+## 1.4.14
+
+* [Android]: Upgrade WebRTC SDK M128.6613.02
+
 ## 1.4.13
 
 * [Feat]: Using dio_compatibility_layer
