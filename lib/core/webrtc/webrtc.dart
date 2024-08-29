@@ -442,14 +442,16 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   Future<void> toggleSpeakerPhone({bool? forceValue}) async {
     if (_mParticipant == null) return;
 
-    if (WebRTC.platformIsMobile) {
-      await Helper.setSpeakerphoneOn(
-        forceValue ?? !_mParticipant!.isSpeakerPhoneEnabled,
-      );
-    }
-
     _mParticipant?.isSpeakerPhoneEnabled =
         forceValue ?? !_mParticipant!.isSpeakerPhoneEnabled;
+
+    if (WebRTC.platformIsMobile) {
+      await Helper.setSpeakerphoneOn(_mParticipant!.isSpeakerPhoneEnabled);
+
+      if (_mParticipant?.isSpeakerPhoneEnabled ?? false) {
+        await Helper.setSpeakerphoneOnButPreferBluetooth();
+      }
+    }
 
     _notify(CallbackEvents.shouldBeUpdateState);
   }

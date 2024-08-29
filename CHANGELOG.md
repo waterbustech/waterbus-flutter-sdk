@@ -1,3 +1,8 @@
+## 1.4.15
+
+* [Feat]: set speaker phone enabled but prefer bluetooth
+* [Docs]: add guide to setup beauty filters for Android
+
 ## 1.4.14
 
 * [Android]: Upgrade WebRTC SDK M128.6613.02
