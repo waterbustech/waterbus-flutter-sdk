@@ -107,7 +107,7 @@ class MeetingRepositoryImpl extends MeetingRepository {
     final int indexOfMyParticipant = participants.lastIndexWhere(
       (participant) => participantId != null
           ? participant.id == participantId
-          : participant.user.id == userId,
+          : participant.user?.id == userId,
     );
 
     if (indexOfMyParticipant == -1) return meeting;

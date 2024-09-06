@@ -17,11 +17,11 @@ abstract class MessageRemoteDataSource {
     required int meetingId,
     required String data,
   });
-  Future<bool> editMessage({
+  Future<MessageModel?> editMessage({
     required int messageId,
     required String data,
   });
-  Future<bool> deleteMessage({required int messageId});
+  Future<MessageModel?> deleteMessage({required int messageId});
 }
 
 @LazySingleton(as: MessageRemoteDataSource)
@@ -70,7 +70,7 @@ class MessageRemoteDataSourceImpl extends MessageRemoteDataSource {
   }
 
   @override
-  Future<bool> editMessage({
+  Future<MessageModel?> editMessage({
     required int messageId,
     required String data,
   }) async {
@@ -79,15 +79,23 @@ class MessageRemoteDataSourceImpl extends MessageRemoteDataSource {
       {"data": data},
     );
 
-    return [StatusCode.ok, StatusCode.created].contains(response.statusCode);
+    if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
+      return MessageModel.fromMap(response.data);
+    }
+
+    return null;
   }
 
   @override
-  Future<bool> deleteMessage({required int messageId}) async {
+  Future<MessageModel?> deleteMessage({required int messageId}) async {
     final Response response = await _remoteData.deleteRoute(
       "${ApiEndpoints.chats}/$messageId",
     );
 
-    return [StatusCode.ok, StatusCode.created].contains(response.statusCode);
+    if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
+      return MessageModel.fromMap(response.data);
+    }
+
+    return null;
   }
 }

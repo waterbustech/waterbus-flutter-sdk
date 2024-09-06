@@ -1,7 +1,6 @@
 enum MessageStatusEnum {
-  error(-1),
-  sending(0),
-  sent(1);
+  inactive(1),
+  active(0);
 
   const MessageStatusEnum(this.status);
 
@@ -13,7 +12,7 @@ extension MessageStatusEnumX on int {
     final int index =
         MessageStatusEnum.values.indexWhere((status) => status.status == this);
 
-    if (index == -1) return MessageStatusEnum.sending;
+    if (index == -1) return MessageStatusEnum.inactive;
 
     return MessageStatusEnum.values[index];
   }

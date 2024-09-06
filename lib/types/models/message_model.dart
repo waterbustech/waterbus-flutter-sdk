@@ -4,12 +4,14 @@ import 'dart:convert';
 
 import 'package:waterbus_sdk/types/index.dart';
 import 'package:waterbus_sdk/types/models/message_status_enum.dart';
+import 'package:waterbus_sdk/types/models/sending_status_enum.dart';
 
 class MessageModel {
   final int id;
   String data;
   final int meeting;
   final User? createdBy;
+  SendingStatusEnum sendingStatus;
   MessageStatusEnum status;
   final int type;
   final DateTime createdAt;
@@ -19,7 +21,8 @@ class MessageModel {
     required this.data,
     required this.meeting,
     required this.createdBy,
-    this.status = MessageStatusEnum.sent,
+    this.sendingStatus = SendingStatusEnum.sent,
+    required this.status,
     required this.type,
     required this.createdAt,
     required this.updatedAt,
@@ -30,6 +33,7 @@ class MessageModel {
     String? data,
     int? meeting,
     User? createdBy,
+    SendingStatusEnum? sendingStatus,
     MessageStatusEnum? status,
     int? type,
     DateTime? createdAt,
@@ -40,6 +44,7 @@ class MessageModel {
       data: data ?? this.data,
       meeting: meeting ?? this.meeting,
       createdBy: createdBy ?? this.createdBy,
+      sendingStatus: sendingStatus ?? this.sendingStatus,
       status: status ?? this.status,
       type: type ?? this.type,
       createdAt: createdAt ?? this.createdAt,
@@ -53,7 +58,8 @@ class MessageModel {
       'data': data,
       'meeting': meeting,
       'createdBy': createdBy,
-      'status': status,
+      'sendingStatus': sendingStatus.status,
+      'status': status.status,
       'type': type,
       'createdAt': createdAt.toString(),
       'updatedAt': updatedAt.toString(),
@@ -68,6 +74,8 @@ class MessageModel {
               ? map['meeting']['id']
               : map['meeting']) ??
           0,
+      status:
+          (int.tryParse(map['status']?.toString() ?? "") ?? 0).getMessageStatus,
       createdBy:
           map['createdBy'] != null && map['createdBy'] is Map<String, dynamic>
               ? User.fromMap(map['createdBy'])
@@ -83,6 +91,8 @@ class MessageModel {
   factory MessageModel.fromMapSocket(Map<String, dynamic> map) {
     return MessageModel(
       id: map['id'] ?? 0,
+      status:
+          (int.tryParse(map['status']?.toString() ?? "") ?? 0).getMessageStatus,
       data: map['data'] ?? "",
       meeting: (map['meeting'] is Map<String, dynamic>
               ? map['meeting']['id']
@@ -109,7 +119,7 @@ class MessageModel {
 
   @override
   String toString() {
-    return 'MessageModel(id: $id, data: $data, meeting: $meeting, type: $type, createdAt: $createdAt, updatedAt: $updatedAt, createdBy: $createdBy, status: $status)';
+    return 'MessageModel(id: $id, data: $data, meeting: $meeting, type: $type, createdAt: $createdAt, updatedAt: $updatedAt, createdBy: $createdBy, status: $sendingStatus)';
   }
 
   @override
@@ -123,7 +133,7 @@ class MessageModel {
         other.type == type &&
         other.updatedAt == updatedAt &&
         other.createdAt == createdAt &&
-        other.status == status;
+        other.sendingStatus == sendingStatus;
   }
 
   @override
@@ -135,6 +145,8 @@ class MessageModel {
         type.hashCode ^
         updatedAt.hashCode ^
         createdAt.hashCode ^
-        status.hashCode;
+        sendingStatus.hashCode;
   }
+
+  bool get isDeleted => status == MessageStatusEnum.inactive;
 }

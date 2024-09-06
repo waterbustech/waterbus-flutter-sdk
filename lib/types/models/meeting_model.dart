@@ -148,14 +148,14 @@ class Meeting {
     final int numberOfPaticipants = participants.length;
 
     if (numberOfPaticipants == 1) {
-      return '${participants[0].user.fullName} is in the room';
+      return '${participants[0].user?.fullName} is in the room';
     } else if (numberOfPaticipants == 2) {
-      return '${participants[0].user.fullName} and ${participants[1].user.fullName} are in the room';
+      return '${participants[0].user?.fullName} and ${participants[1].user?.fullName} are in the room';
     } else {
       final int otherParticipants = numberOfPaticipants - 2;
       final String participantList = participants
           .sublist(0, 2)
-          .map<String>((participant) => participant.user.fullName)
+          .map<String>((participant) => participant.user?.fullName ?? "")
           .join(', ');
       return '$participantList and $otherParticipants others are in the room';
     }

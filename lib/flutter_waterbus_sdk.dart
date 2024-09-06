@@ -19,9 +19,15 @@ class WaterbusSdk {
   static String apiUrl = '';
   static String wsUrl = '';
   static String apiKey = '';
+  static String privateMessageKey = '';
   static Function(CallbackPayload)? onEventChanged;
   static Function(VideoSenderStats)? onStatsChanged;
   static Function(Subtitle)? onSubtitle;
+  static Function(MessageSocketEvent)? onMesssageChanged;
+
+  set onMessageSocketChanged(Function(MessageSocketEvent) onMesssageChanged) {
+    WaterbusSdk.onMesssageChanged = onMesssageChanged;
+  }
 
   set onEventChangedRegister(Function(CallbackPayload) onEventChanged) {
     WaterbusSdk.onEventChanged = onEventChanged;
@@ -38,11 +44,13 @@ class WaterbusSdk {
   Future<void> initializeApp({
     required String wsUrl,
     required String apiUrl,
+    required String privateMessageKey,
     String apiKey = 'waterbus@2024',
   }) async {
     WaterbusSdk.wsUrl = wsUrl;
     WaterbusSdk.apiUrl = apiUrl;
     WaterbusSdk.apiKey = apiKey;
+    WaterbusSdk.privateMessageKey = privateMessageKey;
 
     // Init dependency injection if needed
     if (!getIt.isRegistered<WaterbusWebRTCManager>()) {
@@ -268,14 +276,14 @@ class WaterbusSdk {
     return await _sdk.sendMessage(meetingId: meetingId, data: data);
   }
 
-  Future<bool> editMessage({
+  Future<MessageModel?> editMessage({
     required int messageId,
     required String data,
   }) async {
     return await _sdk.editMessage(messageId: messageId, data: data);
   }
 
-  Future<bool> deleteMessage({required int messageId}) async {
+  Future<MessageModel?> deleteMessage({required int messageId}) async {
     return await _sdk.deleteMessage(messageId: messageId);
   }
 

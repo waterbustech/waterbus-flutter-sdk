@@ -8,7 +8,7 @@ import 'package:waterbus_sdk/types/models/user_model.dart';
 
 class Participant extends Equatable {
   final int id;
-  final User user;
+  final User? user;
   final bool isMe;
   const Participant({
     required this.id,
@@ -31,7 +31,7 @@ class Participant extends Equatable {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
-      'user': user.toMap(),
+      'user': user?.toMap(),
       'isMe': isMe,
     };
   }
@@ -39,7 +39,9 @@ class Participant extends Equatable {
   factory Participant.fromMap(Map<String, dynamic> map) {
     return Participant(
       id: map['id'] as int,
-      user: User.fromMap(map['user'] as Map<String, dynamic>),
+      user: map['user'] != null && map['user'] is Map<String, dynamic>
+          ? User.fromMap(map['user'])
+          : null,
       isMe: map['isMe'] ?? false,
     );
   }
@@ -64,10 +66,6 @@ class Participant extends Equatable {
 
   @override
   List<Object> get props {
-    return [
-      id,
-      user,
-      isMe,
-    ];
+    return [id, isMe];
   }
 }

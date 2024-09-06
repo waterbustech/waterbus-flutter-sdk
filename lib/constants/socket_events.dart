@@ -32,4 +32,8 @@ class SocketEvent {
   static const String sendPodNameSSC = 'SEND_POD_NAME_SSC';
   static const String reconnect = 'reconnect_CSS';
   static const String destroy = 'destroy';
+
+  static const String sendMessageSSC = 'SEND_MESSAGE_SSC';
+  static const String updateMessageSSC = 'UPDATE_MESSAGE_SSC';
+  static const String deleteMessageSSC = 'DELETE_MESSAGE_SSC';
 }

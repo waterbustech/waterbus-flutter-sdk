@@ -14,8 +14,11 @@ abstract class MessageRepository {
     required int meetingId,
     required String data,
   });
-  Future<bool> editMessage({required int messageId, required String data});
-  Future<bool> deleteMessage({required int messageId});
+  Future<MessageModel?> editMessage({
+    required int messageId,
+    required String data,
+  });
+  Future<MessageModel?> deleteMessage({required int messageId});
 }
 
 @LazySingleton(as: MessageRepository)
@@ -27,22 +30,22 @@ class MessageRepositoryImpl extends MessageRepository {
   );
 
   @override
-  Future<bool> deleteMessage({required int messageId}) async {
-    final bool isSucceed =
+  Future<MessageModel?> deleteMessage({required int messageId}) async {
+    final MessageModel? messageModel =
         await _remoteDataSource.deleteMessage(messageId: messageId);
 
-    return isSucceed;
+    return messageModel;
   }
 
   @override
-  Future<bool> editMessage({
+  Future<MessageModel?> editMessage({
     required int messageId,
     required String data,
   }) async {
-    final bool isSucceed =
+    final MessageModel? messageModel =
         await _remoteDataSource.editMessage(messageId: messageId, data: data);
 
-    return isSucceed;
+    return messageModel;
   }
 
   @override

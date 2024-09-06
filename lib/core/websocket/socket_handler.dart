@@ -277,6 +277,30 @@ class SocketHandlerImpl extends SocketHandler {
           );
         }
       });
+
+      _socket?.on(SocketEvent.sendMessageSSC, (data) {
+        if (data == null) return;
+
+        WaterbusSdk.onMesssageChanged?.call(
+          MessageSocketEvent(event: MessageEventEnum.create, data: data),
+        );
+      });
+
+      _socket?.on(SocketEvent.updateMessageSSC, (data) {
+        if (data == null) return;
+
+        WaterbusSdk.onMesssageChanged?.call(
+          MessageSocketEvent(event: MessageEventEnum.update, data: data),
+        );
+      });
+
+      _socket?.on(SocketEvent.deleteMessageSSC, (data) {
+        if (data == null) return;
+
+        WaterbusSdk.onMesssageChanged?.call(
+          MessageSocketEvent(event: MessageEventEnum.delete, data: data),
+        );
+      });
     });
   }
 

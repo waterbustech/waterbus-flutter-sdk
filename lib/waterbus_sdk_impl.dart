@@ -317,7 +317,7 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<bool> editMessage({
+  Future<MessageModel?> editMessage({
     required int messageId,
     required String data,
   }) async {
@@ -328,7 +328,7 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<bool> deleteMessage({required int messageId}) async {
+  Future<MessageModel?> deleteMessage({required int messageId}) async {
     return await _messageRepository.deleteMessage(messageId: messageId);
   }
 
