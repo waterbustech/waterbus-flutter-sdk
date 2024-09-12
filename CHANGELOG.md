@@ -1,3 +1,7 @@
+## 1.4.16
+
+* [Chore]: upgrade web: ^1.0.0
+
 ## 1.4.15
 
 * [Feat]: set speaker phone enabled but prefer bluetooth
