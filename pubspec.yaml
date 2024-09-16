@@ -34,7 +34,9 @@ dependencies:
   replay_kit_launcher: ^1.0.0
   waterbus_callkit_incoming: ^2.0.0+5
   web: ^0.5.1
-
+  cryptography: ^2.7.0
+  convert: ^3.1.1
+  
   # WebRTC
   sdp_transform: ^0.3.2
   h264_profile_level_id: ^0.2.1

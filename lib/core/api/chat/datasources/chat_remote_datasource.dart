@@ -1,10 +1,13 @@
+import 'dart:isolate';
+
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
 import 'package:waterbus_sdk/constants/api_enpoints.dart';
 import 'package:waterbus_sdk/constants/http_status_code.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
-import 'package:waterbus_sdk/types/index.dart';
+import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/utils/encrypt/encrypt.dart';
 
 abstract class ChatRemoteDataSource {
   Future<List<Meeting>> getConversations({
@@ -38,11 +41,47 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
     );
 
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
-      final List list = response.data;
-      return list.map((meeting) => Meeting.fromMap(meeting)).toList();
+      final ReceivePort receivePort = ReceivePort();
+
+      final Map<String, dynamic> message = {
+        "conversations": (response.data as List)
+            .map((meeting) => Meeting.fromMap(meeting))
+            .toList(),
+        "sendPort": receivePort.sendPort,
+        "key": WaterbusSdk.privateMessageKey,
+      };
+
+      await Isolate.spawn(_handleDecryptLastMessage, message);
+
+      return await receivePort.first;
     }
 
     return [];
+  }
+
+  static Future<void> _handleDecryptLastMessage(
+    Map<String, dynamic> map,
+  ) async {
+    final List<Meeting> conversations = map['conversations'];
+    final SendPort sendPort = map['sendPort'];
+    final String key = map['key'];
+    final List<Meeting> conversationsDecrypt = [];
+    for (final Meeting conversation in conversations) {
+      if (conversation.latestMessage == null) continue;
+
+      final String decrypt = await EncryptAES().decryptAES256(
+        cipherText: conversation.latestMessage?.data ?? "",
+        key: key,
+      );
+
+      conversationsDecrypt.add(
+        conversation.copyWith(
+          latestMessage: conversation.latestMessage?.copyWith(data: decrypt),
+        ),
+      );
+    }
+
+    Isolate.exit(sendPort, conversationsDecrypt);
   }
 
   @override

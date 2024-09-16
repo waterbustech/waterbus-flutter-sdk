@@ -1,10 +1,12 @@
+import 'package:waterbus_sdk/types/index.dart';
+
 enum MessageEventEnum { create, update, delete }
 
 class MessageSocketEvent {
   final MessageEventEnum event;
-  final Map<String, dynamic> data;
+  final MessageModel message;
   MessageSocketEvent({
     required this.event,
-    required this.data,
+    required this.message,
   });
 }

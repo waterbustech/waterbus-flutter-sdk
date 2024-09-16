@@ -57,7 +57,7 @@ class MessageModel {
       '_id': id,
       'data': data,
       'meeting': meeting,
-      'createdBy': createdBy,
+      'createdBy': createdBy?.toMap(),
       'sendingStatus': sendingStatus.status,
       'status': status.status,
       'type': type,

@@ -1,10 +1,13 @@
+import 'dart:isolate';
+
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
 import 'package:waterbus_sdk/constants/api_enpoints.dart';
 import 'package:waterbus_sdk/constants/http_status_code.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
-import 'package:waterbus_sdk/types/models/message_model.dart';
+import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/utils/encrypt/encrypt.dart';
 
 abstract class MessageRemoteDataSource {
   Future<List<MessageModel>> getMessageByRoom({
@@ -44,12 +47,41 @@ class MessageRemoteDataSourceImpl extends MessageRemoteDataSource {
     );
 
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
-      return (response.data as List)
+      final List<MessageModel> messages = (response.data as List)
           .map((message) => MessageModel.fromMap(message))
           .toList();
+
+      final ReceivePort receivePort = ReceivePort();
+
+      await Isolate.spawn(
+        _handleDecryptMessages,
+        {
+          "messages": messages,
+          "sendPort": receivePort.sendPort,
+          "key": WaterbusSdk.privateMessageKey,
+        },
+      );
+
+      return await receivePort.first;
     }
 
     return [];
+  }
+
+  static Future<void> _handleDecryptMessages(Map<String, dynamic> map) async {
+    final List<MessageModel> messages = map['messages'];
+    final SendPort sendPort = map['sendPort'];
+    final String key = map['key'];
+
+    final List<MessageModel> messagesDecrypt = [];
+    for (final MessageModel messageModel in messages) {
+      final String data = await EncryptAES()
+          .decryptAES256(cipherText: messageModel.data, key: key);
+
+      messagesDecrypt.add(messageModel.copyWith(data: data));
+    }
+
+    Isolate.exit(sendPort, messagesDecrypt);
   }
 
   @override
@@ -57,13 +89,16 @@ class MessageRemoteDataSourceImpl extends MessageRemoteDataSource {
     required int meetingId,
     required String data,
   }) async {
+    final String messageData =
+        await EncryptAES().encryptAES256(cleartext: data);
+
     final Response response = await _remoteData.postRoute(
       "${ApiEndpoints.chats}/$meetingId",
-      body: {"data": data},
+      body: {"data": messageData},
     );
 
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
-      return MessageModel.fromMap(response.data);
+      return MessageModel.fromMap(response.data).copyWith(data: data);
     }
 
     return null;
@@ -74,13 +109,15 @@ class MessageRemoteDataSourceImpl extends MessageRemoteDataSource {
     required int messageId,
     required String data,
   }) async {
+    final String messageData =
+        await EncryptAES().encryptAES256(cleartext: data);
     final Response response = await _remoteData.putRoute(
       "${ApiEndpoints.chats}/$messageId",
-      {"data": data},
+      {"data": messageData},
     );
 
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
-      return MessageModel.fromMap(response.data);
+      return MessageModel.fromMap(response.data).copyWith(data: data);
     }
 
     return null;
