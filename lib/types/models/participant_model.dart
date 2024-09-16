@@ -65,7 +65,7 @@ class Participant extends Equatable {
   int get hashCode => id.hashCode ^ user.hashCode ^ isMe.hashCode;
 
   @override
-  List<Object> get props {
-    return [id, isMe];
+  List<dynamic> get props {
+    return [id, user, isMe];
   }
 }
