@@ -1,3 +1,29 @@
+## 1.4.15
+
+* [Feat]: set speaker phone enabled but prefer bluetooth
+* [Docs]: add guide to setup beauty filters for Android
+
+## 1.4.14
+
+* [Android]: Upgrade WebRTC SDK M128.6613.02
+
+## 1.4.13
+
+* [Feat]: Using dio_compatibility_layer
+
+## 1.4.12
+
+* [Feat]: Using rhttp + dio
+
+## 1.4.11
+
+* [Feat]: Add reconnect func
+
+## 1.4.10
+
+* [Linux]: Fix crash app when joinRoom
+* [Linux]: Fix can not get display media
+
 ## 1.4.9
 
 * Chore: remove dependency_overrides

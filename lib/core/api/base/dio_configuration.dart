@@ -1,14 +1,19 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
+
 import 'package:dio/dio.dart';
-import 'package:dio_smart_retry/dio_smart_retry.dart';
+import 'package:dio_compatibility_layer/dio_compatibility_layer.dart';
+import 'package:dio_smart_retry/dio_smart_retry.dart' as rt;
 import 'package:injectable/injectable.dart';
+import 'package:rhttp/rhttp.dart';
 
 import 'package:waterbus_sdk/constants/api_enpoints.dart';
 import 'package:waterbus_sdk/constants/http_status_code.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
+import 'package:waterbus_sdk/utils/http/dio_transformer.dart';
 import 'package:waterbus_sdk/utils/queues/completer_queue.dart';
 
 typedef TokensCallback = Function(
@@ -29,9 +34,25 @@ class DioConfiguration {
 
   // MARK: public methods
   Future<Dio> configuration(Dio dioClient) async {
+    if (!kIsWeb) {
+      await Rhttp.init();
+      final rhttpAdapter = await RhttpCompatibleClient.create(
+        settings: ClientSettings(
+          timeout: 10.seconds,
+          connectTimeout: 10.seconds,
+          throwOnStatusCode: false,
+        ),
+      );
+
+      dioClient.httpClientAdapter = ConversionLayerAdapter(rhttpAdapter);
+
+      // Transform json with compute
+      dioClient.transformer = FlutterTransformer();
+    }
+
     // Integration retry
     dioClient.interceptors.add(
-      RetryInterceptor(
+      rt.RetryInterceptor(
         dio: dioClient,
         // logPrint: print, // specify log function (optional)
         retryDelays: [
