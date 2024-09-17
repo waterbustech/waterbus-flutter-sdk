@@ -13,7 +13,6 @@ import 'package:waterbus_sdk/constants/http_status_code.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
-import 'package:waterbus_sdk/utils/http/dio_transformer.dart';
 import 'package:waterbus_sdk/utils/queues/completer_queue.dart';
 
 typedef TokensCallback = Function(
@@ -46,8 +45,8 @@ class DioConfiguration {
 
       dioClient.httpClientAdapter = ConversionLayerAdapter(rhttpAdapter);
 
-      // Transform json with compute
-      dioClient.transformer = FlutterTransformer();
+      // // Transform json with compute
+      // dioClient.transformer = FlutterTransformer();
     }
 
     // Integration retry

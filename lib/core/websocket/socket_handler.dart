@@ -9,6 +9,7 @@ import 'package:waterbus_sdk/core/api/base/dio_configuration.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/socket_handler_interface.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/utils/encrypt/encrypt.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
@@ -276,6 +277,48 @@ class SocketHandlerImpl extends SocketHandler {
             },
           );
         }
+      });
+
+      _socket?.on(SocketEvent.sendMessageSSC, (data) async {
+        if (data == null) return;
+
+        final MessageModel message = MessageModel.fromMapSocket(data);
+
+        final String dataDecrypted =
+            await EncryptAES().decryptAES256(cipherText: message.data);
+
+        WaterbusSdk.onMesssageChanged?.call(
+          MessageSocketEvent(
+            event: MessageEventEnum.create,
+            message: message.copyWith(data: dataDecrypted),
+          ),
+        );
+      });
+
+      _socket?.on(SocketEvent.updateMessageSSC, (data) async {
+        if (data == null) return;
+
+        final MessageModel message = MessageModel.fromMapSocket(data);
+
+        final String dataDecrypted =
+            await EncryptAES().decryptAES256(cipherText: message.data);
+
+        WaterbusSdk.onMesssageChanged?.call(
+          MessageSocketEvent(
+            event: MessageEventEnum.update,
+            message: message.copyWith(data: dataDecrypted),
+          ),
+        );
+      });
+
+      _socket?.on(SocketEvent.deleteMessageSSC, (data) {
+        if (data == null) return;
+
+        final MessageModel message = MessageModel.fromMapSocket(data);
+
+        WaterbusSdk.onMesssageChanged?.call(
+          MessageSocketEvent(event: MessageEventEnum.delete, message: message),
+        );
       });
     });
   }

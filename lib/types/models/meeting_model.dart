@@ -2,13 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
-import 'package:equatable/equatable.dart';
+import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/types/models/chat_status_enum.dart';
 
-import 'package:waterbus_sdk/types/enums/meeting_role.dart';
-import 'package:waterbus_sdk/types/models/member_model.dart';
-import 'package:waterbus_sdk/types/models/participant_model.dart';
-
-class Meeting extends Equatable {
+class Meeting {
   final int id;
   final String title;
   final List<Participant> participants;
@@ -16,7 +13,10 @@ class Meeting extends Equatable {
   final int code;
   final DateTime? createdAt;
   final DateTime? latestJoinedAt;
-  const Meeting({
+  final ChatStatusEnum status;
+  MessageModel? latestMessage;
+
+  Meeting({
     this.id = -1,
     required this.title,
     this.participants = const [],
@@ -24,6 +24,8 @@ class Meeting extends Equatable {
     this.code = -1,
     this.createdAt,
     this.latestJoinedAt,
+    this.status = ChatStatusEnum.join,
+    this.latestMessage,
   });
 
   Meeting copyWith({
@@ -34,6 +36,8 @@ class Meeting extends Equatable {
     int? code,
     DateTime? createdAt,
     DateTime? latestJoinedAt,
+    ChatStatusEnum? status,
+    MessageModel? latestMessage,
   }) {
     return Meeting(
       id: id ?? this.id,
@@ -43,6 +47,8 @@ class Meeting extends Equatable {
       code: code ?? this.code,
       createdAt: createdAt ?? this.createdAt,
       latestJoinedAt: latestJoinedAt ?? this.latestJoinedAt,
+      status: status ?? this.status,
+      latestMessage: latestMessage ?? this.latestMessage,
     );
   }
 
@@ -55,6 +61,8 @@ class Meeting extends Equatable {
       'code': code,
       'createdAt': createdAt.toString(),
       'latestJoinedAt': latestJoinedAt.toString(),
+      'status': status.status,
+      'latestMessage': latestMessage?.toMap(),
     };
   }
 
@@ -81,10 +89,14 @@ class Meeting extends Equatable {
         ),
       ),
       code: map['code'],
+      status: (int.tryParse(map['status'].toString()) ?? 0).getChatStatusEnum,
       createdAt: DateTime.parse(map['createdAt']).toLocal(),
-      latestJoinedAt: DateTime.parse(
-        map['latestJoinedAt'] ?? map['createdAt'],
-      ).toLocal(),
+      latestJoinedAt:
+          DateTime.parse(map['latestJoinedAt'] ?? map['createdAt']).toLocal(),
+      latestMessage: map['latestMessage'] != null &&
+              map['latestMessage'] is Map<String, dynamic>
+          ? MessageModel.fromMap(map['latestMessage'])
+          : null,
     );
   }
 
@@ -100,10 +112,17 @@ class Meeting extends Equatable {
     return other.id == id &&
         other.title == title &&
         other.createdAt == createdAt &&
+        other.status == status &&
         other.latestJoinedAt == latestJoinedAt &&
+        other.latestMessage == latestMessage &&
         listEquals(other.participants, participants) &&
         listEquals(other.members, members) &&
         other.code == code;
+  }
+
+  @override
+  String toString() {
+    return 'MessageModel(id: $id, title: $title, createdAt: $createdAt, status: $status, latestJoinedAt: $latestJoinedAt, participants: $participants, members: $members, status: $status, code: $code, latestMessage: $latestMessage)';
   }
 
   @override
@@ -112,27 +131,13 @@ class Meeting extends Equatable {
         title.hashCode ^
         participants.hashCode ^
         members.hashCode ^
+        status.hashCode ^
         code.hashCode ^
         createdAt.hashCode ^
+        latestMessage.hashCode ^
         latestJoinedAt.hashCode;
   }
 
-  @override
-  List<Object?> get props => [
-        id,
-        participants,
-        members,
-        code,
-        createdAt,
-        title,
-        latestJoinedAt,
-      ];
-
-  @override
-  bool get stringify => true;
-}
-
-extension MeetingX on Meeting {
   bool get isNoOneElse => participants.length < 2;
 
   String get inviteLink => 'https:/waterbus.tech/meeting/$code';
@@ -140,17 +145,17 @@ extension MeetingX on Meeting {
   String? get participantsOnlineTile {
     if (participants.isEmpty) return null;
 
-    final n = participants.length;
+    final int numberOfPaticipants = participants.length;
 
-    if (n == 1) {
-      return '${participants[0].user.fullName} is in the room';
-    } else if (n == 2) {
-      return '${participants[0].user.fullName} and ${participants[1].user.fullName} are in the room';
+    if (numberOfPaticipants == 1) {
+      return '${participants[0].user?.fullName} is in the room';
+    } else if (numberOfPaticipants == 2) {
+      return '${participants[0].user?.fullName} and ${participants[1].user?.fullName} are in the room';
     } else {
-      final int otherParticipants = n - 2;
+      final int otherParticipants = numberOfPaticipants - 2;
       final String participantList = participants
           .sublist(0, 2)
-          .map<String>((participant) => participant.user.fullName)
+          .map<String>((participant) => participant.user?.fullName ?? "")
           .join(', ');
       return '$participantList and $otherParticipants others are in the room';
     }
@@ -160,11 +165,18 @@ extension MeetingX on Meeting {
     return latestJoinedAt ?? createdAt ?? DateTime.now();
   }
 
-  bool get isHost {
-    final int indexOfHost = members.indexWhere(
-      (member) => member.role == MeetingRole.host && member.user.id == 1,
-    );
+  bool get isGroup => memberJoined.length >= 2;
 
-    return indexOfHost != -1;
-  }
+  StatusSeenMessage get statusLastedMessage => StatusSeenMessage.seen;
+
+  List<Member> get memberJoined => members
+      .where((member) => member.status == MemberStatusEnum.joined)
+      .toList();
+
+  StatusMessage get statusMessage => StatusMessage.none;
+
+  int get countUnreadMessage => 10;
+
+  DateTime get updatedAt =>
+      (latestMessage?.updatedAt ?? createdAt ?? DateTime.now()).toLocal();
 }

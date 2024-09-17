@@ -17,7 +17,10 @@ import '../core/api/auth/datasources/auth_remote_datasource.dart' as _i997;
 import '../core/api/auth/repositories/auth_repository.dart' as _i824;
 import '../core/api/base/base_remote_data.dart' as _i182;
 import '../core/api/base/dio_configuration.dart' as _i314;
+import '../core/api/chat/datasources/chat_remote_datasource.dart' as _i712;
+import '../core/api/chat/repositories/chat_repository.dart' as _i613;
 import '../core/api/meetings/repositories/meeting_repository.dart' as _i1023;
+import '../core/api/messages/repositories/message_repository.dart' as _i575;
 import '../core/api/user/datasources/user_remote_datasource.dart' as _i1054;
 import '../core/api/user/repositories/user_repository.dart' as _i895;
 import '../core/webrtc/webrtc.dart' as _i388;
@@ -38,6 +41,8 @@ import '../waterbus_sdk_interface.dart' as _i513;
 
 import '../core/api/meetings/datasources/meeting_remote_datesource.dart'
     as _i377;
+import '../core/api/messages/datasources/message_remote_datasource.dart'
+    as _i242;
 
 // initializes the registration of main-scope dependencies inside of GetIt
 _i174.GetIt $initGetIt(
@@ -75,6 +80,8 @@ _i174.GetIt $initGetIt(
       () => _i1054.UserRemoteDataSourceImpl(gh<_i182.BaseRemoteData>()));
   gh.lazySingleton<_i377.MeetingRemoteDataSource>(
       () => _i377.MeetingRemoteDataSourceImpl(gh<_i182.BaseRemoteData>()));
+  gh.lazySingleton<_i242.MessageRemoteDataSource>(
+      () => _i242.MessageRemoteDataSourceImpl(gh<_i182.BaseRemoteData>()));
   gh.singleton<_i314.DioConfiguration>(() => _i314.DioConfiguration(
         gh<_i182.BaseRemoteData>(),
         gh<_i828.AuthLocalDataSource>(),
@@ -88,14 +95,20 @@ _i174.GetIt $initGetIt(
             gh<_i182.BaseRemoteData>(),
             gh<_i828.AuthLocalDataSource>(),
           ));
+  gh.lazySingleton<_i712.ChatRemoteDataSource>(
+      () => _i712.ChatRemoteDataSourceImpl(gh<_i182.BaseRemoteData>()));
   gh.lazySingleton<_i824.AuthRepository>(() => _i824.AuthRepositoryImpl(
         gh<_i828.AuthLocalDataSource>(),
         gh<_i997.AuthRemoteDataSource>(),
       ));
   gh.lazySingleton<_i1023.MeetingRepository>(
       () => _i1023.MeetingRepositoryImpl(gh<_i377.MeetingRemoteDataSource>()));
+  gh.lazySingleton<_i575.MessageRepository>(
+      () => _i575.MessageRepositoryImpl(gh<_i242.MessageRemoteDataSource>()));
   gh.lazySingleton<_i895.UserRepository>(
       () => _i895.UserRepositoryImpl(gh<_i1054.UserRemoteDataSource>()));
+  gh.lazySingleton<_i613.ChatRepository>(
+      () => _i613.ChatRepositoryImpl(gh<_i712.ChatRemoteDataSource>()));
   gh.singleton<_i976.SocketHandler>(() => _i1068.SocketHandlerImpl(
         gh<_i413.WaterbusWebRTCManager>(),
         gh<_i944.WaterbusLogger>(),
@@ -111,6 +124,8 @@ _i174.GetIt $initGetIt(
         gh<_i824.AuthRepository>(),
         gh<_i1023.MeetingRepository>(),
         gh<_i895.UserRepository>(),
+        gh<_i613.ChatRepository>(),
+        gh<_i575.MessageRepository>(),
         gh<_i944.WaterbusLogger>(),
       ));
   return getIt;

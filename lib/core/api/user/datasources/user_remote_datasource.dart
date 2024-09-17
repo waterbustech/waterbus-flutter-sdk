@@ -17,6 +17,11 @@ abstract class UserRemoteDataSource {
   Future<bool> updateUserProfile(User user);
   Future<bool> updateUsername(String username);
   Future<bool?> checkUsername(String username);
+  Future<List<User>> searchUsers({
+    required String keyword,
+    required int skip,
+    required int limit,
+  });
   Future<String?> getPresignedUrl();
   Future<String?> uploadImageToS3({
     required String uploadUrl,
@@ -86,11 +91,7 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
       user.toMap(),
     );
 
-    if (response.statusCode == StatusCode.ok) {
-      return true;
-    }
-
-    return false;
+    return response.statusCode == StatusCode.ok;
   }
 
   @override
@@ -100,11 +101,7 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
       {},
     );
 
-    if (response.statusCode == StatusCode.ok) {
-      return true;
-    }
-
-    return false;
+    return response.statusCode == StatusCode.ok;
   }
 
   @override
@@ -118,5 +115,25 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
     }
 
     return false;
+  }
+
+  @override
+  Future<List<User>> searchUsers({
+    required String keyword,
+    required int skip,
+    required int limit,
+  }) async {
+    final Response response = await _remoteData.getRoute(
+      ApiEndpoints.searchUsers,
+      query: "q=$keyword&limit=$limit&skip=$skip",
+    );
+
+    if (response.statusCode == StatusCode.ok) {
+      final List data = response.data['hits'];
+
+      return data.map((user) => User.fromMap(user['document'])).toList();
+    }
+
+    return [];
   }
 }
