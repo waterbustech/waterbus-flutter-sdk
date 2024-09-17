@@ -1,3 +1,7 @@
+## 1.5.0
+
+* [Feat]: encrypted chats
+
 ## 1.4.16
 
 * [Chore]: upgrade web: ^1.0.0

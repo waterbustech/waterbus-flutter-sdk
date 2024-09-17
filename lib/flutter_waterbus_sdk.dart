@@ -19,9 +19,15 @@ class WaterbusSdk {
   static String apiUrl = '';
   static String wsUrl = '';
   static String apiKey = '';
+  static String privateMessageKey = '';
   static Function(CallbackPayload)? onEventChanged;
   static Function(VideoSenderStats)? onStatsChanged;
   static Function(Subtitle)? onSubtitle;
+  static Function(MessageSocketEvent)? onMesssageChanged;
+
+  set onMessageSocketChanged(Function(MessageSocketEvent) onMesssageChanged) {
+    WaterbusSdk.onMesssageChanged = onMesssageChanged;
+  }
 
   set onEventChangedRegister(Function(CallbackPayload) onEventChanged) {
     WaterbusSdk.onEventChanged = onEventChanged;
@@ -38,11 +44,13 @@ class WaterbusSdk {
   Future<void> initializeApp({
     required String wsUrl,
     required String apiUrl,
+    required String privateMessageKey,
     String apiKey = 'waterbus@2024',
   }) async {
     WaterbusSdk.wsUrl = wsUrl;
     WaterbusSdk.apiUrl = apiUrl;
     WaterbusSdk.apiKey = apiKey;
+    WaterbusSdk.privateMessageKey = privateMessageKey;
 
     // Init dependency injection if needed
     if (!getIt.isRegistered<WaterbusWebRTCManager>()) {
@@ -205,6 +213,78 @@ class WaterbusSdk {
     required String uploadUrl,
   }) async {
     return await _sdk.uploadAvatar(image: image, uploadUrl: uploadUrl);
+  }
+
+  Future<List<User>> searchUsers({
+    required String keyword,
+    required int skip,
+    int limit = 10,
+  }) async {
+    return await _sdk.searchUsers(keyword: keyword, skip: skip, limit: limit);
+  }
+
+  // Chat
+  Future<Meeting?> addMember(int code, int userId) async {
+    return await _sdk.addMember(code: code, userId: userId);
+  }
+
+  Future<Meeting?> deleteMember(int code, int userId) async {
+    return await _sdk.deleteMember(code: code, userId: userId);
+  }
+
+  Future<Meeting?> acceptInvite(int code) async {
+    return await _sdk.acceptInvite(code: code);
+  }
+
+  Future<Meeting?> leaveConversation(int code) async {
+    return await _sdk.leaveConversation(code: code);
+  }
+
+  Future<bool> deleteConversation(int conversationId) async {
+    return await _sdk.deleteConversation(conversationId);
+  }
+
+  Future<List<Meeting>> getConversations({
+    required int skip,
+    int limit = 10,
+    int status = 2,
+  }) async {
+    return await _sdk.getConversations(
+      status: status,
+      limit: limit,
+      skip: skip,
+    );
+  }
+
+  // Messages
+  Future<List<MessageModel>> getMessageByRoom({
+    required int meetingId,
+    required int skip,
+    int limit = 10,
+  }) async {
+    return await _sdk.getMessageByRoom(
+      meetingId: meetingId,
+      limit: limit,
+      skip: skip,
+    );
+  }
+
+  Future<MessageModel?> sendMessage({
+    required int meetingId,
+    required String data,
+  }) async {
+    return await _sdk.sendMessage(meetingId: meetingId, data: data);
+  }
+
+  Future<MessageModel?> editMessage({
+    required int messageId,
+    required String data,
+  }) async {
+    return await _sdk.editMessage(messageId: messageId, data: data);
+  }
+
+  Future<MessageModel?> deleteMessage({required int messageId}) async {
+    return await _sdk.deleteMessage(messageId: messageId);
   }
 
   // Auth

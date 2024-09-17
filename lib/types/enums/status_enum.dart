@@ -1,21 +1,20 @@
-enum StatusEnum {
+enum MemberStatusEnum {
   inviting(0),
   invisible(1),
   joined(2);
 
-  const StatusEnum(this.value);
-  final int value;
-}
+  const MemberStatusEnum(this.value);
 
-extension StatusX on StatusEnum {
-  static StatusEnum fromValue(int value) {
+  final int value;
+
+  static MemberStatusEnum fromValue(int value) {
     switch (value) {
       case 0:
-        return StatusEnum.inviting;
+        return MemberStatusEnum.inviting;
       case 1:
-        return StatusEnum.invisible;
+        return MemberStatusEnum.invisible;
       case 2:
-        return StatusEnum.joined;
+        return MemberStatusEnum.joined;
       default:
         throw Exception('Unknown MeetingRole value: $value');
     }

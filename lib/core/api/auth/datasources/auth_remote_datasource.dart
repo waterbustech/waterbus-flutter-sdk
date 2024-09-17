@@ -66,10 +66,6 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
       ApiEndpoints.auth,
     );
 
-    if (response.statusCode == StatusCode.noContent) {
-      return true;
-    }
-
-    return false;
+    return response.statusCode == StatusCode.noContent;
   }
 }

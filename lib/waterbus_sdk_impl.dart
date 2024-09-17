@@ -5,7 +5,9 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 import 'package:waterbus_sdk/core/api/auth/repositories/auth_repository.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
+import 'package:waterbus_sdk/core/api/chat/repositories/chat_repository.dart';
 import 'package:waterbus_sdk/core/api/meetings/repositories/meeting_repository.dart';
+import 'package:waterbus_sdk/core/api/messages/repositories/message_repository.dart';
 import 'package:waterbus_sdk/core/api/user/repositories/user_repository.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/socket_emiter_interface.dart';
@@ -24,12 +26,14 @@ class SdkCore extends WaterbusSdkInterface {
   final SocketEmiter _socketEmiter;
   final WaterbusWebRTCManager _rtcManager;
   final ReplayKitChannel _replayKitChannel;
-
   final BaseRemoteData _baseRepository;
   final AuthRepository _authRepository;
   final MeetingRepository _meetingRepository;
   final UserRepository _userRepository;
+  final ChatRepository _chatRepository;
+  final MessageRepository _messageRepository;
   final WaterbusLogger _logger;
+
   SdkCore(
     this._webSocket,
     this._socketEmiter,
@@ -39,6 +43,8 @@ class SdkCore extends WaterbusSdkInterface {
     this._authRepository,
     this._meetingRepository,
     this._userRepository,
+    this._chatRepository,
+    this._messageRepository,
     this._logger,
   );
 
@@ -243,8 +249,90 @@ class SdkCore extends WaterbusSdkInterface {
     await setPictureInPictureEnabled(textureId: textureId);
   }
 
-  // User
+  // Chat
+  @override
+  Future<bool> deleteConversation(int conversationId) async {
+    return await _chatRepository.deleteConversation(conversationId);
+  }
 
+  @override
+  Future<List<Meeting>> getConversations({
+    required int skip,
+    int limit = 10,
+    int status = 2,
+  }) async {
+    return await _chatRepository.getConversations(
+      status: status,
+      limit: limit,
+      skip: skip,
+    );
+  }
+
+  @override
+  Future<Meeting?> acceptInvite({required int code}) async {
+    return await _chatRepository.acceptInvite(code: code);
+  }
+
+  @override
+  Future<Meeting?> addMember({required int code, required int userId}) async {
+    return await _chatRepository.addMember(code: code, userId: userId);
+  }
+
+  @override
+  Future<Meeting?> leaveConversation({required int code}) async {
+    return await _chatRepository.leaveConversation(code: code);
+  }
+
+  @override
+  Future<Meeting?> deleteMember({
+    required int code,
+    required int userId,
+  }) async {
+    return await _chatRepository.deleteMember(code: code, userId: userId);
+  }
+
+  // Messages
+  @override
+  Future<List<MessageModel>> getMessageByRoom({
+    required int meetingId,
+    required int skip,
+    int limit = 10,
+  }) async {
+    return await _messageRepository.getMessageByRoom(
+      meetingId: meetingId,
+      limit: limit,
+      skip: skip,
+    );
+  }
+
+  @override
+  Future<MessageModel?> sendMessage({
+    required int meetingId,
+    required String data,
+  }) async {
+    return await _messageRepository.sendMessage(
+      meetingId: meetingId,
+      data: data,
+    );
+  }
+
+  @override
+  Future<MessageModel?> editMessage({
+    required int messageId,
+    required String data,
+  }) async {
+    return await _messageRepository.editMessage(
+      messageId: messageId,
+      data: data,
+    );
+  }
+
+  @override
+  Future<MessageModel?> deleteMessage({required int messageId}) async {
+    return await _messageRepository.deleteMessage(messageId: messageId);
+  }
+
+  // User
   @override
   Future<User?> getProfile() async {
     return await _userRepository.getUserProfile();
@@ -285,8 +373,20 @@ class SdkCore extends WaterbusSdkInterface {
     );
   }
 
-  // Auth
+  @override
+  Future<List<User>> searchUsers({
+    required String keyword,
+    required int skip,
+    required int limit,
+  }) async {
+    return await _userRepository.searchUsers(
+      keyword: keyword,
+      skip: skip,
+      limit: limit,
+    );
+  }
 
+  // Auth
   @override
   Future<User?> createToken({required AuthPayloadModel payload}) async {
     final User? user = await _authRepository.loginWithSocial(payload);
