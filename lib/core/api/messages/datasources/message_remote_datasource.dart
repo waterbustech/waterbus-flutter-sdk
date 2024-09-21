@@ -1,6 +1,5 @@
-import 'dart:isolate';
-
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 
 import 'package:waterbus_sdk/constants/api_enpoints.dart';
@@ -51,26 +50,19 @@ class MessageRemoteDataSourceImpl extends MessageRemoteDataSource {
           .map((message) => MessageModel.fromMap(message))
           .toList();
 
-      final ReceivePort receivePort = ReceivePort();
-
-      await Isolate.spawn(
-        _handleDecryptMessages,
-        {
-          "messages": messages,
-          "sendPort": receivePort.sendPort,
-          "key": WaterbusSdk.privateMessageKey,
-        },
-      );
-
-      return await receivePort.first;
+      return await compute(_handleDecryptMessages, {
+        "messages": messages,
+        "key": WaterbusSdk.privateMessageKey,
+      });
     }
 
     return [];
   }
 
-  static Future<void> _handleDecryptMessages(Map<String, dynamic> map) async {
+  static Future<List<MessageModel>> _handleDecryptMessages(
+    Map<String, dynamic> map,
+  ) async {
     final List<MessageModel> messages = map['messages'];
-    final SendPort sendPort = map['sendPort'];
     final String key = map['key'];
 
     final List<MessageModel> messagesDecrypt = [];
@@ -81,7 +73,7 @@ class MessageRemoteDataSourceImpl extends MessageRemoteDataSource {
       messagesDecrypt.add(messageModel.copyWith(data: data));
     }
 
-    Isolate.exit(sendPort, messagesDecrypt);
+    return messagesDecrypt;
   }
 
   @override
