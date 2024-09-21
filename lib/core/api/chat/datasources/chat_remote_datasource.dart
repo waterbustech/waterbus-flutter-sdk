@@ -1,4 +1,4 @@
-import 'dart:isolate';
+import 'package:flutter/foundation.dart';
 
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
@@ -41,29 +41,23 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
     );
 
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
-      final ReceivePort receivePort = ReceivePort();
-
       final Map<String, dynamic> message = {
         "conversations": (response.data as List)
             .map((meeting) => Meeting.fromMap(meeting))
             .toList(),
-        "sendPort": receivePort.sendPort,
         "key": WaterbusSdk.privateMessageKey,
       };
 
-      await Isolate.spawn(_handleDecryptLastMessage, message);
-
-      return await receivePort.first;
+      return await compute(_handleDecryptLastMessage, message);
     }
 
     return [];
   }
 
-  static Future<void> _handleDecryptLastMessage(
+  static Future<List<Meeting>> _handleDecryptLastMessage(
     Map<String, dynamic> map,
   ) async {
     final List<Meeting> conversations = map['conversations'];
-    final SendPort sendPort = map['sendPort'];
     final String key = map['key'];
     final List<Meeting> conversationsDecrypt = [];
     for (final Meeting conversation in conversations) {
@@ -81,7 +75,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
       );
     }
 
-    Isolate.exit(sendPort, conversationsDecrypt);
+    return conversationsDecrypt;
   }
 
   @override
