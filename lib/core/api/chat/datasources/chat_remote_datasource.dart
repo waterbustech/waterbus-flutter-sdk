@@ -1,5 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+
+import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
 import 'package:waterbus_sdk/constants/api_enpoints.dart';
