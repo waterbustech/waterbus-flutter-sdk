@@ -1,3 +1,7 @@
+## 1.5.1
+
+* [Fix]: Isolate on web
+
 ## 1.5.0
 
 * [Feat]: encrypted chats
