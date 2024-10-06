@@ -23,6 +23,8 @@ abstract class MeetingRemoteDataSource {
     required Meeting meeting,
   });
   Future<Meeting?> getInfoMeeting(int code);
+  Future<int?> startRecord(int roomId);
+  Future<bool> stopRecord(int roomId);
 }
 
 @LazySingleton(as: MeetingRemoteDataSource)
@@ -114,5 +116,29 @@ class MeetingRemoteDataSourceImpl extends MeetingRemoteDataSource {
     );
 
     return response.statusCode == StatusCode.ok;
+  }
+
+  @override
+  Future<int?> startRecord(int roomId) async {
+    final Response response = await _remoteData.postRoute(
+      ApiEndpoints.startRecord,
+      queryParameters: {"code": roomId},
+    );
+
+    if (response.statusCode == StatusCode.created) {
+      return response.data['id'];
+    }
+
+    return null;
+  }
+
+  @override
+  Future<bool> stopRecord(int roomId) async {
+    final Response response = await _remoteData.postRoute(
+      ApiEndpoints.stopRecord,
+      queryParameters: {"code": roomId},
+    );
+
+    return response.statusCode == StatusCode.created;
   }
 }

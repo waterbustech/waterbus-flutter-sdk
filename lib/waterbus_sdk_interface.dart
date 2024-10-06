@@ -72,6 +72,8 @@ abstract class WaterbusSdkInterface {
     required int? userId,
   });
   Future<Meeting?> getRoomInfo(int code);
+  Future<int?> startRecord();
+  Future<bool> stopRecord();
   Future<void> leaveRoom();
 
   // WebRTC

@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert' as convert;
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
@@ -82,21 +84,14 @@ class BaseRemoteData {
   Future<Response<dynamic>> postRoute(
     String gateway, {
     Map<String, dynamic>? body,
-    String? query,
+    Map<String, dynamic>? queryParameters,
   }) async {
     try {
-      final Map<String, String> paramsObject = {};
-      if (query != null) {
-        query.split('&').forEach((element) {
-          paramsObject[element.split('=')[0].toString()] =
-              element.split('=')[1].toString();
-        });
-      }
       final Response response = await dio.post(
         gateway,
         data: body == null ? {} : convert.jsonEncode(body),
         options: getOptions(),
-        queryParameters: query == null ? null : paramsObject,
+        queryParameters: queryParameters,
       );
 
       return response;
@@ -263,6 +258,7 @@ class BaseRemoteData {
         connectTimeout: 10.seconds,
         receiveTimeout: 10.seconds,
         sendTimeout: 10.seconds,
+        responseDecoder: _responseDecoder,
       ),
     );
 
@@ -271,5 +267,23 @@ class BaseRemoteData {
           .configuration(dio)
           .then((client) => dio = client),
     ]);
+  }
+
+  FutureOr<String?> _responseDecoder(
+    List<int> responseBytes,
+    RequestOptions options,
+    ResponseBody responseBody,
+  ) {
+    final encoding = (responseBody.headers["content-encoding"] ?? ['']).first;
+    switch (encoding) {
+      case "":
+        return utf8.decode(responseBytes);
+      case "gzip":
+        return utf8.decode(gzip.decode(responseBytes));
+      default:
+        throw Exception(
+          "unsupported encoding /$encoding/ used in response body",
+        );
+    }
   }
 }
