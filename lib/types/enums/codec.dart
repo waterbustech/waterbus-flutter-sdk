@@ -5,7 +5,7 @@ enum WebRTCCodec {
   vp8('vp8', true),
   vp9('vp9', true),
   h264('h264', true),
-  h265('h265', false),
+  // h265('h265', false),
   av1('av1', false);
 
   const WebRTCCodec(this.codec, this.isSFrameSuported);
@@ -35,7 +35,7 @@ extension CodecStringX on String {
       'vp8' || 'video/vp8' => WebRTCCodec.vp8,
       'vp9' || 'video/vp9' => WebRTCCodec.vp9,
       'h264' || 'video/h264' => WebRTCCodec.h264,
-      'h265' || 'video/h265' => WebRTCCodec.h265,
+      // 'h265' || 'video/h265' => WebRTCCodec.h265,
       'av1' || 'video/av1' => WebRTCCodec.av1,
       _ => WebRTCCodec.h264,
     };

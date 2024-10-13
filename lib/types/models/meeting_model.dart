@@ -139,7 +139,7 @@ class Meeting {
         latestJoinedAt.hashCode;
   }
 
-  bool get isNoOneElse => participants.length < 2;
+  bool get isNoOneElse => members.length < 2;
 
   String get inviteLink => 'https:/waterbus.tech/meeting/$code';
 
