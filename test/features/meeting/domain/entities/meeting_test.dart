@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 
+import 'package:waterbus_sdk/types/enums/meeting_role.dart';
 import 'package:waterbus_sdk/types/index.dart';
 import '../../../../constants/sample_file_path.dart';
 import '../../../../fixtures/fixture_reader.dart';
@@ -169,9 +170,21 @@ void main() {
     final participant2 = Participant(user: user2, id: 2);
     final participant3 = Participant(user: user3, id: 3);
 
+    final fakeParticipants = [participant1, participant2, participant3];
+    final fakeMembers = fakeParticipants
+        .map(
+          (participant) => Member(
+            id: participant.id,
+            role: MeetingRole.attendee,
+            user: participant.user!,
+          ),
+        )
+        .toList();
+
     final meetingWithParticipants = Meeting(
       title: "Meeting with Kai",
-      participants: [participant1, participant2, participant3],
+      participants: fakeParticipants,
+      members: fakeMembers,
     );
 
     final meetingWithoutParticipants = Meeting(
