@@ -1,8 +1,10 @@
 library dio_flutter_transformer;
 
 import 'dart:convert';
-import 'package:dio/dio.dart';
+
 import 'package:flutter/foundation.dart';
+
+import 'package:dio/dio.dart';
 
 /// Dio has already implemented a [SyncTransformer], and as the default
 /// [Transformer]. If you want to custom the transformation of
