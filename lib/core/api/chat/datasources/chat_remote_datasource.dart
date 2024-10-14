@@ -62,7 +62,10 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
     final String key = map['key'];
     final List<Meeting> conversationsDecrypt = [];
     for (final Meeting conversation in conversations) {
-      if (conversation.latestMessage == null) continue;
+      if (conversation.latestMessage == null) {
+        conversationsDecrypt.add(conversation);
+        continue;
+      }
 
       final String decrypt = await EncryptAES().decryptAES256(
         cipherText: conversation.latestMessage?.data ?? "",

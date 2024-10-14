@@ -14,6 +14,8 @@ abstract class MeetingRepository {
     CreateMeetingParams params,
   );
   Future<Meeting?> getInfoMeeting(int code);
+  Future<int?> startRecord(int roomId);
+  Future<bool> stopRecord(int roomId);
 }
 
 @LazySingleton(as: MeetingRepository)
@@ -116,5 +118,15 @@ class MeetingRepositoryImpl extends MeetingRepository {
     participants.removeAt(indexOfMyParticipant);
 
     return meeting.copyWith(participants: participants);
+  }
+
+  @override
+  Future<int?> startRecord(int roomId) async {
+    return await _remoteDataSource.startRecord(roomId);
+  }
+
+  @override
+  Future<bool> stopRecord(int roomId) async {
+    return await _remoteDataSource.stopRecord(roomId);
   }
 }

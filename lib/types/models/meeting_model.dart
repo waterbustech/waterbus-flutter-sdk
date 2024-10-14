@@ -103,7 +103,8 @@ class Meeting {
       status: (int.tryParse(map['status'].toString()) ?? 0).getChatStatusEnum,
       createdAt: DateTime.parse(map['createdAt']).toLocal(),
       latestJoinedAt:
-          DateTime.parse(map['latestJoinedAt'] ?? map['createdAt']).toLocal(),
+          DateTime.parse(map['latestMessageCreatedAt'] ?? map['createdAt'])
+              .toLocal(),
       latestMessage: map['latestMessage'] != null &&
               map['latestMessage'] is Map<String, dynamic>
           ? MessageModel.fromMap(map['latestMessage'])
@@ -152,7 +153,7 @@ class Meeting {
         latestJoinedAt.hashCode;
   }
 
-  bool get isNoOneElse => participants.length < 2;
+  bool get isNoOneElse => members.length < 2;
 
   String get inviteLink => 'https:/waterbus.tech/meeting/$code';
 

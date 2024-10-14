@@ -52,8 +52,8 @@ class WaterbusSdk {
   Future<void> initializeApp({
     required String wsUrl,
     required String apiUrl,
-    required String privateMessageKey,
     String apiKey = 'waterbus@2024',
+    String privateMessageKey = '', // Disable message encrypted if empty
   }) async {
     WaterbusSdk.wsUrl = wsUrl;
     WaterbusSdk.apiUrl = apiUrl;
@@ -113,6 +113,14 @@ class WaterbusSdk {
 
   Future<Meeting?> getRoomInfo({required int code}) async {
     return await _sdk.getRoomInfo(code);
+  }
+
+  Future<int?> startRecord() async {
+    return await _sdk.startRecord();
+  }
+
+  Future<bool> stopRecord() async {
+    return await _sdk.stopRecord();
   }
 
   Future<void> leaveRoom() async {
