@@ -14,6 +14,7 @@ class Meeting {
   final DateTime? createdAt;
   final DateTime? latestJoinedAt;
   final ChatStatusEnum status;
+  final String? avatar;
   MessageModel? latestMessage;
 
   Meeting({
@@ -26,6 +27,7 @@ class Meeting {
     this.latestJoinedAt,
     this.status = ChatStatusEnum.join,
     this.latestMessage,
+    this.avatar,
   });
 
   Meeting copyWith({
@@ -38,6 +40,7 @@ class Meeting {
     DateTime? latestJoinedAt,
     ChatStatusEnum? status,
     MessageModel? latestMessage,
+    String? avatar,
   }) {
     return Meeting(
       id: id ?? this.id,
@@ -49,6 +52,7 @@ class Meeting {
       latestJoinedAt: latestJoinedAt ?? this.latestJoinedAt,
       status: status ?? this.status,
       latestMessage: latestMessage ?? this.latestMessage,
+      avatar: avatar ?? this.avatar,
     );
   }
 
@@ -63,15 +67,22 @@ class Meeting {
       'latestJoinedAt': latestJoinedAt.toString(),
       'status': status.status,
       'latestMessage': latestMessage?.toMap(),
+      'avatar': avatar,
     };
   }
 
-  Map<String, dynamic> toMapCreate(String password) {
-    return {
+  Map<String, dynamic> toMapCreate({String? password}) {
+    final Map<String, dynamic> body = {
       'title': title,
-      'password': password,
       'code': code,
+      'avatar': avatar,
     };
+
+    if (password != null) {
+      body['password'] = password;
+    }
+
+    return body;
   }
 
   factory Meeting.fromMap(Map<String, dynamic> map) {
@@ -97,6 +108,7 @@ class Meeting {
               map['latestMessage'] is Map<String, dynamic>
           ? MessageModel.fromMap(map['latestMessage'])
           : null,
+      avatar: map['avatar'],
     );
   }
 
@@ -112,6 +124,7 @@ class Meeting {
     return other.id == id &&
         other.title == title &&
         other.createdAt == createdAt &&
+        other.avatar == avatar &&
         other.status == status &&
         other.latestJoinedAt == latestJoinedAt &&
         other.latestMessage == latestMessage &&
@@ -122,7 +135,7 @@ class Meeting {
 
   @override
   String toString() {
-    return 'MessageModel(id: $id, title: $title, createdAt: $createdAt, status: $status, latestJoinedAt: $latestJoinedAt, participants: $participants, members: $members, status: $status, code: $code, latestMessage: $latestMessage)';
+    return 'MessageModel(id: $id, title: $title, avatar: $avatar, createdAt: $createdAt, status: $status, latestJoinedAt: $latestJoinedAt, participants: $participants, members: $members, status: $status, code: $code, latestMessage: $latestMessage)';
   }
 
   @override
@@ -133,6 +146,7 @@ class Meeting {
         members.hashCode ^
         status.hashCode ^
         code.hashCode ^
+        avatar.hashCode ^
         createdAt.hashCode ^
         latestMessage.hashCode ^
         latestJoinedAt.hashCode;

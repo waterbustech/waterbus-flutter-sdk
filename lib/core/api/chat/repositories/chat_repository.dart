@@ -9,6 +9,7 @@ abstract class ChatRepository {
     required int limit,
     required int skip,
   });
+  Future<bool> updateConversation({required Meeting meeting});
   Future<bool> deleteConversation(int meetingId);
   Future<Meeting?> leaveConversation({required int code});
   Future<Meeting?> addMember({required int code, required int userId});
@@ -88,5 +89,14 @@ class ChatRepositoryImpl extends ChatRepository {
     );
 
     return meeting;
+  }
+
+  @override
+  Future<bool> updateConversation({required Meeting meeting}) async {
+    final bool isSucceed = await _remoteDataSource.updateConversation(
+      meeting: meeting,
+    );
+
+    return isSucceed;
   }
 }

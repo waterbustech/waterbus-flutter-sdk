@@ -104,7 +104,7 @@ void main() {
       const String password = 'sample_password';
 
       // Act
-      final Map<String, dynamic> map = meeting.toMapCreate(password);
+      final Map<String, dynamic> map = meeting.toMapCreate(password: password);
 
       // Assert
       expect(map, isA<Map<String, dynamic>>());

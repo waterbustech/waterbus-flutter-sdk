@@ -20,6 +20,7 @@ abstract class ChatRemoteDataSource {
   Future<Meeting?> addMember({required int code, required int userId});
   Future<Meeting?> deleteMember({required int code, required int userId});
   Future<Meeting?> acceptInvite({required int code});
+  Future<bool> updateConversation({required Meeting meeting});
 }
 
 @LazySingleton(as: ChatRemoteDataSource)
@@ -76,6 +77,16 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
     }
 
     return conversationsDecrypt;
+  }
+
+  @override
+  Future<bool> updateConversation({required Meeting meeting}) async {
+    final Response response = await _remoteData.putRoute(
+      ApiEndpoints.meetings,
+      meeting.toMapCreate(),
+    );
+    print("updateConversation $response");
+    return response.statusCode == StatusCode.ok;
   }
 
   @override

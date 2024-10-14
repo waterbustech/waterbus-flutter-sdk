@@ -8,6 +8,7 @@ import 'package:waterbus_sdk/core/api/base/base_local_storage.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
 import 'package:waterbus_sdk/types/index.dart';
+import 'package:waterbus_sdk/types/models/conversation_socket_event.dart';
 import 'package:waterbus_sdk/utils/callkit/callkit_listener.dart';
 import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
 
@@ -24,9 +25,16 @@ class WaterbusSdk {
   static Function(VideoSenderStats)? onStatsChanged;
   static Function(Subtitle)? onSubtitle;
   static Function(MessageSocketEvent)? onMesssageChanged;
+  static Function(ConversationSocketEvent)? onConversationChanged;
 
   set onMessageSocketChanged(Function(MessageSocketEvent) onMesssageChanged) {
     WaterbusSdk.onMesssageChanged = onMesssageChanged;
+  }
+
+  set onConversationSocketChanged(
+    Function(ConversationSocketEvent) onConversationChanged,
+  ) {
+    WaterbusSdk.onConversationChanged = onConversationChanged;
   }
 
   set onEventChangedRegister(Function(CallbackPayload) onEventChanged) {
@@ -254,6 +262,10 @@ class WaterbusSdk {
       limit: limit,
       skip: skip,
     );
+  }
+
+  Future<bool> updateConversation({required Meeting meeting}) async {
+    return await _sdk.updateConversation(meeting: meeting);
   }
 
   // Messages

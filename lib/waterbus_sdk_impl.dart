@@ -269,6 +269,11 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
+  Future<bool> updateConversation({required Meeting meeting}) async {
+    return await _chatRepository.updateConversation(meeting: meeting);
+  }
+
+  @override
   Future<Meeting?> acceptInvite({required int code}) async {
     return await _chatRepository.acceptInvite(code: code);
   }
