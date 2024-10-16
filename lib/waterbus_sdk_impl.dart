@@ -1,5 +1,4 @@
-import 'dart:typed_data';
-
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
@@ -16,6 +15,7 @@ import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/native/picture-in-picture/index.dart';
 import 'package:waterbus_sdk/native/replaykit.dart';
 import 'package:waterbus_sdk/types/models/create_meeting_params.dart';
+import 'package:waterbus_sdk/types/models/draw_model.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 import 'package:waterbus_sdk/utils/replaykit/replaykit_helper.dart';
 import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
@@ -156,6 +156,21 @@ class SdkCore extends WaterbusSdkInterface {
     }
   }
 
+  @override
+  Future<void> getWhiteBoard(int roomId) async {
+
+    _socketEmiter.startWhiteBoard(roomId);
+  }
+
+  @override
+  Future<void> updateWhiteBoard(
+      int roomId, DrawModel draw, String action,) async {
+    _socketEmiter.updateWhiteBoard(roomId, draw, action);
+  }
+  @override
+  Future<void> cleanWhiteBoard(int roomId) async {
+    _socketEmiter.cleanWhiteBoard(roomId);
+  }
   @override
   Future<void> reconnect() async {
     _socketEmiter.reconnect();

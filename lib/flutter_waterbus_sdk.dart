@@ -1,13 +1,15 @@
 library waterbus_sdk;
 
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 
 import 'package:waterbus_sdk/core/api/base/base_local_storage.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
 import 'package:waterbus_sdk/types/index.dart';
+import 'package:waterbus_sdk/types/models/draw_model.dart';
+import 'package:waterbus_sdk/types/models/draw_socket_event.dart';
 import 'package:waterbus_sdk/utils/callkit/callkit_listener.dart';
 import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
 
@@ -24,6 +26,7 @@ class WaterbusSdk {
   static Function(VideoSenderStats)? onStatsChanged;
   static Function(Subtitle)? onSubtitle;
   static Function(MessageSocketEvent)? onMesssageChanged;
+  static Function(DrawSocketEvent)? onDrawChanged;
 
   set onMessageSocketChanged(Function(MessageSocketEvent) onMesssageChanged) {
     WaterbusSdk.onMesssageChanged = onMesssageChanged;
@@ -39,6 +42,10 @@ class WaterbusSdk {
 
   set setOnSubtitle(Function(Subtitle)? onSubtitle) {
     WaterbusSdk.onSubtitle = onSubtitle;
+  }
+
+  set onDrawSocketChanged(Function(DrawSocketEvent) onDrawChanged) {
+    WaterbusSdk.onDrawChanged = onDrawChanged;
   }
 
   Future<void> initializeApp({
@@ -111,6 +118,16 @@ class WaterbusSdk {
     await _sdk.leaveRoom();
   }
 
+  Future<void> getWhiteBoard(int roomId) async {
+    await _sdk.getWhiteBoard(roomId);
+  }
+
+  Future<void> updateWhiteBoard(int roomId,DrawModel draw, String action) async {
+    await _sdk.updateWhiteBoard(roomId,draw,action);
+  }
+    Future<void> cleanWhiteBoard(int roomId) async {
+    await _sdk.cleanWhiteBoard(roomId);
+  }
   // Related to local media
   Future<void> reconnect() async => await _sdk.reconnect();
 

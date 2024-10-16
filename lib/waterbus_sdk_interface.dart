@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/types/models/draw_model.dart';
 
 abstract class WaterbusSdkInterface {
   Future<void> initializeApp();
@@ -73,6 +74,9 @@ abstract class WaterbusSdkInterface {
   });
   Future<Meeting?> getRoomInfo(int code);
   Future<void> leaveRoom();
+  Future<void> getWhiteBoard(int roomId);
+  Future<void> updateWhiteBoard(int roomId,DrawModel draw, String action);
+  Future<void> cleanWhiteBoard(int roomId);
 
   // WebRTC
   Future<void> reconnect();

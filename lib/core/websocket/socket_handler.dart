@@ -9,6 +9,8 @@ import 'package:waterbus_sdk/core/api/base/dio_configuration.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/socket_handler_interface.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/types/models/draw_model.dart';
+import 'package:waterbus_sdk/types/models/draw_socket_event.dart';
 import 'package:waterbus_sdk/utils/encrypt/encrypt.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
@@ -318,6 +320,42 @@ class SocketHandlerImpl extends SocketHandler {
 
         WaterbusSdk.onMesssageChanged?.call(
           MessageSocketEvent(event: MessageEventEnum.delete, message: message),
+        );
+      });
+
+      _socket?.on(SocketEvent.startWhiteBoardSSC, (data) {
+        if (data == null) return;
+
+        final List<dynamic> drawDataSocket = data['paints'];
+        final List<DrawModel> drawList =
+            drawDataSocket.map((data) => DrawModel.fromMap(data)).toList();
+        WaterbusSdk.onDrawChanged?.call(
+          DrawSocketEvent(
+            event: DrawSocketEnum.start,
+            draw: drawList,
+          ),
+        );
+      });
+      _socket?.on(SocketEvent.updateWhiteBoardSSC, (data) {
+        if (data == null) return;
+        final UpdateDrawEnum action = UpdateDrawEnum.fromString(data['action']);
+        final List drawDataSocket = data['paints'];
+        final List<DrawModel> drawList =
+            drawDataSocket.map((data) => DrawModel.fromMap(data)).toList();
+        WaterbusSdk.onDrawChanged?.call(
+          DrawSocketEvent(
+            event: DrawSocketEnum.update,
+            action: action,
+            draw: drawList,
+          ),
+        );
+      });
+      _socket?.on(SocketEvent.cleanWhiteBoardSSC, (data) {
+        WaterbusSdk.onDrawChanged?.call(
+          DrawSocketEvent(
+            event: DrawSocketEnum.delete,
+            draw: [],
+          ),
         );
       });
     });

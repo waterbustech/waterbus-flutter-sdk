@@ -19,4 +19,7 @@ class ApiEndpoints {
   // Chats
   static const String chats = 'chats';
   static const String chatsConversations = 'chats/conversations';
+
+  static const String baseUrl = 'https://service-v2.waterbus.tech/busapi/v1/';
+  static const String wsUrl = 'https://sfu-v2.waterbus.tech';
 }
