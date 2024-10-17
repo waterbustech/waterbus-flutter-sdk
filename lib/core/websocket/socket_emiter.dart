@@ -111,6 +111,11 @@ class SocketEmiterImpl extends SocketEmiter {
   }
 
   @override
+  void setHandRaising(bool isRaising) {
+    _socket?.emit(SocketEvent.handRaisingCSS, {'isRaising': isRaising});
+  }
+
+  @override
   void reconnect() {
     _socket?.emit(SocketEvent.reconnect);
   }

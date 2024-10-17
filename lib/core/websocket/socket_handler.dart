@@ -87,8 +87,9 @@ class SocketHandlerImpl extends SocketHandler {
         if (data == null) return;
 
         final String sdp = data['sdp'];
+        final bool isRecording = data['isRecording'];
 
-        _rtcManager.setPublisherRemoteSdp(sdp);
+        _rtcManager.setPublisherRemoteSdp(sdp, isRecording);
       });
 
       _socket?.on(SocketEvent.newParticipantSSC, (data) {
@@ -119,6 +120,7 @@ class SocketHandlerImpl extends SocketHandler {
           videoEnabled: data['videoEnabled'] ?? false,
           isScreenSharing: data['isScreenSharing'] ?? false,
           isE2eeEnabled: data['isE2eeEnabled'] ?? false,
+          isHandRaising: data['isHandRaising'] ?? false,
           type: CameraType.values[type],
           codec: codec,
         );
@@ -257,6 +259,26 @@ class SocketHandlerImpl extends SocketHandler {
         WaterbusSdk.onSubtitle?.call(
           Subtitle(participant: participantId, content: content),
         );
+      });
+
+      _socket?.on(SocketEvent.handRaisingSSC, (data) {
+        if (data == null) return;
+
+        final String participantId = data['participantId'];
+        final bool isRaising = data['isRaising'];
+
+        _rtcManager.setHandRaising(
+          targetId: participantId,
+          isRaising: isRaising,
+        );
+      });
+
+      _socket?.on(SocketEvent.startRecordSSC, (data) {
+        _rtcManager.setIsRecording(isRecording: true);
+      });
+
+      _socket?.on(SocketEvent.stopRecordSSC, (data) {
+        _rtcManager.setIsRecording(isRecording: false);
       });
 
       _socket?.on(SocketEvent.sendPodNameSSC, (data) {
