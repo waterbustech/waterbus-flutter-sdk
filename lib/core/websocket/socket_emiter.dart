@@ -6,6 +6,7 @@ import 'package:waterbus_sdk/core/websocket/interfaces/socket_emiter_interface.d
 import 'package:waterbus_sdk/core/websocket/interfaces/socket_handler_interface.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
+
 @Injectable(as: SocketEmiter)
 class SocketEmiterImpl extends SocketEmiter {
   // MARK: emit functions
