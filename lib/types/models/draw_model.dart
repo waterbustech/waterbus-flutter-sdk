@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:waterbus_sdk/types/enums/draw_types.dart';
 
-abstract class DrawModel {
+import 'package:equatable/equatable.dart';
+
+import 'package:waterbus_sdk/types/enums/draw_shapes.dart';
+
+class DrawModel extends Equatable {
   final List<Offset> points;
   final Color color;
   final double size;
-  final bool? isFilled;
-  final int? polygonSides;
-  final DrawTypes strokeType;
+  final bool isFilled;
+  final bool showGrid;
+  final int polygonSides;
+  final DrawShapes drawShapes;
   final DateTime createdAt;
 
   DrawModel({
@@ -15,39 +19,59 @@ abstract class DrawModel {
     Color? color,
     double? size,
     bool? isFilled,
+    bool? showGrid,
     int? polygonSides,
-    DrawTypes? strokeType,
+    DrawShapes? drawShapes,
     DateTime? createdAt,
   })  : color = color ?? Colors.black,
         size = size ?? 1,
         isFilled = isFilled ?? false,
-        polygonSides = polygonSides ?? 0,
-        strokeType = strokeType ?? DrawTypes.normal,
+        showGrid = showGrid ?? false,
+        polygonSides = polygonSides ?? 3,
+        drawShapes = drawShapes ?? DrawShapes.normal,
         createdAt = createdAt ?? DateTime.now().toUtc();
 
   DrawModel copyWith({
     List<Offset>? points,
     Color? color,
+    double? size,
+    bool? isFilled,
+    bool? showGrid,
+    int? polygonSides,
+    DrawShapes? drawShapes,
     DateTime? createdAt,
-  });
+  }) {
+    return DrawModel(
+      points: points ?? this.points,
+      color: color ?? this.color,
+      size: size ?? this.size,
+      isFilled: isFilled ?? this.isFilled,
+      showGrid: showGrid ?? this.showGrid,
+      polygonSides: polygonSides ?? this.polygonSides,
+      drawShapes: drawShapes ?? this.drawShapes,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
 
   factory DrawModel.fromMap(Map<String, dynamic> map) {
-    final strokeType = DrawTypes.fromString(map['type']);
-    switch (strokeType) {
-      case DrawTypes.normal:
+    final String typeMap = map['type'];
+    final drawShapes = typeMap.getDrawShapesEnum;
+
+    switch (drawShapes) {
+      case DrawShapes.normal:
         return NormalStroke.fromMap(map);
-      case DrawTypes.eraser:
+      case DrawShapes.eraser:
         return EraserStroke.fromMap(map);
-      case DrawTypes.line:
+      case DrawShapes.line:
         return LineStroke.fromMap(map);
-      case DrawTypes.polygon:
+      case DrawShapes.polygon:
         return PolygonStroke.fromMap(map);
-      case DrawTypes.square:
+      case DrawShapes.square:
         return SquareStroke.fromMap(map);
-      case DrawTypes.circle:
+      case DrawShapes.circle:
         return CircleStroke.fromMap(map);
       default:
-        throw UnimplementedError('Unknown stroke type: $strokeType');
+        throw UnimplementedError('Unknown stroke type: $drawShapes');
     }
   }
 
@@ -55,13 +79,25 @@ abstract class DrawModel {
     return {
       'offsets': points.map((e) => {'dx': e.dx, 'dy': e.dy}).toList(),
       'color': colorToHexString(color),
-      'width': size,
+      'size': size,
       'isFilled': isFilled,
       'poligonSides': polygonSides,
-      'type': strokeType.toString(),
+      'type': drawShapes.str,
       'createdAt': createdAt.toUtc().toString(),
     };
   }
+
+  @override
+  List<Object?> get props => [
+        points,
+        color,
+        size,
+        isFilled,
+        showGrid,
+        drawShapes,
+        createdAt,
+        polygonSides,
+      ];
 }
 
 String colorToHexString(Color color, {bool includeAlpha = true}) {
@@ -84,13 +120,17 @@ class NormalStroke extends DrawModel {
     super.color,
     super.size,
     super.createdAt,
-  }) : super(strokeType: DrawTypes.normal);
+  }) : super(drawShapes: DrawShapes.normal);
 
   @override
   NormalStroke copyWith({
     List<Offset>? points,
     Color? color,
     double? size,
+    bool? isFilled,
+    bool? showGrid,
+    int? polygonSides,
+    DrawShapes? drawShapes,
     DateTime? createdAt,
   }) {
     return NormalStroke(
@@ -107,7 +147,7 @@ class NormalStroke extends DrawModel {
           .map((e) => Offset(e['dx'], e['dy']))
           .toList(),
       color: colorFromHexString(map['color']),
-      size: (map['width'] as num).toDouble(),
+      size: (map['size'] as num).toDouble(),
       createdAt: DateTime.parse(map['createdAt']),
     );
   }
@@ -119,13 +159,17 @@ class EraserStroke extends DrawModel {
     super.color,
     super.size,
     super.createdAt,
-  }) : super(strokeType: DrawTypes.eraser);
+  }) : super(drawShapes: DrawShapes.eraser);
 
   @override
   EraserStroke copyWith({
     List<Offset>? points,
     Color? color,
     double? size,
+    bool? isFilled,
+    bool? showGrid,
+    int? polygonSides,
+    DrawShapes? drawShapes,
     DateTime? createdAt,
   }) {
     return EraserStroke(
@@ -138,8 +182,9 @@ class EraserStroke extends DrawModel {
 
   factory EraserStroke.fromMap(Map<String, dynamic> map) {
     return EraserStroke(
-      points:
-          (map['points'] as List).map((e) => Offset(e['dx'], e['dy'])).toList(),
+      points: (map['offsets'] as List)
+          .map((e) => Offset(e['dx'], e['dy']))
+          .toList(),
       color: colorFromHexString(map['color']),
       size: (map['size'] as num).toDouble(),
       createdAt: DateTime.parse(map['createdAt']),
@@ -153,13 +198,17 @@ class LineStroke extends DrawModel {
     super.color,
     super.size,
     super.createdAt,
-  }) : super(strokeType: DrawTypes.line);
+  }) : super(drawShapes: DrawShapes.line);
 
   @override
   LineStroke copyWith({
     List<Offset>? points,
     Color? color,
     double? size,
+    bool? isFilled,
+    bool? showGrid,
+    int? polygonSides,
+    DrawShapes? drawShapes,
     DateTime? createdAt,
   }) {
     return LineStroke(
@@ -172,8 +221,9 @@ class LineStroke extends DrawModel {
 
   factory LineStroke.fromMap(Map<String, dynamic> map) {
     return LineStroke(
-      points:
-          (map['points'] as List).map((e) => Offset(e['dx'], e['dy'])).toList(),
+      points: (map['offsets'] as List)
+          .map((e) => Offset(e['dx'], e['dy']))
+          .toList(),
       color: colorFromHexString(map['color']),
       size: (map['size'] as num).toDouble(),
       createdAt: DateTime.parse(map['createdAt']),
@@ -188,37 +238,40 @@ class PolygonStroke extends DrawModel {
   PolygonStroke({
     required super.points,
     required this.sides,
-    this.filled = false,
+    this.filled = true,
     super.color,
     super.size,
     super.createdAt,
-  }) : super(strokeType: DrawTypes.polygon);
+  }) : super(drawShapes: DrawShapes.polygon);
 
   @override
   PolygonStroke copyWith({
     List<Offset>? points,
-    int? sides,
     Color? color,
     double? size,
-    bool? filled,
+    bool? isFilled,
+    bool? showGrid,
+    int? polygonSides,
+    DrawShapes? drawShapes,
     DateTime? createdAt,
   }) {
     return PolygonStroke(
       points: points ?? this.points,
-      sides: sides ?? this.sides,
+      sides: sides,
       color: color ?? this.color,
       size: size ?? this.size,
-      filled: filled ?? this.filled,
+      filled: filled,
       createdAt: createdAt ?? this.createdAt,
     );
   }
 
   factory PolygonStroke.fromMap(Map<String, dynamic> map) {
     return PolygonStroke(
-      points:
-          (map['points'] as List).map((e) => Offset(e['dx'], e['dy'])).toList(),
-      sides: map['sides'] as int,
-      filled: map['filled'] as bool? ?? false,
+      points: (map['offsets'] as List)
+          .map((e) => Offset(e['dx'], e['dy']))
+          .toList(),
+      sides: map['poligonSides'] as int,
+      filled: map['isFilled'] as bool? ?? false,
       color: colorFromHexString(map['color']),
       size: (map['size'] as num).toDouble(),
       createdAt: DateTime.parse(map['createdAt']),
@@ -235,32 +288,36 @@ class CircleStroke extends DrawModel {
     super.color,
     super.size,
     super.createdAt,
-  }) : super(strokeType: DrawTypes.circle);
+  }) : super(drawShapes: DrawShapes.circle);
 
   @override
   CircleStroke copyWith({
     List<Offset>? points,
     Color? color,
     double? size,
-    bool? filled,
+    bool? isFilled,
+    bool? showGrid,
+    int? polygonSides,
+    DrawShapes? drawShapes,
     DateTime? createdAt,
   }) {
     return CircleStroke(
       points: points ?? this.points,
       color: color ?? this.color,
       size: size ?? this.size,
-      filled: filled ?? this.filled,
+      filled: filled,
       createdAt: createdAt ?? this.createdAt,
     );
   }
 
   factory CircleStroke.fromMap(Map<String, dynamic> map) {
     return CircleStroke(
-      points:
-          (map['points'] as List).map((e) => Offset(e['dx'], e['dy'])).toList(),
-      filled: map['filled'] as bool? ?? false,
+      points: (map['offsets'] as List)
+          .map((e) => Offset(e['dx'], e['dy']))
+          .toList(),
+      filled: map['isFilled'] as bool? ?? false,
       color: colorFromHexString(map['color']),
-      size: (map['size'] as num).toDouble(),
+      size: (map['poligonSides'] as num).toDouble(),
       createdAt: DateTime.parse(map['createdAt']),
     );
   }
@@ -275,30 +332,34 @@ class SquareStroke extends DrawModel {
     super.color,
     super.size,
     super.createdAt,
-  }) : super(strokeType: DrawTypes.square);
+  }) : super(drawShapes: DrawShapes.square);
 
   @override
   SquareStroke copyWith({
     List<Offset>? points,
     Color? color,
     double? size,
-    bool? filled,
+    bool? isFilled,
+    bool? showGrid,
+    int? polygonSides,
+    DrawShapes? drawShapes,
     DateTime? createdAt,
   }) {
     return SquareStroke(
       points: points ?? this.points,
       color: color ?? this.color,
       size: size ?? this.size,
-      filled: filled ?? this.filled,
+      filled: filled,
       createdAt: createdAt ?? this.createdAt,
     );
   }
 
   factory SquareStroke.fromMap(Map<String, dynamic> map) {
     return SquareStroke(
-      points:
-          (map['points'] as List).map((e) => Offset(e['dx'], e['dy'])).toList(),
-      filled: map['filled'] as bool? ?? false,
+      points: (map['offsets'] as List)
+          .map((e) => Offset(e['dx'], e['dy']))
+          .toList(),
+      filled: map['isFilled'] as bool? ?? false,
       color: colorFromHexString(map['color']),
       size: (map['size'] as num).toDouble(),
       createdAt: DateTime.parse(map['createdAt']),

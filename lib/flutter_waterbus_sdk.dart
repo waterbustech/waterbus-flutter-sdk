@@ -1,15 +1,15 @@
 library waterbus_sdk;
 
-
 import 'package:flutter/foundation.dart';
+
 import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 
 import 'package:waterbus_sdk/core/api/base/base_local_storage.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
+import 'package:waterbus_sdk/types/enums/draw_socket_enum.dart';
 import 'package:waterbus_sdk/types/index.dart';
 import 'package:waterbus_sdk/types/models/draw_model.dart';
-import 'package:waterbus_sdk/types/models/draw_socket_event.dart';
 import 'package:waterbus_sdk/utils/callkit/callkit_listener.dart';
 import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
 
@@ -26,7 +26,7 @@ class WaterbusSdk {
   static Function(VideoSenderStats)? onStatsChanged;
   static Function(Subtitle)? onSubtitle;
   static Function(MessageSocketEvent)? onMesssageChanged;
-  static Function(DrawSocketEvent)? onDrawChanged;
+  static Function(List<DrawModel> drawList)? onDrawChanged;
 
   set onMessageSocketChanged(Function(MessageSocketEvent) onMesssageChanged) {
     WaterbusSdk.onMesssageChanged = onMesssageChanged;
@@ -44,7 +44,7 @@ class WaterbusSdk {
     WaterbusSdk.onSubtitle = onSubtitle;
   }
 
-  set onDrawSocketChanged(Function(DrawSocketEvent) onDrawChanged) {
+  set setOnDrawChanged(Function(List<DrawModel> drawList)? onDrawChanged) {
     WaterbusSdk.onDrawChanged = onDrawChanged;
   }
 
@@ -118,16 +118,30 @@ class WaterbusSdk {
     await _sdk.leaveRoom();
   }
 
-  Future<void> getWhiteBoard(int roomId) async {
-    await _sdk.getWhiteBoard(roomId);
+  // MARK : White board
+  Future<void> startWhiteBoard() async {
+    await _sdk.startWhiteBoard();
   }
 
-  Future<void> updateWhiteBoard(int roomId,DrawModel draw, String action) async {
-    await _sdk.updateWhiteBoard(roomId,draw,action);
+  Future<void> updateWhiteBoard(
+    DrawModel draw,
+    DrawActionEnum action,
+  ) async {
+    await _sdk.updateWhiteBoard(draw, action);
   }
-    Future<void> cleanWhiteBoard(int roomId) async {
-    await _sdk.cleanWhiteBoard(roomId);
+
+  Future<void> cleanWhiteBoard() async {
+    await _sdk.cleanWhiteBoard();
   }
+
+  Future<void> undo() async {
+    await _sdk.undoWhiteBoard();
+  }
+
+  Future<void> redo() async {
+    await _sdk.redoWhiteBoard();
+  }
+
   // Related to local media
   Future<void> reconnect() async => await _sdk.reconnect();
 

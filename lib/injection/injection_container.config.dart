@@ -29,6 +29,8 @@ import '../core/websocket/interfaces/socket_emiter_interface.dart' as _i530;
 import '../core/websocket/interfaces/socket_handler_interface.dart' as _i976;
 import '../core/websocket/socket_emiter.dart' as _i515;
 import '../core/websocket/socket_handler.dart' as _i1068;
+import '../core/whiteboard/white_board.dart' as _i844;
+import '../core/whiteboard/white_board_interfaces.dart' as _i831;
 import '../e2ee/frame_crypto.dart' as _i602;
 import '../native/native_channel.dart' as _i235;
 import '../native/replaykit.dart' as _i124;
@@ -103,6 +105,8 @@ _i174.GetIt $initGetIt(
       ));
   gh.lazySingleton<_i1023.MeetingRepository>(
       () => _i1023.MeetingRepositoryImpl(gh<_i377.MeetingRemoteDataSource>()));
+  gh.factory<_i831.WhiteBoardManager>(
+      () => _i844.WhiteBoardManagerIpml(gh<_i413.WaterbusWebRTCManager>()));
   gh.lazySingleton<_i575.MessageRepository>(
       () => _i575.MessageRepositoryImpl(gh<_i242.MessageRemoteDataSource>()));
   gh.lazySingleton<_i895.UserRepository>(
@@ -114,10 +118,12 @@ _i174.GetIt $initGetIt(
         gh<_i944.WaterbusLogger>(),
         gh<_i828.AuthLocalDataSource>(),
         gh<_i314.DioConfiguration>(),
+        gh<_i831.WhiteBoardManager>(),
       ));
   gh.singleton<_i513.WaterbusSdkInterface>(() => _i1039.SdkCore(
         gh<_i976.SocketHandler>(),
         gh<_i530.SocketEmiter>(),
+        gh<_i831.WhiteBoardManager>(),
         gh<_i413.WaterbusWebRTCManager>(),
         gh<_i124.ReplayKitChannel>(),
         gh<_i182.BaseRemoteData>(),

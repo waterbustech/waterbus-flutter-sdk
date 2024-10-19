@@ -8,9 +8,10 @@ import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dar
 import 'package:waterbus_sdk/core/api/base/dio_configuration.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/socket_handler_interface.dart';
+import 'package:waterbus_sdk/core/whiteboard/white_board_interfaces.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/types/enums/draw_socket_enum.dart';
 import 'package:waterbus_sdk/types/models/draw_model.dart';
-import 'package:waterbus_sdk/types/models/draw_socket_event.dart';
 import 'package:waterbus_sdk/utils/encrypt/encrypt.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
@@ -21,11 +22,13 @@ class SocketHandlerImpl extends SocketHandler {
   final WaterbusLogger _logger;
   final AuthLocalDataSource _authLocal;
   final DioConfiguration _dioConfig;
+  final WhiteBoardManager _whiteBoardManager;
   SocketHandlerImpl(
     this._rtcManager,
     this._logger,
     this._authLocal,
     this._dioConfig,
+    this._whiteBoardManager,
   );
 
   Socket? _socket;
@@ -326,37 +329,30 @@ class SocketHandlerImpl extends SocketHandler {
       _socket?.on(SocketEvent.startWhiteBoardSSC, (data) {
         if (data == null) return;
 
-        final List<dynamic> drawDataSocket = data['paints'];
-        final List<DrawModel> drawList =
-            drawDataSocket.map((data) => DrawModel.fromMap(data)).toList();
-        WaterbusSdk.onDrawChanged?.call(
-          DrawSocketEvent(
-            event: DrawSocketEnum.start,
-            draw: drawList,
-          ),
-        );
+        final drawDataSocket = data['paints'];
+        drawDataSocket.map((data) => DrawModel.fromMap(data)).toList();
+        debugPrint(drawDataSocket[0]?.toMap().toString());
+        _whiteBoardManager.startWhiteBoardSSC(drawDataSocket);
       });
       _socket?.on(SocketEvent.updateWhiteBoardSSC, (data) {
         if (data == null) return;
-        final UpdateDrawEnum action = UpdateDrawEnum.fromString(data['action']);
+
+        final String actionMap = data['action'];
+        final DrawActionEnum action = actionMap.drawSocketEnum;
         final List drawDataSocket = data['paints'];
         final List<DrawModel> drawList =
             drawDataSocket.map((data) => DrawModel.fromMap(data)).toList();
-        WaterbusSdk.onDrawChanged?.call(
-          DrawSocketEvent(
-            event: DrawSocketEnum.update,
-            action: action,
-            draw: drawList,
-          ),
-        );
+
+        _whiteBoardManager.startWhiteBoardSSC(drawList);
+
+        if (action == DrawActionEnum.updateAdd) {
+          _whiteBoardManager.updateWhiteBoardAddSSC(drawList);
+        } else if (action == DrawActionEnum.updateRemove) {
+          _whiteBoardManager.updateWhiteBoardRemoveSSC(drawList);
+        }
       });
       _socket?.on(SocketEvent.cleanWhiteBoardSSC, (data) {
-        WaterbusSdk.onDrawChanged?.call(
-          DrawSocketEvent(
-            event: DrawSocketEnum.delete,
-            draw: [],
-          ),
-        );
+        _whiteBoardManager.cleanWhiteBoardSSC();
       });
     });
   }
