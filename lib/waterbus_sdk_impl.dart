@@ -159,7 +159,10 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<List<RecordModel>> getRecords({required int skip, required int limit}) async {
+  Future<List<RecordModel>> getRecords({
+    required int skip,
+    required int limit,
+  }) async {
     return await _meetingRepository.getRecords(skip: skip, limit: limit);
   }
 
