@@ -16,6 +16,7 @@ import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/native/picture-in-picture/index.dart';
 import 'package:waterbus_sdk/native/replaykit.dart';
 import 'package:waterbus_sdk/types/models/create_meeting_params.dart';
+import 'package:waterbus_sdk/types/models/record_model.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 import 'package:waterbus_sdk/utils/replaykit/replaykit_helper.dart';
 import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
@@ -144,6 +145,11 @@ class SdkCore extends WaterbusSdkInterface {
   @override
   Future<Meeting?> getRoomInfo(int code) async {
     return await _meetingRepository.getInfoMeeting(code);
+  }
+
+  @override
+  Future<List<RecordModel>> getRecords({required int skip, required int limit}) async {
+    return await _meetingRepository.getRecords(skip: skip, limit: limit);
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/types/models/record_model.dart';
 
 abstract class WaterbusSdkInterface {
   Future<void> initializeApp();
@@ -72,6 +73,7 @@ abstract class WaterbusSdkInterface {
     required int? userId,
   });
   Future<Meeting?> getRoomInfo(int code);
+  Future<List<RecordModel>> getRecords({required int skip, required int limit});
   Future<int?> startRecord();
   Future<bool> stopRecord();
   Future<void> leaveRoom();

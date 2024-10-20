@@ -78,16 +78,20 @@ class Meeting {
     return Meeting(
       id: map['id'] as int,
       title: map['title'] as String,
-      participants: List<Participant>.from(
-        (map['participants'] as List).map<Participant>(
-          (x) => Participant.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
-      members: List<Member>.from(
-        (map['members'] as List).map<Member>(
-          (x) => Member.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
+      participants: map['participants'] == null
+          ? []
+          : List<Participant>.from(
+              (map['participants'] as List).map<Participant>(
+                (x) => Participant.fromMap(x as Map<String, dynamic>),
+              ),
+            ),
+      members: map['members'] == null
+          ? []
+          : List<Member>.from(
+              (map['members'] as List).map<Member>(
+                (x) => Member.fromMap(x as Map<String, dynamic>),
+              ),
+            ),
       code: map['code'],
       status: (int.tryParse(map['status'].toString()) ?? 0).getChatStatusEnum,
       createdAt: DateTime.parse(map['createdAt']).toLocal(),

@@ -8,6 +8,7 @@ import 'package:waterbus_sdk/core/api/base/base_local_storage.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
 import 'package:waterbus_sdk/types/index.dart';
+import 'package:waterbus_sdk/types/models/record_model.dart';
 import 'package:waterbus_sdk/utils/callkit/callkit_listener.dart';
 import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
 
@@ -105,6 +106,10 @@ class WaterbusSdk {
 
   Future<Meeting?> getRoomInfo({required int code}) async {
     return await _sdk.getRoomInfo(code);
+  }
+
+  Future<List<RecordModel>> getRecords({int skip = 0, int limit = 10}) async {
+    return await _sdk.getRecords(skip: skip, limit: limit);
   }
 
   Future<int?> startRecord() async {
