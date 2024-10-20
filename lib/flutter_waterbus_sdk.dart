@@ -10,6 +10,7 @@ import 'package:waterbus_sdk/injection/injection_container.dart';
 import 'package:waterbus_sdk/types/enums/draw_action.dart';
 import 'package:waterbus_sdk/types/index.dart';
 import 'package:waterbus_sdk/types/models/draw_model.dart';
+import 'package:waterbus_sdk/types/models/record_model.dart';
 import 'package:waterbus_sdk/utils/callkit/callkit_listener.dart';
 import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
 
@@ -51,8 +52,8 @@ class WaterbusSdk {
   Future<void> initializeApp({
     required String wsUrl,
     required String apiUrl,
-    required String privateMessageKey,
     String apiKey = 'waterbus@2024',
+    String privateMessageKey = '', // Disable message encrypted if empty
   }) async {
     WaterbusSdk.wsUrl = wsUrl;
     WaterbusSdk.apiUrl = apiUrl;
@@ -112,6 +113,18 @@ class WaterbusSdk {
 
   Future<Meeting?> getRoomInfo({required int code}) async {
     return await _sdk.getRoomInfo(code);
+  }
+
+  Future<List<RecordModel>> getRecords({int skip = 0, int limit = 10}) async {
+    return await _sdk.getRecords(skip: skip, limit: limit);
+  }
+
+  Future<int?> startRecord() async {
+    return await _sdk.startRecord();
+  }
+
+  Future<bool> stopRecord() async {
+    return await _sdk.stopRecord();
   }
 
   Future<void> leaveRoom() async {

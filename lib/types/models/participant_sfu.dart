@@ -15,6 +15,7 @@ class ParticipantSFU extends Equatable {
   bool isE2eeEnabled;
   bool isSpeakerPhoneEnabled;
   bool isSharingScreen;
+  bool isHandRaising;
   CameraType cameraType;
   AudioLevel audioLevel;
   MediaSource? cameraSource;
@@ -29,6 +30,7 @@ class ParticipantSFU extends Equatable {
     this.isSharingScreen = false,
     this.isE2eeEnabled = false,
     this.isSpeakerPhoneEnabled = true,
+    this.isHandRaising = false,
     this.cameraType = CameraType.front,
     this.audioLevel = AudioLevel.kSilence,
     required this.peerConnection,

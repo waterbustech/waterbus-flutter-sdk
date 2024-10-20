@@ -6,7 +6,7 @@ abstract class WhiteBoardManager {
   void updateWhiteBoard(DrawModel draw, DrawActionEnum action);
   void undoWhiteBoard();
   void redoWhiteBoard();
-  void cleanWhiteBoard({bool isLocal = true});
+  void cleanWhiteBoard({bool shouldEmit = true});
 
   void onRemoteBoardChanged(List<DrawModel> paints, DrawActionEnum action) {}
 }

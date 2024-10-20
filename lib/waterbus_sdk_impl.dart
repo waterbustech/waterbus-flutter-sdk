@@ -19,6 +19,7 @@ import 'package:waterbus_sdk/native/replaykit.dart';
 import 'package:waterbus_sdk/types/enums/draw_action.dart';
 import 'package:waterbus_sdk/types/models/create_meeting_params.dart';
 import 'package:waterbus_sdk/types/models/draw_model.dart';
+import 'package:waterbus_sdk/types/models/record_model.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 import 'package:waterbus_sdk/utils/replaykit/replaykit_helper.dart';
 import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
@@ -155,6 +156,29 @@ class SdkCore extends WaterbusSdkInterface {
   @override
   Future<Meeting?> getRoomInfo(int code) async {
     return await _meetingRepository.getInfoMeeting(code);
+  }
+
+  @override
+  Future<List<RecordModel>> getRecords({required int skip, required int limit}) async {
+    return await _meetingRepository.getRecords(skip: skip, limit: limit);
+  }
+
+  @override
+  Future<int?> startRecord() async {
+    final String? meetingId = _rtcManager.roomId;
+
+    if (meetingId == null) return null;
+
+    return await _meetingRepository.startRecord(int.parse(meetingId));
+  }
+
+  @override
+  Future<bool> stopRecord() async {
+    final String? meetingId = _rtcManager.roomId;
+
+    if (meetingId == null) return false;
+
+    return await _meetingRepository.stopRecord(int.parse(meetingId));
   }
 
   @override

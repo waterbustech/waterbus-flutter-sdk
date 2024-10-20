@@ -78,21 +78,26 @@ class Meeting {
     return Meeting(
       id: map['id'] as int,
       title: map['title'] as String,
-      participants: List<Participant>.from(
-        (map['participants'] as List).map<Participant>(
-          (x) => Participant.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
-      members: List<Member>.from(
-        (map['members'] as List).map<Member>(
-          (x) => Member.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
+      participants: map['participants'] == null
+          ? []
+          : List<Participant>.from(
+              (map['participants'] as List).map<Participant>(
+                (x) => Participant.fromMap(x as Map<String, dynamic>),
+              ),
+            ),
+      members: map['members'] == null
+          ? []
+          : List<Member>.from(
+              (map['members'] as List).map<Member>(
+                (x) => Member.fromMap(x as Map<String, dynamic>),
+              ),
+            ),
       code: map['code'],
       status: (int.tryParse(map['status'].toString()) ?? 0).getChatStatusEnum,
       createdAt: DateTime.parse(map['createdAt']).toLocal(),
       latestJoinedAt:
-          DateTime.parse(map['latestJoinedAt'] ?? map['createdAt']).toLocal(),
+          DateTime.parse(map['latestMessageCreatedAt'] ?? map['createdAt'])
+              .toLocal(),
       latestMessage: map['latestMessage'] != null &&
               map['latestMessage'] is Map<String, dynamic>
           ? MessageModel.fromMap(map['latestMessage'])
@@ -138,7 +143,7 @@ class Meeting {
         latestJoinedAt.hashCode;
   }
 
-  bool get isNoOneElse => participants.length < 2;
+  bool get isNoOneElse => members.length < 2;
 
   String get inviteLink => 'https:/waterbus.tech/meeting/$code';
 

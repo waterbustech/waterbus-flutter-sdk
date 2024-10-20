@@ -6,7 +6,7 @@ abstract class WaterbusWebRTCManager {
   Future<void> joinRoom({required String roomId, required int participantId});
   Future<void> reconnect();
   Future<void> subscribe(List<String> targetIds);
-  Future<void> setPublisherRemoteSdp(String sdp);
+  Future<void> setPublisherRemoteSdp(String sdp, [bool? isRecording]);
   Future<void> setSubscriberRemoteSdp({
     required String targetId,
     required String sdp,
@@ -14,6 +14,7 @@ abstract class WaterbusWebRTCManager {
     required bool audioEnabled,
     required bool isScreenSharing,
     required bool isE2eeEnabled,
+    required bool isHandRaising,
     required CameraType type,
     required WebRTCCodec codec,
   });
@@ -39,11 +40,14 @@ abstract class WaterbusWebRTCManager {
   Future<void> toggleSpeakerPhone({bool? forceValue});
   Future<void> toggleVideo();
   Future<void> switchCamera();
+  void toggleRaiseHand();
   void setE2eeEnabled({required String targetId, required bool isEnabled});
   void setVideoEnabled({required String targetId, required bool isEnabled});
   void setCameraType({required String targetId, required CameraType type});
   void setAudioEnabled({required String targetId, required bool isEnabled});
   void setScreenSharing({required String targetId, required bool isSharing});
+  void setHandRaising({required String targetId, required bool isRaising});
+  void setIsRecording({required bool isRecording});
   Future<void> enableVirtualBackground({
     required Uint8List backgroundImage,
     double thresholdConfidence = 0.7,
@@ -54,4 +58,5 @@ abstract class WaterbusWebRTCManager {
   CallState callState();
   Stream<CallbackPayload> get notifyChanged;
   String? get roomId;
+  bool get isRecording;
 }

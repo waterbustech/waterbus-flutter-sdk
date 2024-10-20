@@ -1,55 +1,29 @@
 library dio_flutter_transformer;
 
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
 import 'package:dio/dio.dart';
 
-/// FlutterTransformer optimized for performance.
-/// JSON decoding/encoding will only be offloaded to a separate isolate
-/// if the data is above a certain size threshold.
+/// Dio has already implemented a [SyncTransformer], and as the default
+/// [Transformer]. If you want to custom the transformation of
+/// request/response data, you can provide a [Transformer] by your self, and
+/// replace the [SyncTransformer] by setting the [dio.Transformer].
+///
+/// [FlutterTransformer] is especially for flutter, by which the json decoding
+/// will be in background with [compute] function.
+
+/// FlutterTransformer
 class FlutterTransformer extends SyncTransformer {
-  static const int _computeThreshold = 200 * 1024; // 200 KB threshold
-
-  FlutterTransformer()
-      : super(
-          jsonDecodeCallback: _parseJson,
-          jsonEncodeCallback: _parseString,
-        );
+  FlutterTransformer() : super(jsonDecodeCallback: _parseJson);
 }
 
-/// Determines if data should be processed in the main thread or offloaded.
-bool _shouldUseCompute(String text) {
-  return text.length > FlutterTransformer._computeThreshold;
-}
-
-/// Parses and decodes a JSON string. Offloads to a separate isolate if data is large.
-Future<Map<String, dynamic>> _parseJson(String text) {
-  if (_shouldUseCompute(text)) {
-    return compute(_parseAndDecode, text);
-  } else {
-    return Future.value(_parseAndDecode(text));
-  }
-}
-
-/// Encodes an object to a JSON string. Offloads to a separate isolate if data is large.
-Future<String> _parseString(Object obj) {
-  final String jsonString = _parseAndEncode(obj);
-  if (jsonString.length > FlutterTransformer._computeThreshold) {
-    return compute(_parseAndEncode, obj);
-  } else {
-    return Future.value(jsonString);
-  }
-}
-
-/// Decodes a JSON string into a Map.
-Map<String, dynamic> _parseAndDecode(String response) {
+// Must be top-level function
+_parseAndDecode(String response) {
   return jsonDecode(response);
 }
 
-/// Encodes an object into a JSON string.
-String _parseAndEncode(Object obj) {
-  return jsonEncode(obj);
+_parseJson(String text) {
+  return compute(_parseAndDecode, text);
 }

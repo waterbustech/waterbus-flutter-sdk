@@ -92,7 +92,7 @@ _i174.GetIt $initGetIt(
         gh<_i944.WaterbusLogger>(),
         gh<_i413.WaterbusWebRTCManager>(),
       ));
-  gh.factory<_i831.WhiteBoardManager>(() => _i844.WhiteBoardManagerIpml(
+  gh.lazySingleton<_i831.WhiteBoardManager>(() => _i844.WhiteBoardManagerIpml(
         gh<_i413.WaterbusWebRTCManager>(),
         gh<_i530.SocketEmiter>(),
       ));

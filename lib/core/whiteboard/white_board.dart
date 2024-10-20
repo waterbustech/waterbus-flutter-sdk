@@ -7,11 +7,11 @@ import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/types/enums/draw_action.dart';
 import 'package:waterbus_sdk/types/models/draw_model.dart';
 
-@Injectable(as: WhiteBoardManager)
+@LazySingleton(as: WhiteBoardManager)
 class WhiteBoardManagerIpml extends WhiteBoardManager {
-  final List<DrawModel> localWhiteBoard = [];
-  final List<DrawModel> remoteWhiteBoard = [];
-  final List<DrawModel> historyWhiteBoard = [];
+  final List<DrawModel> _localPaints = [];
+  final List<DrawModel> _remotePaints = [];
+  final List<DrawModel> _cachedPaints = [];
 
   final WaterbusWebRTCManager _rtcManager;
   final SocketEmiter _socketEmiter;
@@ -23,6 +23,7 @@ class WhiteBoardManagerIpml extends WhiteBoardManager {
   Future<void> startWhiteBoard() async {
     if (roomId == null) return;
 
+    cleanWhiteBoard(shouldEmit: false);
     _socketEmiter.startWhiteBoard(roomId!);
   }
 
@@ -33,31 +34,31 @@ class WhiteBoardManagerIpml extends WhiteBoardManager {
   ) async {
     if (roomId == null) return;
 
-    historyWhiteBoard.add(draw);
-    localWhiteBoard.add(draw);
+    _cachedPaints.add(draw);
+    _localPaints.add(draw);
 
     _socketEmiter.updateWhiteBoard(roomId!, action.action, draw);
     _emitWhiteBoard();
   }
 
   @override
-  Future<void> cleanWhiteBoard({bool isLocal = true}) async {
+  Future<void> cleanWhiteBoard({bool shouldEmit = true}) async {
     if (roomId == null) return;
 
-    localWhiteBoard.clear();
-    remoteWhiteBoard.clear();
-    historyWhiteBoard.clear();
+    _localPaints.clear();
+    _remotePaints.clear();
+    _cachedPaints.clear();
 
-    if (isLocal) _socketEmiter.cleanWhiteBoard(roomId!);
+    if (shouldEmit) _socketEmiter.cleanWhiteBoard(roomId!);
     _emitWhiteBoard();
   }
 
   @override
   Future<void> undoWhiteBoard() async {
-    if (localWhiteBoard.isEmpty || roomId == null) return;
+    if (_localPaints.isEmpty || roomId == null) return;
 
-    final undoModel = localWhiteBoard.last;
-    localWhiteBoard.removeLast();
+    final undoModel = _localPaints.last;
+    _localPaints.removeLast();
 
     _socketEmiter.updateWhiteBoard(
       roomId!,
@@ -69,12 +70,12 @@ class WhiteBoardManagerIpml extends WhiteBoardManager {
 
   @override
   Future<void> redoWhiteBoard() async {
-    if (historyWhiteBoard.length == localWhiteBoard.length || roomId == null) {
+    if (_cachedPaints.length == _localPaints.length || roomId == null) {
       return;
     }
 
-    final redoModel = historyWhiteBoard[localWhiteBoard.length];
-    localWhiteBoard.add(redoModel);
+    final redoModel = _cachedPaints[_localPaints.length];
+    _localPaints.add(redoModel);
 
     _socketEmiter.updateWhiteBoard(
       roomId!,
@@ -88,11 +89,11 @@ class WhiteBoardManagerIpml extends WhiteBoardManager {
   void onRemoteBoardChanged(List<DrawModel> paints, DrawActionEnum action) {
     switch (action) {
       case DrawActionEnum.updateAdd:
-        remoteWhiteBoard.addAll(paints);
+        _remotePaints.addAll(paints);
         _emitWhiteBoard();
         break;
       case DrawActionEnum.updateRemove:
-        remoteWhiteBoard.removeWhere((element) => paints.contains(element));
+        _remotePaints.removeWhere((element) => paints.contains(element));
         _emitWhiteBoard();
         break;
       default:
@@ -101,7 +102,7 @@ class WhiteBoardManagerIpml extends WhiteBoardManager {
   }
 
   Future<void> _emitWhiteBoard() async {
-    final props = [...localWhiteBoard, ...remoteWhiteBoard];
+    final props = [..._localPaints, ..._remotePaints];
     props.sort((a, b) => a.createdAt.compareTo(b.createdAt));
     WaterbusSdk.onDrawChanged?.call(props);
   }

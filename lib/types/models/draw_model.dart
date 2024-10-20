@@ -79,7 +79,7 @@ class DrawModel extends Equatable {
     return {
       'offsets': points.map((e) => {'dx': e.dx, 'dy': e.dy}).toList(),
       'color': colorToHexString(color),
-      'size': size,
+      'width': size,
       'isFilled': isFilled,
       'poligonSides': polygonSides,
       'type': drawShapes.str,
@@ -147,8 +147,8 @@ class NormalStroke extends DrawModel {
           .map((e) => Offset(e['dx'], e['dy']))
           .toList(),
       color: colorFromHexString(map['color']),
-      size: (map['size'] as num).toDouble(),
-      createdAt: DateTime.parse(map['createdAt']),
+      size: (map['width'] as num? ?? 0).toDouble(),
+      createdAt: DateTime.parse(map['createdAt']).toLocal(),
     );
   }
 }
@@ -186,8 +186,8 @@ class EraserStroke extends DrawModel {
           .map((e) => Offset(e['dx'], e['dy']))
           .toList(),
       color: colorFromHexString(map['color']),
-      size: (map['size'] as num).toDouble(),
-      createdAt: DateTime.parse(map['createdAt']),
+      size: (map['width'] as num? ?? 0).toDouble(),
+      createdAt: DateTime.parse(map['createdAt']).toLocal(),
     );
   }
 }
@@ -225,8 +225,8 @@ class LineStroke extends DrawModel {
           .map((e) => Offset(e['dx'], e['dy']))
           .toList(),
       color: colorFromHexString(map['color']),
-      size: (map['size'] as num).toDouble(),
-      createdAt: DateTime.parse(map['createdAt']),
+      size: (map['width'] as num? ?? 0).toDouble(),
+      createdAt: DateTime.parse(map['createdAt']).toLocal(),
     );
   }
 }
@@ -270,11 +270,11 @@ class PolygonStroke extends DrawModel {
       points: (map['offsets'] as List)
           .map((e) => Offset(e['dx'], e['dy']))
           .toList(),
-      sides: map['poligonSides'] as int,
+      sides: map['poligonSides'] ?? 0,
       filled: map['isFilled'] as bool? ?? false,
       color: colorFromHexString(map['color']),
-      size: (map['size'] as num).toDouble(),
-      createdAt: DateTime.parse(map['createdAt']),
+      size: (map['width'] as num? ?? 0).toDouble(),
+      createdAt: DateTime.parse(map['createdAt']).toLocal(),
     );
   }
 }
@@ -315,10 +315,10 @@ class CircleStroke extends DrawModel {
       points: (map['offsets'] as List)
           .map((e) => Offset(e['dx'], e['dy']))
           .toList(),
-      filled: map['isFilled'] as bool? ?? false,
+      filled: map['isFilled'] ?? false,
       color: colorFromHexString(map['color']),
-      size: (map['poligonSides'] as num).toDouble(),
-      createdAt: DateTime.parse(map['createdAt']),
+      size: ((map['poligonSides'] ?? 0) as num).toDouble(),
+      createdAt: DateTime.parse(map['createdAt']).toLocal(),
     );
   }
 }
@@ -361,8 +361,8 @@ class SquareStroke extends DrawModel {
           .toList(),
       filled: map['isFilled'] as bool? ?? false,
       color: colorFromHexString(map['color']),
-      size: (map['size'] as num).toDouble(),
-      createdAt: DateTime.parse(map['createdAt']),
+      size: (map['width'] as num? ?? 0).toDouble(),
+      createdAt: DateTime.parse(map['createdAt']).toLocal(),
     );
   }
 }

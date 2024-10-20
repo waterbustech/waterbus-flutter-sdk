@@ -28,9 +28,11 @@ abstract class SocketEmiter {
   void setVideoEnabled(bool isEnabled);
   void setAudioEnabled(bool isEnabled);
   void setScreenSharing(bool isSharing);
+  void setSubtitle(bool isEnabled);
+  void setHandRaising(bool isRaising);
+
   void sendNewSdp(String sdp);
   void leaveRoom(String roomId);
-  void setSubtitle(bool isEnabled);
   void reconnect();
 
   // White board
