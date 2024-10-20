@@ -6,6 +6,7 @@ import 'package:waterbus_sdk/core/websocket/interfaces/socket_emiter_interface.d
 import 'package:waterbus_sdk/core/websocket/interfaces/socket_handler_interface.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
+import 'package:waterbus_sdk/types/models/draw_model.dart';
 
 @Injectable(as: SocketEmiter)
 class SocketEmiterImpl extends SocketEmiter {
@@ -113,6 +114,27 @@ class SocketEmiterImpl extends SocketEmiter {
   @override
   void reconnect() {
     _socket?.emit(SocketEvent.reconnect);
+  }
+
+  // White board
+
+  @override
+  void cleanWhiteBoard(String roomId) {
+    _socket?.emit(SocketEvent.cleanWhiteBoardCSS, {'roomId': roomId});
+  }
+
+  @override
+  void startWhiteBoard(String roomId) {
+    _socket?.emit(SocketEvent.startWhiteBoardCSS, {'roomId': roomId});
+  }
+
+  @override
+  void updateWhiteBoard(String roomId, String action, DrawModel draw) {
+    _socket?.emit(SocketEvent.updateWhiteBoardCSS, {
+      'roomId': roomId,
+      'action': action,
+      'paints': [draw.toMap()],
+    });
   }
 
   Socket? get _socket => getIt<SocketHandler>().socket;

@@ -92,11 +92,22 @@ _i174.GetIt $initGetIt(
         gh<_i944.WaterbusLogger>(),
         gh<_i413.WaterbusWebRTCManager>(),
       ));
+  gh.factory<_i831.WhiteBoardManager>(() => _i844.WhiteBoardManagerIpml(
+        gh<_i413.WaterbusWebRTCManager>(),
+        gh<_i530.SocketEmiter>(),
+      ));
   gh.lazySingleton<_i997.AuthRemoteDataSource>(
       () => _i997.AuthRemoteDataSourceImpl(
             gh<_i182.BaseRemoteData>(),
             gh<_i828.AuthLocalDataSource>(),
           ));
+  gh.singleton<_i976.SocketHandler>(() => _i1068.SocketHandlerImpl(
+        gh<_i413.WaterbusWebRTCManager>(),
+        gh<_i944.WaterbusLogger>(),
+        gh<_i828.AuthLocalDataSource>(),
+        gh<_i314.DioConfiguration>(),
+        gh<_i831.WhiteBoardManager>(),
+      ));
   gh.lazySingleton<_i712.ChatRemoteDataSource>(
       () => _i712.ChatRemoteDataSourceImpl(gh<_i182.BaseRemoteData>()));
   gh.lazySingleton<_i824.AuthRepository>(() => _i824.AuthRepositoryImpl(
@@ -105,21 +116,12 @@ _i174.GetIt $initGetIt(
       ));
   gh.lazySingleton<_i1023.MeetingRepository>(
       () => _i1023.MeetingRepositoryImpl(gh<_i377.MeetingRemoteDataSource>()));
-  gh.factory<_i831.WhiteBoardManager>(
-      () => _i844.WhiteBoardManagerIpml(gh<_i413.WaterbusWebRTCManager>()));
   gh.lazySingleton<_i575.MessageRepository>(
       () => _i575.MessageRepositoryImpl(gh<_i242.MessageRemoteDataSource>()));
   gh.lazySingleton<_i895.UserRepository>(
       () => _i895.UserRepositoryImpl(gh<_i1054.UserRemoteDataSource>()));
   gh.lazySingleton<_i613.ChatRepository>(
       () => _i613.ChatRepositoryImpl(gh<_i712.ChatRemoteDataSource>()));
-  gh.singleton<_i976.SocketHandler>(() => _i1068.SocketHandlerImpl(
-        gh<_i413.WaterbusWebRTCManager>(),
-        gh<_i944.WaterbusLogger>(),
-        gh<_i828.AuthLocalDataSource>(),
-        gh<_i314.DioConfiguration>(),
-        gh<_i831.WhiteBoardManager>(),
-      ));
   gh.singleton<_i513.WaterbusSdkInterface>(() => _i1039.SdkCore(
         gh<_i976.SocketHandler>(),
         gh<_i530.SocketEmiter>(),

@@ -1,4 +1,4 @@
-import 'package:waterbus_sdk/types/enums/draw_socket_enum.dart';
+import 'package:waterbus_sdk/types/enums/draw_action.dart';
 import 'package:waterbus_sdk/types/models/draw_model.dart';
 
 class DrawSocketEvent {

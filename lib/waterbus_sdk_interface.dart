@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/types/enums/draw_socket_enum.dart';
+import 'package:waterbus_sdk/types/enums/draw_action.dart';
 import 'package:waterbus_sdk/types/models/draw_model.dart';
 
 abstract class WaterbusSdkInterface {

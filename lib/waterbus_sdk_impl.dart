@@ -16,7 +16,7 @@ import 'package:waterbus_sdk/core/whiteboard/white_board_interfaces.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/native/picture-in-picture/index.dart';
 import 'package:waterbus_sdk/native/replaykit.dart';
-import 'package:waterbus_sdk/types/enums/draw_socket_enum.dart';
+import 'package:waterbus_sdk/types/enums/draw_action.dart';
 import 'package:waterbus_sdk/types/models/create_meeting_params.dart';
 import 'package:waterbus_sdk/types/models/draw_model.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
@@ -169,7 +169,7 @@ class SdkCore extends WaterbusSdkInterface {
 
   @override
   Future<void> startWhiteBoard() async {
-    _whiteBoardManager.startWhiteBoardCSS();
+    _whiteBoardManager.startWhiteBoard();
   }
 
   @override
@@ -177,22 +177,22 @@ class SdkCore extends WaterbusSdkInterface {
     DrawModel draw,
     DrawActionEnum action,
   ) async {
-    _whiteBoardManager.updateWhiteBoardCSS(draw, action);
+    _whiteBoardManager.updateWhiteBoard(draw, action);
   }
 
   @override
   Future<void> cleanWhiteBoard() async {
-    _whiteBoardManager.cleanWhiteBoardCSS();
+    _whiteBoardManager.cleanWhiteBoard();
   }
 
   @override
   Future<void> undoWhiteBoard() async {
-    _whiteBoardManager.undoWhiteBoardCSS();
+    _whiteBoardManager.undoWhiteBoard();
   }
 
   @override
   Future<void> redoWhiteBoard() async {
-    _whiteBoardManager.redoWhiteBoardCSS();
+    _whiteBoardManager.redoWhiteBoard();
   }
 
   @override

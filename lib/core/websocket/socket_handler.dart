@@ -10,7 +10,7 @@ import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/socket_handler_interface.dart';
 import 'package:waterbus_sdk/core/whiteboard/white_board_interfaces.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/types/enums/draw_socket_enum.dart';
+import 'package:waterbus_sdk/types/enums/draw_action.dart';
 import 'package:waterbus_sdk/types/models/draw_model.dart';
 import 'package:waterbus_sdk/utils/encrypt/encrypt.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
@@ -326,33 +326,34 @@ class SocketHandlerImpl extends SocketHandler {
         );
       });
 
+      // White board
       _socket?.on(SocketEvent.startWhiteBoardSSC, (data) {
         if (data == null) return;
 
-        final drawDataSocket = data['paints'];
-        drawDataSocket.map((data) => DrawModel.fromMap(data)).toList();
-        debugPrint(drawDataSocket[0]?.toMap().toString());
-        _whiteBoardManager.startWhiteBoardSSC(drawDataSocket);
+        final rawData = data['paints'];
+        final List<DrawModel> paints =
+            rawData.map((data) => DrawModel.fromMap(data)).toList();
+
+        _whiteBoardManager.onRemoteBoardChanged(
+          paints,
+          DrawActionEnum.updateAdd,
+        );
       });
+
       _socket?.on(SocketEvent.updateWhiteBoardSSC, (data) {
         if (data == null) return;
 
         final String actionMap = data['action'];
-        final DrawActionEnum action = actionMap.drawSocketEnum;
-        final List drawDataSocket = data['paints'];
-        final List<DrawModel> drawList =
-            drawDataSocket.map((data) => DrawModel.fromMap(data)).toList();
+        final DrawActionEnum action = actionMap.drawAction;
+        final List rawData = data['paints'];
+        final List<DrawModel> paints =
+            rawData.map((data) => DrawModel.fromMap(data)).toList();
 
-        _whiteBoardManager.startWhiteBoardSSC(drawList);
-
-        if (action == DrawActionEnum.updateAdd) {
-          _whiteBoardManager.updateWhiteBoardAddSSC(drawList);
-        } else if (action == DrawActionEnum.updateRemove) {
-          _whiteBoardManager.updateWhiteBoardRemoveSSC(drawList);
-        }
+        _whiteBoardManager.onRemoteBoardChanged(paints, action);
       });
+
       _socket?.on(SocketEvent.cleanWhiteBoardSSC, (data) {
-        _whiteBoardManager.cleanWhiteBoardSSC();
+        _whiteBoardManager.cleanWhiteBoard(isLocal: false);
       });
     });
   }

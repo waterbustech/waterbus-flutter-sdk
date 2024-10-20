@@ -7,7 +7,7 @@ import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 import 'package:waterbus_sdk/core/api/base/base_local_storage.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
-import 'package:waterbus_sdk/types/enums/draw_socket_enum.dart';
+import 'package:waterbus_sdk/types/enums/draw_action.dart';
 import 'package:waterbus_sdk/types/index.dart';
 import 'package:waterbus_sdk/types/models/draw_model.dart';
 import 'package:waterbus_sdk/utils/callkit/callkit_listener.dart';
