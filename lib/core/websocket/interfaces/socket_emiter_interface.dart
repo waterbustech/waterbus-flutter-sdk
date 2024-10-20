@@ -1,6 +1,8 @@
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/types/models/draw_model.dart';
 
 abstract class SocketEmiter {
+  // Meeting
   void establishBroadcast({
     required String sdp,
     required String roomId,
@@ -31,6 +33,10 @@ abstract class SocketEmiter {
 
   void sendNewSdp(String sdp);
   void leaveRoom(String roomId);
-
   void reconnect();
+
+  // White board
+  void startWhiteBoard(String roomId);
+  void updateWhiteBoard(String roomId, String action, DrawModel draw);
+  void cleanWhiteBoard(String roomId);
 }

@@ -8,7 +8,10 @@ import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dar
 import 'package:waterbus_sdk/core/api/base/dio_configuration.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/socket_handler_interface.dart';
+import 'package:waterbus_sdk/core/whiteboard/white_board_interfaces.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/types/enums/draw_action.dart';
+import 'package:waterbus_sdk/types/models/draw_model.dart';
 import 'package:waterbus_sdk/utils/encrypt/encrypt.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
@@ -19,11 +22,13 @@ class SocketHandlerImpl extends SocketHandler {
   final WaterbusLogger _logger;
   final AuthLocalDataSource _authLocal;
   final DioConfiguration _dioConfig;
+  final WhiteBoardManager _whiteBoardManager;
   SocketHandlerImpl(
     this._rtcManager,
     this._logger,
     this._authLocal,
     this._dioConfig,
+    this._whiteBoardManager,
   );
 
   Socket? _socket;
@@ -341,6 +346,37 @@ class SocketHandlerImpl extends SocketHandler {
         WaterbusSdk.onMesssageChanged?.call(
           MessageSocketEvent(event: MessageEventEnum.delete, message: message),
         );
+      });
+
+      // White board
+      _socket?.on(SocketEvent.startWhiteBoardSSC, (data) {
+        if (data == null) return;
+
+        final List rawData = data;
+
+        final List<DrawModel> paints =
+            rawData.map((data) => DrawModel.fromMap(data)).toList();
+
+        _whiteBoardManager.onRemoteBoardChanged(
+          paints,
+          DrawActionEnum.updateAdd,
+        );
+      });
+
+      _socket?.on(SocketEvent.updateWhiteBoardSSC, (data) {
+        if (data == null) return;
+
+        final String actionMap = data['action'];
+        final DrawActionEnum action = actionMap.drawAction;
+        final List rawData = data['paints'];
+        final List<DrawModel> paints =
+            rawData.map((data) => DrawModel.fromMap(data)).toList();
+
+        _whiteBoardManager.onRemoteBoardChanged(paints, action);
+      });
+
+      _socket?.on(SocketEvent.cleanWhiteBoardSSC, (data) {
+        _whiteBoardManager.cleanWhiteBoard(shouldEmit: false);
       });
     });
   }

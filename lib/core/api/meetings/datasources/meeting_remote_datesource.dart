@@ -121,7 +121,10 @@ class MeetingRemoteDataSourceImpl extends MeetingRemoteDataSource {
   }
 
   @override
-  Future<List<RecordModel>> getRecords({required int skip, required int limit}) async {
+  Future<List<RecordModel>> getRecords({
+    required int skip,
+    required int limit,
+  }) async {
     final Response response = await _remoteData.getRoute(ApiEndpoints.records);
 
     if (response.statusCode == StatusCode.ok) {

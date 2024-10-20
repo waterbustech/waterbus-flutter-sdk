@@ -123,7 +123,10 @@ class MeetingRepositoryImpl extends MeetingRepository {
   }
 
   @override
-  Future<List<RecordModel>> getRecords({required int skip, required int limit}) async {
+  Future<List<RecordModel>> getRecords({
+    required int skip,
+    required int limit,
+  }) async {
     return await _remoteDataSource.getRecords(skip: skip, limit: limit);
   }
 

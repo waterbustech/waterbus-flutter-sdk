@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/types/enums/draw_action.dart';
+import 'package:waterbus_sdk/types/models/draw_model.dart';
 import 'package:waterbus_sdk/types/models/record_model.dart';
 
 abstract class WaterbusSdkInterface {
@@ -77,6 +79,16 @@ abstract class WaterbusSdkInterface {
   Future<int?> startRecord();
   Future<bool> stopRecord();
   Future<void> leaveRoom();
+
+  // white board
+  Future<void> startWhiteBoard();
+  Future<void> updateWhiteBoard(
+    DrawModel draw,
+    DrawActionEnum action,
+  );
+  Future<void> cleanWhiteBoard();
+  Future<void> undoWhiteBoard();
+  Future<void> redoWhiteBoard();
 
   // WebRTC
   Future<void> reconnect();

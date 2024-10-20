@@ -1,13 +1,15 @@
 library waterbus_sdk;
 
-import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 
 import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 
 import 'package:waterbus_sdk/core/api/base/base_local_storage.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
+import 'package:waterbus_sdk/types/enums/draw_action.dart';
 import 'package:waterbus_sdk/types/index.dart';
+import 'package:waterbus_sdk/types/models/draw_model.dart';
 import 'package:waterbus_sdk/types/models/record_model.dart';
 import 'package:waterbus_sdk/utils/callkit/callkit_listener.dart';
 import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
@@ -25,6 +27,7 @@ class WaterbusSdk {
   static Function(VideoSenderStats)? onStatsChanged;
   static Function(Subtitle)? onSubtitle;
   static Function(MessageSocketEvent)? onMesssageChanged;
+  static Function(List<DrawModel> drawList)? onDrawChanged;
 
   set onMessageSocketChanged(Function(MessageSocketEvent) onMesssageChanged) {
     WaterbusSdk.onMesssageChanged = onMesssageChanged;
@@ -40,6 +43,10 @@ class WaterbusSdk {
 
   set setOnSubtitle(Function(Subtitle)? onSubtitle) {
     WaterbusSdk.onSubtitle = onSubtitle;
+  }
+
+  set setOnDrawChanged(Function(List<DrawModel> drawList)? onDrawChanged) {
+    WaterbusSdk.onDrawChanged = onDrawChanged;
   }
 
   Future<void> initializeApp({
@@ -122,6 +129,30 @@ class WaterbusSdk {
 
   Future<void> leaveRoom() async {
     await _sdk.leaveRoom();
+  }
+
+  // MARK : White board
+  Future<void> startWhiteBoard() async {
+    await _sdk.startWhiteBoard();
+  }
+
+  Future<void> updateWhiteBoard(
+    DrawModel draw,
+    DrawActionEnum action,
+  ) async {
+    await _sdk.updateWhiteBoard(draw, action);
+  }
+
+  Future<void> cleanWhiteBoard() async {
+    await _sdk.cleanWhiteBoard();
+  }
+
+  Future<void> undo() async {
+    await _sdk.undoWhiteBoard();
+  }
+
+  Future<void> redo() async {
+    await _sdk.redoWhiteBoard();
   }
 
   // Related to local media
