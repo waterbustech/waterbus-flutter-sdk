@@ -9,6 +9,7 @@ import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
 import 'package:waterbus_sdk/types/enums/draw_action.dart';
 import 'package:waterbus_sdk/types/index.dart';
+import 'package:waterbus_sdk/types/models/conversation_socket_event.dart';
 import 'package:waterbus_sdk/types/models/draw_model.dart';
 import 'package:waterbus_sdk/types/models/record_model.dart';
 import 'package:waterbus_sdk/utils/callkit/callkit_listener.dart';
@@ -27,10 +28,17 @@ class WaterbusSdk {
   static Function(VideoSenderStats)? onStatsChanged;
   static Function(Subtitle)? onSubtitle;
   static Function(MessageSocketEvent)? onMesssageChanged;
+  static Function(ConversationSocketEvent)? onConversationChanged;
   static Function(List<DrawModel> drawList)? onDrawChanged;
 
   set onMessageSocketChanged(Function(MessageSocketEvent) onMesssageChanged) {
     WaterbusSdk.onMesssageChanged = onMesssageChanged;
+  }
+
+  set onConversationSocketChanged(
+    Function(ConversationSocketEvent) onConversationChanged,
+  ) {
+    WaterbusSdk.onConversationChanged = onConversationChanged;
   }
 
   set onEventChangedRegister(Function(CallbackPayload) onEventChanged) {
@@ -276,8 +284,8 @@ class WaterbusSdk {
     return await _sdk.deleteMember(code: code, userId: userId);
   }
 
-  Future<Meeting?> acceptInvite(int code) async {
-    return await _sdk.acceptInvite(code: code);
+  Future<Meeting?> acceptInvite(int meetingId) async {
+    return await _sdk.acceptInvite(meetingId: meetingId);
   }
 
   Future<Meeting?> leaveConversation(int code) async {
@@ -298,6 +306,10 @@ class WaterbusSdk {
       limit: limit,
       skip: skip,
     );
+  }
+
+  Future<bool> updateConversation({required Meeting meeting}) async {
+    return await _sdk.updateConversation(meeting: meeting);
   }
 
   // Messages

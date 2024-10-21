@@ -9,11 +9,12 @@ abstract class ChatRepository {
     required int limit,
     required int skip,
   });
+  Future<bool> updateConversation({required Meeting meeting});
   Future<bool> deleteConversation(int meetingId);
   Future<Meeting?> leaveConversation({required int code});
   Future<Meeting?> addMember({required int code, required int userId});
   Future<Meeting?> deleteMember({required int code, required int userId});
-  Future<Meeting?> acceptInvite({required int code});
+  Future<Meeting?> acceptInvite({required int meetingId});
 }
 
 @LazySingleton(as: ChatRepository)
@@ -59,9 +60,9 @@ class ChatRepositoryImpl extends ChatRepository {
   }
 
   @override
-  Future<Meeting?> acceptInvite({required int code}) async {
+  Future<Meeting?> acceptInvite({required int meetingId}) async {
     final Meeting? meeting = await _remoteDataSource.acceptInvite(
-      code: code,
+      meetingId: meetingId,
     );
 
     return meeting;
@@ -88,5 +89,14 @@ class ChatRepositoryImpl extends ChatRepository {
     );
 
     return meeting;
+  }
+
+  @override
+  Future<bool> updateConversation({required Meeting meeting}) async {
+    final bool isSucceed = await _remoteDataSource.updateConversation(
+      meeting: meeting,
+    );
+
+    return isSucceed;
   }
 }

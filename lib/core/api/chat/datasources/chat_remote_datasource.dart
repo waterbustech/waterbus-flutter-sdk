@@ -19,7 +19,8 @@ abstract class ChatRemoteDataSource {
   Future<Meeting?> leaveConversation({required int code});
   Future<Meeting?> addMember({required int code, required int userId});
   Future<Meeting?> deleteMember({required int code, required int userId});
-  Future<Meeting?> acceptInvite({required int code});
+  Future<Meeting?> acceptInvite({required int meetingId});
+  Future<bool> updateConversation({required Meeting meeting});
 }
 
 @LazySingleton(as: ChatRemoteDataSource)
@@ -82,6 +83,16 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
   }
 
   @override
+  Future<bool> updateConversation({required Meeting meeting}) async {
+    final Response response = await _remoteData.putRoute(
+      ApiEndpoints.meetings,
+      meeting.toMapCreate(),
+    );
+
+    return response.statusCode == StatusCode.ok;
+  }
+
+  @override
   Future<bool> deleteConversation({required int meetingId}) async {
     final response = await _remoteData.deleteRoute(
       "${ApiEndpoints.chatsConversations}/$meetingId",
@@ -105,9 +116,9 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
   }
 
   @override
-  Future<Meeting?> acceptInvite({required int code}) async {
+  Future<Meeting?> acceptInvite({required int meetingId}) async {
     final Response response = await _remoteData.postRoute(
-      '${ApiEndpoints.acceptInvite}/$code',
+      '${ApiEndpoints.acceptInvite}/$meetingId',
     );
 
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {

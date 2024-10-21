@@ -11,6 +11,7 @@ import 'package:waterbus_sdk/core/websocket/interfaces/socket_handler_interface.
 import 'package:waterbus_sdk/core/whiteboard/white_board_interfaces.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/types/enums/draw_action.dart';
+import 'package:waterbus_sdk/types/models/conversation_socket_event.dart';
 import 'package:waterbus_sdk/types/models/draw_model.dart';
 import 'package:waterbus_sdk/utils/encrypt/encrypt.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
@@ -345,6 +346,30 @@ class SocketHandlerImpl extends SocketHandler {
 
         WaterbusSdk.onMesssageChanged?.call(
           MessageSocketEvent(event: MessageEventEnum.delete, message: message),
+        );
+      });
+
+      _socket?.on(SocketEvent.newInvitationSSC, (data) {
+        if (data == null) return;
+        final Meeting meeting = Meeting.fromMapSocket(data['meeting']);
+
+        WaterbusSdk.onConversationChanged?.call(
+          ConversationSocketEvent(
+            event: ConversationEventEnum.newInvitaion,
+            conversation: meeting,
+          ),
+        );
+      });
+
+      _socket?.on(SocketEvent.newMemberJoinedSSC, (data) {
+        if (data == null) return;
+        final Member member = Member.fromMapSocket(data);
+
+        WaterbusSdk.onConversationChanged?.call(
+          ConversationSocketEvent(
+            event: ConversationEventEnum.newMemberJoined,
+            member: member,
+          ),
         );
       });
 

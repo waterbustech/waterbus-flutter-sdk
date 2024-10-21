@@ -46,7 +46,7 @@ class User {
       fullName: map['fullName'] ?? '',
       userName: map['userName'] ?? '',
       bio: map['bio'] ?? '',
-      avatar: map['avatar'] != null ? map['avatar'] as String : null,
+      avatar: map['avatar'],
     );
   }
 

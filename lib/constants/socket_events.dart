@@ -39,6 +39,8 @@ class SocketEvent {
   static const String updateMessageSSC = 'UPDATE_MESSAGE_SSC';
   static const String deleteMessageSSC = 'DELETE_MESSAGE_SSC';
 
+  static const String newMemberJoinedSSC = 'NEW_MEMBER_JOINED_SSC';
+  static const String newInvitationSSC = 'NEW_INVITATION_SSC';
   static const String startWhiteBoardSSC = 'START_WHITE_BOARD_SSC';
   static const String startWhiteBoardCSS = 'START_WHITE_BOARD_CSS';
   static const String updateWhiteBoardCSS = 'UPDATE_WHITE_BOARD_CSS';

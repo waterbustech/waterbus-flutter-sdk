@@ -35,11 +35,12 @@ abstract class WaterbusSdkInterface {
     int limit = 10,
     required int skip,
   });
+  Future<bool> updateConversation({required Meeting meeting});
   Future<bool> deleteConversation(int conversationId);
   Future<Meeting?> leaveConversation({required int code});
   Future<Meeting?> addMember({required int code, required int userId});
   Future<Meeting?> deleteMember({required int code, required int userId});
-  Future<Meeting?> acceptInvite({required int code});
+  Future<Meeting?> acceptInvite({required int meetingId});
 
   // Messages
   Future<List<MessageModel>> getMessageByRoom({
