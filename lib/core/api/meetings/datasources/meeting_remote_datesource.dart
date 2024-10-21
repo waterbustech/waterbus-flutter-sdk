@@ -5,6 +5,7 @@ import 'package:waterbus_sdk/constants/api_enpoints.dart';
 import 'package:waterbus_sdk/constants/http_status_code.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/types/models/meeting_model.dart';
+import 'package:waterbus_sdk/types/models/record_model.dart';
 
 abstract class MeetingRemoteDataSource {
   Future<Meeting?> createMeeting({
@@ -23,6 +24,7 @@ abstract class MeetingRemoteDataSource {
     required Meeting meeting,
   });
   Future<Meeting?> getInfoMeeting(int code);
+  Future<List<RecordModel>> getRecords({required int skip, required int limit});
   Future<int?> startRecord(int roomId);
   Future<bool> stopRecord(int roomId);
 }
@@ -116,6 +118,21 @@ class MeetingRemoteDataSourceImpl extends MeetingRemoteDataSource {
     );
 
     return response.statusCode == StatusCode.ok;
+  }
+
+  @override
+  Future<List<RecordModel>> getRecords({
+    required int skip,
+    required int limit,
+  }) async {
+    final Response response = await _remoteData.getRoute(ApiEndpoints.records);
+
+    if (response.statusCode == StatusCode.ok) {
+      final List rawData = response.data;
+      return rawData.map((data) => RecordModel.fromMap(data)).toList();
+    }
+
+    return [];
   }
 
   @override

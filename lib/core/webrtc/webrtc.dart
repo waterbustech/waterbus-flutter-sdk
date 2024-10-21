@@ -42,6 +42,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   MediaStream? _displayStream;
   ParticipantSFU? _mParticipant;
   bool _flagPublisherCanAddCandidate = false;
+  bool _isRecording = false;
   CallSetting _callSetting = CallSetting();
   final Map<String, ParticipantSFU> _subscribers = {};
   final Map<String, List<RTCIceCandidate>> _queueRemoteSubCandidates = {};
@@ -199,7 +200,9 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   }
 
   @override
-  Future<void> setPublisherRemoteSdp(String sdp) async {
+  Future<void> setPublisherRemoteSdp(String sdp, [bool? isRecording]) async {
+    if (isRecording != null) _isRecording = isRecording;
+
     final RTCSessionDescription description = RTCSessionDescription(
       sdp,
       DescriptionType.answer.type,
@@ -223,6 +226,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     required bool audioEnabled,
     required bool isScreenSharing,
     required bool isE2eeEnabled,
+    required bool isHandRaising,
     required CameraType type,
     required WebRTCCodec codec,
   }) async {
@@ -240,6 +244,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       audioEnabled,
       isScreenSharing,
       isE2eeEnabled,
+      isHandRaising,
       type,
       codec,
     );
@@ -457,6 +462,14 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   }
 
   @override
+  void toggleRaiseHand() {
+    if (_mParticipant == null) return;
+
+    _mParticipant!.isHandRaising = !_mParticipant!.isHandRaising;
+    _socketEmiter.setHandRaising(_mParticipant!.isHandRaising);
+  }
+
+  @override
   Future<void> setE2eeEnabled({
     required String targetId,
     required bool isEnabled,
@@ -507,6 +520,18 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
   @override
   void setScreenSharing({required String targetId, required bool isSharing}) {
     _subscribers[targetId]?.setScreenSharing(isSharing);
+    _notify(CallbackEvents.shouldBeUpdateState);
+  }
+
+  @override
+  void setHandRaising({required String targetId, required bool isRaising}) {
+    _subscribers[targetId]?.isHandRaising = isRaising;
+    _notify(CallbackEvents.shouldBeUpdateState);
+  }
+
+  @override
+  void setIsRecording({required bool isRecording}) {
+    _isRecording = isRecording;
     _notify(CallbackEvents.shouldBeUpdateState);
   }
 
@@ -784,6 +809,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
     bool videoEnabled,
     bool audioEnabled,
     bool isScreenSharing,
+    bool isHandRaising,
     bool isE2eeEnabled,
     CameraType type,
     WebRTCCodec codec,
@@ -800,6 +826,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
       isVideoEnabled: videoEnabled,
       isSharingScreen: isScreenSharing,
       isE2eeEnabled: isE2eeEnabled,
+      isHandRaising: isHandRaising,
       cameraType: type,
       videoCodec: codec,
       stats: _stats,
@@ -940,4 +967,7 @@ class WaterbusWebRTCManagerIpml extends WaterbusWebRTCManager {
 
   @override
   String? get roomId => _roomId;
+
+  @override
+  bool get isRecording => _isRecording;
 }

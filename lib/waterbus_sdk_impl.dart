@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 
 import 'package:injectable/injectable.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -12,10 +12,14 @@ import 'package:waterbus_sdk/core/api/user/repositories/user_repository.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/socket_emiter_interface.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/socket_handler_interface.dart';
+import 'package:waterbus_sdk/core/whiteboard/white_board_interfaces.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/native/picture-in-picture/index.dart';
 import 'package:waterbus_sdk/native/replaykit.dart';
+import 'package:waterbus_sdk/types/enums/draw_action.dart';
 import 'package:waterbus_sdk/types/models/create_meeting_params.dart';
+import 'package:waterbus_sdk/types/models/draw_model.dart';
+import 'package:waterbus_sdk/types/models/record_model.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 import 'package:waterbus_sdk/utils/replaykit/replaykit_helper.dart';
 import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
@@ -24,6 +28,8 @@ import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
 class SdkCore extends WaterbusSdkInterface {
   final SocketHandler _webSocket;
   final SocketEmiter _socketEmiter;
+  final WhiteBoardManager _whiteBoardManager;
+
   final WaterbusWebRTCManager _rtcManager;
   final ReplayKitChannel _replayKitChannel;
   final BaseRemoteData _baseRepository;
@@ -37,6 +43,7 @@ class SdkCore extends WaterbusSdkInterface {
   SdkCore(
     this._webSocket,
     this._socketEmiter,
+    this._whiteBoardManager,
     this._rtcManager,
     this._replayKitChannel,
     this._baseRepository,
@@ -47,6 +54,11 @@ class SdkCore extends WaterbusSdkInterface {
     this._messageRepository,
     this._logger,
   );
+
+  //note
+  static List<DrawModel> localDraw = [];
+  static List<DrawModel> remoteDraw = [];
+  static List<DrawModel> historyDraw = [];
 
   @override
   Future<void> initializeApp() async {
@@ -147,6 +159,14 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
+  Future<List<RecordModel>> getRecords({
+    required int skip,
+    required int limit,
+  }) async {
+    return await _meetingRepository.getRecords(skip: skip, limit: limit);
+  }
+
+  @override
   Future<int?> startRecord() async {
     final String? meetingId = _rtcManager.roomId;
 
@@ -172,6 +192,34 @@ class SdkCore extends WaterbusSdkInterface {
     } catch (error) {
       _logger.bug(error.toString());
     }
+  }
+
+  @override
+  Future<void> startWhiteBoard() async {
+    _whiteBoardManager.startWhiteBoard();
+  }
+
+  @override
+  Future<void> updateWhiteBoard(
+    DrawModel draw,
+    DrawActionEnum action,
+  ) async {
+    _whiteBoardManager.updateWhiteBoard(draw, action);
+  }
+
+  @override
+  Future<void> cleanWhiteBoard() async {
+    _whiteBoardManager.cleanWhiteBoard();
+  }
+
+  @override
+  Future<void> undoWhiteBoard() async {
+    _whiteBoardManager.undoWhiteBoard();
+  }
+
+  @override
+  Future<void> redoWhiteBoard() async {
+    _whiteBoardManager.redoWhiteBoard();
   }
 
   @override
