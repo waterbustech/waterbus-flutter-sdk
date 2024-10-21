@@ -248,8 +248,8 @@ class WaterbusSdk {
     return await _sdk.deleteMember(code: code, userId: userId);
   }
 
-  Future<Meeting?> acceptInvite(int code) async {
-    return await _sdk.acceptInvite(code: code);
+  Future<Meeting?> acceptInvite(int meetingId) async {
+    return await _sdk.acceptInvite(meetingId: meetingId);
   }
 
   Future<Meeting?> leaveConversation(int code) async {

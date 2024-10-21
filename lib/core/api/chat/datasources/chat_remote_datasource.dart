@@ -19,7 +19,7 @@ abstract class ChatRemoteDataSource {
   Future<Meeting?> leaveConversation({required int code});
   Future<Meeting?> addMember({required int code, required int userId});
   Future<Meeting?> deleteMember({required int code, required int userId});
-  Future<Meeting?> acceptInvite({required int code});
+  Future<Meeting?> acceptInvite({required int meetingId});
   Future<bool> updateConversation({required Meeting meeting});
 }
 
@@ -88,7 +88,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
       ApiEndpoints.meetings,
       meeting.toMapCreate(),
     );
-    print("updateConversation $response");
+
     return response.statusCode == StatusCode.ok;
   }
 
@@ -116,9 +116,9 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
   }
 
   @override
-  Future<Meeting?> acceptInvite({required int code}) async {
+  Future<Meeting?> acceptInvite({required int meetingId}) async {
     final Response response = await _remoteData.postRoute(
-      '${ApiEndpoints.acceptInvite}/$code',
+      '${ApiEndpoints.acceptInvite}/$meetingId',
     );
 
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {

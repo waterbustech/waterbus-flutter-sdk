@@ -324,8 +324,7 @@ class SocketHandlerImpl extends SocketHandler {
 
       _socket?.on(SocketEvent.newInvitationSSC, (data) {
         if (data == null) return;
-
-        final Meeting meeting = Meeting.fromMap(data);
+        final Meeting meeting = Meeting.fromMapSocket(data['meeting']);
 
         WaterbusSdk.onConversationChanged?.call(
           ConversationSocketEvent(
@@ -337,13 +336,12 @@ class SocketHandlerImpl extends SocketHandler {
 
       _socket?.on(SocketEvent.newMemberJoinedSSC, (data) {
         if (data == null) return;
-
-        final Meeting meeting = Meeting.fromMap(data);
+        final Member member = Member.fromMapSocket(data);
 
         WaterbusSdk.onConversationChanged?.call(
           ConversationSocketEvent(
             event: ConversationEventEnum.newMemberJoined,
-            conversation: meeting,
+            member: member,
           ),
         );
       });

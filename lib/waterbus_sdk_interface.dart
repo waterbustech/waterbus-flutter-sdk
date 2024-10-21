@@ -37,7 +37,7 @@ abstract class WaterbusSdkInterface {
   Future<Meeting?> leaveConversation({required int code});
   Future<Meeting?> addMember({required int code, required int userId});
   Future<Meeting?> deleteMember({required int code, required int userId});
-  Future<Meeting?> acceptInvite({required int code});
+  Future<Meeting?> acceptInvite({required int meetingId});
 
   // Messages
   Future<List<MessageModel>> getMessageByRoom({

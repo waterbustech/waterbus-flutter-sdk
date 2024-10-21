@@ -85,22 +85,46 @@ class Meeting {
     return body;
   }
 
+  factory Meeting.fromMapSocket(Map<String, dynamic> map) {
+    return Meeting(
+      id: map['id'] ?? 0,
+      title: map['title'] ?? "",
+      members: map['members'] != null && map['members'] is List
+          ? (map['members'] as List)
+              .whereType<Map<String, dynamic>>()
+              .map<Member>((member) => Member.fromMap(member))
+              .toList()
+          : [],
+      status: (int.tryParse(map['status'].toString()) ?? 0).getChatStatusEnum,
+      createdAt:
+          DateTime.fromMillisecondsSinceEpoch(int.parse(map['createdAt']))
+              .toLocal(),
+      avatar: map['avatar'],
+      code: map['code'] ?? 0,
+    );
+  }
+
   factory Meeting.fromMap(Map<String, dynamic> map) {
     return Meeting(
-      id: map['id'] as int,
-      title: map['title'] as String,
-      participants: List<Participant>.from(
-        (map['participants'] as List).map<Participant>(
-          (x) => Participant.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
-      members: List<Member>.from(
-        (map['members'] as List).map<Member>(
-          (x) => Member.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
-      code: map['code'],
-      status: (int.tryParse(map['status'].toString()) ?? 0).getChatStatusEnum,
+      id: map['id'] ?? 0,
+      title: map['title'] ?? "",
+      participants: map['participants'] != null && map['participants'] is List
+          ? (map['participants'] as List)
+              .whereType<Map<String, dynamic>>()
+              .map<Participant>(
+                (participant) => Participant.fromMap(participant),
+              )
+              .toList()
+          : [],
+      members: map['members'] != null && map['members'] is List
+          ? (map['members'] as List)
+              .whereType<Map<String, dynamic>>()
+              .map<Member>((member) => Member.fromMap(member))
+              .toList()
+          : [],
+      code: map['code'] ?? 0,
+      status: (int.tryParse(map['status']?.toString() ?? "") ?? 0)
+          .getChatStatusEnum,
       createdAt: DateTime.parse(map['createdAt']).toLocal(),
       latestJoinedAt:
           DateTime.parse(map['latestMessageCreatedAt'] ?? map['createdAt'])
@@ -136,7 +160,7 @@ class Meeting {
 
   @override
   String toString() {
-    return 'MessageModel(id: $id, title: $title, avatar: $avatar, createdAt: $createdAt, status: $status, latestJoinedAt: $latestJoinedAt, participants: $participants, members: $members, status: $status, code: $code, latestMessage: $latestMessage)';
+    return 'MeetingModel(id: $id, title: $title, avatar: $avatar, createdAt: $createdAt, status: $status, latestJoinedAt: $latestJoinedAt, participants: $participants, members: $members, status: $status, code: $code, latestMessage: $latestMessage)';
   }
 
   @override

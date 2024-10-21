@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 
 enum ChatStatusEnum {
   invite(0),
+  archived(1),
   join(2);
 
   const ChatStatusEnum(this.status);

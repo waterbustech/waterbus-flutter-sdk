@@ -1,24 +1,23 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-
 import 'dart:convert';
-
-import 'package:equatable/equatable.dart';
 
 import 'package:waterbus_sdk/types/enums/meeting_role.dart';
 import 'package:waterbus_sdk/types/enums/status_enum.dart';
 import 'package:waterbus_sdk/types/models/user_model.dart';
 
-class Member extends Equatable {
+class Member {
   final int id;
   final MeetingRole role;
-  final MemberStatusEnum status;
+  MemberStatusEnum status;
   final User user;
   final bool isMe;
-  const Member({
+  final int? meetingId;
+
+  Member({
     required this.id,
     required this.role,
     required this.user,
     this.isMe = false,
+    this.meetingId,
     this.status = MemberStatusEnum.joined,
   });
 
@@ -27,6 +26,7 @@ class Member extends Equatable {
     MeetingRole? role,
     User? user,
     bool? isMe,
+    int? meetingId,
     MemberStatusEnum? status,
   }) {
     return Member(
@@ -35,6 +35,7 @@ class Member extends Equatable {
       user: user ?? this.user,
       isMe: isMe ?? this.isMe,
       status: status ?? this.status,
+      meetingId: meetingId ?? this.meetingId,
     );
   }
 
@@ -45,12 +46,28 @@ class Member extends Equatable {
       'user': user.toMap(),
       'isMe': isMe,
       'status': status.value,
+      'meetingId': meetingId,
     };
+  }
+
+  factory Member.fromMapSocket(Map<String, dynamic> map) {
+    final Map<String, dynamic> member = map['member'];
+    return Member(
+      id: member['id'] ?? 0,
+      role:
+          MeetingRoleX.fromValue(member['role'] ?? MeetingRole.attendee.value),
+      user: User.fromMap(member['user'] as Map<String, dynamic>),
+      isMe: member['isMe'] ?? false,
+      status: MemberStatusEnum.fromValue(
+        member['status'] ?? MemberStatusEnum.inviting.value,
+      ),
+      meetingId: map['meetingId'],
+    );
   }
 
   factory Member.fromMap(Map<String, dynamic> map) {
     return Member(
-      id: map['id'] as int,
+      id: map['id'] ?? 0,
       role: MeetingRoleX.fromValue(map['role'] ?? MeetingRole.attendee.value),
       user: User.fromMap(map['user'] as Map<String, dynamic>),
       isMe: map['isMe'] ?? false,
@@ -67,7 +84,7 @@ class Member extends Equatable {
 
   @override
   String toString() =>
-      'Participant(id: $id, role: $role, user: $user, status: $status)';
+      'Participant(id: $id, role: $role, meetingId: $meetingId, user: $user, status: $status)';
 
   @override
   bool operator ==(covariant Member other) {
@@ -77,6 +94,7 @@ class Member extends Equatable {
         other.role == role &&
         other.user == user &&
         other.isMe == isMe &&
+        other.meetingId == meetingId &&
         other.status == status;
   }
 
@@ -86,10 +104,6 @@ class Member extends Equatable {
       role.hashCode ^
       user.hashCode ^
       isMe.hashCode ^
+      meetingId.hashCode ^
       status.hashCode;
-
-  @override
-  List<Object> get props {
-    return [id, role, status, user, isMe];
-  }
 }
