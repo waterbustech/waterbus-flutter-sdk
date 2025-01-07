@@ -262,7 +262,7 @@ class SocketHandlerImpl extends SocketHandler {
         final participantId = data['participantId'];
         final content = data['transcription'];
 
-        WaterbusSdk.onSubtitle?.call(
+        WaterbusSdk.listener.onSubtitle?.call(
           Subtitle(participant: participantId, content: content),
         );
       });
@@ -314,7 +314,7 @@ class SocketHandlerImpl extends SocketHandler {
         final String dataDecrypted =
             await EncryptAES().decryptAES256(cipherText: message.data);
 
-        WaterbusSdk.onMesssageChanged?.call(
+        WaterbusSdk.listener.onMesssageChanged?.call(
           MessageSocketEvent(
             event: MessageEventEnum.create,
             message: message.copyWith(data: dataDecrypted),
@@ -330,7 +330,7 @@ class SocketHandlerImpl extends SocketHandler {
         final String dataDecrypted =
             await EncryptAES().decryptAES256(cipherText: message.data);
 
-        WaterbusSdk.onMesssageChanged?.call(
+        WaterbusSdk.listener.onMesssageChanged?.call(
           MessageSocketEvent(
             event: MessageEventEnum.update,
             message: message.copyWith(data: dataDecrypted),
@@ -343,7 +343,7 @@ class SocketHandlerImpl extends SocketHandler {
 
         final MessageModel message = MessageModel.fromMapSocket(data);
 
-        WaterbusSdk.onMesssageChanged?.call(
+        WaterbusSdk.listener.onMesssageChanged?.call(
           MessageSocketEvent(event: MessageEventEnum.delete, message: message),
         );
       });
@@ -352,7 +352,7 @@ class SocketHandlerImpl extends SocketHandler {
         if (data == null) return;
         final Meeting meeting = Meeting.fromMapSocket(data['meeting']);
 
-        WaterbusSdk.onConversationChanged?.call(
+        WaterbusSdk.listener.onConversationChanged?.call(
           ConversationSocketEvent(
             event: ConversationEventEnum.newInvitaion,
             conversation: meeting,
@@ -364,7 +364,7 @@ class SocketHandlerImpl extends SocketHandler {
         if (data == null) return;
         final Member member = Member.fromMapSocket(data);
 
-        WaterbusSdk.onConversationChanged?.call(
+        WaterbusSdk.listener.onConversationChanged?.call(
           ConversationSocketEvent(
             event: ConversationEventEnum.newMemberJoined,
             member: member,

@@ -69,7 +69,7 @@ class SdkCore extends WaterbusSdkInterface {
     _webSocket.establishConnection(forceConnection: true);
 
     _rtcManager.notifyChanged.listen((event) {
-      WaterbusSdk.onEventChanged?.call(event);
+      WaterbusSdk.listener.onEventChanged?.call(event);
     });
   }
 
