@@ -14,6 +14,7 @@ import 'package:waterbus_sdk/types/models/draw_model.dart';
 import 'package:waterbus_sdk/types/models/record_model.dart';
 import 'package:waterbus_sdk/types/result.dart';
 import 'package:waterbus_sdk/utils/callkit/callkit_listener.dart';
+import 'package:waterbus_sdk/waterbus_event_listener.dart';
 import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
 
 export 'types/index.dart';
@@ -25,37 +26,38 @@ class WaterbusSdk {
   static String wsUrl = '';
   static String apiKey = '';
   static String privateMessageKey = '';
-  static Function(CallbackPayload)? onEventChanged;
-  static Function(VideoSenderStats)? onStatsChanged;
-  static Function(Subtitle)? onSubtitle;
-  static Function(MessageSocketEvent)? onMesssageChanged;
-  static Function(ConversationSocketEvent)? onConversationChanged;
-  static Function(List<DrawModel> drawList)? onDrawChanged;
+  static WaterBusEventListener listener = WaterBusEventListener();
 
   set onMessageSocketChanged(Function(MessageSocketEvent) onMesssageChanged) {
-    WaterbusSdk.onMesssageChanged = onMesssageChanged;
+    WaterbusSdk.listener =
+        WaterbusSdk.listener.copyWith(onMesssageChanged: onMesssageChanged);
   }
 
   set onConversationSocketChanged(
     Function(ConversationSocketEvent) onConversationChanged,
   ) {
-    WaterbusSdk.onConversationChanged = onConversationChanged;
+    WaterbusSdk.listener = WaterbusSdk.listener
+        .copyWith(onConversationChanged: onConversationChanged);
   }
 
   set onEventChangedRegister(Function(CallbackPayload) onEventChanged) {
-    WaterbusSdk.onEventChanged = onEventChanged;
+    WaterbusSdk.listener =
+        WaterbusSdk.listener.copyWith(onEventChanged: onEventChanged);
   }
 
   set setStatsChanged(Function(VideoSenderStats)? onStatsChanged) {
-    WaterbusSdk.onStatsChanged = onStatsChanged;
+    WaterbusSdk.listener =
+        WaterbusSdk.listener.copyWith(onStatsChanged: onStatsChanged);
   }
 
   set setOnSubtitle(Function(Subtitle)? onSubtitle) {
-    WaterbusSdk.onSubtitle = onSubtitle;
+    WaterbusSdk.listener =
+        WaterbusSdk.listener.copyWith(onSubtitle: onSubtitle);
   }
 
   set setOnDrawChanged(Function(List<DrawModel> drawList)? onDrawChanged) {
-    WaterbusSdk.onDrawChanged = onDrawChanged;
+    WaterbusSdk.listener =
+        WaterbusSdk.listener.copyWith(onDrawChanged: onDrawChanged);
   }
 
   Future<void> initializeApp({
