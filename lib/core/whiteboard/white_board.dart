@@ -102,6 +102,6 @@ class WhiteBoardManagerIpml extends WhiteBoardManager {
   Future<void> _emitWhiteBoard() async {
     final props = [..._localPaints, ..._remotePaints];
     props.sort((a, b) => a.createdAt.compareTo(b.createdAt));
-    WaterbusSdk.onDrawChanged?.call(props);
+    WaterbusSdk.listener.onDrawChanged?.call(props);
   }
 }
