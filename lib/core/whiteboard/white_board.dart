@@ -96,9 +96,7 @@ class WhiteBoardManagerIpml extends WhiteBoardManager {
         _remotePaints.removeWhere((element) => paints.contains(element));
         _emitWhiteBoard();
         break;
-      default:
-        break;
-    }
+      }
   }
 
   Future<void> _emitWhiteBoard() async {

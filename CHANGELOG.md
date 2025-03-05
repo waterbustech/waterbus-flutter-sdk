@@ -1,3 +1,8 @@
+## 1.6.0
+
+* [Fix] Build wasm
+* [Chore] Enhance WebRTC configuration with improved ICE and audio settings
+
 ## 1.5.3
 
 * [Fix] fix rear camera rotation on android

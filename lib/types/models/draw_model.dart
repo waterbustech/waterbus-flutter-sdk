@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 
 import 'package:equatable/equatable.dart';
@@ -70,8 +72,6 @@ class DrawModel extends Equatable {
         return SquareStroke.fromMap(map);
       case DrawShapes.circle:
         return CircleStroke.fromMap(map);
-      default:
-        throw UnimplementedError('Unknown stroke type: $drawShapes');
     }
   }
 

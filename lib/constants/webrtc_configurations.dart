@@ -11,6 +11,10 @@ class WebRTCConfigurations {
       }
     ],
     'sdpSemantics': 'unified-plan',
+    'iceCandidatePoolSize': 20,
+    "audioJitterBufferMaxPackets": 50,
+    'bundlePolicy': 'max-bundle',
+    "rtcpMuxPolicy": "require",
   };
 
   static const Map<String, dynamic> offerPublisherSdpConstraints = {
