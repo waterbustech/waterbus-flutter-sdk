@@ -138,43 +138,26 @@ class MeetingRemoteDataSourceImpl extends MeetingRemoteDataSource {
     required int skip,
     required int limit,
   }) async {
-    final Response response = await _remoteData.getRoute(ApiEndpoints.records);
-
-    if (response.statusCode == StatusCode.ok) {
-      final List rawData = response.data;
-      return Result.success(
-        rawData.map((data) => RecordModel.fromMap(data)).toList(),
-      );
-    }
-
-    return Result.failure(response.data['message'].toString().meetingException);
+    return Result.success([]);
   }
 
   @override
   Future<Result<int>> startRecord(int roomId) async {
-    final Response response = await _remoteData.postRoute(
-      ApiEndpoints.startRecord,
-      queryParameters: {"code": roomId},
-    );
+    // final Response response = await _remoteData.postRoute(
+    //   ApiEndpoints.startRecord,
+    //   queryParameters: {"code": roomId},
+    // );
 
-    if (response.statusCode == StatusCode.created) {
-      return Result.success(response.data['id']);
-    }
+    // if (response.statusCode == StatusCode.created) {
+    //   return Result.success(response.data['id']);
+    // }
 
-    return Result.failure(response.data['message'].toString().meetingException);
+    // return Result.failure(response.data['message'].toString().meetingException);
+    return Result.success(1);
   }
 
   @override
   Future<Result<bool>> stopRecord(int roomId) async {
-    final Response response = await _remoteData.postRoute(
-      ApiEndpoints.stopRecord,
-      queryParameters: {"code": roomId},
-    );
-
-    if (response.statusCode == StatusCode.created) {
-      return Result.success(true);
-    }
-
-    return Result.failure(response.data['message'].toString().meetingException);
+    return Result.success(true);
   }
 }

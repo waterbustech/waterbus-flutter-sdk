@@ -147,7 +147,11 @@ class ParticipantSFU extends Equatable {
 
 extension ParticipantSFUX on ParticipantSFU {
   Future<void> addCandidate(RTCIceCandidate candidate) async {
-    await peerConnection.addCandidate(candidate);
+    try {
+      await peerConnection.addCandidate(candidate);
+    } catch (error) {
+      WaterbusLogger.instance.bug("====> E: ${error.toString()}");
+    }
   }
 
   Future<void> setRemoteDescription(RTCSessionDescription description) async {
@@ -179,7 +183,11 @@ extension ParticipantSFUX on ParticipantSFU {
       return;
     }
 
-    if (cameraSource?.stream?.getVideoTracks().isEmpty ?? true) {
+    final videoTrackExists = cameraSource?.stream?.getVideoTracks().firstOrNull;
+    final isSameStreamId =
+        cameraSource != null && cameraSource?.streamId == stream.id;
+
+    if (videoTrackExists == null || isSameStreamId) {
       // Set src camera
       cameraSource?.setSrcObject(stream);
     } else {
@@ -192,8 +200,8 @@ extension ParticipantSFUX on ParticipantSFU {
     isSharingScreen = isSharing;
 
     if (!isSharing) {
-      screenSource?.dispose();
-      screenSource = null;
+      await screenSource?.dispose();
+      screenSource = MediaSource(onFirstFrameRendered: onFirstFrameRendered);
     }
   }
 

@@ -222,7 +222,6 @@ class BaseRemoteData {
       },
       headers: {
         'Authorization': 'Bearer ${_authLocal.refreshToken}',
-        'api-key': WaterbusSdk.apiKey,
         'Content-Type': 'application/json; charset=UTF-8',
         'Connection': 'keep-alive',
         'Accept': '*/*',
@@ -243,7 +242,6 @@ class BaseRemoteData {
   getHeaders() {
     return {
       'Authorization': 'Bearer ${_authLocal.accessToken}',
-      'api-key': WaterbusSdk.apiKey,
       'Content-Type': 'application/json; charset=UTF-8',
       'Connection': 'keep-alive',
       'Accept': '*/*',

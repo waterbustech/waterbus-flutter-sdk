@@ -42,9 +42,9 @@ dependencies:
   sdp_transform: ^0.3.2
   h264_profile_level_id: ^0.2.1
   dart_webrtc_plus: ^1.4.10+4
-  flutter_webrtc_plus: ^0.12.1+6
-  # flutter_webrtc_plus:
-  #   path: /Users/lambiengcode/Documents/waterbus/flutter-webrtc-plus
+  # flutter_webrtc_plus: ^0.12.1+6
+  flutter_webrtc_plus:
+    path: /Users/lambiengcode/Documents/waterbus/flutter-webrtc-plus
     
   # Dependency Injection
   get_it: ^7.6.8

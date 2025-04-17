@@ -33,10 +33,10 @@ extension VideoQualityX on VideoQuality {
       // HD - Full HD
       case VideoQuality.high:
         return {
-          'minHeight': '720',
-          'minWidth': '1280',
-          'minFrameRate': '24',
-          'frameRate': '24',
+          'minHeight': '1080',
+          'minWidth': '1920',
+          'minFrameRate': '30',
+          'frameRate': '30',
           'height': '1080',
           'width': '1920',
         };

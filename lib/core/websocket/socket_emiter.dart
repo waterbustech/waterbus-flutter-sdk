@@ -108,7 +108,8 @@ class SocketEmiterImpl extends SocketEmiter {
 
   @override
   void setSubtitle(bool isEnabled) {
-    _socket?.emit(SocketEvent.setSubscribeSubtitleCSS, {'enabled': isEnabled});
+    _socket
+        ?.emit(SocketEvent.setSubscribeSubtitleCSS, {'isEnabled': isEnabled});
   }
 
   @override

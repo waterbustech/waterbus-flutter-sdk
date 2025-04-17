@@ -62,7 +62,10 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
       final http.Response response = await http.put(
         uri,
         body: image,
-        headers: const {"Content-Type": 'image/png'},
+        headers: const {
+          "Content-Type": 'image/png',
+          'x-amz-acl': 'public-read',
+        },
       );
 
       if (response.statusCode == StatusCode.ok) {

@@ -180,7 +180,10 @@ class WebRTCVideoStats {
         if (r != null) {
           vs.jitter = getNumValFromReport(r.values, 'jitter');
           vs.packetsLost = getNumValFromReport(r.values, 'packetsLost');
-          vs.roundTripTime = getNumValFromReport(r.values, 'roundTripTime');
+          vs.roundTripTime = getNumValFromReport(
+            r.values,
+            'totalRoundTripTime',
+          );
 
           // Monitor latency & jitter
           WaterbusLogger().log(vs.toString());

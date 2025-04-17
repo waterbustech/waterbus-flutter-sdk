@@ -5,16 +5,20 @@ import 'package:waterbus_sdk/types/enums/codec.dart';
 import 'package:waterbus_sdk/utils/codec_selector.dart';
 
 extension SdpX on String {
-  String enableAudioDTX() {
+  String optimizeSdp({WebRTCCodec codec = WebRTCCodec.h264}) {
+    return _enableAudioDTX()._setPreferredCodec(codec: codec);
+  }
+
+  String _enableAudioDTX() {
     return replaceAll(
       'a=fmtp:111 minptime=10;useinbandfec=1',
       'a=fmtp:111 minptime=10;useinbandfec=1;usedtx=1',
     );
   }
 
-  String useH264HighLevel() {
+  String _useH264HighLevel() {
     final profileLevelId = ProfileLevelId(
-      profile: H264Utils.ProfileConstrainedBaseline,
+      profile: H264Utils.ProfileBaseline,
       level: H264Utils.Level3_1,
     );
     final session = parse(this);
@@ -26,7 +30,7 @@ extension SdpX on String {
     return newSdp;
   }
 
-  String setPreferredCodec({WebRTCCodec codec = WebRTCCodec.h264}) {
+  String _setPreferredCodec({WebRTCCodec codec = WebRTCCodec.h264}) {
     final capSel = CodecCapabilitySelector(this);
 
     final vcaps = capSel.getCapabilities('video');
@@ -42,44 +46,10 @@ extension SdpX on String {
       capSel.setCapabilities(vcaps);
     }
 
-    if (codec == WebRTCCodec.h264) return capSel.sdp().useH264HighLevel();
-
-    return capSel.sdp();
-  }
-
-  String optimizeSdp() {
-    // Split the SDP into lines.
-    final List<String> lines = split('\n');
-
-    // List of codecs you want to keep (customizable).
-    final List<String> allowedCodecs = ["opus", "h264", "av1"];
-
-    // Variable to store the optimized SDP.
-    String optimizedSdp = '';
-
-    for (String line in lines) {
-      // Check if the current line contains codec information.
-      if (line.contains('m=audio') || line.contains('m=video')) {
-        // This is the line describing codecs.
-        // Extract codecs from this line (e.g., "m=audio 12345 UDP/TLS/RTP/SAVPF 111 103 104 9 0 8").
-        final List<String> codecTokens = line.split(' ');
-
-        // Get the list of codecs listed.
-        final List<String> codecs = codecTokens.sublist(3);
-
-        // Filter the codecs you want to keep.
-        final List<String> filteredCodecs =
-            codecs.where((codec) => allowedCodecs.contains(codec)).toList();
-
-        // Update the codec description line with the filtered codecs.
-        line =
-            '${codecTokens.sublist(0, 3).join(' ')} ${filteredCodecs.join(' ')}';
-      }
-
-      // Add the line to the optimized SDP.
-      optimizedSdp += '$line\n';
+    if (codec == WebRTCCodec.h264) {
+      return capSel.sdp()._useH264HighLevel();
     }
 
-    return optimizedSdp;
+    return capSel.sdp();
   }
 }
