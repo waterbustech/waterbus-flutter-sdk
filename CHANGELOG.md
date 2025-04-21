@@ -1,3 +1,11 @@
+## 2.0.0
+
+* [BREAKING] Upgrade Waterbus SFU to v3 [Written in Rust](https://github.com/waterbustech/waterbus-rs)
+* [Feat] Implement simulcast
+* [Feat] Integrate connectivity_plus to manage user connection
+* [Fix] Frame Encryption
+* [Chore] Improvement stats
+
 ## 1.6.0
 
 * [Fix] Build wasm

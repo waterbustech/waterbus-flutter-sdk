@@ -44,11 +44,6 @@ class WaterbusSdk {
         WaterbusSdk.listener.copyWith(onEventChanged: onEventChanged);
   }
 
-  set setStatsChanged(Function(VideoSenderStats)? onStatsChanged) {
-    WaterbusSdk.listener =
-        WaterbusSdk.listener.copyWith(onStatsChanged: onStatsChanged);
-  }
-
   set setOnSubtitle(Function(Subtitle)? onSubtitle) {
     WaterbusSdk.listener =
         WaterbusSdk.listener.copyWith(onSubtitle: onSubtitle);
@@ -62,7 +57,8 @@ class WaterbusSdk {
   Future<void> initializeApp({
     required String wsUrl,
     required String apiUrl,
-    String privateMessageKey = '', // Disable message encrypted if empty
+    String privateMessageKey =
+        '', // Encryption message will be disabled if the key is empty
   }) async {
     WaterbusSdk.wsUrl = wsUrl;
     WaterbusSdk.apiUrl = apiUrl;

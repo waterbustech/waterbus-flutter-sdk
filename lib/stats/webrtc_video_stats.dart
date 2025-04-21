@@ -1,122 +1,144 @@
 import 'dart:async';
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 
 import 'package:collection/collection.dart';
+import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 import 'package:injectable/injectable.dart';
 
-import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/constants/constants.dart';
+import 'package:waterbus_sdk/types/models/rtc_participant_stats.dart';
+import 'package:waterbus_sdk/types/models/stats.dart';
+import 'package:waterbus_sdk/types/models/video_stats_params.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
-import 'package:waterbus_sdk/utils/path_helper.dart';
 
 @singleton
 class WebRTCVideoStats {
-  // MARK: State of receiver
-  final Map<String, List<RTCRtpReceiver>> _receivers = {};
-  final Map<String, VideoReceiverStats> _prevStats = {};
-  final Map<String, num> _currentReceiverBitrate = {};
-
   // MARK: State of sender
-  final List<RTCRtpSender> _senders = [];
+  final Map<String, VideoStatsParam> _senders = {};
   final Map<String, num> _bitrateFoLayers = {};
   num? _currentSenderBitrate;
-  Map<String, VideoSenderStats> _prevSenderStats = {};
-  final List<WaterbusStatsBenchmark> _statsBenchmark = [];
+  final Map<String, VideoSenderStats> _prevSenderStats = {};
+
+  // MARK: State of receiver
+  final Map<String, VideoStatsParam> _receivers = {};
+  final Map<String, VideoReceiverStats> _prevStats = {};
+  final Map<String, num> _currentReceiverBitrate = {};
 
   Timer? _statsTimer;
 
   get currentSenderBitrate => _currentSenderBitrate;
-  get currentBitrate => _currentReceiverBitrate;
 
   void initialize() {
-    // Clear any previous measurements
-    _prevStats.clear();
-    _currentReceiverBitrate.clear();
-
     // Start collecting stats periodically
     _statsTimer = Timer.periodic(2.seconds, (timer) {
       _monitorSenderStats();
       _monitorReceiverStats();
-
-      _recordStats();
     });
   }
 
-  void addSenders(String id, List<RTCRtpSender> senders) {
-    _senders.addAll(senders);
+  void addSenders({
+    required String ownerId,
+    required List<RTCRtpSender> senders,
+    required Function(RtcParticipantStats) callback,
+  }) {
+    final videoSenders =
+        senders.where((s) => s.track?.kind == 'video').toList();
+
+    _senders[ownerId] = VideoStatsParam(
+      ownerId: kIsMine,
+      callBack: callback,
+      senders: videoSenders,
+    );
   }
 
-  void addReceivers(String id, List<RTCRtpReceiver> receivers) {
-    _receivers[id] = receivers;
+  void removeSenders(String ownerId) {
+    _senders.removeWhere((k, v) => k == ownerId);
   }
 
-  void removeSenders() {
-    _senders.clear();
+  void addReceivers({
+    required String ownerId,
+    required List<RTCRtpReceiver> receivers,
+    required Function(RtcParticipantStats) callback,
+  }) {
+    _receivers[ownerId] = VideoStatsParam(
+      ownerId: ownerId,
+      callBack: callback,
+      receivers: receivers,
+    );
   }
 
-  void removeReceivers(String id) {
-    _receivers.remove(id);
+  void removeReceivers(String ownerId) {
+    _receivers.removeWhere((k, v) => k.startsWith(ownerId));
   }
 
   void dispose() {
-    if (kIsWeb) return;
-
     if (_statsTimer == null) return;
 
     _statsTimer?.cancel();
     _statsTimer = null;
 
-    _writeStatsToFile();
     _senders.clear();
     _receivers.clear();
-    _currentReceiverBitrate.clear();
-    _prevStats.clear();
   }
 
   Future<void> _monitorSenderStats() async {
-    for (final sender in _senders) {
-      try {
-        final List<StatsReport> statsReport = await sender.getStats();
-        final List<VideoSenderStats> stats = await _getSenderStats(statsReport);
+    for (final senders in _senders.entries) {
+      for (final sender in senders.value.senders) {
+        try {
+          final List<StatsReport> statsReport = await sender.getStats();
+          final List<VideoSenderStats> stats =
+              await _getSenderStats(statsReport);
 
-        final Map<String, VideoSenderStats> statsMap = {};
+          final Map<String, VideoSenderStats> statsMap = {};
 
-        for (final s in stats) {
-          if (s.rid == null) continue;
+          for (final s in stats) {
+            if (s.rid == null || s.bytesSent == 0) continue;
 
-          statsMap[s.rid ?? 'f'] = s;
-        }
-
-        if (_prevSenderStats.isNotEmpty) {
-          num totalBitrate = 0;
-
-          for (final stats in statsMap.entries) {
-            final prev = _prevSenderStats[stats.key];
-            final bitRateForlayer = computeBitrateForSenderStats(
-              stats.value,
-              prev,
-            );
-            _bitrateFoLayers[stats.key] = bitRateForlayer;
-            totalBitrate += bitRateForlayer;
+            statsMap[s.rid ?? 'f'] = s;
           }
 
-          _currentSenderBitrate = totalBitrate;
-        }
+          if (_prevSenderStats.isNotEmpty) {
+            num totalBitrate = 0;
 
-        for (final stats in statsMap.entries) {
-          _prevSenderStats[stats.key] = stats.value;
+            for (final stats in statsMap.entries) {
+              final prev = _prevSenderStats[stats.key];
+              final bitRateForlayer = computeBitrateForSenderStats(
+                stats.value,
+                prev,
+              );
+              _bitrateFoLayers[stats.key] = bitRateForlayer;
+              totalBitrate += bitRateForlayer;
+            }
+
+            _currentSenderBitrate = totalBitrate;
+
+            final RtcParticipantStats senderStats = RtcParticipantStats(
+              frameWidth: stats.last.frameWidth,
+              frameHeight: stats.last.frameHeight,
+              jitter: stats.last.jitter,
+              roundTripTime: stats.last.roundTripTime,
+              packetsLost: stats.last.packetsLost,
+              bitrate: _currentSenderBitrate,
+              fps: stats.last.framesPerSecond,
+              framesSent: stats.last.framesSent,
+            );
+
+            _senders[senders.key]?.callBack.call(senderStats);
+          }
+
+          for (final stats in statsMap.entries) {
+            _prevSenderStats[stats.key] = stats.value;
+          }
+        } catch (error) {
+          WaterbusLogger.instance.bug(error.toString());
         }
-      } catch (error) {
-        WaterbusLogger().bug(error.toString());
       }
     }
   }
 
   Future<void> _monitorReceiverStats() async {
     for (final receivers in _receivers.entries) {
-      for (final receiver in receivers.value) {
+      for (final receiver in receivers.value.receivers) {
         try {
           final List<StatsReport> statsReport = await receiver.getStats();
           final stats = await _getReceiverStats(statsReport);
@@ -129,12 +151,24 @@ class WebRTCVideoStats {
               );
 
               _currentReceiverBitrate[receivers.key] = currentBitrate;
+
+              final RtcParticipantStats receiverStats = RtcParticipantStats(
+                frameWidth: stats.frameWidth,
+                frameHeight: stats.frameHeight,
+                jitter: stats.jitter,
+                packetsLost: stats.packetsLost,
+                bitrate: currentBitrate,
+                fps: stats.framesPerSecond,
+                framesReceived: stats.framesReceived,
+              );
+
+              _receivers[receivers.key]?.callBack.call(receiverStats);
             }
 
             _prevStats[receivers.key] = stats;
           }
         } catch (error) {
-          WaterbusLogger().bug(error.toString());
+          WaterbusLogger.instance.bug(error.toString());
         }
       }
     }
@@ -169,11 +203,6 @@ class WebRTCVideoStats {
         vs.qualityLimitationResolutionChanges =
             getNumValFromReport(v.values, 'qualityLimitationResolutionChanges');
 
-        if (vs.framesSent != null) {
-          // Monitor frames info
-          WaterbusLogger().log(vs.infoVideo());
-        }
-
         // locate the appropriate remote-inbound-rtp item
         final remoteId = getStringValFromReport(v.values, 'remoteId');
         final r = stats.firstWhereOrNull((element) => element.id == remoteId);
@@ -184,11 +213,6 @@ class WebRTCVideoStats {
             r.values,
             'totalRoundTripTime',
           );
-
-          // Monitor latency & jitter
-          WaterbusLogger().log(vs.toString());
-
-          WaterbusSdk.listener.onStatsChanged?.call(vs);
         }
         final c = stats.firstWhereOrNull((element) => element.type == 'codec');
         if (c != null) {
@@ -249,51 +273,8 @@ class WebRTCVideoStats {
       }
     }
 
-    if (receiverStats?.framesReceived != null) {
-      // Monitor frames receive
-      WaterbusLogger().log(receiverStats!.infoVideo());
-    }
+    if (receiverStats?.framesReceived != null) {}
 
     return receiverStats;
-  }
-
-  void _recordStats() {
-    final VideoSenderStats? stats = _prevSenderStats.values.firstOrNull;
-
-    _statsBenchmark.add(
-      WaterbusStatsBenchmark(
-        latency: stats?.roundTripTime ?? 0,
-        bitrate: _currentSenderBitrate ?? 0,
-        bytesSent: stats?.bytesSent ?? 0,
-        jitter: stats?.jitter ?? 0,
-        packetsLost: stats?.packetsLostPercent ?? 0,
-        totalEncodeTime: stats?.totalEncodeTime ?? 0,
-      ),
-    );
-  }
-
-  Future<void> _writeStatsToFile() async {
-    final Directory? appDir = await PathHelper.appDir;
-    if (appDir != null) {
-      String stats = '''''';
-      for (int index = 1; index <= _statsBenchmark.length; index++) {
-        stats += '''${index * 2} ${_statsBenchmark[index - 1].toString()}\n''';
-      }
-
-      final filePath = File('${appDir.path}/benchmark.txt');
-
-      // Write the asset content to the local file
-      try {
-        await filePath.create();
-        await filePath.writeAsString(stats);
-        WaterbusLogger.instance.log("Saved stats in ${filePath.path}");
-      } catch (e) {
-        WaterbusLogger.instance.log("Error writing data to the file: $e");
-      }
-    }
-
-    _statsBenchmark.clear();
-    _currentSenderBitrate = null;
-    _prevSenderStats = {};
   }
 }

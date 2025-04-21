@@ -194,26 +194,23 @@ num computeBitrateForSenderStats(
   SenderStats currentStats,
   SenderStats? prevStats,
 ) {
-  if (prevStats == null || currentStats.timestamp == prevStats.timestamp) {
+  if (prevStats == null) {
     return 0;
   }
-
-  final num? bytesNow = currentStats.bytesSent;
-  final num? bytesPrev = prevStats.bytesSent;
-
+  num? bytesNow;
+  num? bytesPrev;
+  bytesNow = currentStats.bytesSent;
+  bytesPrev = prevStats.bytesSent;
   if (bytesNow == null || bytesPrev == null) {
     return 0;
   }
-
-  final num timeDifference = currentStats.timestamp - prevStats.timestamp;
-
-  if (timeDifference <= 0) {
-    return 0;
+  if (kIsWeb) {
+    return ((bytesNow - bytesPrev) * 8) /
+        (currentStats.timestamp - prevStats.timestamp);
   }
 
-  final num bitrate = ((bytesNow - bytesPrev).abs() * 8) / timeDifference;
-
-  return bitrate;
+  return ((bytesNow - bytesPrev) * 8 * 1000) /
+      (currentStats.timestamp - prevStats.timestamp);
 }
 
 num computeBitrateForReceiverStats(

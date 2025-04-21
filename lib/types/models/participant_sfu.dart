@@ -1,10 +1,11 @@
+import 'dart:async';
+
 import 'package:equatable/equatable.dart';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/stats/webrtc_audio_stats.dart';
-import 'package:waterbus_sdk/stats/webrtc_video_stats.dart';
 import 'package:waterbus_sdk/types/enums/audio_level.dart';
-import 'package:waterbus_sdk/utils/extensions/peer_extensions.dart';
+import 'package:waterbus_sdk/types/enums/track_type.dart';
+import 'package:waterbus_sdk/types/models/rtc_participant_stats.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 // ignore: must_be_immutable
@@ -17,12 +18,15 @@ class ParticipantSFU extends Equatable {
   bool isSharingScreen;
   bool isHandRaising;
   CameraType cameraType;
-  AudioLevel audioLevel;
   MediaSource? cameraSource;
   MediaSource? screenSource;
   RTCPeerConnection peerConnection;
   final WebRTCCodec videoCodec;
   final Function()? onFirstFrameRendered;
+  AudioLevel audioLevel;
+  StreamController<AudioLevel>? audioLevelController;
+  StreamController<RtcParticipantStats>? webcamStatsController;
+  StreamController<RtcParticipantStats>? screenStatsController;
   ParticipantSFU({
     required this.ownerId,
     this.isVideoEnabled = true,
@@ -32,41 +36,24 @@ class ParticipantSFU extends Equatable {
     this.isSpeakerPhoneEnabled = true,
     this.isHandRaising = false,
     this.cameraType = CameraType.front,
-    this.audioLevel = AudioLevel.kSilence,
     required this.peerConnection,
     required this.onFirstFrameRendered,
     required this.videoCodec,
-    // use only one time
-    WebRTCVideoStats? stats,
-    WebRTCAudioStats? audioStats,
-    bool isMe = false,
+    this.audioLevel = AudioLevel.kSilence,
     this.cameraSource,
     this.screenSource,
+    this.audioLevelController,
+    this.webcamStatsController,
+    this.screenStatsController,
   }) {
     if (cameraSource != null || screenSource != null) return;
 
     cameraSource = MediaSource(onFirstFrameRendered: onFirstFrameRendered);
     screenSource = MediaSource(onFirstFrameRendered: onFirstFrameRendered);
 
-    if (stats != null && audioStats != null) {
-      peerConnection.monitorStats(
-        stats,
-        isMe: isMe,
-        id: peerConnection.peerConnectionId,
-        audioStats: audioStats,
-        onLevelChanged: (level) {
-          if (level == audioLevel) return;
-
-          audioLevel = level;
-          onFirstFrameRendered?.call();
-        },
-      );
-    }
-  }
-
-  @override
-  String toString() {
-    return 'ParticipantSFU(isMicEnabled: $isVideoEnabled, isCamEnabled: $isAudioEnabled, isSharingScreen: $isSharingScreen, peerConnection: $peerConnection)';
+    audioLevelController = StreamController<AudioLevel>.broadcast();
+    webcamStatsController = StreamController<RtcParticipantStats>.broadcast();
+    screenStatsController = StreamController<RtcParticipantStats>.broadcast();
   }
 
   @override
@@ -103,11 +90,13 @@ class ParticipantSFU extends Equatable {
       isSpeakerPhoneEnabled,
       isSharingScreen,
       cameraType,
-      audioLevel,
       peerConnection,
       videoCodec,
     ];
   }
+
+  @override
+  bool get stringify => true;
 
   ParticipantSFU copyWith({
     String? ownerId,
@@ -122,8 +111,6 @@ class ParticipantSFU extends Equatable {
     RTCPeerConnection? peerConnection,
     WebRTCCodec? videoCodec,
     Function()? onFirstFrameRendered,
-    MediaSource? cameraSource,
-    MediaSource? screenSource,
   }) {
     return ParticipantSFU(
       ownerId: ownerId ?? this.ownerId,
@@ -135,17 +122,35 @@ class ParticipantSFU extends Equatable {
           isSpeakerPhoneEnabled ?? this.isSpeakerPhoneEnabled,
       isSharingScreen: isSharingScreen ?? this.isSharingScreen,
       cameraType: cameraType ?? this.cameraType,
-      audioLevel: audioLevel ?? this.audioLevel,
       peerConnection: peerConnection ?? this.peerConnection,
       videoCodec: videoCodec ?? this.videoCodec,
       onFirstFrameRendered: onFirstFrameRendered ?? this.onFirstFrameRendered,
-      cameraSource: cameraSource ?? this.cameraSource,
-      screenSource: screenSource ?? this.screenSource,
+      cameraSource: cameraSource,
+      screenSource: screenSource,
+      audioLevel: audioLevel ?? this.audioLevel,
+      audioLevelController: audioLevelController,
+      webcamStatsController: webcamStatsController,
+      screenStatsController: screenStatsController,
     );
   }
 }
 
 extension ParticipantSFUX on ParticipantSFU {
+  void sinkAudioLevel(AudioLevel level) {
+    if (level == audioLevel) return;
+
+    audioLevel = level;
+    audioLevelController?.sink.add(level);
+  }
+
+  void sinkWebcamStats(RtcParticipantStats stats) {
+    webcamStatsController?.sink.add(stats);
+  }
+
+  void sinkScreenStats(RtcParticipantStats stats) {
+    screenStatsController?.sink.add(stats);
+  }
+
   Future<void> addCandidate(RTCIceCandidate candidate) async {
     try {
       await peerConnection.addCandidate(candidate);
@@ -170,7 +175,7 @@ extension ParticipantSFUX on ParticipantSFU {
     }
   }
 
-  Future<void> setSrcObject(
+  Future<TrackType?> setSrcObject(
     MediaStream stream, {
     bool isDisplayStream = false,
   }) async {
@@ -180,7 +185,7 @@ extension ParticipantSFUX on ParticipantSFU {
       } else {
         cameraSource?.setSrcObject(stream);
       }
-      return;
+      return null;
     }
 
     final videoTrackExists = cameraSource?.stream?.getVideoTracks().firstOrNull;
@@ -190,9 +195,11 @@ extension ParticipantSFUX on ParticipantSFU {
     if (videoTrackExists == null || isSameStreamId) {
       // Set src camera
       cameraSource?.setSrcObject(stream);
+      return TrackType.webcam;
     } else {
       // Set src screen
       screenSource?.setSrcObject(stream);
+      return TrackType.screen;
     }
   }
 
@@ -213,5 +220,18 @@ extension ParticipantSFUX on ParticipantSFU {
     setScreenSharing(false);
     cameraSource?.dispose();
     peerConnection.close();
+    audioLevelController?.close();
+    webcamStatsController?.close();
+    screenStatsController?.close();
   }
+}
+
+extension ParticipantSFUPublic on ParticipantSFU {
+  Stream<AudioLevel>? get audioLevelStream => audioLevelController?.stream;
+
+  Stream<RtcParticipantStats>? get webcamStatsStream =>
+      webcamStatsController?.stream;
+
+  Stream<RtcParticipantStats>? get screenStatsStream =>
+      screenStatsController?.stream;
 }

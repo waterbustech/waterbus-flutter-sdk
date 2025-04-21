@@ -1,20 +1,15 @@
 import 'package:flutter/foundation.dart';
+
 import 'package:waterbus_sdk/constants/webrtc_configurations.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/stats/webrtc_audio_stats.dart';
-import 'package:waterbus_sdk/stats/webrtc_video_stats.dart';
-import 'package:waterbus_sdk/types/enums/audio_level.dart';
-import 'package:waterbus_sdk/types/models/audio_stats_params.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 extension PeerX on RTCPeerConnection {
-  Future<void> addSimulcastTrack(
+  Future<RTCRtpSender> addSimulcastTrack(
     MediaStreamTrack track, {
     required WebRTCCodec vCodec,
     required MediaStream stream,
     String kind = 'video',
-    bool skipSetPreferredCodec = false,
-    bool simulcast = true,
   }) async {
     final transceiver = await addTransceiver(
       track: track,
@@ -29,7 +24,9 @@ extension PeerX on RTCPeerConnection {
       ),
     );
 
-    if (kind != 'video') return;
+    final sender = transceiver.sender;
+
+    if (kind != 'video') return sender;
 
     await Future.wait([
       _setPreferredCodec(
@@ -39,53 +36,8 @@ extension PeerX on RTCPeerConnection {
       ),
       _updateParameters(sender: transceiver.sender),
     ]);
-  }
 
-  void monitorStats(
-    WebRTCVideoStats stats, {
-    required WebRTCAudioStats audioStats,
-    required Function(AudioLevel) onLevelChanged,
-    required String id,
-    required bool isMe,
-  }) {
-    onIceConnectionState = (state) async {
-      switch (state) {
-        case RTCIceConnectionState.RTCIceConnectionStateConnected:
-          if (isMe) {
-            final senders = await getSenders();
-            stats.addSenders(id, senders);
-
-            audioStats.setSender = AudioStatsParams(
-              peerConnection: this,
-              callBack: onLevelChanged,
-            );
-          } else {
-            final receivers = await getReceivers();
-            stats.addReceivers(id, receivers);
-
-            audioStats.addReceiver(
-              AudioStatsParams(
-                peerConnection: this,
-                callBack: onLevelChanged,
-                receivers: receivers,
-              ),
-            );
-          }
-
-          break;
-        case RTCIceConnectionState.RTCIceConnectionStateClosed:
-          if (isMe) {
-            stats.removeSenders();
-            audioStats.setSender = null;
-          } else {
-            stats.removeReceivers(id);
-            audioStats.removeReceiver(peerConnectionId);
-          }
-          break;
-        default:
-          break;
-      }
-    };
+    return sender;
   }
 
   Future<void> _setPreferredCodec({

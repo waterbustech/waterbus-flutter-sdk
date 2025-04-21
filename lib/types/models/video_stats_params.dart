@@ -2,46 +2,46 @@ import 'package:flutter/foundation.dart';
 
 import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 
-import 'package:waterbus_sdk/types/enums/audio_level.dart';
+import 'package:waterbus_sdk/types/models/rtc_participant_stats.dart';
 
-class AudioStatsParams {
+class VideoStatsParam {
   final String ownerId;
-  final Function(AudioLevel) callBack;
-  final RTCPeerConnection? pc;
+  final Function(RtcParticipantStats) callBack;
+  final List<RTCRtpSender> senders;
   final List<RTCRtpReceiver> receivers;
-  AudioStatsParams({
+  VideoStatsParam({
     required this.ownerId,
     required this.callBack,
-    this.pc,
+    this.senders = const [],
     this.receivers = const [],
   });
 
-  AudioStatsParams copyWith({
+  VideoStatsParam copyWith({
     String? ownerId,
-    Function(AudioLevel)? callBack,
-    RTCPeerConnection? pc,
+    Function(RtcParticipantStats)? callBack,
+    List<RTCRtpSender>? senders,
     List<RTCRtpReceiver>? receivers,
   }) {
-    return AudioStatsParams(
+    return VideoStatsParam(
       ownerId: ownerId ?? this.ownerId,
       callBack: callBack ?? this.callBack,
-      pc: pc ?? this.pc,
+      senders: senders ?? this.senders,
       receivers: receivers ?? this.receivers,
     );
   }
 
   @override
   String toString() {
-    return 'AudioStatsParams(ownerId: $ownerId, callBack: $callBack, pc: $pc, receivers: $receivers)';
+    return 'VideoStatsParam(ownerId: $ownerId, callBack: $callBack, senders: $senders, receivers: $receivers)';
   }
 
   @override
-  bool operator ==(covariant AudioStatsParams other) {
+  bool operator ==(covariant VideoStatsParam other) {
     if (identical(this, other)) return true;
 
     return other.ownerId == ownerId &&
         other.callBack == callBack &&
-        other.pc == pc &&
+        listEquals(other.senders, senders) &&
         listEquals(other.receivers, receivers);
   }
 
@@ -49,7 +49,7 @@ class AudioStatsParams {
   int get hashCode {
     return ownerId.hashCode ^
         callBack.hashCode ^
-        pc.hashCode ^
+        senders.hashCode ^
         receivers.hashCode;
   }
 }
