@@ -12,6 +12,7 @@ import 'package:waterbus_sdk/constants/api_enpoints.dart';
 import 'package:waterbus_sdk/constants/http_status_code.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
+import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
 import 'package:waterbus_sdk/utils/queues/completer_queue.dart';
 
@@ -37,7 +38,7 @@ class DioConfiguration {
       await Rhttp.init();
       final rhttpAdapter = await RhttpCompatibleClient.create(
         settings: ClientSettings(
-          httpVersionPref: HttpVersionPref.http2,
+          httpVersionPref: WaterbusSdk.httpVersionPref,
           timeoutSettings: TimeoutSettings(
             timeout: 10.seconds,
             connectTimeout: 10.seconds,
