@@ -6,7 +6,6 @@ import 'package:dio/dio.dart';
 import 'package:dio_compatibility_layer/dio_compatibility_layer.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart' as rt;
 import 'package:injectable/injectable.dart';
-import 'package:rhttp/rhttp.dart';
 
 import 'package:waterbus_sdk/constants/api_enpoints.dart';
 import 'package:waterbus_sdk/constants/http_status_code.dart';
