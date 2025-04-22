@@ -21,8 +21,9 @@ import 'package:waterbus_sdk/waterbus_event_listener.dart';
 import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
 
 export 'types/index.dart';
-export './constants/constants.dart';
+export 'package:waterbus_sdk/constants/constants.dart';
 export 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
+export 'package:rhttp/rhttp.dart';
 
 class WaterbusSdk {
   static String apiUrl = '';
