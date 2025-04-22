@@ -56,7 +56,7 @@ class MessageRemoteDataSourceImpl extends MessageRemoteDataSource {
       return Result.success(
         await compute(_handleDecryptMessages, {
           "messages": messages,
-          "key": WaterbusSdk.privateMessageKey,
+          "key": WaterbusSdk.messageEncryptionKey,
         }),
       );
     }

@@ -175,13 +175,13 @@ class SocketHandlerImpl extends SocketHandler {
         /// targetId, isEnabled
         if (data == null) return;
 
-        final String participantId = data['participantId'];
-        final bool isEnabled = data['isEnabled'];
+        // final String participantId = data['participantId'];
+        // final bool isEnabled = data['isEnabled'];
 
-        _rtcManager.setE2eeEnabled(
-          targetId: participantId,
-          isEnabled: isEnabled,
-        );
+        // _rtcManager.setE2eeEnabled(
+        //   targetId: participantId,
+        //   isEnabled: isEnabled,
+        // );
       });
 
       _socket?.on(SocketEvent.setAudioEnabledSSC, (data) {

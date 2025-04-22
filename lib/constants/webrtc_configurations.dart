@@ -14,6 +14,7 @@ class WebRTCConfigurations {
     "audioJitterBufferMaxPackets": 50,
     'bundlePolicy': 'max-bundle',
     "rtcpMuxPolicy": "require",
+    'iceTransportPolicy': 'all',
     'encodedInsertableStreams': kIsWeb,
   };
 

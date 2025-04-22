@@ -4,7 +4,7 @@ import 'package:waterbus_sdk/utils/encrypt/aes_256_gcm.dart';
 class EncryptAES {
   Future<String> encryptAES256({required String cleartext, String? key}) async {
     try {
-      final String keyword = key ?? WaterbusSdk.privateMessageKey;
+      final String keyword = key ?? WaterbusSdk.messageEncryptionKey;
 
       if (keyword.isEmpty) return cleartext;
       final String message = await Aes256Gcm.encrypt(cleartext, keyword);
@@ -20,7 +20,7 @@ class EncryptAES {
     String? key,
   }) async {
     try {
-      final String keyword = key ?? WaterbusSdk.privateMessageKey;
+      final String keyword = key ?? WaterbusSdk.messageEncryptionKey;
 
       if (keyword.isEmpty) return cipherText;
 

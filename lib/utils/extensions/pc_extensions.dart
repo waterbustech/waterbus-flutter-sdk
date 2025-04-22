@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:waterbus_sdk/constants/webrtc_configurations.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/types/enums/rtc_track_kind.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 extension PeerX on RTCPeerConnection {
@@ -9,24 +10,25 @@ extension PeerX on RTCPeerConnection {
     MediaStreamTrack track, {
     required WebRTCCodec vCodec,
     required MediaStream stream,
-    String kind = 'video',
+    RtcTrackKind kind = RtcTrackKind.video,
   }) async {
     final transceiver = await addTransceiver(
       track: track,
-      kind: kind == 'video'
+      kind: kind == RtcTrackKind.video
           ? RTCRtpMediaType.RTCRtpMediaTypeVideo
           : RTCRtpMediaType.RTCRtpMediaTypeAudio,
       init: RTCRtpTransceiverInit(
         direction: TransceiverDirection.SendOnly,
         streams: [stream],
-        sendEncodings:
-            kind == 'video' ? WebRTCConfigurations.videoEncodings : [],
+        sendEncodings: kind == RtcTrackKind.video
+            ? WebRTCConfigurations.videoEncodings
+            : [],
       ),
     );
 
     final sender = transceiver.sender;
 
-    if (kind != 'video') return sender;
+    if (kind != RtcTrackKind.video) return sender;
 
     await Future.wait([
       _setPreferredCodec(
@@ -42,12 +44,12 @@ extension PeerX on RTCPeerConnection {
 
   Future<void> _setPreferredCodec({
     required RTCRtpTransceiver transceiver,
-    required String kind,
+    required RtcTrackKind kind,
     required String vCodec,
   }) async {
     // when setting codec preferences, the capabilites need to be read from
     // the RTCRtpReceiver
-    final caps = await getRtpReceiverCapabilities(kind);
+    final caps = await getRtpReceiverCapabilities(kind.kind);
     if (caps.codecs == null) return;
 
     final List<RTCRtpCodecCapability> matched = [];
@@ -93,6 +95,7 @@ extension PeerX on RTCPeerConnection {
     if (kIsWeb) return;
 
     final parameters = sender.parameters;
+
     parameters.degradationPreference =
         RTCDegradationPreference.MAINTAIN_RESOLUTION;
 

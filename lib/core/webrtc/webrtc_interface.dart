@@ -41,7 +41,11 @@ abstract class WaterbusWebRTCManager {
   Future<void> toggleVideo();
   Future<void> switchCamera();
   void toggleRaiseHand();
-  void setE2eeEnabled({required String targetId, required bool isEnabled});
+  void setE2eeEnabled({
+    required RTCRtpReceiver receiver,
+    required String targetId,
+    required bool isEnabled,
+  });
   void setVideoEnabled({required String targetId, required bool isEnabled});
   void setCameraType({required String targetId, required CameraType type});
   void setAudioEnabled({required String targetId, required bool isEnabled});

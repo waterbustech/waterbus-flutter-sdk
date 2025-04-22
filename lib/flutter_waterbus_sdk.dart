@@ -1,5 +1,7 @@
 library;
 
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 
 import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
@@ -24,7 +26,8 @@ export 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 class WaterbusSdk {
   static String apiUrl = '';
   static String wsUrl = '';
-  static String privateMessageKey = '';
+  static String messageEncryptionKey = '';
+  static Uint8List webrtcE2eeKey = Uint8List.fromList(utf8.encode('waterbus'));
   static WaterBusEventListener listener = WaterBusEventListener();
 
   set onMessageSocketChanged(Function(MessageSocketEvent) onMesssageChanged) {
@@ -57,12 +60,15 @@ class WaterbusSdk {
   Future<void> initializeApp({
     required String wsUrl,
     required String apiUrl,
-    String privateMessageKey =
-        '', // Encryption message will be disabled if the key is empty
+
+    /// Encryption message will be disabled if the key is empty
+    String messageEncryptionKey = '',
+    String webrtcE2eeKey = '',
   }) async {
     WaterbusSdk.wsUrl = wsUrl;
     WaterbusSdk.apiUrl = apiUrl;
-    WaterbusSdk.privateMessageKey = privateMessageKey;
+    WaterbusSdk.messageEncryptionKey = messageEncryptionKey;
+    WaterbusSdk.webrtcE2eeKey = Uint8List.fromList(utf8.encode(webrtcE2eeKey));
 
     WebRTC.initialize(options: {"bypassVoiceProcessing": true});
 

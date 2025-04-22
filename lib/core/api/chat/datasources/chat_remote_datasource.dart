@@ -59,7 +59,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
         "conversations": (response.data as List)
             .map((meeting) => Meeting.fromMap(meeting))
             .toList(),
-        "key": WaterbusSdk.privateMessageKey,
+        "key": WaterbusSdk.messageEncryptionKey,
       };
 
       return Result.success(await compute(_handleDecryptLastMessage, message));
@@ -83,7 +83,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
         "conversations": (response.data as List)
             .map((meeting) => Meeting.fromMap(meeting))
             .toList(),
-        "key": WaterbusSdk.privateMessageKey,
+        "key": WaterbusSdk.messageEncryptionKey,
       };
 
       return Result.success(await compute(_handleDecryptLastMessage, message));
@@ -158,7 +158,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
     if (response.statusCode == StatusCode.ok) {
       final Map<String, dynamic> message = {
         "conversations": [Meeting.fromMap(response.data)],
-        "key": WaterbusSdk.privateMessageKey,
+        "key": WaterbusSdk.messageEncryptionKey,
       };
 
       return Result.success(
@@ -178,7 +178,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
       final Map<String, dynamic> message = {
         "conversations": [Meeting.fromMap(response.data)],
-        "key": WaterbusSdk.privateMessageKey,
+        "key": WaterbusSdk.messageEncryptionKey,
       };
 
       return Result.success(
@@ -202,7 +202,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
       final Map<String, dynamic> message = {
         "conversations": [Meeting.fromMap(response.data)],
-        "key": WaterbusSdk.privateMessageKey,
+        "key": WaterbusSdk.messageEncryptionKey,
       };
 
       return Result.success(
@@ -226,7 +226,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
       final Map<String, dynamic> message = {
         "conversations": [Meeting.fromMap(response.data)],
-        "key": WaterbusSdk.privateMessageKey,
+        "key": WaterbusSdk.messageEncryptionKey,
       };
 
       return Result.success(
@@ -246,7 +246,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
       final Map<String, dynamic> message = {
         "conversations": [Meeting.fromMap(response.data)],
-        "key": WaterbusSdk.privateMessageKey,
+        "key": WaterbusSdk.messageEncryptionKey,
       };
 
       return Result.success(

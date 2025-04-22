@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/types/enums/rtc_track_kind.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 @singleton
@@ -23,40 +24,6 @@ class WebRTCFrameCrypto {
 
   final FrameCryptorFactory _frameCyrptorFactory = frameCryptorFactory;
   final Map<String, FrameCryptor> _frameCyrptors = {};
-  final Uint8List aesKey = Uint8List.fromList([
-    200,
-    244,
-    58,
-    72,
-    214,
-    245,
-    86,
-    82,
-    192,
-    127,
-    23,
-    153,
-    167,
-    172,
-    122,
-    234,
-    140,
-    70,
-    175,
-    74,
-    61,
-    11,
-    134,
-    58,
-    185,
-    102,
-    172,
-    17,
-    11,
-    6,
-    119,
-    253,
-  ]);
 
   String? _senderParticipantId;
   KeyProvider? _keyProvider;
@@ -79,73 +46,71 @@ class WebRTCFrameCrypto {
 
     _videoCodec = codec;
 
-    await _keyProvider?.setSharedKey(key: aesKey);
+    await _keyProvider?.setSharedKey(key: WaterbusSdk.webrtcE2eeKey);
   }
 
   Future<void> enableEncryption({
-    required RTCPeerConnection peerConnection,
+    required RTCRtpSender sender,
     required bool enabled,
   }) async {
     try {
       if (!_videoCodec.isSFrameSuported) return;
 
-      final List<RTCRtpSender> senders = await peerConnection.senders;
+      final String trackId = sender.track?.id ?? '';
+      final String id =
+          '${sender.track?.kind.toString().trim()}_${trackId}_sender';
 
-      for (final sender in senders) {
-        final String trackId = sender.track?.id ?? '';
-        final String id =
-            '${sender.track?.kind.toString().trim()}_${trackId}_sender';
+      if (!_frameCyrptors.containsKey(id)) {
+        final frameCyrptor =
+            await _frameCyrptorFactory.createFrameCryptorForRtpSender(
+          participantId: id,
+          sender: sender,
+          algorithm: Algorithm.kAesGcm,
+          keyProvider: _keyProvider!,
+        );
 
-        if (!_frameCyrptors.containsKey(id)) {
-          final frameCyrptor =
-              await _frameCyrptorFactory.createFrameCryptorForRtpSender(
-            participantId: id,
-            sender: sender,
-            algorithm: Algorithm.kAesGcm,
-            keyProvider: _keyProvider!,
-          );
+        frameCyrptor.onFrameCryptorStateChanged = (participantId, state) {
+          _logger.log('Encryption: $participantId $state');
+        };
 
-          frameCyrptor.onFrameCryptorStateChanged = (participantId, state) {
-            _logger.log('Encryption: $participantId $state');
-          };
+        _frameCyrptors[id] = frameCyrptor;
+        await frameCyrptor.setKeyIndex(0);
+      }
 
-          _frameCyrptors[id] = frameCyrptor;
-          await frameCyrptor.setKeyIndex(0);
-        }
+      if (sender.track?.kind.toString().trim() == RtcTrackKind.video.kind) {
+        _senderParticipantId = id;
+      }
 
-        if (sender.track?.kind.toString().trim() == 'video') {
-          _senderParticipantId = id;
-        }
+      final frameCyrptor0 = _frameCyrptors[id];
 
-        final frameCyrptor0 = _frameCyrptors[id];
-
-        if (enabled) {
-          await _keyProvider?.setKey(participantId: id, index: 0, key: aesKey);
-        }
-
-        await frameCyrptor0?.setEnabled(enabled);
-
-        await frameCyrptor0?.updateCodec(
-          sender.track?.kind.toString().trim() == 'video'
-              ? _videoCodec.codec.toUpperCase()
-              : audioCodec,
+      if (enabled) {
+        await _keyProvider?.setKey(
+          participantId: id,
+          index: 0,
+          key: WaterbusSdk.webrtcE2eeKey,
         );
       }
+
+      await frameCyrptor0?.setEnabled(enabled);
+
+      await frameCyrptor0?.updateCodec(
+        sender.track?.kind.toString().trim() == RtcTrackKind.video.kind
+            ? _videoCodec.codec.toUpperCase()
+            : audioCodec,
+      );
     } catch (e) {
       _logger.bug(e.toString());
     }
   }
 
   Future<void> enableDecryption({
-    required RTCPeerConnection peerConnection,
+    required RTCRtpReceiver receiver,
     required WebRTCCodec codec,
     required bool enabled,
   }) async {
     if (!codec.isSFrameSuported) return;
 
-    final List<RTCRtpReceiver> receivers = await peerConnection.receivers;
-
-    for (final receiver in receivers) {
+    try {
       final String trackId = receiver.track?.id ?? '';
       final String id = '${receiver.track?.kind}_${trackId}_receiver';
       if (!_frameCyrptors.containsKey(id)) {
@@ -169,16 +134,22 @@ class WebRTCFrameCrypto {
 
       if (enabled) {
         await frameCyrptor0?.setEnabled(true);
-        await _keyProvider?.setKey(participantId: id, index: 0, key: aesKey);
+        await _keyProvider?.setKey(
+          participantId: id,
+          index: 0,
+          key: WaterbusSdk.webrtcE2eeKey,
+        );
       } else {
         await frameCyrptor0?.setEnabled(false);
       }
 
       await frameCyrptor0?.updateCodec(
-        receiver.track?.kind == 'video'
+        receiver.track?.kind == RtcTrackKind.video.kind
             ? codec.codec.toUpperCase()
             : audioCodec,
       );
+    } catch (e) {
+      _logger.bug(e.toString());
     }
   }
 
@@ -191,7 +162,7 @@ class WebRTCFrameCrypto {
 
   void stopVideo() {
     _frameCyrptors.removeWhere((key, value) {
-      if (key.startsWith('video')) {
+      if (key.startsWith(RtcTrackKind.video.kind)) {
         value.dispose();
         return true;
       }
@@ -201,7 +172,7 @@ class WebRTCFrameCrypto {
 
   void stopAudio() {
     _frameCyrptors.removeWhere((key, value) {
-      if (key.startsWith('audio')) {
+      if (key.startsWith(RtcTrackKind.audio.kind)) {
         value.dispose();
         return true;
       }

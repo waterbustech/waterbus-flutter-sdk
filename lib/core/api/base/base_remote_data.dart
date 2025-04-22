@@ -242,7 +242,7 @@ class BaseRemoteData {
   getHeaders() {
     return {
       'Authorization': 'Bearer ${_authLocal.accessToken}',
-      'Content-Type': 'application/json; charset=UTF-8',
+      'Content-Type': 'application/json',
       'Connection': 'keep-alive',
       'Accept': '*/*',
       'Accept-Encoding': 'gzip, deflate, br',

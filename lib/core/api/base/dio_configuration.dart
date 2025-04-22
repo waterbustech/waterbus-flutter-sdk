@@ -37,18 +37,20 @@ class DioConfiguration {
       await Rhttp.init();
       final rhttpAdapter = await RhttpCompatibleClient.create(
         settings: ClientSettings(
+          httpVersionPref: HttpVersionPref.http2,
           timeoutSettings: TimeoutSettings(
             timeout: 10.seconds,
             connectTimeout: 10.seconds,
           ),
           throwOnStatusCode: false,
+          tlsSettings: TlsSettings(
+            verifyCertificates: false,
+            trustRootCertificates: false,
+          ),
         ),
       );
 
       dioClient.httpClientAdapter = ConversionLayerAdapter(rhttpAdapter);
-
-      // // Transform json with compute
-      // dioClient.transformer = FlutterTransformer();
     }
 
     // Integration retry
