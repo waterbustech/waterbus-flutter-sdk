@@ -24,7 +24,7 @@ abstract class MessageRepository {
 
 @Injectable(as: MessageRepository)
 class MessageRepositoryImpl extends MessageRepository {
-final MessageRemoteDataSource _remoteDataSource;
+  final MessageRemoteDataSource _remoteDataSource;
 
   MessageRepositoryImpl(
     this._remoteDataSource,
