@@ -29,7 +29,7 @@ abstract class ChatRepository {
   Future<Result<Meeting>> archivedConversation({required int code});
 }
 
-@LazySingleton(as: ChatRepository)
+@Injectable(as: ChatRepository)
 class ChatRepositoryImpl extends ChatRepository {
   final ChatRemoteDataSource _remoteDataSource;
 

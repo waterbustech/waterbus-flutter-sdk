@@ -1,14 +1,12 @@
 library;
 
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 
 import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 import 'package:rhttp/rhttp.dart';
 
 import 'package:waterbus_sdk/core/api/base/base_local_storage.dart';
-import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
+import 'package:waterbus_sdk/core/webrtc/webrtc_manager.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
 import 'package:waterbus_sdk/types/enums/draw_action.dart';
 import 'package:waterbus_sdk/types/index.dart';
@@ -29,7 +27,7 @@ class WaterbusSdk {
   static String apiUrl = '';
   static String wsUrl = '';
   static String messageEncryptionKey = '';
-  static Uint8List webrtcE2eeKey = Uint8List.fromList(utf8.encode('waterbus'));
+  static String webrtcE2eeKey = 'waterbus';
   static HttpVersionPref httpVersionPref = HttpVersionPref.all;
   static WaterBusEventListener listener = WaterBusEventListener();
 
@@ -72,13 +70,13 @@ class WaterbusSdk {
     WaterbusSdk.wsUrl = wsUrl;
     WaterbusSdk.apiUrl = apiUrl;
     WaterbusSdk.messageEncryptionKey = messageEncryptionKey;
-    WaterbusSdk.webrtcE2eeKey = Uint8List.fromList(utf8.encode(webrtcE2eeKey));
+    WaterbusSdk.webrtcE2eeKey = webrtcE2eeKey;
     WaterbusSdk.httpVersionPref = httpVersionPref;
 
     WebRTC.initialize(options: {"bypassVoiceProcessing": true});
 
     // Init dependency injection if needed
-    if (!getIt.isRegistered<WaterbusWebRTCManager>()) {
+    if (!getIt.isRegistered<WebRTCManager>()) {
       await BaseLocalData.initialize();
 
       configureDependencies();
@@ -239,10 +237,10 @@ class WaterbusSdk {
     await _sdk.setPiPEnabled(textureId: textureId, enabled: enabled);
   }
 
-  Future<List<WebRTCCodec>> filterSupportedCodecs() async {
-    final List<WebRTCCodec> supportedCodecs = [];
+  Future<List<RTCVideoCodec>> filterSupportedCodecs() async {
+    final List<RTCVideoCodec> supportedCodecs = [];
 
-    for (final codec in WebRTCCodec.values) {
+    for (final codec in RTCVideoCodec.values) {
       if (await codec.isPlatformSupported()) {
         supportedCodecs.add(codec);
       }

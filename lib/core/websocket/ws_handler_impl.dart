@@ -6,25 +6,26 @@ import 'package:socket_io_client/socket_io_client.dart';
 import 'package:waterbus_sdk/constants/socket_events.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
 import 'package:waterbus_sdk/core/api/base/dio_configuration.dart';
-import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
-import 'package:waterbus_sdk/core/websocket/interfaces/socket_handler_interface.dart';
+import 'package:waterbus_sdk/core/webrtc/webrtc_manager.dart';
+import 'package:waterbus_sdk/core/websocket/interfaces/ws_handler.dart';
 import 'package:waterbus_sdk/core/whiteboard/white_board_interfaces.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/types/enums/draw_action.dart';
 import 'package:waterbus_sdk/types/models/conversation_socket_event.dart';
 import 'package:waterbus_sdk/types/models/draw_model.dart';
+import 'package:waterbus_sdk/types/models/subscribe_response.dart';
 import 'package:waterbus_sdk/utils/encrypt/encrypt.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
-@Singleton(as: SocketHandler)
-class SocketHandlerImpl extends SocketHandler {
-  final WaterbusWebRTCManager _rtcManager;
+@Singleton(as: WsHandler)
+class WsHandlerImpl extends WsHandler {
+  final WebRTCManager _rtcManager;
   final WaterbusLogger _logger;
   final AuthLocalDataSource _authLocal;
   final DioConfiguration _dioConfig;
   final WhiteBoardManager _whiteBoardManager;
-  SocketHandlerImpl(
+  WsHandlerImpl(
     this._rtcManager,
     this._logger,
     this._authLocal,
@@ -105,7 +106,7 @@ class SocketHandlerImpl extends SocketHandler {
 
         final participant = Participant.fromMap(data);
 
-        _rtcManager.newParticipant(participant);
+        _rtcManager.handleNewParticipant(participant);
       });
 
       _socket?.on(SocketEvent.answerSubscriberSSC, (data) async {
@@ -114,12 +115,11 @@ class SocketHandlerImpl extends SocketHandler {
         /// sdp, targetId
         if (data == null || data['offer'] == null) return;
 
-        final WebRTCCodec codec =
+        final RTCVideoCodec codec =
             ((data['videoCodec'] ?? '') as String).videoCodec;
 
         final int type = data['cameraType'] ?? CameraType.front.type;
-
-        await _rtcManager.setSubscriberRemoteSdp(
+        final payload = SubscribeResponsePayload(
           targetId: data['targetId'],
           sdp: data['offer'],
           audioEnabled: data['audioEnabled'] ?? false,
@@ -127,9 +127,12 @@ class SocketHandlerImpl extends SocketHandler {
           isScreenSharing: data['isScreenSharing'] ?? false,
           isE2eeEnabled: data['isE2eeEnabled'] ?? false,
           isHandRaising: data['isHandRaising'] ?? false,
+          screenTrackId: data['screenTrackId'],
           type: CameraType.values[type],
           codec: codec,
         );
+
+        await _rtcManager.setSubscriberRemoteSdp(payload);
       });
 
       _socket?.on(SocketEvent.participantHasLeftSSC, (data) {
@@ -138,7 +141,7 @@ class SocketHandlerImpl extends SocketHandler {
 
         final participantId = data['targetId'];
 
-        _rtcManager.participantHasLeft(participantId);
+        _rtcManager.handleParticipantLeave(participantId);
       });
 
       _socket?.on(SocketEvent.publisherCandidateSSC, (data) {
@@ -229,10 +232,12 @@ class SocketHandlerImpl extends SocketHandler {
 
         final String participantId = data['participantId'];
         final bool isSharing = data['isSharing'];
+        final String? screenTrackId = data['screenTrackId'];
 
         _rtcManager.setScreenSharing(
           targetId: participantId,
           isSharing: isSharing,
+          screenTrackId: screenTrackId,
         );
       });
 
@@ -250,7 +255,7 @@ class SocketHandlerImpl extends SocketHandler {
         final String targetId = data['targetId'];
         final String sdp = data['sdp'];
 
-        _rtcManager.handleSubscriberRenegotiation(
+        _rtcManager.renegotiateSubscriber(
           targetId: targetId,
           sdp: sdp,
         );

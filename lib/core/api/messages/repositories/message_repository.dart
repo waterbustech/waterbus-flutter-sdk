@@ -22,9 +22,9 @@ abstract class MessageRepository {
   Future<Result<MessageModel>> deleteMessage({required int messageId});
 }
 
-@LazySingleton(as: MessageRepository)
+@Injectable(as: MessageRepository)
 class MessageRepositoryImpl extends MessageRepository {
-  final MessageRemoteDataSource _remoteDataSource;
+final MessageRemoteDataSource _remoteDataSource;
 
   MessageRepositoryImpl(
     this._remoteDataSource,

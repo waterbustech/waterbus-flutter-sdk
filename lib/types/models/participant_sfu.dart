@@ -17,11 +17,12 @@ class ParticipantSFU extends Equatable {
   bool isSpeakerPhoneEnabled;
   bool isSharingScreen;
   bool isHandRaising;
+  String? screenTrackId;
   CameraType cameraType;
   MediaSource? cameraSource;
   MediaSource? screenSource;
   RTCPeerConnection peerConnection;
-  final WebRTCCodec videoCodec;
+  final RTCVideoCodec videoCodec;
   final Function()? onFirstFrameRendered;
   AudioLevel audioLevel;
   StreamController<AudioLevel>? audioLevelController;
@@ -45,6 +46,7 @@ class ParticipantSFU extends Equatable {
     this.audioLevelController,
     this.webcamStatsController,
     this.screenStatsController,
+    this.screenTrackId,
   }) {
     if (cameraSource != null || screenSource != null) return;
 
@@ -106,10 +108,11 @@ class ParticipantSFU extends Equatable {
     bool? isE2eeEnabled,
     bool? isSpeakerPhoneEnabled,
     bool? isSharingScreen,
+    String? screenTrackId,
     CameraType? cameraType,
     AudioLevel? audioLevel,
     RTCPeerConnection? peerConnection,
-    WebRTCCodec? videoCodec,
+    RTCVideoCodec? videoCodec,
     Function()? onFirstFrameRendered,
   }) {
     return ParticipantSFU(
@@ -121,6 +124,7 @@ class ParticipantSFU extends Equatable {
       isSpeakerPhoneEnabled:
           isSpeakerPhoneEnabled ?? this.isSpeakerPhoneEnabled,
       isSharingScreen: isSharingScreen ?? this.isSharingScreen,
+      screenTrackId: screenTrackId ?? this.screenTrackId,
       cameraType: cameraType ?? this.cameraType,
       peerConnection: peerConnection ?? this.peerConnection,
       videoCodec: videoCodec ?? this.videoCodec,
@@ -177,6 +181,7 @@ extension ParticipantSFUX on ParticipantSFU {
 
   Future<TrackType?> setSrcObject(
     MediaStream stream, {
+    String? trackId,
     bool isDisplayStream = false,
   }) async {
     if (ownerId == kIsMine) {
@@ -188,23 +193,20 @@ extension ParticipantSFUX on ParticipantSFU {
       return null;
     }
 
-    final videoTrackExists = cameraSource?.stream?.getVideoTracks().firstOrNull;
-    final isSameStreamId =
-        cameraSource != null && cameraSource?.streamId == stream.id;
-
-    if (videoTrackExists == null || isSameStreamId) {
-      // Set src camera
-      cameraSource?.setSrcObject(stream);
-      return TrackType.webcam;
-    } else {
+    if (screenTrackId != null && trackId == screenTrackId) {
       // Set src screen
       screenSource?.setSrcObject(stream);
       return TrackType.screen;
+    } else {
+      // Set src camera
+      cameraSource?.setSrcObject(stream);
+      return TrackType.webcam;
     }
   }
 
-  Future<void> setScreenSharing(bool isSharing) async {
+  Future<void> setScreenSharing(bool isSharing, {String? screenTrackId}) async {
     isSharingScreen = isSharing;
+    this.screenTrackId = screenTrackId;
 
     if (!isSharing) {
       await screenSource?.dispose();

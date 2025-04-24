@@ -36,7 +36,7 @@ abstract class ChatRemoteDataSource {
   });
 }
 
-@LazySingleton(as: ChatRemoteDataSource)
+@Injectable(as: ChatRemoteDataSource)
 class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
   final BaseRemoteData _remoteData;
   ChatRemoteDataSourceImpl(

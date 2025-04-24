@@ -7,6 +7,7 @@
 * [Feat] Add custom WebRTC e2ee key
 * [Fix] Frame Encryption
 * [Chore] Improvement stats
+* [Enhance] Reduce connection time
 
 ## 1.6.0
 

@@ -2,14 +2,14 @@ import 'package:flutter/services.dart';
 
 import 'package:injectable/injectable.dart';
 
-import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
+import 'package:waterbus_sdk/core/webrtc/webrtc_manager.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 
 @singleton
 class ReplayKitChannel {
   final MethodChannel rkChannel = const MethodChannel(kReplayKitChannel);
 
-  void listenEvents(WaterbusWebRTCManager rtcManager) {
+  void listenEvents(WebRTCManager rtcManager) {
     if (!WebRTC.platformIsIOS) return;
 
     rkChannel.setMethodCallHandler((call) async {

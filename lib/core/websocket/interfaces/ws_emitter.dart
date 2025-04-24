@@ -1,13 +1,14 @@
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/types/models/draw_model.dart';
 
-abstract class SocketEmiter {
+abstract class WsEmitter {
   // Meeting
   void establishBroadcast({
     required String sdp,
     required String roomId,
     required String participantId,
     required ParticipantSFU participant,
+    required int totalTracks,
   });
   void requestEstablishSubscriber({
     required String roomId,
@@ -27,7 +28,7 @@ abstract class SocketEmiter {
   void setCameraType(CameraType cameraType);
   void setVideoEnabled(bool isEnabled);
   void setAudioEnabled(bool isEnabled);
-  void setScreenSharing(bool isSharing);
+  void setScreenSharing(bool isSharing, {String? screenTrackId});
   void setSubtitle(bool isEnabled);
   void setHandRaising(bool isRaising);
 

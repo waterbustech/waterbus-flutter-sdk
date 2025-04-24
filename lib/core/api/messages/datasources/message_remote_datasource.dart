@@ -29,7 +29,7 @@ abstract class MessageRemoteDataSource {
   Future<Result<MessageModel>> deleteMessage({required int messageId});
 }
 
-@LazySingleton(as: MessageRemoteDataSource)
+@Injectable(as: MessageRemoteDataSource)
 class MessageRemoteDataSourceImpl extends MessageRemoteDataSource {
   final BaseRemoteData _remoteData;
 

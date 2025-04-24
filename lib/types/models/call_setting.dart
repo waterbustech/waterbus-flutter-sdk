@@ -14,7 +14,7 @@ class CallSetting {
   final bool agcEnabled;
   final bool isVideoMuted;
   final bool e2eeEnabled;
-  final WebRTCCodec preferedCodec;
+  final RTCVideoCodec preferedCodec;
   final VideoQuality videoQuality;
   final VideoLayout videoLayout;
   CallSetting({
@@ -25,8 +25,8 @@ class CallSetting {
     this.agcEnabled = true,
     this.isVideoMuted = false,
     this.e2eeEnabled = false,
-    this.preferedCodec = WebRTCCodec.h264,
-    this.videoQuality = VideoQuality.low,
+    this.preferedCodec = RTCVideoCodec.h264,
+    this.videoQuality = VideoQuality.high,
     this.videoLayout = VideoLayout.gridView,
   });
 
@@ -38,7 +38,7 @@ class CallSetting {
     bool? agcEnabled,
     bool? isVideoMuted,
     bool? e2eeEnabled,
-    WebRTCCodec? preferedCodec,
+    RTCVideoCodec? preferedCodec,
     VideoQuality? videoQuality,
     VideoLayout? videoLayout,
   }) {
@@ -82,7 +82,7 @@ class CallSetting {
       agcEnabled: map['agcEnabled'] as bool,
       isVideoMuted: map['isVideoMuted'] as bool,
       e2eeEnabled: map['e2eeEnabled'] ?? false,
-      preferedCodec: WebRTCCodec.values[map['preferedCodec']],
+      preferedCodec: RTCVideoCodec.values[map['preferedCodec']],
       videoQuality: VideoQuality.values[map['videoQuality']],
       videoLayout: VideoLayout.values[map['videoLayout']],
     );

@@ -1,6 +1,6 @@
 import 'package:socket_io_client/socket_io_client.dart';
 
-abstract class SocketHandler {
+abstract class WsHandler {
   void establishConnection({bool forceConnection = false});
   void disconnection();
   void reconnect({required Function callbackConnected});

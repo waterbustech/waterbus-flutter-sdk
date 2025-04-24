@@ -2,14 +2,14 @@ import 'package:injectable/injectable.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 import 'package:waterbus_sdk/constants/socket_events.dart';
-import 'package:waterbus_sdk/core/websocket/interfaces/socket_emiter_interface.dart';
-import 'package:waterbus_sdk/core/websocket/interfaces/socket_handler_interface.dart';
+import 'package:waterbus_sdk/core/websocket/interfaces/ws_emitter.dart';
+import 'package:waterbus_sdk/core/websocket/interfaces/ws_handler.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
 import 'package:waterbus_sdk/types/models/draw_model.dart';
 
-@Injectable(as: SocketEmiter)
-class SocketEmiterImpl extends SocketEmiter {
+@Injectable(as: WsEmitter)
+class WsEmitterImpl extends WsEmitter {
   // MARK: emit functions
   @override
   void establishBroadcast({
@@ -17,6 +17,7 @@ class SocketEmiterImpl extends SocketEmiter {
     required String roomId,
     required String participantId,
     required ParticipantSFU participant,
+    required int totalTracks,
   }) {
     _socket?.emit(SocketEvent.publishCSS, {
       "roomId": roomId,
@@ -25,6 +26,7 @@ class SocketEmiterImpl extends SocketEmiter {
       "isVideoEnabled": participant.isVideoEnabled,
       "isAudioEnabled": participant.isAudioEnabled,
       "isE2eeEnabled": participant.isE2eeEnabled,
+      "totalTracks": totalTracks,
     });
   }
 
@@ -97,8 +99,16 @@ class SocketEmiterImpl extends SocketEmiter {
   }
 
   @override
-  void setScreenSharing(bool isSharing) {
-    _socket?.emit(SocketEvent.setScreenSharingCSS, {'isSharing': isSharing});
+  void setScreenSharing(bool isSharing, {String? screenTrackId}) {
+    final payload = <String, dynamic>{
+      'isSharing': isSharing,
+    };
+
+    if (screenTrackId != null) {
+      payload['screenTrackId'] = screenTrackId;
+    }
+
+    _socket?.emit(SocketEvent.setScreenSharingCSS, payload);
   }
 
   @override
@@ -143,5 +153,5 @@ class SocketEmiterImpl extends SocketEmiter {
     });
   }
 
-  Socket? get _socket => getIt<SocketHandler>().socket;
+  Socket? get _socket => getIt<WsHandler>().socket;
 }

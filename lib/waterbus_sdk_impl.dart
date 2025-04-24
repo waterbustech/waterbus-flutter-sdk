@@ -9,9 +9,9 @@ import 'package:waterbus_sdk/core/api/chat/repositories/chat_repository.dart';
 import 'package:waterbus_sdk/core/api/meetings/repositories/meeting_repository.dart';
 import 'package:waterbus_sdk/core/api/messages/repositories/message_repository.dart';
 import 'package:waterbus_sdk/core/api/user/repositories/user_repository.dart';
-import 'package:waterbus_sdk/core/webrtc/webrtc_interface.dart';
-import 'package:waterbus_sdk/core/websocket/interfaces/socket_emiter_interface.dart';
-import 'package:waterbus_sdk/core/websocket/interfaces/socket_handler_interface.dart';
+import 'package:waterbus_sdk/core/webrtc/webrtc_manager.dart';
+import 'package:waterbus_sdk/core/websocket/interfaces/ws_emitter.dart';
+import 'package:waterbus_sdk/core/websocket/interfaces/ws_handler.dart';
 import 'package:waterbus_sdk/core/whiteboard/white_board_interfaces.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/native/picture-in-picture/index.dart';
@@ -28,11 +28,10 @@ import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
 
 @Singleton(as: WaterbusSdkInterface)
 class SdkCore extends WaterbusSdkInterface {
-  final SocketHandler _webSocket;
-  final SocketEmiter _socketEmiter;
+  final WsHandler _wsHandler;
+  final WsEmitter _wsEmitter;
   final WhiteBoardManager _whiteBoardManager;
-
-  final WaterbusWebRTCManager _rtcManager;
+  final WebRTCManager _rtcManager;
   final ReplayKitChannel _replayKitChannel;
   final BaseRemoteData _baseRepository;
   final AuthRepository _authRepository;
@@ -43,8 +42,8 @@ class SdkCore extends WaterbusSdkInterface {
   final WaterbusLogger _logger;
 
   SdkCore(
-    this._webSocket,
-    this._socketEmiter,
+    this._wsHandler,
+    this._wsEmitter,
     this._whiteBoardManager,
     this._rtcManager,
     this._replayKitChannel,
@@ -57,16 +56,11 @@ class SdkCore extends WaterbusSdkInterface {
     this._logger,
   );
 
-  //note
-  static List<DrawModel> localDraw = [];
-  static List<DrawModel> remoteDraw = [];
-  static List<DrawModel> historyDraw = [];
-
   @override
   Future<void> initializeApp() async {
     await _baseRepository.initialize();
 
-    _webSocket.establishConnection(forceConnection: true);
+    _wsHandler.establishConnection(forceConnection: true);
 
     _rtcManager.notifyChanged.listen((event) {
       WaterbusSdk.listener.onEventChanged?.call(event);
@@ -95,7 +89,7 @@ class SdkCore extends WaterbusSdkInterface {
     required String password,
     required int? userId,
   }) async {
-    if (!_webSocket.isConnected) return Result.failure(ServerFailure());
+    if (!_wsHandler.isConnected) return Result.failure(ServerFailure());
 
     late final Result<Meeting> room;
 
@@ -232,8 +226,8 @@ class SdkCore extends WaterbusSdkInterface {
 
   @override
   Future<void> reconnect() async {
-    _socketEmiter.reconnect();
-    _webSocket.reconnect(
+    _wsEmitter.reconnect();
+    _wsHandler.reconnect(
       callbackConnected: () async {
         await _rtcManager.reconnect();
       },
@@ -247,7 +241,7 @@ class SdkCore extends WaterbusSdkInterface {
 
   @override
   Future<void> changeCallSettings(CallSetting setting) async {
-    await _rtcManager.applyCallSettings(setting);
+    await _rtcManager.applySettings(setting);
   }
 
   @override
@@ -277,7 +271,7 @@ class SdkCore extends WaterbusSdkInterface {
 
   @override
   void setSubscribeSubtitle(bool isEnabled) {
-    _socketEmiter.setSubtitle(isEnabled);
+    _wsEmitter.setSubtitle(isEnabled);
   }
 
   @override
@@ -501,7 +495,7 @@ class SdkCore extends WaterbusSdkInterface {
     final Result<User> user = await _authRepository.loginWithSocial(payload);
 
     if (user.isSuccess) {
-      _webSocket.establishConnection(forceConnection: true);
+      _wsHandler.establishConnection(forceConnection: true);
     }
 
     return user;
@@ -509,7 +503,7 @@ class SdkCore extends WaterbusSdkInterface {
 
   @override
   Future<Result<bool>> deleteToken() async {
-    _webSocket.disconnection();
+    _wsHandler.disconnection();
 
     return await _authRepository.logOut();
   }

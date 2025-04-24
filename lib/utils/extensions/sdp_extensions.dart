@@ -1,11 +1,11 @@
 import 'package:h264_profile_level_id/h264_profile_level_id.dart';
 import 'package:sdp_transform/sdp_transform.dart';
 
-import 'package:waterbus_sdk/types/enums/codec.dart';
+import 'package:waterbus_sdk/types/enums/rtc_video_codec.dart';
 import 'package:waterbus_sdk/utils/codec_selector.dart';
 
 extension SdpX on String {
-  String optimizeSdp({WebRTCCodec codec = WebRTCCodec.h264}) {
+  String optimizeSdp({RTCVideoCodec codec = RTCVideoCodec.h264}) {
     return _enableAudioDTX()._setPreferredCodec(codec: codec);
   }
 
@@ -30,7 +30,7 @@ extension SdpX on String {
     return newSdp;
   }
 
-  String _setPreferredCodec({WebRTCCodec codec = WebRTCCodec.h264}) {
+  String _setPreferredCodec({RTCVideoCodec codec = RTCVideoCodec.h264}) {
     final capSel = CodecCapabilitySelector(this);
 
     final vcaps = capSel.getCapabilities('video');
@@ -46,7 +46,7 @@ extension SdpX on String {
       capSel.setCapabilities(vcaps);
     }
 
-    if (codec == WebRTCCodec.h264) {
+    if (codec == RTCVideoCodec.h264) {
       return capSel.sdp()._useH264HighLevel();
     }
 
