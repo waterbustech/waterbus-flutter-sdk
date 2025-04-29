@@ -1,34 +1,31 @@
-import 'package:h264_profile_level_id/h264_profile_level_id.dart';
-import 'package:sdp_transform/sdp_transform.dart';
-
 import 'package:waterbus_sdk/types/enums/rtc_video_codec.dart';
 import 'package:waterbus_sdk/utils/codec_selector.dart';
 
 extension SdpX on String {
   String optimizeSdp({RTCVideoCodec codec = RTCVideoCodec.h264}) {
-    return _enableAudioDTX()._setPreferredCodec(codec: codec);
+    return _setPreferredCodec(codec: codec);
   }
 
-  String _enableAudioDTX() {
-    return replaceAll(
-      'a=fmtp:111 minptime=10;useinbandfec=1',
-      'a=fmtp:111 minptime=10;useinbandfec=1;usedtx=1',
-    );
-  }
+  // String _enableAudioDTX() {
+  //   return replaceAll(
+  //     'a=fmtp:111 minptime=10;useinbandfec=1',
+  //     'a=fmtp:111 minptime=10;useinbandfec=1;usedtx=1',
+  //   );
+  // }
 
-  String _useH264HighLevel() {
-    final profileLevelId = ProfileLevelId(
-      profile: H264Utils.ProfileBaseline,
-      level: H264Utils.Level3_1,
-    );
-    final session = parse(this);
-    session['media'][0]['profile-level-id'] = H264Utils.profileLevelIdToString(
-      profileLevelId,
-    );
-    final newSdp = write(session, null);
+  // String _useH264HighLevel() {
+  //   final profileLevelId = ProfileLevelId(
+  //     profile: H264Utils.ProfileConstrainedBaseline,
+  //     level: H264Utils.Level3_1,
+  //   );
+  //   final session = parse(this);
+  //   session['media'][0]['profile-level-id'] = H264Utils.profileLevelIdToString(
+  //     profileLevelId,
+  //   );
+  //   final newSdp = write(session, null);
 
-    return newSdp;
-  }
+  //   return newSdp;
+  // }
 
   String _setPreferredCodec({RTCVideoCodec codec = RTCVideoCodec.h264}) {
     final capSel = CodecCapabilitySelector(this);
@@ -44,10 +41,6 @@ extension SdpX on String {
       vcaps.codecs = codecsFiltered;
       vcaps.setCodecPreferences('video', vcaps.codecs);
       capSel.setCapabilities(vcaps);
-    }
-
-    if (codec == RTCVideoCodec.h264) {
-      return capSel.sdp()._useH264HighLevel();
     }
 
     return capSel.sdp();

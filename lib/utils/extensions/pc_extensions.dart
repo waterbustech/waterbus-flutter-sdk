@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import 'package:waterbus_sdk/constants/rtc_configurations.dart';
+// import 'package:waterbus_sdk/constants/rtc_configurations.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/types/enums/rtc_track_kind.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
@@ -20,8 +20,8 @@ extension PeerX on RTCPeerConnection {
       init: RTCRtpTransceiverInit(
         direction: TransceiverDirection.SendOnly,
         streams: [stream],
-        sendEncodings:
-            kind == RtcTrackKind.video ? RTCConfigurations.videoEncodings : [],
+        // sendEncodings:
+        //     kind == RtcTrackKind.video ? RTCConfigurations.videoEncodings : [],
       ),
     );
 

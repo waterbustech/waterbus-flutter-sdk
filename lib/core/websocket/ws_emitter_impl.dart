@@ -1,7 +1,7 @@
 import 'package:injectable/injectable.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
-import 'package:waterbus_sdk/constants/socket_events.dart';
+import 'package:waterbus_sdk/constants/ws_event.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/ws_emitter.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/ws_handler.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
@@ -19,7 +19,7 @@ class WsEmitterImpl extends WsEmitter {
     required ParticipantSFU participant,
     required int totalTracks,
   }) {
-    _socket?.emit(SocketEvent.publishCSS, {
+    _socket?.emit(WsEvent.publishCSS, {
       "roomId": roomId,
       "sdp": sdp,
       "participantId": participantId,
@@ -32,13 +32,13 @@ class WsEmitterImpl extends WsEmitter {
 
   @override
   void leaveRoom(String roomId) {
-    _socket?.emit(SocketEvent.sendLeaveRoomCSS, {"roomId": roomId});
+    _socket?.emit(WsEvent.sendLeaveRoomCSS, {"roomId": roomId});
   }
 
   @override
   void sendBroadcastCandidate(RTCIceCandidate candidate) {
     _socket?.emit(
-      SocketEvent.publisherCandidateCSS,
+      WsEvent.publisherCandidateCSS,
       candidate.toMap(),
     );
   }
@@ -48,7 +48,7 @@ class WsEmitterImpl extends WsEmitter {
     required RTCIceCandidate candidate,
     required targetId,
   }) {
-    _socket?.emit(SocketEvent.subscriberCandidateCSS, {
+    _socket?.emit(WsEvent.subscriberCandidateCSS, {
       'targetId': targetId,
       'candidate': candidate.toMap(),
     });
@@ -59,7 +59,7 @@ class WsEmitterImpl extends WsEmitter {
     required String targetId,
     required String sdp,
   }) {
-    _socket?.emit(SocketEvent.answerSubscriberCSS, {
+    _socket?.emit(WsEvent.answerSubscriberCSS, {
       "targetId": targetId,
       "sdp": sdp,
     });
@@ -71,7 +71,7 @@ class WsEmitterImpl extends WsEmitter {
     required String participantId,
     required String targetId,
   }) {
-    _socket?.emit(SocketEvent.subscribeCSS, {
+    _socket?.emit(WsEvent.subscribeCSS, {
       "roomId": roomId,
       "targetId": targetId,
       "participantId": participantId,
@@ -80,22 +80,22 @@ class WsEmitterImpl extends WsEmitter {
 
   @override
   void setE2eeEnabled(bool isEnabled) {
-    _socket?.emit(SocketEvent.setE2eeEnabledCSS, {'isEnabled': isEnabled});
+    _socket?.emit(WsEvent.setE2eeEnabledCSS, {'isEnabled': isEnabled});
   }
 
   @override
   void setAudioEnabled(bool isEnabled) {
-    _socket?.emit(SocketEvent.setAudioEnabledCSS, {'isEnabled': isEnabled});
+    _socket?.emit(WsEvent.setAudioEnabledCSS, {'isEnabled': isEnabled});
   }
 
   @override
   void setVideoEnabled(bool isEnabled) {
-    _socket?.emit(SocketEvent.setVideoEnabledCSS, {'isEnabled': isEnabled});
+    _socket?.emit(WsEvent.setVideoEnabledCSS, {'isEnabled': isEnabled});
   }
 
   @override
   void setCameraType(CameraType cameraType) {
-    _socket?.emit(SocketEvent.setCameraTypeCSS, {'type': cameraType.type});
+    _socket?.emit(WsEvent.setCameraTypeCSS, {'type': cameraType.type});
   }
 
   @override
@@ -108,45 +108,44 @@ class WsEmitterImpl extends WsEmitter {
       payload['screenTrackId'] = screenTrackId;
     }
 
-    _socket?.emit(SocketEvent.setScreenSharingCSS, payload);
+    _socket?.emit(WsEvent.setScreenSharingCSS, payload);
   }
 
   @override
   void sendNewSdp(String sdp) {
-    _socket?.emit(SocketEvent.publisherRenegotiationCSS, {'sdp': sdp});
+    _socket?.emit(WsEvent.publisherRenegotiationCSS, {'sdp': sdp});
   }
 
   @override
   void setSubtitle(bool isEnabled) {
-    _socket
-        ?.emit(SocketEvent.setSubscribeSubtitleCSS, {'isEnabled': isEnabled});
+    _socket?.emit(WsEvent.setSubscribeSubtitleCSS, {'isEnabled': isEnabled});
   }
 
   @override
   void setHandRaising(bool isRaising) {
-    _socket?.emit(SocketEvent.handRaisingCSS, {'isRaising': isRaising});
+    _socket?.emit(WsEvent.handRaisingCSS, {'isRaising': isRaising});
   }
 
   @override
   void reconnect() {
-    _socket?.emit(SocketEvent.reconnect);
+    _socket?.emit(WsEvent.reconnect);
   }
 
   // White board
 
   @override
   void cleanWhiteBoard(String roomId) {
-    _socket?.emit(SocketEvent.cleanWhiteBoardCSS, {'roomId': roomId});
+    _socket?.emit(WsEvent.cleanWhiteBoardCSS, {'roomId': roomId});
   }
 
   @override
   void startWhiteBoard(String roomId) {
-    _socket?.emit(SocketEvent.startWhiteBoardCSS, {'roomId': roomId});
+    _socket?.emit(WsEvent.startWhiteBoardCSS, {'roomId': roomId});
   }
 
   @override
   void updateWhiteBoard(String roomId, String action, DrawModel draw) {
-    _socket?.emit(SocketEvent.updateWhiteBoardCSS, {
+    _socket?.emit(WsEvent.updateWhiteBoardCSS, {
       'roomId': roomId,
       'action': action,
       'paints': [draw.toMap()],

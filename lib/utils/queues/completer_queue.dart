@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:flutter/foundation.dart';
-
 class CompleterQueue<T> {
   final Queue<Completer<T>> _completers = Queue();
 
@@ -19,7 +17,6 @@ class CompleterQueue<T> {
 
   void completeAllQueue(T result) {
     while (_completers.isNotEmpty) {
-      debugPrint("** Solve 1 queue ** refresh token");
       next?.complete(result);
     }
   }

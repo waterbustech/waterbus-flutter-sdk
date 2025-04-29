@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
-import 'package:waterbus_sdk/constants/socket_events.dart';
+import 'package:waterbus_sdk/constants/ws_event.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
 import 'package:waterbus_sdk/core/api/base/dio_configuration.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_manager.dart';
@@ -17,6 +17,7 @@ import 'package:waterbus_sdk/types/models/subscribe_response.dart';
 import 'package:waterbus_sdk/utils/encrypt/encrypt.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
+import 'package:waterbus_sdk/utils/msg_pack_parser.dart';
 
 @Singleton(as: WsHandler)
 class WsHandlerImpl extends WsHandler {
@@ -52,16 +53,23 @@ class WsHandlerImpl extends WsHandler {
 
     final String mAccessToken = forceAccessToken ?? _authLocal.accessToken;
 
-    _socket = io(
-      WaterbusSdk.wsUrl,
-      OptionBuilder()
-          .setTransports(kIsWeb ? ['polling'] : ['websocket'])
-          .enableReconnection()
-          .enableForceNew()
-          .setExtraHeaders({
+    final options = OptionBuilder()
+        .setTransports(kIsWeb ? ['polling'] : ['websocket'])
+        .enableReconnection()
+        .enableForceNew()
+        .setParser(
+          ParserOptions(
+            encoder: () => MsgPackEncoder(),
+            decoder: () => MsgPackDecoder(),
+          ),
+        )
+        .setExtraHeaders(
+      {
         'Authorization': 'Bearer $mAccessToken',
-      }).build(),
-    );
+      },
+    ).build();
+
+    _socket = io(WaterbusSdk.wsUrl, options);
 
     _socket?.connect();
 
@@ -86,7 +94,7 @@ class WsHandlerImpl extends WsHandler {
 
       _logger.log('established connection - sid: ${_socket?.id}');
 
-      _socket?.on(SocketEvent.publishSSC, (data) {
+      _socket?.on(WsEvent.publishSSC, (data) {
         /// pc context: only send peer
         /// will receive sdp remote from service side if you join success
         /// otherParticipants, sdp (data)
@@ -99,7 +107,7 @@ class WsHandlerImpl extends WsHandler {
         _rtcManager.setPublisherRemoteSdp(sdp, isRecording);
       });
 
-      _socket?.on(SocketEvent.newParticipantSSC, (data) {
+      _socket?.on(WsEvent.newParticipantSSC, (data) {
         /// Will receive signal when someone join,
         /// targetId
         if (data == null) return;
@@ -109,7 +117,7 @@ class WsHandlerImpl extends WsHandler {
         _rtcManager.handleNewParticipant(participant);
       });
 
-      _socket?.on(SocketEvent.answerSubscriberSSC, (data) async {
+      _socket?.on(WsEvent.answerSubscriberSSC, (data) async {
         /// pc context: only receive peer
         /// will receive sdp, get it and add to pc
         /// sdp, targetId
@@ -135,7 +143,7 @@ class WsHandlerImpl extends WsHandler {
         await _rtcManager.setSubscriberRemoteSdp(payload);
       });
 
-      _socket?.on(SocketEvent.participantHasLeftSSC, (data) {
+      _socket?.on(WsEvent.participantHasLeftSSC, (data) {
         /// targetId
         if (data == null) return;
 
@@ -144,7 +152,7 @@ class WsHandlerImpl extends WsHandler {
         _rtcManager.handleParticipantLeave(participantId);
       });
 
-      _socket?.on(SocketEvent.publisherCandidateSSC, (data) {
+      _socket?.on(WsEvent.publisherCandidateSSC, (data) {
         /// candidate json
         if (data == null) return;
 
@@ -157,7 +165,7 @@ class WsHandlerImpl extends WsHandler {
         _rtcManager.addPublisherCandidate(candidate);
       });
 
-      _socket?.on(SocketEvent.subscriberCandidateSSC, (data) {
+      _socket?.on(WsEvent.subscriberCandidateSSC, (data) {
         /// targetId, candidate json
 
         if (data == null) return;
@@ -174,7 +182,7 @@ class WsHandlerImpl extends WsHandler {
         _rtcManager.addSubscriberCandidate(participantId, candidate);
       });
 
-      _socket?.on(SocketEvent.setE2eeEnabledSSC, (data) {
+      _socket?.on(WsEvent.setE2eeEnabledSSC, (data) {
         /// targetId, isEnabled
         if (data == null) return;
 
@@ -187,7 +195,7 @@ class WsHandlerImpl extends WsHandler {
         // );
       });
 
-      _socket?.on(SocketEvent.setAudioEnabledSSC, (data) {
+      _socket?.on(WsEvent.setAudioEnabledSSC, (data) {
         /// targetId, isEnabled
         if (data == null) return;
 
@@ -200,7 +208,7 @@ class WsHandlerImpl extends WsHandler {
         );
       });
 
-      _socket?.on(SocketEvent.setVideoEnabledSSC, (data) {
+      _socket?.on(WsEvent.setVideoEnabledSSC, (data) {
         /// targetId, isEnabled
         if (data == null) return;
 
@@ -213,7 +221,7 @@ class WsHandlerImpl extends WsHandler {
         );
       });
 
-      _socket?.on(SocketEvent.setCameraTypeSSC, (data) {
+      _socket?.on(WsEvent.setCameraTypeSSC, (data) {
         /// targetId, isEnabled
         if (data == null) return;
 
@@ -226,7 +234,7 @@ class WsHandlerImpl extends WsHandler {
         );
       });
 
-      _socket?.on(SocketEvent.setScreenSharingSSC, (data) {
+      _socket?.on(WsEvent.setScreenSharingSSC, (data) {
         /// targetId, isSharing
         if (data == null) return;
 
@@ -241,7 +249,7 @@ class WsHandlerImpl extends WsHandler {
         );
       });
 
-      _socket!.on(SocketEvent.publisherRenegotiationSSC, (data) {
+      _socket!.on(WsEvent.publisherRenegotiationSSC, (data) {
         if (data == null) return;
 
         final String sdp = data['sdp'];
@@ -249,7 +257,7 @@ class WsHandlerImpl extends WsHandler {
         _rtcManager.setPublisherRemoteSdp(sdp);
       });
 
-      _socket!.on(SocketEvent.subscriberRenegotiationSSC, (data) {
+      _socket!.on(WsEvent.subscriberRenegotiationSSC, (data) {
         if (data == null) return;
 
         final String targetId = data['targetId'];
@@ -261,7 +269,7 @@ class WsHandlerImpl extends WsHandler {
         );
       });
 
-      _socket?.on(SocketEvent.subtitleSSC, (data) {
+      _socket?.on(WsEvent.subtitleSSC, (data) {
         if (data == null) return;
 
         final participantId = data['participantId'];
@@ -272,7 +280,7 @@ class WsHandlerImpl extends WsHandler {
         );
       });
 
-      _socket?.on(SocketEvent.handRaisingSSC, (data) {
+      _socket?.on(WsEvent.handRaisingSSC, (data) {
         if (data == null) return;
 
         final String participantId = data['participantId'];
@@ -283,21 +291,21 @@ class WsHandlerImpl extends WsHandler {
         );
       });
 
-      _socket?.on(SocketEvent.startRecordSSC, (data) {
+      _socket?.on(WsEvent.startRecordSSC, (data) {
         _rtcManager.setIsRecording(isRecording: true);
       });
 
-      _socket?.on(SocketEvent.stopRecordSSC, (data) {
+      _socket?.on(WsEvent.stopRecordSSC, (data) {
         _rtcManager.setIsRecording(isRecording: false);
       });
 
-      _socket?.on(SocketEvent.sendPodNameSSC, (data) {
+      _socket?.on(WsEvent.sendPodNameSSC, (data) {
         if (data == null) return;
 
         _podName = data['podName'];
       });
 
-      _socket?.on(SocketEvent.destroy, (data) {
+      _socket?.on(WsEvent.destroy, (data) {
         if (data == null) return;
 
         final String podName = data['podName'];
@@ -311,7 +319,7 @@ class WsHandlerImpl extends WsHandler {
         }
       });
 
-      _socket?.on(SocketEvent.sendMessageSSC, (data) async {
+      _socket?.on(WsEvent.sendMessageSSC, (data) async {
         if (data == null) return;
 
         final MessageModel message = MessageModel.fromMapSocket(data);
@@ -327,7 +335,7 @@ class WsHandlerImpl extends WsHandler {
         );
       });
 
-      _socket?.on(SocketEvent.updateMessageSSC, (data) async {
+      _socket?.on(WsEvent.updateMessageSSC, (data) async {
         if (data == null) return;
 
         final MessageModel message = MessageModel.fromMapSocket(data);
@@ -343,7 +351,7 @@ class WsHandlerImpl extends WsHandler {
         );
       });
 
-      _socket?.on(SocketEvent.deleteMessageSSC, (data) {
+      _socket?.on(WsEvent.deleteMessageSSC, (data) {
         if (data == null) return;
 
         final MessageModel message = MessageModel.fromMapSocket(data);
@@ -353,7 +361,7 @@ class WsHandlerImpl extends WsHandler {
         );
       });
 
-      _socket?.on(SocketEvent.newInvitationSSC, (data) {
+      _socket?.on(WsEvent.newInvitationSSC, (data) {
         if (data == null) return;
         final Meeting meeting = Meeting.fromMapSocket(data['meeting']);
 
@@ -365,7 +373,7 @@ class WsHandlerImpl extends WsHandler {
         );
       });
 
-      _socket?.on(SocketEvent.newMemberJoinedSSC, (data) {
+      _socket?.on(WsEvent.newMemberJoinedSSC, (data) {
         if (data == null) return;
         final Member member = Member.fromMapSocket(data);
 
@@ -378,7 +386,7 @@ class WsHandlerImpl extends WsHandler {
       });
 
       // White board
-      _socket?.on(SocketEvent.startWhiteBoardSSC, (data) {
+      _socket?.on(WsEvent.startWhiteBoardSSC, (data) {
         if (data == null) return;
 
         final List rawData = data;
@@ -392,7 +400,7 @@ class WsHandlerImpl extends WsHandler {
         );
       });
 
-      _socket?.on(SocketEvent.updateWhiteBoardSSC, (data) {
+      _socket?.on(WsEvent.updateWhiteBoardSSC, (data) {
         if (data == null) return;
 
         final String actionMap = data['action'];
@@ -404,7 +412,7 @@ class WsHandlerImpl extends WsHandler {
         _whiteBoardManager.onRemoteBoardChanged(paints, action);
       });
 
-      _socket?.on(SocketEvent.cleanWhiteBoardSSC, (data) {
+      _socket?.on(WsEvent.cleanWhiteBoardSSC, (data) {
         _whiteBoardManager.cleanWhiteBoard(shouldEmit: false);
       });
     });

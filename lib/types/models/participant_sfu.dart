@@ -190,6 +190,7 @@ extension ParticipantSFUX on ParticipantSFU {
       } else {
         cameraSource?.setSrcObject(stream);
       }
+
       return null;
     }
 

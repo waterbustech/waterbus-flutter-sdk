@@ -73,8 +73,6 @@ class WaterbusSdk {
     WaterbusSdk.webrtcE2eeKey = webrtcE2eeKey;
     WaterbusSdk.httpVersionPref = httpVersionPref;
 
-    WebRTC.initialize(options: {"bypassVoiceProcessing": true});
-
     // Init dependency injection if needed
     if (!getIt.isRegistered<WebRTCManager>()) {
       await BaseLocalData.initialize();

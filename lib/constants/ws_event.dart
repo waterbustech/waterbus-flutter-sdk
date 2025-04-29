@@ -1,4 +1,4 @@
-class SocketEvent {
+class WsEvent {
   // Meeting
   static const String publishCSS = 'PUBLISH_CSS';
   static const String publishSSC = 'PUBLISH_SSC';
@@ -50,6 +50,6 @@ class SocketEvent {
 
   // System
   static const String sendPodNameSSC = 'SEND_POD_NAME_SSC';
-  static const String reconnect = 'reconnect_CSS';
+  static const String reconnect = 'RECONNECT_CSS';
   static const String destroy = 'destroy';
 }

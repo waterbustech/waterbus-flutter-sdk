@@ -7,6 +7,7 @@ import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 class MediaSource {
   MediaStream? stream;
   VideoRenderer? renderer;
+  RTCRtpSender? sender;
   bool hasFirstFrameRendered;
   final Function()? onFirstFrameRendered;
   MediaSource({
@@ -24,12 +25,16 @@ class MediaSource {
     bool mirror = false,
   }) {
     if (WebRTC.platformIsIOS) {
-      return RTCVideoPlatFormView(
-        objectFit: objectFit,
-        mirror: mirror,
-        onViewReady: (controller) {
-          renderer = controller;
-          renderer?.srcObject = stream;
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          return RTCVideoPlatFormView(
+            objectFit: objectFit,
+            mirror: mirror,
+            onViewReady: (controller) {
+              renderer = controller;
+              renderer?.srcObject = stream;
+            },
+          );
         },
       );
     }
@@ -58,6 +63,24 @@ class MediaSource {
   int? get textureId => renderer?.textureId;
 
   String? get streamId => stream?.id;
+
+  void setSender(RTCRtpSender sender) {
+    this.sender ??= sender;
+  }
+
+  Future<void> setRidActive(String rid, bool active) async {
+    if (sender == null) return;
+
+    final parameters = sender!.parameters;
+
+    for (final RTCRtpEncoding encoding in parameters.encodings ?? []) {
+      if (encoding.rid == rid) {
+        encoding.active = active;
+      }
+    }
+
+    await sender?.setParameters(parameters);
+  }
 
   void setSrcObject(MediaStream? stream) {
     if (stream == null) return;
