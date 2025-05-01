@@ -6,7 +6,6 @@ import 'package:waterbus_sdk/core/websocket/interfaces/ws_emitter.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/ws_handler.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
-import 'package:waterbus_sdk/types/models/draw_model.dart';
 
 @Injectable(as: WsEmitter)
 class WsEmitterImpl extends WsEmitter {
@@ -79,11 +78,6 @@ class WsEmitterImpl extends WsEmitter {
   }
 
   @override
-  void setE2eeEnabled(bool isEnabled) {
-    _socket?.emit(WsEvent.setE2eeEnabledCSS, {'isEnabled': isEnabled});
-  }
-
-  @override
   void setAudioEnabled(bool isEnabled) {
     _socket?.emit(WsEvent.setAudioEnabledCSS, {'isEnabled': isEnabled});
   }
@@ -129,27 +123,6 @@ class WsEmitterImpl extends WsEmitter {
   @override
   void reconnect() {
     _socket?.emit(WsEvent.reconnect);
-  }
-
-  // White board
-
-  @override
-  void cleanWhiteBoard(String roomId) {
-    _socket?.emit(WsEvent.cleanWhiteBoardCSS, {'roomId': roomId});
-  }
-
-  @override
-  void startWhiteBoard(String roomId) {
-    _socket?.emit(WsEvent.startWhiteBoardCSS, {'roomId': roomId});
-  }
-
-  @override
-  void updateWhiteBoard(String roomId, String action, DrawModel draw) {
-    _socket?.emit(WsEvent.updateWhiteBoardCSS, {
-      'roomId': roomId,
-      'action': action,
-      'paints': [draw.toMap()],
-    });
   }
 
   Socket? get _socket => getIt<WsHandler>().socket;

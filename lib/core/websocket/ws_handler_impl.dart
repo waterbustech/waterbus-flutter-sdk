@@ -8,11 +8,8 @@ import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dar
 import 'package:waterbus_sdk/core/api/base/dio_configuration.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_manager.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/ws_handler.dart';
-import 'package:waterbus_sdk/core/whiteboard/white_board_interfaces.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/types/enums/draw_action.dart';
 import 'package:waterbus_sdk/types/models/conversation_socket_event.dart';
-import 'package:waterbus_sdk/types/models/draw_model.dart';
 import 'package:waterbus_sdk/types/models/subscribe_response.dart';
 import 'package:waterbus_sdk/utils/encrypt/encrypt.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
@@ -25,13 +22,11 @@ class WsHandlerImpl extends WsHandler {
   final WaterbusLogger _logger;
   final AuthLocalDataSource _authLocal;
   final DioConfiguration _dioConfig;
-  final WhiteBoardManager _whiteBoardManager;
   WsHandlerImpl(
     this._rtcManager,
     this._logger,
     this._authLocal,
     this._dioConfig,
-    this._whiteBoardManager,
   );
 
   Socket? _socket;
@@ -182,19 +177,6 @@ class WsHandlerImpl extends WsHandler {
         _rtcManager.addSubscriberCandidate(participantId, candidate);
       });
 
-      _socket?.on(WsEvent.setE2eeEnabledSSC, (data) {
-        /// targetId, isEnabled
-        if (data == null) return;
-
-        // final String participantId = data['participantId'];
-        // final bool isEnabled = data['isEnabled'];
-
-        // _rtcManager.setE2eeEnabled(
-        //   targetId: participantId,
-        //   isEnabled: isEnabled,
-        // );
-      });
-
       _socket?.on(WsEvent.setAudioEnabledSSC, (data) {
         /// targetId, isEnabled
         if (data == null) return;
@@ -269,17 +251,6 @@ class WsHandlerImpl extends WsHandler {
         );
       });
 
-      _socket?.on(WsEvent.subtitleSSC, (data) {
-        if (data == null) return;
-
-        final participantId = data['participantId'];
-        final content = data['transcription'];
-
-        WaterbusSdk.listener.onSubtitle?.call(
-          Subtitle(participant: participantId, content: content),
-        );
-      });
-
       _socket?.on(WsEvent.handRaisingSSC, (data) {
         if (data == null) return;
 
@@ -289,20 +260,6 @@ class WsHandlerImpl extends WsHandler {
           targetId: participantId,
           isRaising: isRaising,
         );
-      });
-
-      _socket?.on(WsEvent.startRecordSSC, (data) {
-        _rtcManager.setIsRecording(isRecording: true);
-      });
-
-      _socket?.on(WsEvent.stopRecordSSC, (data) {
-        _rtcManager.setIsRecording(isRecording: false);
-      });
-
-      _socket?.on(WsEvent.sendPodNameSSC, (data) {
-        if (data == null) return;
-
-        _podName = data['podName'];
       });
 
       _socket?.on(WsEvent.destroy, (data) {
@@ -383,37 +340,6 @@ class WsHandlerImpl extends WsHandler {
             member: member,
           ),
         );
-      });
-
-      // White board
-      _socket?.on(WsEvent.startWhiteBoardSSC, (data) {
-        if (data == null) return;
-
-        final List rawData = data;
-
-        final List<DrawModel> paints =
-            rawData.map((data) => DrawModel.fromMap(data)).toList();
-
-        _whiteBoardManager.onRemoteBoardChanged(
-          paints,
-          DrawActionEnum.updateAdd,
-        );
-      });
-
-      _socket?.on(WsEvent.updateWhiteBoardSSC, (data) {
-        if (data == null) return;
-
-        final String actionMap = data['action'];
-        final DrawActionEnum action = actionMap.drawAction;
-        final List rawData = data['paints'];
-        final List<DrawModel> paints =
-            rawData.map((data) => DrawModel.fromMap(data)).toList();
-
-        _whiteBoardManager.onRemoteBoardChanged(paints, action);
-      });
-
-      _socket?.on(WsEvent.cleanWhiteBoardSSC, (data) {
-        _whiteBoardManager.cleanWhiteBoard(shouldEmit: false);
       });
     });
   }

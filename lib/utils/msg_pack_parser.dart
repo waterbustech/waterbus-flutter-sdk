@@ -1,7 +1,8 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'dart:typed_data';
 
 import 'package:msgpack_dart/msgpack_dart.dart' as m2;
-// ignore: depend_on_referenced_packages
 import 'package:socket_io_common/socket_io_common.dart';
 
 class MsgPackEncoder extends Encoder {

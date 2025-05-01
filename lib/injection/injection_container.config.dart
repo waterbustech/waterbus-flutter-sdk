@@ -30,8 +30,6 @@ import '../core/websocket/interfaces/ws_emitter.dart' as _i988;
 import '../core/websocket/interfaces/ws_handler.dart' as _i743;
 import '../core/websocket/ws_emitter_impl.dart' as _i17;
 import '../core/websocket/ws_handler_impl.dart' as _i380;
-import '../core/whiteboard/white_board.dart' as _i844;
-import '../core/whiteboard/white_board_interfaces.dart' as _i831;
 import '../e2ee/e2ee_manager.dart' as _i460;
 import '../native/native_channel.dart' as _i235;
 import '../native/replaykit.dart' as _i124;
@@ -75,10 +73,6 @@ _i174.GetIt $initGetIt(
         gh<_i232.WebRTCVideoStats>(),
         gh<_i245.WebRTCAudioStats>(),
       ));
-  gh.lazySingleton<_i831.WhiteBoardManager>(() => _i844.WhiteBoardManagerIpml(
-        gh<_i272.WebRTCManager>(),
-        gh<_i988.WsEmitter>(),
-      ));
   gh.singleton<_i182.BaseRemoteData>(
       () => _i182.BaseRemoteData(gh<_i828.AuthLocalDataSource>()));
   gh.lazySingleton<_i1054.UserRemoteDataSource>(
@@ -94,13 +88,6 @@ _i174.GetIt $initGetIt(
   gh.singleton<_i324.CallKitListener>(() => _i324.CallKitListener(
         gh<_i944.WaterbusLogger>(),
         gh<_i272.WebRTCManager>(),
-      ));
-  gh.singleton<_i743.WsHandler>(() => _i380.WsHandlerImpl(
-        gh<_i272.WebRTCManager>(),
-        gh<_i944.WaterbusLogger>(),
-        gh<_i828.AuthLocalDataSource>(),
-        gh<_i314.DioConfiguration>(),
-        gh<_i831.WhiteBoardManager>(),
       ));
   gh.lazySingleton<_i997.AuthRemoteDataSource>(
       () => _i997.AuthRemoteDataSourceImpl(
@@ -119,12 +106,17 @@ _i174.GetIt $initGetIt(
       () => _i575.MessageRepositoryImpl(gh<_i242.MessageRemoteDataSource>()));
   gh.lazySingleton<_i895.UserRepository>(
       () => _i895.UserRepositoryImpl(gh<_i1054.UserRemoteDataSource>()));
+  gh.singleton<_i743.WsHandler>(() => _i380.WsHandlerImpl(
+        gh<_i272.WebRTCManager>(),
+        gh<_i944.WaterbusLogger>(),
+        gh<_i828.AuthLocalDataSource>(),
+        gh<_i314.DioConfiguration>(),
+      ));
   gh.factory<_i613.ChatRepository>(
       () => _i613.ChatRepositoryImpl(gh<_i712.ChatRemoteDataSource>()));
   gh.singleton<_i513.WaterbusSdkInterface>(() => _i1039.SdkCore(
         gh<_i743.WsHandler>(),
         gh<_i988.WsEmitter>(),
-        gh<_i831.WhiteBoardManager>(),
         gh<_i272.WebRTCManager>(),
         gh<_i124.ReplayKitChannel>(),
         gh<_i182.BaseRemoteData>(),

@@ -12,14 +12,11 @@ import 'package:waterbus_sdk/core/api/user/repositories/user_repository.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_manager.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/ws_emitter.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/ws_handler.dart';
-import 'package:waterbus_sdk/core/whiteboard/white_board_interfaces.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/native/picture-in-picture/index.dart';
 import 'package:waterbus_sdk/native/replaykit.dart';
-import 'package:waterbus_sdk/types/enums/draw_action.dart';
 import 'package:waterbus_sdk/types/error/failures.dart';
 import 'package:waterbus_sdk/types/models/create_meeting_params.dart';
-import 'package:waterbus_sdk/types/models/draw_model.dart';
 import 'package:waterbus_sdk/types/models/record_model.dart';
 import 'package:waterbus_sdk/types/result.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
@@ -30,7 +27,6 @@ import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
 class SdkCore extends WaterbusSdkInterface {
   final WsHandler _wsHandler;
   final WsEmitter _wsEmitter;
-  final WhiteBoardManager _whiteBoardManager;
   final WebRTCManager _rtcManager;
   final ReplayKitChannel _replayKitChannel;
   final BaseRemoteData _baseRepository;
@@ -44,7 +40,6 @@ class SdkCore extends WaterbusSdkInterface {
   SdkCore(
     this._wsHandler,
     this._wsEmitter,
-    this._whiteBoardManager,
     this._rtcManager,
     this._replayKitChannel,
     this._baseRepository,
@@ -194,34 +189,6 @@ class SdkCore extends WaterbusSdkInterface {
     } catch (error) {
       _logger.bug(error.toString());
     }
-  }
-
-  @override
-  Future<void> startWhiteBoard() async {
-    _whiteBoardManager.startWhiteBoard();
-  }
-
-  @override
-  Future<void> updateWhiteBoard(
-    DrawModel draw,
-    DrawActionEnum action,
-  ) async {
-    _whiteBoardManager.updateWhiteBoard(draw, action);
-  }
-
-  @override
-  Future<void> cleanWhiteBoard() async {
-    _whiteBoardManager.cleanWhiteBoard();
-  }
-
-  @override
-  Future<void> undoWhiteBoard() async {
-    _whiteBoardManager.undoWhiteBoard();
-  }
-
-  @override
-  Future<void> redoWhiteBoard() async {
-    _whiteBoardManager.redoWhiteBoard();
   }
 
   @override

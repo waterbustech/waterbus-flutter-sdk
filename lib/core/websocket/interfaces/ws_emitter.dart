@@ -1,5 +1,4 @@
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/types/models/draw_model.dart';
 
 abstract class WsEmitter {
   // Meeting
@@ -24,7 +23,6 @@ abstract class WsEmitter {
     required RTCIceCandidate candidate,
     required targetId,
   });
-  void setE2eeEnabled(bool isEnabled);
   void setCameraType(CameraType cameraType);
   void setVideoEnabled(bool isEnabled);
   void setAudioEnabled(bool isEnabled);
@@ -35,9 +33,4 @@ abstract class WsEmitter {
   void sendNewSdp(String sdp);
   void leaveRoom(String roomId);
   void reconnect();
-
-  // White board
-  void startWhiteBoard(String roomId);
-  void updateWhiteBoard(String roomId, String action, DrawModel draw);
-  void cleanWhiteBoard(String roomId);
 }

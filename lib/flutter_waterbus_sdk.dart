@@ -8,10 +8,8 @@ import 'package:rhttp/rhttp.dart';
 import 'package:waterbus_sdk/core/api/base/base_local_storage.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_manager.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
-import 'package:waterbus_sdk/types/enums/draw_action.dart';
 import 'package:waterbus_sdk/types/index.dart';
 import 'package:waterbus_sdk/types/models/conversation_socket_event.dart';
-import 'package:waterbus_sdk/types/models/draw_model.dart';
 import 'package:waterbus_sdk/types/models/record_model.dart';
 import 'package:waterbus_sdk/types/result.dart';
 import 'package:waterbus_sdk/utils/callkit/callkit_listener.dart';
@@ -51,11 +49,6 @@ class WaterbusSdk {
   set setOnSubtitle(Function(Subtitle)? onSubtitle) {
     WaterbusSdk.listener =
         WaterbusSdk.listener.copyWith(onSubtitle: onSubtitle);
-  }
-
-  set setOnDrawChanged(Function(List<DrawModel> drawList)? onDrawChanged) {
-    WaterbusSdk.listener =
-        WaterbusSdk.listener.copyWith(onDrawChanged: onDrawChanged);
   }
 
   Future<void> initializeApp({
@@ -145,30 +138,6 @@ class WaterbusSdk {
 
   Future<void> leaveRoom() async {
     await _sdk.leaveRoom();
-  }
-
-  // MARK : White board
-  Future<void> startWhiteBoard() async {
-    await _sdk.startWhiteBoard();
-  }
-
-  Future<void> updateWhiteBoard(
-    DrawModel draw,
-    DrawActionEnum action,
-  ) async {
-    await _sdk.updateWhiteBoard(draw, action);
-  }
-
-  Future<void> cleanWhiteBoard() async {
-    await _sdk.cleanWhiteBoard();
-  }
-
-  Future<void> undo() async {
-    await _sdk.undoWhiteBoard();
-  }
-
-  Future<void> redo() async {
-    await _sdk.redoWhiteBoard();
   }
 
   // Related to local media
