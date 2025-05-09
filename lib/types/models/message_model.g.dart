@@ -1,0 +1,51 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'message_model.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+_MessageModel _$MessageModelFromJson(Map<String, dynamic> json) =>
+    _MessageModel(
+      id: (json['id'] as num).toInt(),
+      data: json['data'] as String,
+      meeting: (json['meeting'] is Map<String, dynamic>
+              ? json['meeting']['id']
+              : json['meeting']) ??
+          0,
+      createdBy: json['createdBy'] == null
+          ? null
+          : User.fromJson(json['createdBy'] as Map<String, dynamic>),
+      sendingStatus: $enumDecodeNullable(
+              _$SendingStatusEnumEnumMap, json['sendingStatus']) ??
+          SendingStatusEnum.sent,
+      status: $enumDecode(_$MessageStatusEnumEnumMap, json['status']),
+      type: (json['type'] as num).toInt(),
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      updatedAt: DateTime.parse(json['updatedAt'] as String),
+    );
+
+Map<String, dynamic> _$MessageModelToJson(_MessageModel instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'data': instance.data,
+      'meeting': instance.meeting,
+      'createdBy': instance.createdBy,
+      'sendingStatus': _$SendingStatusEnumEnumMap[instance.sendingStatus]!,
+      'status': _$MessageStatusEnumEnumMap[instance.status]!,
+      'type': instance.type,
+      'createdAt': instance.createdAt.toIso8601String(),
+      'updatedAt': instance.updatedAt.toIso8601String(),
+    };
+
+const _$SendingStatusEnumEnumMap = {
+  SendingStatusEnum.error: -1,
+  SendingStatusEnum.sending: 0,
+  SendingStatusEnum.sent: 1,
+};
+
+const _$MessageStatusEnumEnumMap = {
+  MessageStatusEnum.inactive: 1,
+  MessageStatusEnum.active: 0,
+};

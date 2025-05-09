@@ -1,42 +1,15 @@
 import 'package:flutter/foundation.dart';
 
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:waterbus_sdk/types/models/participant_sfu.dart';
 
-class CallState extends Equatable {
-  final ParticipantSFU? mParticipant;
-  final Map<String, ParticipantSFU> participants;
-  const CallState({
-    this.mParticipant,
-    required this.participants,
-  });
+part 'call_state.freezed.dart';
 
-  CallState copyWith({
+@freezed
+abstract class CallState with _$CallState {
+  const factory CallState({
     ParticipantSFU? mParticipant,
-    Map<String, ParticipantSFU>? participants,
-  }) {
-    return CallState(
-      mParticipant: mParticipant ?? this.mParticipant,
-      participants: participants ?? this.participants,
-    );
-  }
-
-  @override
-  String toString() =>
-      'CallState(mParticipant: $mParticipant, participants: $participants)';
-
-  @override
-  bool operator ==(covariant CallState other) {
-    if (identical(this, other)) return true;
-
-    return other.mParticipant == mParticipant &&
-        mapEquals(other.participants, participants);
-  }
-
-  @override
-  int get hashCode => mParticipant.hashCode ^ participants.hashCode;
-
-  @override
-  List<Object?> get props => [mParticipant, participants];
+    required Map<String, ParticipantSFU> participants,
+  }) = _CallState;
 }

@@ -1,52 +1,15 @@
-import 'dart:convert';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class Subtitle {
-  final String participant;
-  final String content;
-  Subtitle({
-    required this.participant,
-    required this.content,
-  });
+part 'subtitle.freezed.dart';
+part 'subtitle.g.dart';
 
-  Subtitle copyWith({
-    String? participant,
-    String? content,
-  }) {
-    return Subtitle(
-      participant: participant ?? this.participant,
-      content: content ?? this.content,
-    );
-  }
+@freezed
+abstract class Subtitle with _$Subtitle {
+  const factory Subtitle({
+    required String participant,
+    required String content,
+  }) = _Subtitle;
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'participant': participant,
-      'content': content,
-    };
-  }
-
-  factory Subtitle.fromMap(Map<String, dynamic> map) {
-    return Subtitle(
-      participant: map['participant'] as String,
-      content: map['content'] as String,
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory Subtitle.fromJson(String source) =>
-      Subtitle.fromMap(json.decode(source) as Map<String, dynamic>);
-
-  @override
-  String toString() => 'Subtitle(participant: $participant, content: $content)';
-
-  @override
-  bool operator ==(covariant Subtitle other) {
-    if (identical(this, other)) return true;
-
-    return other.participant == participant && other.content == content;
-  }
-
-  @override
-  int get hashCode => participant.hashCode ^ content.hashCode;
+  factory Subtitle.fromJson(Map<String, Object?> json) =>
+      _$SubtitleFromJson(json);
 }

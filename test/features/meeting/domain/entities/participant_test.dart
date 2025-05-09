@@ -69,7 +69,7 @@ void main() {
         user: userModel,
       );
 
-      final participantMap = participant.toMap();
+      final participantMap = participant.toJson();
       expect(participantMap, isA<Map<String, dynamic>>());
       expect(participantMap['id'], 1);
       expect(participantMap['user'], isA<Map<String, dynamic>>());
@@ -77,7 +77,7 @@ void main() {
 
     test('Should create Participant from Map', () {
       final participantMap = json.decode(participantJson);
-      final participant = Participant.fromMap(participantMap);
+      final participant = Participant.fromJson(participantMap);
 
       expect(participant, isA<Participant>());
       expect(participant.id, 1);
@@ -96,7 +96,7 @@ void main() {
     });
 
     test('Should create Participant from JSON', () {
-      final participant = Participant.fromJson(participantJson);
+      final participant = Participant.fromJson(json.decode(participantJson));
 
       expect(participant, isA<Participant>());
       expect(participant.id, 1);

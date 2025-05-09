@@ -1,55 +1,16 @@
-import 'package:flutter/foundation.dart';
-
 import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:waterbus_sdk/types/enums/audio_level.dart';
 
-class AudioStatsParams {
-  final String ownerId;
-  final Function(AudioLevel) callBack;
-  final RTCPeerConnection? pc;
-  final List<RTCRtpReceiver> receivers;
-  AudioStatsParams({
-    required this.ownerId,
-    required this.callBack,
-    this.pc,
-    this.receivers = const [],
-  });
+part 'audio_stats_params.freezed.dart';
 
-  AudioStatsParams copyWith({
-    String? ownerId,
-    Function(AudioLevel)? callBack,
+@freezed
+abstract class AudioStatsParams with _$AudioStatsParams {
+  const factory AudioStatsParams({
+    required String ownerId,
+    required Function(AudioLevel) callBack,
     RTCPeerConnection? pc,
-    List<RTCRtpReceiver>? receivers,
-  }) {
-    return AudioStatsParams(
-      ownerId: ownerId ?? this.ownerId,
-      callBack: callBack ?? this.callBack,
-      pc: pc ?? this.pc,
-      receivers: receivers ?? this.receivers,
-    );
-  }
-
-  @override
-  String toString() {
-    return 'AudioStatsParams(ownerId: $ownerId, callBack: $callBack, pc: $pc, receivers: $receivers)';
-  }
-
-  @override
-  bool operator ==(covariant AudioStatsParams other) {
-    if (identical(this, other)) return true;
-
-    return other.ownerId == ownerId &&
-        other.callBack == callBack &&
-        other.pc == pc &&
-        listEquals(other.receivers, receivers);
-  }
-
-  @override
-  int get hashCode {
-    return ownerId.hashCode ^
-        callBack.hashCode ^
-        pc.hashCode ^
-        receivers.hashCode;
-  }
+    required List<RTCRtpReceiver> receivers,
+  }) = _AudioStatsParams;
 }
