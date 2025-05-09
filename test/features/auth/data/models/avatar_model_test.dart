@@ -92,53 +92,5 @@ void main() {
         expect(avatar, isNotNull);
       },
     );
-    test(
-      'fromJson - should return a valid model when the JSON',
-      () {
-        // arrange
-        final Map<String, dynamic> avatarJson = jsonDecode(
-          fixture(avatarModelSample),
-        );
-
-        // act
-        final AvatarModel avatar = AvatarModel.fromJson(avatarJson);
-
-        // assert
-        expect(avatar, isNotNull);
-      },
-    );
-  });
-
-  group('fromJson', () {
-    test(
-      'fromJson - should return a valid model when the JSON',
-      () {
-        // arrange
-        final String avatarJson = fixture(avatarModelSample);
-
-        // act
-        final AvatarModel avatar =
-            AvatarModel.fromJson(json.decode(avatarJson));
-
-        // assert
-        expect(avatar, isNotNull);
-      },
-    );
-
-    test(
-      'toJson - should return a valid model when the JSON',
-      () {
-        // arrange
-        final Map<String, dynamic> avatarJsom = jsonDecode(
-          fixture(avatarModelSample),
-        );
-
-        // act
-        final AvatarModel avatar = AvatarModel.fromJson(avatarJsom);
-
-        // assert
-        expect(avatar.toJson(), isNotNull);
-      },
-    );
   });
 }

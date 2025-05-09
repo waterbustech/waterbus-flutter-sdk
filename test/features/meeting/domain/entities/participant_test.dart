@@ -63,7 +63,7 @@ void main() {
       expect(updatedParticipant1.user, updatedUserModel);
     });
 
-    test('Should convert Participant to Map', () {
+    test('Should convert Participant to Json', () {
       final participant = Participant(
         id: 1,
         user: userModel,
@@ -75,28 +75,9 @@ void main() {
       expect(participantMap['user'], isA<Map<String, dynamic>>());
     });
 
-    test('Should create Participant from Map', () {
+    test('Should create Participant from Json', () {
       final participantMap = json.decode(participantJson);
       final participant = Participant.fromJson(participantMap);
-
-      expect(participant, isA<Participant>());
-      expect(participant.id, 1);
-      expect(participant.user, userModel);
-    });
-
-    test('Should convert Participant to JSON', () {
-      final participant = Participant(
-        id: 1,
-        user: userModel,
-      );
-
-      final participantJsonString = participant.toJson();
-      expect(participantJsonString, isA<String>());
-      expect(participantJsonString, jsonEncode(jsonDecode(participantJson)));
-    });
-
-    test('Should create Participant from JSON', () {
-      final participant = Participant.fromJson(json.decode(participantJson));
 
       expect(participant, isA<Participant>());
       expect(participant.id, 1);

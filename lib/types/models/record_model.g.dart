@@ -18,7 +18,7 @@ _RecordModel _$RecordModelFromJson(Map<String, dynamic> json) => _RecordModel(
 Map<String, dynamic> _$RecordModelToJson(_RecordModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'meeting': instance.meeting,
+      'meeting': instance.meeting.toJson(),
       'urlToVideo': instance.urlToVideo,
       'thumbnail': instance.thumbnail,
       'duration': instance.duration,

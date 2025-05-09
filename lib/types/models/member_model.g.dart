@@ -19,7 +19,7 @@ _Member _$MemberFromJson(Map<String, dynamic> json) => _Member(
 Map<String, dynamic> _$MemberToJson(_Member instance) => <String, dynamic>{
       'id': instance.id,
       'role': _$MeetingRoleEnumMap[instance.role]!,
-      'user': instance.user,
+      'user': instance.user.toJson(),
       'isMe': instance.isMe,
       'meetingId': instance.meetingId,
       'status': _$MemberStatusEnumEnumMap[instance.status]!,

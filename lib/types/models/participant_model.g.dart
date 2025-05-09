@@ -17,6 +17,6 @@ _Participant _$ParticipantFromJson(Map<String, dynamic> json) => _Participant(
 Map<String, dynamic> _$ParticipantToJson(_Participant instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'user': instance.user,
+      'user': instance.user?.toJson(),
       'isMe': instance.isMe,
     };

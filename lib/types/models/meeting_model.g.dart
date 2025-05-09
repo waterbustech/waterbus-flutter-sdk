@@ -36,13 +36,14 @@ _Meeting _$MeetingFromJson(Map<String, dynamic> json) => _Meeting(
 Map<String, dynamic> _$MeetingToJson(_Meeting instance) => <String, dynamic>{
       'id': instance.id,
       'title': instance.title,
-      'participants': instance.participants,
-      'members': instance.members,
+      'participants':
+          instance.participants.map((item) => item.toJson()).toList(),
+      'members': instance.members.map((item) => item.toJson()).toList(),
       'code': instance.code,
       'createdAt': instance.createdAt?.toIso8601String(),
       'latestJoinedAt': instance.latestJoinedAt?.toIso8601String(),
       'status': _$MeetingStatusEnumMap[instance.status]!,
-      'latestMessage': instance.latestMessage,
+      'latestMessage': instance.latestMessage?.toJson(),
       'avatar': instance.avatar,
     };
 

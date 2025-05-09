@@ -31,7 +31,7 @@ Map<String, dynamic> _$MessageModelToJson(_MessageModel instance) =>
       'id': instance.id,
       'data': instance.data,
       'meeting': instance.meeting,
-      'createdBy': instance.createdBy,
+      'createdBy': instance.createdBy?.toJson(),
       'sendingStatus': _$SendingStatusEnumEnumMap[instance.sendingStatus]!,
       'status': _$MessageStatusEnumEnumMap[instance.status]!,
       'type': instance.type,
