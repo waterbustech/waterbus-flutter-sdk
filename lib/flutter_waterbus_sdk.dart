@@ -363,7 +363,7 @@ class WaterbusSdk {
   WaterbusSdkInterface get _sdk => getIt<WaterbusSdkInterface>();
   CallKitListener get _callKitListener => getIt<CallKitListener>();
 
-  ///Singleton factory
+  /// Singleton factory
   static final WaterbusSdk instance = WaterbusSdk._internal();
 
   factory WaterbusSdk() {

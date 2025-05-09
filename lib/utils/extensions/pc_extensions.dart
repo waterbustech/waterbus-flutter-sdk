@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
+import 'package:waterbus_sdk/constants/rtc_configurations.dart'
+    show RTCConfigurations;
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/types/enums/rtc_track_kind.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
-
-// import 'package:waterbus_sdk/constants/rtc_configurations.dart';
 
 extension PeerX on RTCPeerConnection {
   Future<RTCRtpSender> addSimulcastTrack(
@@ -13,6 +13,16 @@ extension PeerX on RTCPeerConnection {
     required MediaStream stream,
     RtcTrackKind kind = RtcTrackKind.video,
   }) async {
+    final List<RTCRtpEncoding> encodings = [];
+
+    if (kind == RtcTrackKind.video) {
+      if (vCodec == RTCVideoCodec.vp9) {
+        encodings.addAll(RTCConfigurations.svcEncodings);
+      } else {
+        encodings.addAll(RTCConfigurations.simulcastEncodings);
+      }
+    }
+
     final transceiver = await addTransceiver(
       track: track,
       kind: kind == RtcTrackKind.video
@@ -21,8 +31,7 @@ extension PeerX on RTCPeerConnection {
       init: RTCRtpTransceiverInit(
         direction: TransceiverDirection.SendOnly,
         streams: [stream],
-        // sendEncodings:
-        //     kind == RtcTrackKind.video ? RTCConfigurations.videoEncodings : [],
+        sendEncodings: encodings,
       ),
     );
 
@@ -47,8 +56,6 @@ extension PeerX on RTCPeerConnection {
     required RtcTrackKind kind,
     required String vCodec,
   }) async {
-    // when setting codec preferences, the capabilites need to be read from
-    // the RTCRtpReceiver
     final caps = await getRtpReceiverCapabilities(kind.kind);
     if (caps.codecs == null) return;
 
@@ -65,21 +72,38 @@ extension PeerX on RTCPeerConnection {
       final matchesVideoCodec =
           codec.toLowerCase() == 'video/$vCodec'.toLowerCase();
       if (!matchesVideoCodec) {
-        unmatched.add(c);
+        if (WebRTC.platformIsAndroid && codec == 'video/vp9') {
+          if (c.sdpFmtpLine != null &&
+              (c.sdpFmtpLine!.contains('profile-id=0') ||
+                  c.sdpFmtpLine!.contains('profile-id=1'))) {
+            unmatched.add(c);
+          }
+        } else {
+          unmatched.add(c);
+        }
         continue;
       }
+
       // for h264 codecs that have sdpFmtpLine available, use only if the
       // profile-level-id is 42e01f for cross-browser compatibility
       if (vCodec.toLowerCase() == 'h264') {
         if (c.sdpFmtpLine != null &&
-            (c.sdpFmtpLine!.contains('profile-level-id=42e01f'))) {
+            c.sdpFmtpLine!.contains('profile-level-id=42e01f')) {
           matched.add(c);
         } else {
           partialMatched.add(c);
         }
         continue;
       }
-      matched.add(c);
+      if (WebRTC.platformIsAndroid && codec == 'video/vp9') {
+        if (c.sdpFmtpLine != null &&
+            (c.sdpFmtpLine!.contains('profile-id=0') ||
+                c.sdpFmtpLine!.contains('profile-id=1'))) {
+          matched.add(c);
+        }
+      } else {
+        matched.add(c);
+      }
     }
     matched.addAll([...partialMatched, ...unmatched]);
     try {
@@ -97,7 +121,7 @@ extension PeerX on RTCPeerConnection {
     final parameters = sender.parameters;
 
     parameters.degradationPreference =
-        RTCDegradationPreference.MAINTAIN_RESOLUTION;
+        RTCDegradationPreference.MAINTAIN_FRAMERATE;
 
     await sender.setParameters(parameters);
   }

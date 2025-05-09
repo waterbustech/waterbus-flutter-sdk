@@ -107,7 +107,9 @@ class WsHandlerImpl extends WsHandler {
         /// targetId
         if (data == null) return;
 
-        final participant = Participant.fromMap(data);
+        final participant = Participant.fromMap(
+          Map<String, dynamic>.from(data),
+        );
 
         _rtcManager.handleNewParticipant(participant);
       });

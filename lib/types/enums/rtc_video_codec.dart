@@ -5,7 +5,6 @@ enum RTCVideoCodec {
   vp8('vp8', true),
   vp9('vp9', true),
   h264('h264', true),
-  // h265('h265', false),
   av1('av1', false);
 
   const RTCVideoCodec(this.codec, this.isSFrameSuported);
