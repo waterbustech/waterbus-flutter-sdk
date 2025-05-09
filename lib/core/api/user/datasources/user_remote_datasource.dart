@@ -10,10 +10,10 @@ import 'package:injectable/injectable.dart';
 import 'package:waterbus_sdk/constants/api_enpoints.dart';
 import 'package:waterbus_sdk/constants/http_status_code.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
+import 'package:waterbus_sdk/types/error/app_exception.dart';
 import 'package:waterbus_sdk/types/error/failures.dart';
-import 'package:waterbus_sdk/types/models/exceptions/exceptions.dart';
+import 'package:waterbus_sdk/types/error/result.dart';
 import 'package:waterbus_sdk/types/models/user_model.dart';
-import 'package:waterbus_sdk/types/result.dart';
 
 abstract class UserRemoteDataSource {
   Future<Result<User>> getUserProfile();
@@ -84,24 +84,24 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
 
     if (response.statusCode == StatusCode.ok) {
       final Map<String, dynamic> rawData = response.data;
-      return Result.success(User.fromMap(rawData));
+      return Result.success(User.fromJson(rawData));
     }
 
-    return Result.failure(response.data['message'].toString().userException);
+    return Result.failure(response.data['message'].toString().toFailure);
   }
 
   @override
   Future<Result<bool>> updateUserProfile(User user) async {
     final Response response = await _remoteData.putRoute(
       ApiEndpoints.users,
-      user.toMap(),
+      user.toJson(),
     );
 
     if (response.statusCode == StatusCode.ok) {
       return Result.success(true);
     }
 
-    return Result.failure(response.data['message'].toString().userException);
+    return Result.failure(response.data['message'].toString().toFailure);
   }
 
   @override
@@ -115,7 +115,7 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
       return Result.success(true);
     }
 
-    return Result.failure(response.data['message'].toString().userException);
+    return Result.failure(response.data['message'].toString().toFailure);
   }
 
   @override
@@ -128,7 +128,7 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
       return Result.success(response.data['isRegistered'] ?? false);
     }
 
-    return Result.failure(response.data['message'].toString().userException);
+    return Result.failure(response.data['message'].toString().toFailure);
   }
 
   @override
@@ -146,10 +146,10 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
       final List data = response.data['hits'];
 
       return Result.success(
-        data.map((user) => User.fromMap(user['document'])).toList(),
+        data.map((user) => User.fromJson(user['document'])).toList(),
       );
     }
 
-    return Result.failure(response.data['message'].toString().userException);
+    return Result.failure(response.data['message'].toString().toFailure);
   }
 }

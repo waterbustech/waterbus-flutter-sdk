@@ -21,6 +21,7 @@ import 'package:waterbus_sdk/types/models/audio_stats_params.dart';
 import 'package:waterbus_sdk/types/models/subscribe_response.dart';
 import 'package:waterbus_sdk/utils/extensions/pc_extensions.dart';
 import 'package:waterbus_sdk/utils/extensions/sdp_extensions.dart';
+import 'package:waterbus_sdk/utils/extensions/string_ext.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 @LazySingleton(as: WebRTCManager)
@@ -749,6 +750,7 @@ class WebRTCManagerIpml extends WebRTCManager {
 
       if (track.kind == RtcTrackKind.audio.kind) {
         _audioStats.setSender = AudioStatsParams(
+          receivers: [],
           ownerId: kIsMine,
           pc: peerConnection,
           callBack: (audioLevel) {

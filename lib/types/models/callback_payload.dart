@@ -1,39 +1,15 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
 import 'package:waterbus_sdk/types/index.dart';
 
-class CallbackPayload {
-  CallbackEvents event;
-  CallState callState;
-  String? participantId;
-  Participant? newParticipant;
-  CallbackPayload({
-    required this.event,
-    required this.callState,
-    this.participantId,
-    this.newParticipant,
-  });
+part 'callback_payload.freezed.dart';
 
-  CallbackPayload copyWith({
-    CallbackEvents? event,
-    CallState? callState,
+@freezed
+abstract class CallbackPayload with _$CallbackPayload {
+  const factory CallbackPayload({
+    required CallbackEvents event,
+    required CallState callState,
     String? participantId,
-  }) {
-    return CallbackPayload(
-      event: event ?? this.event,
-      callState: callState ?? this.callState,
-      participantId: participantId ?? this.participantId,
-    );
-  }
-
-  @override
-  String toString() => 'CallbackPayload(event: $event, callState: $callState)';
-
-  @override
-  bool operator ==(covariant CallbackPayload other) {
-    if (identical(this, other)) return true;
-
-    return other.event == event && other.callState == callState;
-  }
-
-  @override
-  int get hashCode => event.hashCode ^ callState.hashCode;
+    Participant? newParticipant,
+  }) = _CallbackPayload;
 }

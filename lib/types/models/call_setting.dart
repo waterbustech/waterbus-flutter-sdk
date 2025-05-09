@@ -1,130 +1,31 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
+
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:waterbus_sdk/types/index.dart';
 
-class CallSetting {
-  final bool isLowBandwidthMode;
-  final bool isAudioMuted;
-  final bool echoCancellationEnabled;
-  final bool noiseSuppressionEnabled;
-  final bool agcEnabled;
-  final bool isVideoMuted;
-  final bool e2eeEnabled;
-  final RTCVideoCodec preferedCodec;
-  final VideoQuality videoQuality;
-  final VideoLayout videoLayout;
-  CallSetting({
-    this.isLowBandwidthMode = false,
-    this.isAudioMuted = false,
-    this.echoCancellationEnabled = true,
-    this.noiseSuppressionEnabled = true,
-    this.agcEnabled = true,
-    this.isVideoMuted = false,
-    this.e2eeEnabled = false,
-    this.preferedCodec = RTCVideoCodec.h264,
-    this.videoQuality = VideoQuality.high,
-    this.videoLayout = VideoLayout.gridView,
-  });
+part 'call_setting.freezed.dart';
+part 'call_setting.g.dart';
 
-  CallSetting copyWith({
-    bool? isLowBandwidthMode,
-    bool? isAudioMuted,
-    bool? echoCancellationEnabled,
-    bool? noiseSuppressionEnabled,
-    bool? agcEnabled,
-    bool? isVideoMuted,
-    bool? e2eeEnabled,
-    RTCVideoCodec? preferedCodec,
-    VideoQuality? videoQuality,
-    VideoLayout? videoLayout,
-  }) {
-    return CallSetting(
-      isLowBandwidthMode: isLowBandwidthMode ?? this.isLowBandwidthMode,
-      isAudioMuted: isAudioMuted ?? this.isAudioMuted,
-      echoCancellationEnabled:
-          echoCancellationEnabled ?? this.echoCancellationEnabled,
-      noiseSuppressionEnabled:
-          noiseSuppressionEnabled ?? this.noiseSuppressionEnabled,
-      agcEnabled: agcEnabled ?? this.agcEnabled,
-      isVideoMuted: isVideoMuted ?? this.isVideoMuted,
-      e2eeEnabled: e2eeEnabled ?? this.e2eeEnabled,
-      preferedCodec: preferedCodec ?? this.preferedCodec,
-      videoQuality: videoQuality ?? this.videoQuality,
-      videoLayout: videoLayout ?? this.videoLayout,
-    );
-  }
+@freezed
+abstract class CallSetting with _$CallSetting {
+  const factory CallSetting({
+    @Default(false) bool isLowBandwidthMode,
+    @Default(false) bool isAudioMuted,
+    @Default(true) bool echoCancellationEnabled,
+    @Default(true) bool noiseSuppressionEnabled,
+    @Default(true) bool agcEnabled,
+    @Default(false) bool isVideoMuted,
+    @Default(false) bool e2eeEnabled,
+    @Default(RTCVideoCodec.h264) RTCVideoCodec preferedCodec,
+    @Default(VideoQuality.high) VideoQuality videoQuality,
+    // @Default(VideoLayout.gridView) VideoLayout videoLayout,
+  }) = _CallSetting;
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'isLowBandwidthMode': isLowBandwidthMode,
-      'isAudioMuted': isAudioMuted,
-      'echoCancellationEnabled': echoCancellationEnabled,
-      'noiseSuppressionEnabled': noiseSuppressionEnabled,
-      'agcEnabled': agcEnabled,
-      'isVideoMuted': isVideoMuted,
-      'e2eeEnabled': e2eeEnabled,
-      'preferedCodec': preferedCodec.index,
-      'videoQuality': videoQuality.index,
-      'videoLayout': videoLayout.index,
-    };
-  }
-
-  factory CallSetting.fromMap(Map<String, dynamic> map) {
-    return CallSetting(
-      isLowBandwidthMode: map['isLowBandwidthMode'] as bool,
-      isAudioMuted: map['isAudioMuted'] as bool,
-      echoCancellationEnabled: map['echoCancellationEnabled'] as bool,
-      noiseSuppressionEnabled: map['noiseSuppressionEnabled'] as bool,
-      agcEnabled: map['agcEnabled'] as bool,
-      isVideoMuted: map['isVideoMuted'] as bool,
-      e2eeEnabled: map['e2eeEnabled'] ?? false,
-      preferedCodec: RTCVideoCodec.values[map['preferedCodec']],
-      videoQuality: VideoQuality.values[map['videoQuality']],
-      videoLayout: VideoLayout.values[map['videoLayout']],
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory CallSetting.fromJson(String source) =>
-      CallSetting.fromMap(json.decode(source) as Map<String, dynamic>);
-
-  @override
-  String toString() {
-    return 'CallSetting(isLowBandwidthMode: $isLowBandwidthMode, isAudioMuted: $isAudioMuted, echoCancellationEnabled: $echoCancellationEnabled, noiseSuppressionEnabled: $noiseSuppressionEnabled, agcEnabled: $agcEnabled, isVideoMuted: $isVideoMuted, preferedCodec: $preferedCodec, videoQuality: $videoQuality, videoLayout: $videoLayout)';
-  }
-
-  @override
-  bool operator ==(covariant CallSetting other) {
-    if (identical(this, other)) return true;
-
-    return other.isLowBandwidthMode == isLowBandwidthMode &&
-        other.isAudioMuted == isAudioMuted &&
-        other.echoCancellationEnabled == echoCancellationEnabled &&
-        other.noiseSuppressionEnabled == noiseSuppressionEnabled &&
-        other.agcEnabled == agcEnabled &&
-        other.isVideoMuted == isVideoMuted &&
-        other.preferedCodec == preferedCodec &&
-        other.videoQuality == videoQuality &&
-        other.videoLayout == videoLayout;
-  }
-
-  @override
-  int get hashCode {
-    return isLowBandwidthMode.hashCode ^
-        isAudioMuted.hashCode ^
-        echoCancellationEnabled.hashCode ^
-        noiseSuppressionEnabled.hashCode ^
-        agcEnabled.hashCode ^
-        isVideoMuted.hashCode ^
-        preferedCodec.hashCode ^
-        videoQuality.hashCode ^
-        videoLayout.hashCode;
-  }
+  factory CallSetting.fromJson(Map<String, Object?> json) =>
+      _$CallSettingFromJson(json);
 }
 
 extension CallSettingX on CallSetting {

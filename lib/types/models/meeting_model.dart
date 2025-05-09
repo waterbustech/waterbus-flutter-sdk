@@ -1,76 +1,51 @@
-import 'dart:convert';
-
-import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/types/models/chat_status_enum.dart';
 
-class Meeting {
-  final int id;
-  final String title;
-  final List<Participant> participants;
-  final List<Member> members;
-  final int code;
-  final DateTime? createdAt;
-  final DateTime? latestJoinedAt;
-  final MeetingStatus status;
-  final String? avatar;
-  MessageModel? latestMessage;
+part 'meeting_model.freezed.dart';
+part 'meeting_model.g.dart';
 
-  Meeting({
-    this.id = -1,
-    required this.title,
-    this.participants = const [],
-    this.members = const [],
-    this.code = -1,
-    this.createdAt,
-    this.latestJoinedAt,
-    this.status = MeetingStatus.active,
-    this.latestMessage,
-    this.avatar,
-  });
-
-  Meeting copyWith({
-    int? id,
-    String? title,
-    List<Participant>? participants,
-    List<Member>? members,
-    int? code,
+@freezed
+abstract class Meeting with _$Meeting {
+  const factory Meeting({
+    @Default(-1) int id,
+    required String title,
+    @Default([]) List<Participant> participants,
+    @Default([]) List<Member> members,
+    @Default(-1) int code,
     DateTime? createdAt,
     DateTime? latestJoinedAt,
-    MeetingStatus? status,
+    @Default(MeetingStatus.active) MeetingStatus status,
     MessageModel? latestMessage,
     String? avatar,
-  }) {
+  }) = _Meeting;
+
+  factory Meeting.fromJson(Map<String, Object?> json) =>
+      _$MeetingFromJson(json);
+  // Map<String, dynamic> toJson() => _$MeetingToJson(this);
+
+  factory Meeting.fromMapSocket(Map<String, dynamic> map) {
     return Meeting(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      participants: participants ?? this.participants,
-      members: members ?? this.members,
-      code: code ?? this.code,
-      createdAt: createdAt ?? this.createdAt,
-      latestJoinedAt: latestJoinedAt ?? this.latestJoinedAt,
-      status: status ?? this.status,
-      latestMessage: latestMessage ?? this.latestMessage,
-      avatar: avatar ?? this.avatar,
+      id: map['id'] ?? 0,
+      title: map['title'] ?? "",
+      members: map['members'] != null && map['members'] is List
+          ? (map['members'] as List)
+              .whereType<Map<String, dynamic>>()
+              .map<Member>((member) => Member.fromJson(member))
+              .toList()
+          : [],
+      status: (int.tryParse(map['status']?.toString() ?? "0") ?? 0)
+          .getMeetingStatusEnum,
+      createdAt:
+          DateTime.fromMillisecondsSinceEpoch(int.parse(map['createdAt']))
+              .toLocal(),
+      avatar: map['avatar'],
+      code: map['code'] ?? 0,
     );
   }
+}
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'id': id,
-      'title': title,
-      'participants': participants.map((x) => x.toMap()).toList(),
-      'members': members.map((x) => x.toMap()).toList(),
-      'code': code,
-      'createdAt': createdAt.toString(),
-      'latestJoinedAt': latestJoinedAt.toString(),
-      'status': status.status,
-      'latestMessage': latestMessage?.toMap(),
-      'avatar': avatar,
-    };
-  }
-
+extension MeetingExtention on Meeting {
   Map<String, dynamic> toMapCreate({String? password}) {
     final Map<String, dynamic> body = {
       'title': title,
@@ -83,98 +58,6 @@ class Meeting {
     }
 
     return body;
-  }
-
-  factory Meeting.fromMapSocket(Map<String, dynamic> map) {
-    return Meeting(
-      id: map['id'] ?? 0,
-      title: map['title'] ?? "",
-      members: map['members'] != null && map['members'] is List
-          ? (map['members'] as List)
-              .whereType<Map<String, dynamic>>()
-              .map<Member>((member) => Member.fromMap(member))
-              .toList()
-          : [],
-      status: (int.tryParse(map['status']?.toString() ?? "0") ?? 0)
-          .getMeetingStatusEnum,
-      createdAt:
-          DateTime.fromMillisecondsSinceEpoch(int.parse(map['createdAt']))
-              .toLocal(),
-      avatar: map['avatar'],
-      code: map['code'] ?? 0,
-    );
-  }
-
-  factory Meeting.fromMap(Map<String, dynamic> map) {
-    return Meeting(
-      id: map['id'] ?? 0,
-      title: map['title'] ?? "",
-      participants: map['participants'] != null && map['participants'] is List
-          ? (map['participants'] as List)
-              .whereType<Map<String, dynamic>>()
-              .map<Participant>(
-                (participant) => Participant.fromMap(participant),
-              )
-              .toList()
-          : [],
-      members: map['members'] != null && map['members'] is List
-          ? (map['members'] as List)
-              .whereType<Map<String, dynamic>>()
-              .map<Member>((member) => Member.fromMap(member))
-              .toList()
-          : [],
-      code: map['code'] ?? 0,
-      status: (int.tryParse(map['status']?.toString() ?? "0") ?? 0)
-          .getMeetingStatusEnum,
-      createdAt: DateTime.parse(map['createdAt']).toLocal(),
-      latestJoinedAt:
-          DateTime.parse(map['latestJoinedAt'] ?? map['createdAt']).toLocal(),
-      latestMessage: map['latestMessage'] != null &&
-              map['latestMessage'] is Map<String, dynamic>
-          ? MessageModel.fromMap(map['latestMessage'])
-          : null,
-      avatar: map['avatar'],
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory Meeting.fromJson(String source) =>
-      Meeting.fromMap(json.decode(source) as Map<String, dynamic>);
-
-  @override
-  bool operator ==(covariant Meeting other) {
-    if (identical(this, other)) return true;
-
-    return other.id == id &&
-        other.title == title &&
-        other.createdAt == createdAt &&
-        other.avatar == avatar &&
-        other.status == status &&
-        other.latestJoinedAt == latestJoinedAt &&
-        other.latestMessage == latestMessage &&
-        listEquals(other.participants, participants) &&
-        listEquals(other.members, members) &&
-        other.code == code;
-  }
-
-  @override
-  String toString() {
-    return 'MeetingModel(id: $id, title: $title, avatar: $avatar, createdAt: $createdAt, status: $status, latestJoinedAt: $latestJoinedAt, participants: $participants, members: $members, status: $status, code: $code, latestMessage: $latestMessage)';
-  }
-
-  @override
-  int get hashCode {
-    return id.hashCode ^
-        title.hashCode ^
-        participants.hashCode ^
-        members.hashCode ^
-        status.hashCode ^
-        code.hashCode ^
-        avatar.hashCode ^
-        createdAt.hashCode ^
-        latestMessage.hashCode ^
-        latestJoinedAt.hashCode;
   }
 
   bool get isNoOneElse => members.length < 2;

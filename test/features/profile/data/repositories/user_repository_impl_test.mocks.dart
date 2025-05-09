@@ -9,8 +9,8 @@ import 'dart:typed_data' as _i6;
 
 import 'package:mockito/mockito.dart' as _i1;
 
+import 'package:waterbus_sdk/types/error/result.dart' as _i2;
 import 'package:waterbus_sdk/types/models/user_model.dart' as _i5;
-import 'package:waterbus_sdk/types/result.dart' as _i2;
 
 import 'package:waterbus_sdk/core/api/user/datasources/user_remote_datasource.dart'
     as _i3;

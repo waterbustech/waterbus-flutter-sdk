@@ -7,8 +7,8 @@ import 'package:waterbus_sdk/constants/api_enpoints.dart';
 import 'package:waterbus_sdk/constants/http_status_code.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/types/models/exceptions/exceptions.dart';
-import 'package:waterbus_sdk/types/result.dart';
+import 'package:waterbus_sdk/types/error/app_exception.dart';
+import 'package:waterbus_sdk/types/error/result.dart';
 import 'package:waterbus_sdk/utils/encrypt/encrypt.dart';
 
 abstract class ChatRemoteDataSource {
@@ -57,7 +57,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
       final Map<String, dynamic> message = {
         "conversations": (response.data as List)
-            .map((meeting) => Meeting.fromMap(meeting))
+            .map((meeting) => Meeting.fromJson(meeting))
             .toList(),
         "key": WaterbusSdk.messageEncryptionKey,
       };
@@ -65,7 +65,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
       return Result.success(await compute(_handleDecryptLastMessage, message));
     }
 
-    return Result.failure(response.data['message'].toString().meetingException);
+    return Result.failure(response.data['message'].toString().toFailure);
   }
 
   @override
@@ -81,7 +81,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
       final Map<String, dynamic> message = {
         "conversations": (response.data as List)
-            .map((meeting) => Meeting.fromMap(meeting))
+            .map((meeting) => Meeting.fromJson(meeting))
             .toList(),
         "key": WaterbusSdk.messageEncryptionKey,
       };
@@ -89,7 +89,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
       return Result.success(await compute(_handleDecryptLastMessage, message));
     }
 
-    return Result.failure(response.data['message'].toString().meetingException);
+    return Result.failure(response.data['message'].toString().toFailure);
   }
 
   static Future<List<Meeting>> _handleDecryptLastMessage(
@@ -133,7 +133,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
       return Result.success(true);
     }
 
-    return Result.failure(response.data['message'].toString().meetingException);
+    return Result.failure(response.data['message'].toString().toFailure);
   }
 
   @override
@@ -146,7 +146,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
       return Result.success(true);
     }
 
-    return Result.failure(response.data['message'].toString().meetingException);
+    return Result.failure(response.data['message'].toString().toFailure);
   }
 
   @override
@@ -157,7 +157,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
 
     if (response.statusCode == StatusCode.ok) {
       final Map<String, dynamic> message = {
-        "conversations": [Meeting.fromMap(response.data)],
+        "conversations": [Meeting.fromJson(response.data)],
         "key": WaterbusSdk.messageEncryptionKey,
       };
 
@@ -166,7 +166,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
       );
     }
 
-    return Result.failure(response.data['message'].toString().meetingException);
+    return Result.failure(response.data['message'].toString().toFailure);
   }
 
   @override
@@ -177,7 +177,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
 
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
       final Map<String, dynamic> message = {
-        "conversations": [Meeting.fromMap(response.data)],
+        "conversations": [Meeting.fromJson(response.data)],
         "key": WaterbusSdk.messageEncryptionKey,
       };
 
@@ -186,7 +186,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
       );
     }
 
-    return Result.failure(response.data['message'].toString().meetingException);
+    return Result.failure(response.data['message'].toString().toFailure);
   }
 
   @override
@@ -201,7 +201,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
 
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
       final Map<String, dynamic> message = {
-        "conversations": [Meeting.fromMap(response.data)],
+        "conversations": [Meeting.fromJson(response.data)],
         "key": WaterbusSdk.messageEncryptionKey,
       };
 
@@ -210,7 +210,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
       );
     }
 
-    return Result.failure(response.data['message'].toString().meetingException);
+    return Result.failure(response.data['message'].toString().toFailure);
   }
 
   @override
@@ -225,7 +225,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
 
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
       final Map<String, dynamic> message = {
-        "conversations": [Meeting.fromMap(response.data)],
+        "conversations": [Meeting.fromJson(response.data)],
         "key": WaterbusSdk.messageEncryptionKey,
       };
 
@@ -234,7 +234,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
       );
     }
 
-    return Result.failure(response.data['message'].toString().meetingException);
+    return Result.failure(response.data['message'].toString().toFailure);
   }
 
   @override
@@ -245,7 +245,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
 
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
       final Map<String, dynamic> message = {
-        "conversations": [Meeting.fromMap(response.data)],
+        "conversations": [Meeting.fromJson(response.data)],
         "key": WaterbusSdk.messageEncryptionKey,
       };
 
@@ -254,6 +254,6 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
       );
     }
 
-    return Result.failure(response.data['message'].toString().meetingException);
+    return Result.failure(response.data['message'].toString().toFailure);
   }
 }

@@ -1,82 +1,17 @@
-import 'dart:convert';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class User {
-  final int id;
-  final String fullName;
-  String userName;
-  final String? bio;
-  final String? avatar;
-  User({
-    required this.id,
-    required this.fullName,
-    required this.userName,
-    this.bio,
-    this.avatar,
-  });
+part 'user_model.freezed.dart';
+part 'user_model.g.dart';
 
-  User copyWith({
-    int? id,
-    String? fullName,
-    String? userName,
-    String? avatar,
+@freezed
+abstract class User with _$User {
+  const factory User({
+    required int id,
+    required String fullName,
+    required String userName,
     String? bio,
-  }) {
-    return User(
-      id: id ?? this.id,
-      fullName: fullName ?? this.fullName,
-      userName: userName ?? this.userName,
-      avatar: avatar ?? this.avatar,
-      bio: bio ?? this.bio,
-    );
-  }
+    String? avatar,
+  }) = _User;
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'id': id,
-      'fullName': fullName,
-      'userName': userName,
-      'avatar': avatar,
-      'bio': bio,
-    };
-  }
-
-  factory User.fromMap(Map<String, dynamic> map) {
-    return User(
-      id: int.parse(map['id']?.toString() ?? "0"),
-      fullName: map['fullName'] ?? '',
-      userName: map['userName'] ?? '',
-      bio: map['bio'] ?? '',
-      avatar: map['avatar'],
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory User.fromJson(String source) =>
-      User.fromMap(json.decode(source) as Map<String, dynamic>);
-
-  @override
-  String toString() {
-    return 'User(id: $id, fullName: $fullName, bio: $bio, userName: $userName, avatar: $avatar)';
-  }
-
-  @override
-  bool operator ==(covariant User other) {
-    if (identical(this, other)) return true;
-
-    return other.id == id &&
-        other.fullName == fullName &&
-        other.bio == bio &&
-        other.userName == userName &&
-        other.avatar == avatar;
-  }
-
-  @override
-  int get hashCode {
-    return id.hashCode ^
-        fullName.hashCode ^
-        bio.hashCode ^
-        userName.hashCode ^
-        avatar.hashCode;
-  }
+  factory User.fromJson(Map<String, Object?> json) => _$UserFromJson(json);
 }
