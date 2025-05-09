@@ -52,7 +52,7 @@ void main() {
       final Map<String, dynamic> avatarJson = jsonDecode(
         fixture(avatarModelSample),
       );
-      final AvatarModel avatar = AvatarModel.fromMap(avatarJson);
+      final AvatarModel avatar = AvatarModel.fromJson(avatarJson);
 
       // act
       final AvatarModel avatarClone = avatar.copyWith(
@@ -86,57 +86,10 @@ void main() {
         );
 
         // act
-        final AvatarModel avatar = AvatarModel.fromMap(avatarJson);
-
-        // assert
-        expect(avatar, isNotNull);
-      },
-    );
-    test(
-      'fromMap - should return a valid model when the JSON',
-      () {
-        // arrange
-        final Map<String, dynamic> avatarJson = jsonDecode(
-          fixture(avatarModelSample),
-        );
-
-        // act
-        final AvatarModel avatar = AvatarModel.fromMap(avatarJson);
-
-        // assert
-        expect(avatar, isNotNull);
-      },
-    );
-  });
-
-  group('fromJson', () {
-    test(
-      'fromJson - should return a valid model when the JSON',
-      () {
-        // arrange
-        final String avatarJson = fixture(avatarModelSample);
-
-        // act
         final AvatarModel avatar = AvatarModel.fromJson(avatarJson);
 
         // assert
         expect(avatar, isNotNull);
-      },
-    );
-
-    test(
-      'toJson - should return a valid model when the JSON',
-      () {
-        // arrange
-        final Map<String, dynamic> avatarJsom = jsonDecode(
-          fixture(avatarModelSample),
-        );
-
-        // act
-        final AvatarModel avatar = AvatarModel.fromMap(avatarJsom);
-
-        // assert
-        expect(avatar.toJson(), isNotNull);
       },
     );
   });

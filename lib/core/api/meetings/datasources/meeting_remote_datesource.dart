@@ -4,10 +4,10 @@ import 'package:injectable/injectable.dart';
 import 'package:waterbus_sdk/constants/api_enpoints.dart';
 import 'package:waterbus_sdk/constants/http_status_code.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
-import 'package:waterbus_sdk/types/models/exceptions/exceptions.dart';
+import 'package:waterbus_sdk/types/error/app_exception.dart';
+import 'package:waterbus_sdk/types/error/result.dart';
 import 'package:waterbus_sdk/types/models/meeting_model.dart';
 import 'package:waterbus_sdk/types/models/record_model.dart';
-import 'package:waterbus_sdk/types/result.dart';
 
 abstract class MeetingRemoteDataSource {
   Future<Result<Meeting>> createMeeting({
@@ -53,10 +53,10 @@ class MeetingRemoteDataSourceImpl extends MeetingRemoteDataSource {
 
     if (response.statusCode == StatusCode.created) {
       final Map<String, dynamic> rawData = response.data;
-      return Result.success(Meeting.fromMap(rawData));
+      return Result.success(Meeting.fromJson(rawData));
     }
 
-    return Result.failure(response.data['message'].toString().meetingException);
+    return Result.failure(response.data['message'].toString().toFailure);
   }
 
   @override
@@ -68,10 +68,10 @@ class MeetingRemoteDataSourceImpl extends MeetingRemoteDataSource {
     if (response.statusCode == StatusCode.ok &&
         response.data.toString().isNotEmpty) {
       final Map<String, dynamic> rawData = response.data;
-      return Result.success(Meeting.fromMap(rawData));
+      return Result.success(Meeting.fromJson(rawData));
     }
 
-    return Result.failure(response.data['message'].toString().meetingException);
+    return Result.failure(response.data['message'].toString().toFailure);
   }
 
   @override
@@ -87,13 +87,13 @@ class MeetingRemoteDataSourceImpl extends MeetingRemoteDataSource {
     if (response.statusCode == StatusCode.created) {
       final Map<String, dynamic> rawData = response.data;
       return Result.success(
-        Meeting.fromMap(rawData).copyWith(
+        Meeting.fromJson(rawData).copyWith(
           latestJoinedAt: DateTime.now(),
         ),
       );
     }
 
-    return Result.failure(response.data['message'].toString().meetingException);
+    return Result.failure(response.data['message'].toString().toFailure);
   }
 
   @override
@@ -107,13 +107,13 @@ class MeetingRemoteDataSourceImpl extends MeetingRemoteDataSource {
     if (response.statusCode == StatusCode.created) {
       final Map<String, dynamic> rawData = response.data;
       return Result.success(
-        Meeting.fromMap(rawData).copyWith(
+        Meeting.fromJson(rawData).copyWith(
           latestJoinedAt: DateTime.now(),
         ),
       );
     }
 
-    return Result.failure(response.data['message'].toString().meetingException);
+    return Result.failure(response.data['message'].toString().toFailure);
   }
 
   @override
@@ -130,7 +130,7 @@ class MeetingRemoteDataSourceImpl extends MeetingRemoteDataSource {
       return Result.success(true);
     }
 
-    return Result.failure(response.data['message'].toString().meetingException);
+    return Result.failure(response.data['message'].toString().toFailure);
   }
 
   @override
@@ -152,7 +152,7 @@ class MeetingRemoteDataSourceImpl extends MeetingRemoteDataSource {
     //   return Result.success(response.data['id']);
     // }
 
-    // return Result.failure(response.data['message'].toString().meetingException);
+    // return Result.failure(response.data['message'].toString().toFailure);
     return Result.success(1);
   }
 

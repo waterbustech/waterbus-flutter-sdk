@@ -7,8 +7,8 @@ import 'package:waterbus_sdk/constants/api_enpoints.dart';
 import 'package:waterbus_sdk/constants/http_status_code.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/types/models/exceptions/exceptions.dart';
-import 'package:waterbus_sdk/types/result.dart';
+import 'package:waterbus_sdk/types/error/app_exception.dart';
+import 'package:waterbus_sdk/types/error/result.dart';
 import 'package:waterbus_sdk/utils/encrypt/encrypt.dart';
 
 abstract class MessageRemoteDataSource {
@@ -50,7 +50,7 @@ class MessageRemoteDataSourceImpl extends MessageRemoteDataSource {
 
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
       final List<MessageModel> messages = (response.data as List)
-          .map((message) => MessageModel.fromMap(message))
+          .map((message) => MessageModel.fromJson(message))
           .toList();
 
       return Result.success(
@@ -62,7 +62,7 @@ class MessageRemoteDataSourceImpl extends MessageRemoteDataSource {
     }
 
     return Result.failure(
-      (response.data['message'] as String).messageException,
+      (response.data['message'] as String).toFailure,
     );
   }
 
@@ -98,12 +98,12 @@ class MessageRemoteDataSourceImpl extends MessageRemoteDataSource {
 
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
       return Result.success(
-        MessageModel.fromMap(response.data).copyWith(data: data),
+        MessageModel.fromJson(response.data).copyWith(data: data),
       );
     }
 
     return Result.failure(
-      (response.data['message'] as String).messageException,
+      (response.data['message'] as String).toFailure,
     );
   }
 
@@ -121,12 +121,12 @@ class MessageRemoteDataSourceImpl extends MessageRemoteDataSource {
 
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
       return Result.success(
-        MessageModel.fromMap(response.data).copyWith(data: data),
+        MessageModel.fromJson(response.data).copyWith(data: data),
       );
     }
 
     return Result.failure(
-      (response.data['message'] as String).messageException,
+      (response.data['message'] as String).toFailure,
     );
   }
 
@@ -139,11 +139,11 @@ class MessageRemoteDataSourceImpl extends MessageRemoteDataSource {
     );
 
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
-      return Result.success(MessageModel.fromMap(response.data));
+      return Result.success(MessageModel.fromJson(response.data));
     }
 
     return Result.failure(
-      (response.data['message'] as String).messageException,
+      (response.data['message'] as String).toFailure,
     );
   }
 }

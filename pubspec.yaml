@@ -49,6 +49,7 @@ dependencies:
   # Dependency Injection
   get_it: ^8.0.3
   injectable: ^2.5.0
+  freezed_annotation: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -61,6 +62,8 @@ dev_dependencies:
   injectable_generator: ^2.7.0
   build_runner: ^2.4.15
   mockito: ^5.4.6
+  freezed: ^3.0.6
+  json_serializable: ^6.9.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -62,7 +62,7 @@ void main() {
           jsonDecode(fixture(meetingSample));
 
       // Act
-      final Meeting meeting = Meeting.fromMap(meetingSampleJson);
+      final Meeting meeting = Meeting.fromJson(meetingSampleJson);
       final Meeting updatedMeeting = meeting.copyWith(
         title: 'Updated Meeting',
         id: 0,
@@ -78,7 +78,7 @@ void main() {
           jsonDecode(fixture(meetingSample));
 
       // Act
-      final Meeting meeting = Meeting.fromMap(meetingSampleJson);
+      final Meeting meeting = Meeting.fromJson(meetingSampleJson);
       final String meetingString = meeting.toString();
 
       // Assert
@@ -92,7 +92,7 @@ void main() {
           jsonDecode(fixture(meetingSample));
 
       // Act
-      final Meeting meeting = Meeting.fromMap(meetingSampleJson);
+      final Meeting meeting = Meeting.fromJson(meetingSampleJson);
       final int hashCode = meeting.hashCode;
 
       // Assert
@@ -114,16 +114,16 @@ void main() {
     });
   });
 
-  group('fromMap', () {
+  group('fromJson', () {
     test(
-      'fromMap - should return a valid model when the JSON',
+      'fromJson - should return a valid model when the JSON',
       () {
         // Arrange
         final Map<String, dynamic> meetingSampleJson =
             jsonDecode(fixture(meetingSample));
 
         // Act
-        final Meeting meeting = Meeting.fromMap(meetingSampleJson);
+        final Meeting meeting = Meeting.fromJson(meetingSampleJson);
 
         // Assert
         expect(meeting, isNotNull);
@@ -139,7 +139,7 @@ void main() {
         final String meetingSampleJson = fixture(meetingSample);
 
         // Act
-        final Meeting meeting = Meeting.fromJson(meetingSampleJson);
+        final Meeting meeting = Meeting.fromJson(jsonDecode(meetingSampleJson));
 
         // Assert
         expect(meeting, isNotNull);
@@ -153,7 +153,7 @@ void main() {
         final String meetingSampleJson = fixture(meetingSample);
 
         // Act
-        final Meeting meeting = Meeting.fromJson(meetingSampleJson);
+        final Meeting meeting = Meeting.fromJson(jsonDecode(meetingSampleJson));
 
         // Assert
         expect(meeting.toJson(), isNotNull);

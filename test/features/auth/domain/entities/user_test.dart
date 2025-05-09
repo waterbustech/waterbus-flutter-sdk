@@ -32,7 +32,7 @@ void main() {
       );
 
       // act
-      final User user = User.fromMap(userJson);
+      final User user = User.fromJson(userJson);
 
       expect(user == userModel1, true);
       expect(user == userModel2, false);
@@ -49,7 +49,7 @@ void main() {
       );
 
       // act
-      final User user = User.fromMap(userJson);
+      final User user = User.fromJson(userJson);
 
       final User userClone = user.copyWith(
         userName: "lambiengcode1",
@@ -63,9 +63,9 @@ void main() {
     });
   });
 
-  group('fromMap', () {
+  group('fromJson', () {
     test(
-      'fromMap - should return a valid model when the JSON',
+      'fromJson - should return a valid model when the JSON',
       () {
         // arrange
         final Map<String, dynamic> userJson = jsonDecode(
@@ -73,7 +73,7 @@ void main() {
         );
 
         // act
-        final User user = User.fromMap(userJson);
+        final User user = User.fromJson(userJson);
 
         final User userClone = user.copyWith(
           userName: "lambiengcode1",
@@ -94,7 +94,7 @@ void main() {
         final String userJson = fixture(userSample);
 
         // act
-        final User user = User.fromJson(userJson);
+        final User user = User.fromJson(json.decode(userJson));
 
         // assert
         expect(user, isNotNull);
@@ -110,7 +110,7 @@ void main() {
         );
 
         // act
-        final User user = User.fromMap(userJson);
+        final User user = User.fromJson(userJson);
 
         // assert
         expect(user.toJson(), isNotNull);

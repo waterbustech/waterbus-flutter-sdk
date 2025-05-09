@@ -1,34 +1,15 @@
-class BeautyFilters {
-  double smoothValue;
-  double whiteValue;
-  double thinFaceValue;
-  double bigEyeValue;
-  double lipstickValue;
-  double blusherValue;
-  BeautyFilters({
-    this.smoothValue = 0,
-    this.whiteValue = 0,
-    this.thinFaceValue = 0,
-    this.bigEyeValue = 0,
-    this.lipstickValue = 0,
-    this.blusherValue = 0,
-  });
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  BeautyFilters copyWith({
-    double? smoothValue,
-    double? whiteValue,
-    double? thinFaceValue,
-    double? bigEyeValue,
-    double? lipstickValue,
-    double? blusherValue,
-  }) {
-    return BeautyFilters(
-      smoothValue: smoothValue ?? this.smoothValue,
-      whiteValue: whiteValue ?? this.whiteValue,
-      thinFaceValue: thinFaceValue ?? this.thinFaceValue,
-      bigEyeValue: bigEyeValue ?? this.bigEyeValue,
-      lipstickValue: lipstickValue ?? this.lipstickValue,
-      blusherValue: blusherValue ?? this.blusherValue,
-    );
-  }
+part 'beauty_filters.freezed.dart';
+
+@freezed
+abstract class BeautyFilters with _$BeautyFilters {
+  const factory BeautyFilters({
+    @Default(0) double smoothValue,
+    @Default(0) double whiteValue,
+    @Default(0) double thinFaceValue,
+    @Default(0) double bigEyeValue,
+    @Default(0) double lipstickValue,
+    @Default(0) double blusherValue,
+  }) = _BeautyFilters;
 }

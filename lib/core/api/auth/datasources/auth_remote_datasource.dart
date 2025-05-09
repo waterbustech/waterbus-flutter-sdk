@@ -6,9 +6,9 @@ import 'package:waterbus_sdk/constants/http_status_code.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/types/error/failures.dart';
+import 'package:waterbus_sdk/types/error/result.dart';
 import 'package:waterbus_sdk/types/models/auth_payload_model.dart';
 import 'package:waterbus_sdk/types/models/user_model.dart';
-import 'package:waterbus_sdk/types/result.dart';
 
 abstract class AuthRemoteDataSource {
   Future<(String?, String?)> refreshToken();
@@ -25,7 +25,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
 
   @override
   Future<Result<User>> signInWithSocial(AuthPayloadModel authPayload) async {
-    final Map<String, dynamic> body = authPayload.toMap();
+    final Map<String, dynamic> body = authPayload.toJson();
 
     final Response response = await _baseRemoteData.postRoute(
       ApiEndpoints.auth,
@@ -41,7 +41,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
         refreshToken: refreshToken,
       );
 
-      return Result.success(User.fromMap(response.data['user']));
+      return Result.success(User.fromJson(response.data['user']));
     }
 
     return Result.failure(ServerFailure());

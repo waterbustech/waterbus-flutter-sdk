@@ -107,7 +107,7 @@ class WsHandlerImpl extends WsHandler {
         /// targetId
         if (data == null) return;
 
-        final participant = Participant.fromMap(
+        final participant = Participant.fromJson(
           Map<String, dynamic>.from(data),
         );
 
