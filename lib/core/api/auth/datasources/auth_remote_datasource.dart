@@ -6,9 +6,9 @@ import 'package:waterbus_sdk/constants/status_code.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/types/error/failures.dart';
-import 'package:waterbus_sdk/types/result.dart';
 import 'package:waterbus_sdk/types/models/auth_payload_model.dart';
 import 'package:waterbus_sdk/types/models/user_model.dart';
+import 'package:waterbus_sdk/types/result.dart';
 
 abstract class AuthRemoteDataSource {
   Future<(String?, String?)> refreshToken();

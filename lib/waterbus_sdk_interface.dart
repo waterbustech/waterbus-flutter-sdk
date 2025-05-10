@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/types/result.dart';
 import 'package:waterbus_sdk/types/models/record_model.dart';
+import 'package:waterbus_sdk/types/result.dart';
 
 abstract class WaterbusSdkInterface {
   Future<void> initializeApp();

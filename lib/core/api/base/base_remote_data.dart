@@ -8,9 +8,9 @@ import 'package:injectable/injectable.dart';
 
 import 'package:waterbus_sdk/constants/status_code.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
-import 'package:waterbus_sdk/utils/dio/dio_configuration.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
+import 'package:waterbus_sdk/utils/dio/dio_configuration.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extension.dart';
 
 @Singleton()

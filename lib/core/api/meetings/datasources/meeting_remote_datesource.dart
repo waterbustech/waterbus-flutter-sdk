@@ -5,9 +5,9 @@ import 'package:waterbus_sdk/constants/endpoints.dart';
 import 'package:waterbus_sdk/constants/status_code.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/types/error/app_exception.dart';
-import 'package:waterbus_sdk/types/result.dart';
 import 'package:waterbus_sdk/types/models/meeting_model.dart';
 import 'package:waterbus_sdk/types/models/record_model.dart';
+import 'package:waterbus_sdk/types/result.dart';
 
 abstract class MeetingRemoteDataSource {
   Future<Result<Meeting>> createMeeting({
