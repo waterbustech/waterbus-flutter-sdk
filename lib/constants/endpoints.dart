@@ -1,4 +1,4 @@
-class ApiEndpoints {
+class Endpoints {
   // Auth
   static const String auth = 'auth';
   static const String presignedUrlS3 = 'auth/presigned-url';

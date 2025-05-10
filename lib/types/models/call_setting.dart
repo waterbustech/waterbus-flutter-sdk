@@ -21,7 +21,6 @@ abstract class CallSetting with _$CallSetting {
     @Default(false) bool e2eeEnabled,
     @Default(RTCVideoCodec.h264) RTCVideoCodec preferedCodec,
     @Default(VideoQuality.high) VideoQuality videoQuality,
-    // @Default(VideoLayout.gridView) VideoLayout videoLayout,
   }) = _CallSetting;
 
   factory CallSetting.fromJson(Map<String, Object?> json) =>

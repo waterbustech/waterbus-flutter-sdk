@@ -54,7 +54,7 @@ abstract class WebRTCManager {
   });
   Future<void> disableVirtualBackground({bool reset = false});
 
-  // Getter
+  // Expose states
   CallState callState();
   Stream<CallbackPayload> get notifyChanged;
   String? get roomId;

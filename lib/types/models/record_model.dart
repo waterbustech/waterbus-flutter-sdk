@@ -6,7 +6,7 @@ part 'record_model.freezed.dart';
 part 'record_model.g.dart';
 
 @freezed
-abstract class RecordModel with _$RecordModel {
+sealed class RecordModel with _$RecordModel {
   const factory RecordModel({
     required int id,
     required Meeting meeting,

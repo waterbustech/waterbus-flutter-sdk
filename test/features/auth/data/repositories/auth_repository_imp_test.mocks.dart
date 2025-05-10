@@ -9,7 +9,7 @@ import 'dart:async' as _i6;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i4;
 
-import 'package:waterbus_sdk/types/error/result.dart' as _i2;
+import 'package:waterbus_sdk/types/result.dart' as _i2;
 import 'package:waterbus_sdk/types/models/auth_payload_model.dart' as _i8;
 import 'package:waterbus_sdk/types/models/user_model.dart' as _i7;
 

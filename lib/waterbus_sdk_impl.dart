@@ -16,7 +16,7 @@ import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/native/picture-in-picture/index.dart';
 import 'package:waterbus_sdk/native/replaykit.dart';
 import 'package:waterbus_sdk/types/error/failures.dart';
-import 'package:waterbus_sdk/types/error/result.dart';
+import 'package:waterbus_sdk/types/result.dart';
 import 'package:waterbus_sdk/types/models/create_meeting_params.dart';
 import 'package:waterbus_sdk/types/models/record_model.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';

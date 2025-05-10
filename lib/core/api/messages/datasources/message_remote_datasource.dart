@@ -3,12 +3,12 @@ import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
-import 'package:waterbus_sdk/constants/api_enpoints.dart';
-import 'package:waterbus_sdk/constants/http_status_code.dart';
+import 'package:waterbus_sdk/constants/endpoints.dart';
+import 'package:waterbus_sdk/constants/status_code.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/types/error/app_exception.dart';
-import 'package:waterbus_sdk/types/error/result.dart';
+import 'package:waterbus_sdk/types/result.dart';
 import 'package:waterbus_sdk/utils/encrypt/encrypt.dart';
 
 abstract class MessageRemoteDataSource {
@@ -43,8 +43,8 @@ class MessageRemoteDataSourceImpl extends MessageRemoteDataSource {
     required int limit,
     required int skip,
   }) async {
-    final Response response = await _remoteData.getRoute(
-      "${ApiEndpoints.chats}/$meetingId",
+    final Response response = await _remoteData.get(
+      "${Endpoints.chats}/$meetingId",
       query: "limit=$limit&skip=$skip",
     );
 
@@ -91,8 +91,8 @@ class MessageRemoteDataSourceImpl extends MessageRemoteDataSource {
     final String messageData =
         await EncryptAES().encryptAES256(cleartext: data);
 
-    final Response response = await _remoteData.postRoute(
-      "${ApiEndpoints.chats}/$meetingId",
+    final Response response = await _remoteData.post(
+      "${Endpoints.chats}/$meetingId",
       body: {"data": messageData},
     );
 
@@ -114,8 +114,8 @@ class MessageRemoteDataSourceImpl extends MessageRemoteDataSource {
   }) async {
     final String messageData =
         await EncryptAES().encryptAES256(cleartext: data);
-    final Response response = await _remoteData.putRoute(
-      "${ApiEndpoints.chats}/$messageId",
+    final Response response = await _remoteData.put(
+      "${Endpoints.chats}/$messageId",
       {"data": messageData},
     );
 
@@ -134,8 +134,8 @@ class MessageRemoteDataSourceImpl extends MessageRemoteDataSource {
   Future<Result<MessageModel>> deleteMessage({
     required int messageId,
   }) async {
-    final Response response = await _remoteData.deleteRoute(
-      "${ApiEndpoints.chats}/$messageId",
+    final Response response = await _remoteData.delete(
+      "${Endpoints.chats}/$messageId",
     );
 
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {

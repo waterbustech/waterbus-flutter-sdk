@@ -2,7 +2,7 @@ import 'package:injectable/injectable.dart';
 
 import 'package:waterbus_sdk/core/api/chat/datasources/chat_remote_datasource.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/types/error/result.dart';
+import 'package:waterbus_sdk/types/result.dart';
 
 abstract class ChatRepository {
   Future<Result<List<Meeting>>> getConversations({

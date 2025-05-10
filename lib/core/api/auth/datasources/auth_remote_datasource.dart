@@ -1,12 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
-import 'package:waterbus_sdk/constants/api_enpoints.dart';
-import 'package:waterbus_sdk/constants/http_status_code.dart';
+import 'package:waterbus_sdk/constants/endpoints.dart';
+import 'package:waterbus_sdk/constants/status_code.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/types/error/failures.dart';
-import 'package:waterbus_sdk/types/error/result.dart';
+import 'package:waterbus_sdk/types/result.dart';
 import 'package:waterbus_sdk/types/models/auth_payload_model.dart';
 import 'package:waterbus_sdk/types/models/user_model.dart';
 
@@ -27,8 +27,8 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   Future<Result<User>> signInWithSocial(AuthPayloadModel authPayload) async {
     final Map<String, dynamic> body = authPayload.toJson();
 
-    final Response response = await _baseRemoteData.postRoute(
-      ApiEndpoints.auth,
+    final Response response = await _baseRemoteData.post(
+      Endpoints.auth,
       body: body,
     );
 
@@ -50,7 +50,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   @override
   Future<(String?, String?)> refreshToken() async {
     final Response response = await _baseRemoteData.dio.get(
-      ApiEndpoints.auth,
+      Endpoints.auth,
       options: _baseRemoteData.getOptionsRefreshToken,
     );
 
@@ -64,8 +64,8 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
 
   @override
   Future<Result<bool>> logOut() async {
-    final Response response = await _baseRemoteData.deleteRoute(
-      ApiEndpoints.auth,
+    final Response response = await _baseRemoteData.delete(
+      Endpoints.auth,
     );
 
     if (response.statusCode == StatusCode.noContent) {

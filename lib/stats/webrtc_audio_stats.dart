@@ -6,7 +6,7 @@ import 'package:injectable/injectable.dart';
 import 'package:waterbus_sdk/types/enums/audio_level.dart';
 import 'package:waterbus_sdk/types/models/audio_stats_params.dart';
 import 'package:waterbus_sdk/types/models/stats.dart';
-import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
+import 'package:waterbus_sdk/utils/extensions/duration_extension.dart';
 
 @singleton
 class WebRTCAudioStats {

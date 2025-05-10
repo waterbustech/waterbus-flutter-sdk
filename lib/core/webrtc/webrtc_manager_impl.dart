@@ -19,9 +19,9 @@ import 'package:waterbus_sdk/types/enums/rtc_track_kind.dart';
 import 'package:waterbus_sdk/types/enums/track_type.dart';
 import 'package:waterbus_sdk/types/models/audio_stats_params.dart';
 import 'package:waterbus_sdk/types/models/subscribe_response.dart';
-import 'package:waterbus_sdk/utils/extensions/pc_extensions.dart';
-import 'package:waterbus_sdk/utils/extensions/sdp_extensions.dart';
-import 'package:waterbus_sdk/utils/extensions/string_ext.dart';
+import 'package:waterbus_sdk/utils/extensions/pc_extension.dart';
+import 'package:waterbus_sdk/utils/extensions/sdp_extension.dart';
+import 'package:waterbus_sdk/utils/extensions/string_extension.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 @LazySingleton(as: WebRTCManager)

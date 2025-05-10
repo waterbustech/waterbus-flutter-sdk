@@ -1,7 +1,7 @@
 import 'package:injectable/injectable.dart';
 
 import 'package:waterbus_sdk/core/api/messages/datasources/message_remote_datasource.dart';
-import 'package:waterbus_sdk/types/error/result.dart';
+import 'package:waterbus_sdk/types/result.dart';
 import 'package:waterbus_sdk/types/models/message_model.dart';
 
 abstract class MessageRepository {

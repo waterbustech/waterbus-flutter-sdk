@@ -7,12 +7,12 @@ import 'package:dio_compatibility_layer/dio_compatibility_layer.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart' as rt;
 import 'package:injectable/injectable.dart';
 
-import 'package:waterbus_sdk/constants/api_enpoints.dart';
-import 'package:waterbus_sdk/constants/http_status_code.dart';
+import 'package:waterbus_sdk/constants/endpoints.dart';
+import 'package:waterbus_sdk/constants/status_code.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
+import 'package:waterbus_sdk/utils/extensions/duration_extension.dart';
 import 'package:waterbus_sdk/utils/queues/completer_queue.dart';
 
 typedef TokensCallback = Function(
@@ -72,7 +72,7 @@ class DioConfiguration {
       InterceptorsWrapper(
         onResponse: (response, handler) async {
           final bool isRefreshingToken =
-              response.requestOptions.path == ApiEndpoints.auth &&
+              response.requestOptions.path == Endpoints.auth &&
                   response.requestOptions.method == 'GET';
 
           if (response.statusCode == StatusCode.unauthorized) {
@@ -153,7 +153,7 @@ class DioConfiguration {
     }
 
     final Response response = await _remoteData.dio.get(
-      ApiEndpoints.auth,
+      Endpoints.auth,
       options: _remoteData.getOptionsRefreshToken,
     );
 

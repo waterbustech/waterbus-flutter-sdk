@@ -8,7 +8,7 @@ import 'package:waterbus_sdk/constants/constants.dart';
 import 'package:waterbus_sdk/types/models/rtc_participant_stats.dart';
 import 'package:waterbus_sdk/types/models/stats.dart';
 import 'package:waterbus_sdk/types/models/video_stats_params.dart';
-import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
+import 'package:waterbus_sdk/utils/extensions/duration_extension.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 @singleton

@@ -5,13 +5,13 @@ import 'package:socket_io_client/socket_io_client.dart';
 
 import 'package:waterbus_sdk/constants/ws_event.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
-import 'package:waterbus_sdk/core/api/base/dio_configuration.dart';
+import 'package:waterbus_sdk/utils/dio/dio_configuration.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_manager.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/ws_handler.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/types/models/subscribe_response.dart';
 import 'package:waterbus_sdk/utils/encrypt/encrypt.dart';
-import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
+import 'package:waterbus_sdk/utils/extensions/duration_extension.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 import 'package:waterbus_sdk/utils/msg_pack_parser.dart';
 
@@ -224,7 +224,7 @@ class WsHandlerImpl extends WsHandler {
   void _listenToChatEvents() {
     _socket?.on(WsEvent.chatSend, (data) async {
       if (data == null) return;
-      final msg = MessageModel.fromMapSocket(data);
+      final msg = MessageModel.fromJson(data);
       final decrypted = await EncryptAES().decryptAES256(cipherText: msg.data);
       WaterbusSdk.listener.onMesssageChanged?.call(
         MessageSocketEvent(
@@ -236,7 +236,7 @@ class WsHandlerImpl extends WsHandler {
 
     _socket?.on(WsEvent.chatUpdate, (data) async {
       if (data == null) return;
-      final msg = MessageModel.fromMapSocket(data);
+      final msg = MessageModel.fromJson(data);
       final decrypted = await EncryptAES().decryptAES256(cipherText: msg.data);
       WaterbusSdk.listener.onMesssageChanged?.call(
         MessageSocketEvent(
@@ -248,7 +248,7 @@ class WsHandlerImpl extends WsHandler {
 
     _socket?.on(WsEvent.chatDelete, (data) {
       if (data == null) return;
-      final msg = MessageModel.fromMapSocket(data);
+      final msg = MessageModel.fromJson(data);
       WaterbusSdk.listener.onMesssageChanged?.call(
         MessageSocketEvent(event: MessageEventEnum.delete, message: msg),
       );
