@@ -236,7 +236,7 @@ class WebRTCManagerIpml extends WebRTCManager {
     await _mParticipant?.setRemoteDescription(description);
 
     for (final candidate in _iceCandidateQueueForPublisher) {
-      _wsEmitter.sendBroadcastCandidate(candidate);
+      _wsEmitter.sendPublisherCandidate(candidate);
     }
 
     for (final candidate in _remoteIceCandidatesForPublisher) {
@@ -284,7 +284,7 @@ class WebRTCManagerIpml extends WebRTCManager {
       );
       await pc.setLocalDescription(localDescription);
 
-      _wsEmitter.answerEstablishSubscriber(targetId: targetId, sdp: ansSdp);
+      _wsEmitter.answerSubscribe(targetId: targetId, sdp: ansSdp);
     } catch (_) {}
   }
 
@@ -727,7 +727,7 @@ class WebRTCManagerIpml extends WebRTCManager {
 
     peerConnection.onIceCandidate = (candidate) {
       if (_canPublisherAddIceCandidate) {
-        _wsEmitter.sendBroadcastCandidate(candidate);
+        _wsEmitter.sendPublisherCandidate(candidate);
       } else {
         _iceCandidateQueueForPublisher.add(candidate);
       }
@@ -785,7 +785,7 @@ class WebRTCManagerIpml extends WebRTCManager {
 
     await peerConnection.setLocalDescription(description);
 
-    _wsEmitter.establishBroadcast(
+    _wsEmitter.publish(
       sdp: sdp,
       roomId: _currentRoomId!,
       participantId: _currentParticipantId!,
@@ -836,7 +836,7 @@ class WebRTCManagerIpml extends WebRTCManager {
   Future<void> _makeConnectionReceive(String targetId) async {
     if (_currentRoomId == null || _currentParticipantId == null) return;
 
-    _wsEmitter.requestEstablishSubscriber(
+    _wsEmitter.subscribe(
       roomId: _currentRoomId!,
       participantId: _currentParticipantId!,
       targetId: targetId,
@@ -931,7 +931,7 @@ class WebRTCManagerIpml extends WebRTCManager {
     };
 
     rtcPeerConnection.onIceCandidate = (candidate) {
-      _wsEmitter.sendReceiverCandidate(
+      _wsEmitter.sendSubscriberCandidate(
         candidate: candidate,
         targetId: targetId,
       );
@@ -946,7 +946,7 @@ class WebRTCManagerIpml extends WebRTCManager {
     );
     await rtcPeerConnection.setLocalDescription(description);
 
-    _wsEmitter.answerEstablishSubscriber(targetId: targetId, sdp: sdp);
+    _wsEmitter.answerSubscribe(targetId: targetId, sdp: sdp);
 
     // Process queue candidates from server
     final List<RTCIceCandidate> candidates =
@@ -1047,7 +1047,7 @@ class WebRTCManagerIpml extends WebRTCManager {
 
     await pc.setLocalDescription(description);
 
-    _wsEmitter.sendNewSdp(sdp);
+    _wsEmitter.sendRenegotiateSdp(sdp);
   }
 
   void _notify(

@@ -9,16 +9,16 @@ import 'package:waterbus_sdk/injection/injection_container.dart';
 
 @Injectable(as: WsEmitter)
 class WsEmitterImpl extends WsEmitter {
-  // MARK: emit functions
+  // ====== Room Events ======
   @override
-  void establishBroadcast({
+  void publish({
     required String sdp,
     required String roomId,
     required String participantId,
     required ParticipantSFU participant,
     required int totalTracks,
   }) {
-    _socket?.emit(WsEvent.publishCSS, {
+    _socket?.emit(WsEvent.roomPublish, {
       "roomId": roomId,
       "sdp": sdp,
       "participantId": participantId,
@@ -30,47 +30,12 @@ class WsEmitterImpl extends WsEmitter {
   }
 
   @override
-  void leaveRoom(String roomId) {
-    _socket?.emit(WsEvent.sendLeaveRoomCSS, {"roomId": roomId});
-  }
-
-  @override
-  void sendBroadcastCandidate(RTCIceCandidate candidate) {
-    _socket?.emit(
-      WsEvent.publisherCandidateCSS,
-      candidate.toMap(),
-    );
-  }
-
-  @override
-  void sendReceiverCandidate({
-    required RTCIceCandidate candidate,
-    required targetId,
-  }) {
-    _socket?.emit(WsEvent.subscriberCandidateCSS, {
-      'targetId': targetId,
-      'candidate': candidate.toMap(),
-    });
-  }
-
-  @override
-  void answerEstablishSubscriber({
-    required String targetId,
-    required String sdp,
-  }) {
-    _socket?.emit(WsEvent.answerSubscriberCSS, {
-      "targetId": targetId,
-      "sdp": sdp,
-    });
-  }
-
-  @override
-  void requestEstablishSubscriber({
+  void subscribe({
     required String roomId,
     required String participantId,
     required String targetId,
   }) {
-    _socket?.emit(WsEvent.subscribeCSS, {
+    _socket?.emit(WsEvent.roomSubscribe, {
       "roomId": roomId,
       "targetId": targetId,
       "participantId": participantId,
@@ -78,18 +43,62 @@ class WsEmitterImpl extends WsEmitter {
   }
 
   @override
-  void setAudioEnabled(bool isEnabled) {
-    _socket?.emit(WsEvent.setAudioEnabledCSS, {'isEnabled': isEnabled});
+  void answerSubscribe({
+    required String targetId,
+    required String sdp,
+  }) {
+    _socket?.emit(WsEvent.roomAnswerSubscriber, {
+      "targetId": targetId,
+      "sdp": sdp,
+    });
+  }
+
+  @override
+  void sendRenegotiateSdp(String sdp) {
+    _socket?.emit(WsEvent.roomPublisherRenegotiation, {'sdp': sdp});
+  }
+
+  @override
+  void leaveRoom(String roomId) {
+    _socket?.emit(WsEvent.roomLeave, {"roomId": roomId});
+  }
+
+  @override
+  void reconnect() {
+    _socket?.emit(WsEvent.roomReconnect);
+  }
+
+  // ====== ICE Candidate Events ======
+  @override
+  void sendPublisherCandidate(RTCIceCandidate candidate) {
+    _socket?.emit(WsEvent.roomPublisherCandidate, candidate.toMap());
+  }
+
+  @override
+  void sendSubscriberCandidate({
+    required RTCIceCandidate candidate,
+    required targetId,
+  }) {
+    _socket?.emit(WsEvent.roomSubscriberCandidate, {
+      'targetId': targetId,
+      'candidate': candidate.toMap(),
+    });
+  }
+
+  // ====== Media Controls Events ======
+  @override
+  void setCameraType(CameraType cameraType) {
+    _socket?.emit(WsEvent.roomCameraType, {'type': cameraType.type});
   }
 
   @override
   void setVideoEnabled(bool isEnabled) {
-    _socket?.emit(WsEvent.setVideoEnabledCSS, {'isEnabled': isEnabled});
+    _socket?.emit(WsEvent.roomVideoEnabled, {'isEnabled': isEnabled});
   }
 
   @override
-  void setCameraType(CameraType cameraType) {
-    _socket?.emit(WsEvent.setCameraTypeCSS, {'type': cameraType.type});
+  void setAudioEnabled(bool isEnabled) {
+    _socket?.emit(WsEvent.roomAudioEnabled, {'isEnabled': isEnabled});
   }
 
   @override
@@ -102,28 +111,19 @@ class WsEmitterImpl extends WsEmitter {
       payload['screenTrackId'] = screenTrackId;
     }
 
-    _socket?.emit(WsEvent.setScreenSharingCSS, payload);
-  }
-
-  @override
-  void sendNewSdp(String sdp) {
-    _socket?.emit(WsEvent.publisherRenegotiationCSS, {'sdp': sdp});
+    _socket?.emit(WsEvent.roomScreenSharing, payload);
   }
 
   @override
   void setSubtitle(bool isEnabled) {
-    _socket?.emit(WsEvent.setSubscribeSubtitleCSS, {'isEnabled': isEnabled});
+    _socket?.emit(WsEvent.roomSubtitleTrack, {'isEnabled': isEnabled});
   }
 
   @override
   void setHandRaising(bool isRaising) {
-    _socket?.emit(WsEvent.handRaisingCSS, {'isRaising': isRaising});
+    _socket?.emit(WsEvent.roomHandRaising, {'isRaising': isRaising});
   }
 
-  @override
-  void reconnect() {
-    _socket?.emit(WsEvent.reconnect);
-  }
-
+  // ====== Internal ======
   Socket? get _socket => getIt<WsHandler>().socket;
 }

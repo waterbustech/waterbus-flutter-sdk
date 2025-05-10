@@ -1,10 +1,11 @@
 import 'package:flutter/foundation.dart';
-import 'package:waterbus_sdk/constants/rtc_configurations.dart'
-    show RTCConfigurations;
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/types/enums/rtc_track_kind.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
+
+import 'package:waterbus_sdk/constants/rtc_configurations.dart'
+    show RTCConfigurations;
 
 extension PeerX on RTCPeerConnection {
   Future<RTCRtpSender> addSimulcastTrack(

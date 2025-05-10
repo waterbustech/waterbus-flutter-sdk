@@ -10,7 +10,6 @@ import 'package:waterbus_sdk/core/webrtc/webrtc_manager.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
 import 'package:waterbus_sdk/types/error/result.dart';
 import 'package:waterbus_sdk/types/index.dart';
-import 'package:waterbus_sdk/types/models/conversation_socket_event.dart';
 import 'package:waterbus_sdk/types/models/record_model.dart';
 import 'package:waterbus_sdk/utils/callkit/callkit_listener.dart';
 import 'package:waterbus_sdk/waterbus_event_listener.dart';
@@ -27,18 +26,11 @@ class WaterbusSdk {
   static String messageEncryptionKey = '';
   static String webrtcE2eeKey = 'waterbus';
   static HttpVersionPref httpVersionPref = HttpVersionPref.all;
-  static WaterBusEventListener listener = WaterBusEventListener();
+  static WaterbusEventListener listener = WaterbusEventListener();
 
   set onMessageSocketChanged(Function(MessageSocketEvent) onMesssageChanged) {
     WaterbusSdk.listener =
         WaterbusSdk.listener.copyWith(onMesssageChanged: onMesssageChanged);
-  }
-
-  set onConversationSocketChanged(
-    Function(ConversationSocketEvent) onConversationChanged,
-  ) {
-    WaterbusSdk.listener = WaterbusSdk.listener
-        .copyWith(onConversationChanged: onConversationChanged);
   }
 
   set onEventChangedRegister(Function(CallbackPayload) onEventChanged) {
