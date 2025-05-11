@@ -6,12 +6,12 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
-import 'package:waterbus_sdk/constants/http_status_code.dart';
+import 'package:waterbus_sdk/constants/status_code.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
-import 'package:waterbus_sdk/core/api/base/dio_configuration.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
-import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
+import 'package:waterbus_sdk/utils/dio/dio_configuration.dart';
+import 'package:waterbus_sdk/utils/extensions/duration_extension.dart';
 
 @Singleton()
 class BaseRemoteData {
@@ -26,62 +26,9 @@ class BaseRemoteData {
       receiveTimeout: 10.seconds,
       sendTimeout: 10.seconds,
     ),
-  ); // with default Options
+  );
 
-  Future<Response<dynamic>> downloadFile(
-    String url,
-    String path,
-    Function onReceive,
-  ) async {
-    final Response response = await dio.download(
-      url,
-      path,
-      options: getOptions(),
-      onReceiveProgress: (received, total) {
-        onReceive(received, total);
-      },
-    );
-    return response;
-  }
-
-  Future<Response<dynamic>> postFormData(
-    String gateway,
-    FormData formData,
-  ) async {
-    try {
-      final Response response = await dio.post(
-        gateway,
-        data: formData,
-        options: getOptions(),
-        onSendProgress: (send, total) {},
-        onReceiveProgress: (received, total) {},
-      );
-
-      return response;
-    } on DioException catch (exception) {
-      return catchDioException(exception: exception, gateway: gateway);
-    }
-  }
-
-  Future<Response<dynamic>> putFormData(
-    String gateway,
-    FormData formData,
-  ) async {
-    try {
-      final Response response = await dio.put(
-        gateway,
-        data: formData,
-        options: getOptions(),
-        onSendProgress: (send, total) {},
-        onReceiveProgress: (received, total) {},
-      );
-      return response;
-    } on DioException catch (exception) {
-      return catchDioException(exception: exception, gateway: gateway);
-    }
-  }
-
-  Future<Response<dynamic>> postRoute(
+  Future<Response<dynamic>> post(
     String gateway, {
     Map<String, dynamic>? body,
     Map<String, dynamic>? queryParameters,
@@ -100,7 +47,7 @@ class BaseRemoteData {
     }
   }
 
-  Future<Response<dynamic>> putRoute(
+  Future<Response<dynamic>> put(
     String gateway,
     Map<String, dynamic> body,
   ) async {
@@ -117,34 +64,7 @@ class BaseRemoteData {
     }
   }
 
-  Future<Response<dynamic>> patchRoute(
-    String gateway, {
-    String? query,
-    Map<String, dynamic>? body,
-  }) async {
-    try {
-      final Map<String, String> paramsObject = {};
-      if (query != null) {
-        query.split('&').forEach((element) {
-          paramsObject[element.split('=')[0].toString()] =
-              element.split('=')[1].toString();
-        });
-      }
-
-      final Response response = await dio.patch(
-        gateway,
-        data: body == null ? null : convert.jsonEncode(body),
-        options: getOptions(),
-        queryParameters: query == null ? null : paramsObject,
-      );
-
-      return response;
-    } on DioException catch (exception) {
-      return catchDioException(exception: exception, gateway: gateway);
-    }
-  }
-
-  Future<Response<dynamic>> getRoute(
+  Future<Response<dynamic>> get(
     String gateway, {
     String params = '',
     String? query,
@@ -170,7 +90,7 @@ class BaseRemoteData {
     }
   }
 
-  Future<Response<dynamic>> deleteRoute(
+  Future<Response<dynamic>> delete(
     String gateway, {
     String? params,
     String? query,
@@ -206,7 +126,7 @@ class BaseRemoteData {
     return Response(
       requestOptions: RequestOptions(path: gateway),
       statusCode: StatusCode.badGateway,
-      statusMessage: "CATCH EXCEPTION DIO",
+      statusMessage: "DIO_EXCEPTION",
     );
   }
 

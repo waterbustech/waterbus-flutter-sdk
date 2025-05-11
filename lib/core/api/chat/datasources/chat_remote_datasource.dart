@@ -3,8 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
-import 'package:waterbus_sdk/constants/api_enpoints.dart';
-import 'package:waterbus_sdk/constants/http_status_code.dart';
+import 'package:waterbus_sdk/constants/endpoints.dart';
+import 'package:waterbus_sdk/constants/status_code.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/utils/encrypt/encrypt.dart';
@@ -47,8 +47,8 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
     required int limit,
     required int status,
   }) async {
-    final Response response = await _remoteData.getRoute(
-      "${ApiEndpoints.meetingConversations}/$status",
+    final Response response = await _remoteData.get(
+      "${Endpoints.meetingConversations}/$status",
       query: "limit=$limit&skip=$skip",
     );
 
@@ -71,8 +71,8 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
     required int skip,
     required int limit,
   }) async {
-    final Response response = await _remoteData.getRoute(
-      ApiEndpoints.archivedConversations,
+    final Response response = await _remoteData.get(
+      Endpoints.archivedConversations,
       query: "limit=$limit&skip=$skip",
     );
 
@@ -122,8 +122,8 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
     required Meeting meeting,
     String? password,
   }) async {
-    final Response response = await _remoteData.putRoute(
-      ApiEndpoints.meetings,
+    final Response response = await _remoteData.put(
+      Endpoints.meetings,
       meeting.toMapCreate(password: password),
     );
 
@@ -136,8 +136,8 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
 
   @override
   Future<Result<bool>> deleteConversation({required int meetingId}) async {
-    final response = await _remoteData.deleteRoute(
-      "${ApiEndpoints.chatsConversations}/$meetingId",
+    final response = await _remoteData.delete(
+      "${Endpoints.chatsConversations}/$meetingId",
     );
 
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
@@ -149,8 +149,8 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
 
   @override
   Future<Result<Meeting>> leaveConversation({required int code}) async {
-    final Response response = await _remoteData.deleteRoute(
-      '${ApiEndpoints.meetings}/$code',
+    final Response response = await _remoteData.delete(
+      '${Endpoints.meetings}/$code',
     );
 
     if (response.statusCode == StatusCode.ok) {
@@ -169,8 +169,8 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
 
   @override
   Future<Result<Meeting>> acceptInvite({required int meetingId}) async {
-    final Response response = await _remoteData.postRoute(
-      '${ApiEndpoints.acceptInvite}/$meetingId',
+    final Response response = await _remoteData.post(
+      '${Endpoints.acceptInvite}/$meetingId',
     );
 
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
@@ -192,8 +192,8 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
     required int code,
     required int userId,
   }) async {
-    final Response response = await _remoteData.postRoute(
-      '${ApiEndpoints.meetingMembers}/$code',
+    final Response response = await _remoteData.post(
+      '${Endpoints.meetingMembers}/$code',
       body: {"userId": userId},
     );
 
@@ -216,8 +216,8 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
     required int code,
     required int userId,
   }) async {
-    final Response response = await _remoteData.deleteRoute(
-      '${ApiEndpoints.meetingMembers}/$code',
+    final Response response = await _remoteData.delete(
+      '${Endpoints.meetingMembers}/$code',
       body: {"userId": userId},
     );
 
@@ -237,8 +237,8 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
 
   @override
   Future<Result<Meeting>> archivedConversation({required int code}) async {
-    final Response response = await _remoteData.postRoute(
-      '${ApiEndpoints.archivedMeeeting}/$code',
+    final Response response = await _remoteData.post(
+      '${Endpoints.archivedMeeeting}/$code',
     );
 
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {

@@ -22,26 +22,6 @@ abstract class Meeting with _$Meeting {
 
   factory Meeting.fromJson(Map<String, Object?> json) =>
       _$MeetingFromJson(json);
-
-  factory Meeting.fromMapSocket(Map<String, dynamic> map) {
-    return Meeting(
-      id: map['id'] ?? 0,
-      title: map['title'] ?? "",
-      members: map['members'] != null && map['members'] is List
-          ? (map['members'] as List)
-              .whereType<Map<String, dynamic>>()
-              .map<Member>((member) => Member.fromJson(member))
-              .toList()
-          : [],
-      status: (int.tryParse(map['status']?.toString() ?? "0") ?? 0)
-          .getMeetingStatusEnum,
-      createdAt:
-          DateTime.fromMillisecondsSinceEpoch(int.parse(map['createdAt']))
-              .toLocal(),
-      avatar: map['avatar'],
-      code: map['code'] ?? 0,
-    );
-  }
 }
 
 extension MeetingExtention on Meeting {

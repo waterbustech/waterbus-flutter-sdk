@@ -7,8 +7,8 @@ import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
 
-import 'package:waterbus_sdk/constants/api_enpoints.dart';
-import 'package:waterbus_sdk/constants/http_status_code.dart';
+import 'package:waterbus_sdk/constants/endpoints.dart';
+import 'package:waterbus_sdk/constants/status_code.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/types/error/app_exception.dart';
 import 'package:waterbus_sdk/types/error/failures.dart';
@@ -39,8 +39,8 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
 
   @override
   Future<Result<String>> getPresignedUrl() async {
-    final Response response = await _remoteData.postRoute(
-      ApiEndpoints.presignedUrlS3,
+    final Response response = await _remoteData.post(
+      Endpoints.presignedUrlS3,
     );
 
     if (response.statusCode == StatusCode.created) {
@@ -80,7 +80,7 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
 
   @override
   Future<Result<User>> getUserProfile() async {
-    final Response response = await _remoteData.getRoute(ApiEndpoints.users);
+    final Response response = await _remoteData.get(Endpoints.users);
 
     if (response.statusCode == StatusCode.ok) {
       final Map<String, dynamic> rawData = response.data;
@@ -92,8 +92,8 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
 
   @override
   Future<Result<bool>> updateUserProfile(User user) async {
-    final Response response = await _remoteData.putRoute(
-      ApiEndpoints.users,
+    final Response response = await _remoteData.put(
+      Endpoints.users,
       user.toJson(),
     );
 
@@ -106,8 +106,8 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
 
   @override
   Future<Result<bool>> updateUsername(String username) async {
-    final Response response = await _remoteData.putRoute(
-      "${ApiEndpoints.username}/$username",
+    final Response response = await _remoteData.put(
+      "${Endpoints.username}/$username",
       {},
     );
 
@@ -120,8 +120,8 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
 
   @override
   Future<Result<bool>> checkUsername(String username) async {
-    final Response response = await _remoteData.getRoute(
-      "${ApiEndpoints.username}/$username",
+    final Response response = await _remoteData.get(
+      "${Endpoints.username}/$username",
     );
 
     if (response.statusCode == StatusCode.ok) {
@@ -137,8 +137,8 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
     required int skip,
     required int limit,
   }) async {
-    final Response response = await _remoteData.getRoute(
-      ApiEndpoints.searchUsers,
+    final Response response = await _remoteData.get(
+      Endpoints.searchUsers,
       query: "q=$keyword&limit=$limit&skip=$skip",
     );
 

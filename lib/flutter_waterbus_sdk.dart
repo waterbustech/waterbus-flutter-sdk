@@ -1,5 +1,3 @@
-library;
-
 import 'package:flutter/foundation.dart';
 
 import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
@@ -24,18 +22,11 @@ class WaterbusSdk {
   static String messageEncryptionKey = '';
   static String webrtcE2eeKey = 'waterbus';
   static HttpVersionPref httpVersionPref = HttpVersionPref.all;
-  static WaterBusEventListener listener = WaterBusEventListener();
+  static WaterbusEventListener listener = WaterbusEventListener();
 
   set onMessageSocketChanged(Function(MessageSocketEvent) onMesssageChanged) {
     WaterbusSdk.listener =
         WaterbusSdk.listener.copyWith(onMesssageChanged: onMesssageChanged);
-  }
-
-  set onConversationSocketChanged(
-    Function(ConversationSocketEvent) onConversationChanged,
-  ) {
-    WaterbusSdk.listener = WaterbusSdk.listener
-        .copyWith(onConversationChanged: onConversationChanged);
   }
 
   set onEventChangedRegister(Function(CallbackPayload) onEventChanged) {
@@ -345,7 +336,7 @@ class WaterbusSdk {
   WaterbusSdkInterface get _sdk => getIt<WaterbusSdkInterface>();
   CallKitListener get _callKitListener => getIt<CallKitListener>();
 
-  ///Singleton factory
+  /// Singleton factory
   static final WaterbusSdk instance = WaterbusSdk._internal();
 
   factory WaterbusSdk() {

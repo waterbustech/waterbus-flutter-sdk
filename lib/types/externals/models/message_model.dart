@@ -25,30 +25,6 @@ abstract class MessageModel with _$MessageModel {
 
   factory MessageModel.fromJson(Map<String, Object?> json) =>
       _$MessageModelFromJson(json);
-
-  factory MessageModel.fromMapSocket(Map<String, dynamic> map) {
-    return MessageModel(
-      id: map['id'] ?? 0,
-      status:
-          (int.tryParse(map['status']?.toString() ?? "") ?? 0).getMessageStatus,
-      data: map['data'] ?? "",
-      meeting: (map['meeting'] is Map<String, dynamic>
-              ? map['meeting']['id']
-              : map['meeting']) ??
-          0,
-      createdBy:
-          map['createdBy'] != null && map['createdBy'] is Map<String, dynamic>
-              ? User.fromJson(map['createdBy'])
-              : null,
-      type: map['type'] ?? 0,
-      createdAt:
-          DateTime.fromMillisecondsSinceEpoch(int.parse(map['createdAt']))
-              .toLocal(),
-      updatedAt:
-          DateTime.fromMillisecondsSinceEpoch(int.parse(map['updatedAt']))
-              .toLocal(),
-    );
-  }
 }
 
 extension MessageModelExtension on MessageModel {

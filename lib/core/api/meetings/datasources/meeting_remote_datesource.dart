@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
-import 'package:waterbus_sdk/constants/api_enpoints.dart';
-import 'package:waterbus_sdk/constants/http_status_code.dart';
+import 'package:waterbus_sdk/constants/endpoints.dart';
+import 'package:waterbus_sdk/constants/status_code.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/types/error/app_exception.dart';
 import 'package:waterbus_sdk/types/externals/models/index.dart';
@@ -39,8 +39,8 @@ class MeetingRemoteDataSourceImpl extends MeetingRemoteDataSource {
     required Meeting meeting,
     required String password,
   }) async {
-    final Response response = await _remoteData.postRoute(
-      ApiEndpoints.meetings,
+    final Response response = await _remoteData.post(
+      Endpoints.meetings,
       body: meeting.toMapCreate(password: password),
     );
 
@@ -54,8 +54,8 @@ class MeetingRemoteDataSourceImpl extends MeetingRemoteDataSource {
 
   @override
   Future<Result<Meeting>> getInfoMeeting(int code) async {
-    final Response response = await _remoteData.getRoute(
-      '${ApiEndpoints.meetings}/$code',
+    final Response response = await _remoteData.get(
+      '${Endpoints.meetings}/$code',
     );
 
     if (response.statusCode == StatusCode.ok &&
@@ -72,8 +72,8 @@ class MeetingRemoteDataSourceImpl extends MeetingRemoteDataSource {
     required Meeting meeting,
     required String password,
   }) async {
-    final Response response = await _remoteData.postRoute(
-      '${ApiEndpoints.joinWithPassword}/${meeting.code}',
+    final Response response = await _remoteData.post(
+      '${Endpoints.joinWithPassword}/${meeting.code}',
       body: {'password': password},
     );
 
@@ -93,8 +93,8 @@ class MeetingRemoteDataSourceImpl extends MeetingRemoteDataSource {
   Future<Result<Meeting>> joinMeetingWithoutPassword({
     required Meeting meeting,
   }) async {
-    final Response response = await _remoteData.postRoute(
-      '${ApiEndpoints.joinWithoutPassword}/${meeting.code}',
+    final Response response = await _remoteData.post(
+      '${Endpoints.joinWithoutPassword}/${meeting.code}',
     );
 
     if (response.statusCode == StatusCode.created) {
@@ -114,8 +114,8 @@ class MeetingRemoteDataSourceImpl extends MeetingRemoteDataSource {
     required Meeting meeting,
     required String password,
   }) async {
-    final Response response = await _remoteData.putRoute(
-      ApiEndpoints.meetings,
+    final Response response = await _remoteData.put(
+      Endpoints.meetings,
       meeting.toMapCreate(password: password),
     );
 

@@ -5,12 +5,12 @@ import 'package:socket_io_client/socket_io_client.dart';
 
 import 'package:waterbus_sdk/constants/ws_event.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
-import 'package:waterbus_sdk/core/api/base/dio_configuration.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_manager.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/ws_handler.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/utils/dio/dio_configuration.dart';
 import 'package:waterbus_sdk/utils/encrypt/encrypt.dart';
-import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
+import 'package:waterbus_sdk/utils/extensions/duration_extension.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 import 'package:waterbus_sdk/utils/msg_pack_parser.dart';
 
@@ -84,261 +84,173 @@ class WsHandlerImpl extends WsHandler {
 
     _socket?.onConnect((_) async {
       callbackConnected?.call();
-
       _logger.log('established connection - sid: ${_socket?.id}');
 
-      _socket?.on(WsEvent.publishSSC, (data) {
-        /// pc context: only send peer
-        /// will receive sdp remote from service side if you join success
-        /// otherParticipants, sdp (data)
+      _listenToRoomEvents();
+      _listenToMediaEvents();
+      _listenToRenegotiationEvents();
+      _listenToChatEvents();
+      _listenToSystemEvents();
+    });
+  }
 
-        if (data == null) return;
+  void _listenToRoomEvents() {
+    _socket?.on(WsEvent.roomPublish, (data) {
+      if (data == null) return;
+      _rtcManager.setPublisherRemoteSdp(data['sdp'], data['isRecording']);
+    });
 
-        final String sdp = data['sdp'];
-        final bool isRecording = data['isRecording'];
+    _socket?.on(WsEvent.roomNewParticipant, (data) {
+      if (data == null) return;
+      _rtcManager.handleNewParticipant(
+        Participant.fromJson(Map<String, dynamic>.from(data)),
+      );
+    });
 
-        _rtcManager.setPublisherRemoteSdp(sdp, isRecording);
-      });
+    _socket?.on(WsEvent.roomAnswerSubscriber, (data) async {
+      if (data == null || data['offer'] == null) return;
 
-      _socket?.on(WsEvent.newParticipantSSC, (data) {
-        /// Will receive signal when someone join,
-        /// targetId
-        if (data == null) return;
+      final payload = SubscribeResponsePayload(
+        targetId: data['targetId'],
+        sdp: data['offer'],
+        audioEnabled: data['audioEnabled'] ?? false,
+        videoEnabled: data['videoEnabled'] ?? false,
+        isScreenSharing: data['isScreenSharing'] ?? false,
+        isE2eeEnabled: data['isE2eeEnabled'] ?? false,
+        isHandRaising: data['isHandRaising'] ?? false,
+        screenTrackId: data['screenTrackId'],
+        type: CameraType.values[data['cameraType'] ?? CameraType.front.type],
+        codec: (data['videoCodec'] ?? '').videoCodec,
+      );
 
-        final participant = Participant.fromJson(data);
+      await _rtcManager.setSubscriberRemoteSdp(payload);
+    });
 
-        _rtcManager.handleNewParticipant(participant);
-      });
+    _socket?.on(WsEvent.roomParticipantLeft, (data) {
+      if (data == null) return;
+      _rtcManager.handleParticipantLeave(data['targetId']);
+    });
+  }
 
-      _socket?.on(WsEvent.answerSubscriberSSC, (data) async {
-        /// pc context: only receive peer
-        /// will receive sdp, get it and add to pc
-        /// sdp, targetId
-        if (data == null || data['offer'] == null) return;
-
-        final RTCVideoCodec codec =
-            ((data['videoCodec'] ?? '') as String).videoCodec;
-
-        final int type = data['cameraType'] ?? CameraType.front.type;
-        final payload = SubscribeResponsePayload(
-          targetId: data['targetId'],
-          sdp: data['offer'],
-          audioEnabled: data['audioEnabled'] ?? false,
-          videoEnabled: data['videoEnabled'] ?? false,
-          isScreenSharing: data['isScreenSharing'] ?? false,
-          isE2eeEnabled: data['isE2eeEnabled'] ?? false,
-          isHandRaising: data['isHandRaising'] ?? false,
-          screenTrackId: data['screenTrackId'],
-          type: CameraType.values[type],
-          codec: codec,
-        );
-
-        await _rtcManager.setSubscriberRemoteSdp(payload);
-      });
-
-      _socket?.on(WsEvent.participantHasLeftSSC, (data) {
-        /// targetId
-        if (data == null) return;
-
-        final participantId = data['targetId'];
-
-        _rtcManager.handleParticipantLeave(participantId);
-      });
-
-      _socket?.on(WsEvent.publisherCandidateSSC, (data) {
-        /// candidate json
-        if (data == null) return;
-
-        final RTCIceCandidate candidate = RTCIceCandidate(
+  void _listenToMediaEvents() {
+    _socket?.on(WsEvent.roomPublisherCandidate, (data) {
+      if (data == null) return;
+      _rtcManager.addPublisherCandidate(
+        RTCIceCandidate(
           data['candidate'],
           data['sdpMid'],
           data['sdpMLineIndex'],
-        );
+        ),
+      );
+    });
 
-        _rtcManager.addPublisherCandidate(candidate);
-      });
+    _socket?.on(WsEvent.roomSubscriberCandidate, (data) {
+      if (data == null) return;
+      final c = data['candidate'];
+      _rtcManager.addSubscriberCandidate(
+        data['targetId'],
+        RTCIceCandidate(c['candidate'], c['sdpMid'], c['sdpMLineIndex']),
+      );
+    });
 
-      _socket?.on(WsEvent.subscriberCandidateSSC, (data) {
-        /// targetId, candidate json
+    _socket?.on(WsEvent.roomAudioEnabled, (data) {
+      if (data == null) return;
+      _rtcManager.setAudioEnabled(
+        targetId: data['participantId'],
+        isEnabled: data['isEnabled'],
+      );
+    });
 
-        if (data == null) return;
+    _socket?.on(WsEvent.roomVideoEnabled, (data) {
+      if (data == null) return;
+      _rtcManager.setVideoEnabled(
+        targetId: data['participantId'],
+        isEnabled: data['isEnabled'],
+      );
+    });
 
-        final Map<String, dynamic> candidateMap = data['candidate'];
+    _socket?.on(WsEvent.roomCameraType, (data) {
+      if (data == null) return;
+      _rtcManager.setCameraType(
+        targetId: data['participantId'],
+        type: CameraType.values[data['type']],
+      );
+    });
 
-        final String participantId = data['targetId'];
-        final RTCIceCandidate candidate = RTCIceCandidate(
-          candidateMap['candidate'],
-          candidateMap['sdpMid'],
-          candidateMap['sdpMLineIndex'],
-        );
+    _socket?.on(WsEvent.roomScreenSharing, (data) {
+      if (data == null) return;
+      _rtcManager.setScreenSharing(
+        targetId: data['participantId'],
+        isSharing: data['isSharing'],
+        screenTrackId: data['screenTrackId'],
+      );
+    });
 
-        _rtcManager.addSubscriberCandidate(participantId, candidate);
-      });
+    _socket?.on(WsEvent.roomHandRaising, (data) {
+      if (data == null) return;
+      _rtcManager.setHandRaising(
+        targetId: data['participantId'],
+        isRaising: data['isRaising'],
+      );
+    });
+  }
 
-      _socket?.on(WsEvent.setAudioEnabledSSC, (data) {
-        /// targetId, isEnabled
-        if (data == null) return;
+  void _listenToRenegotiationEvents() {
+    _socket?.on(WsEvent.roomPublisherRenegotiation, (data) {
+      if (data == null) return;
+      _rtcManager.setPublisherRemoteSdp(data['sdp']);
+    });
 
-        final String participantId = data['participantId'];
-        final bool isEnabled = data['isEnabled'];
+    _socket?.on(WsEvent.roomSubscriberRenegotiation, (data) {
+      if (data == null) return;
+      _rtcManager.renegotiateSubscriber(
+        targetId: data['targetId'],
+        sdp: data['sdp'],
+      );
+    });
+  }
 
-        _rtcManager.setAudioEnabled(
-          targetId: participantId,
-          isEnabled: isEnabled,
-        );
-      });
+  void _listenToSystemEvents() {
+    _socket?.on(WsEvent.systemDestroy, (data) {
+      if (data == null) return;
 
-      _socket?.on(WsEvent.setVideoEnabledSSC, (data) {
-        /// targetId, isEnabled
-        if (data == null) return;
+      if (_podName == data['podName'] && _rtcManager.roomId != null) {
+        reconnect(callbackConnected: _rtcManager.reconnect);
+      }
+    });
+  }
 
-        final String participantId = data['participantId'];
-        final bool isEnabled = data['isEnabled'];
+  void _listenToChatEvents() {
+    _socket?.on(WsEvent.chatSend, (data) async {
+      if (data == null) return;
+      final msg = MessageModel.fromJson(data);
+      final decrypted = await EncryptAES().decryptAES256(cipherText: msg.data);
+      WaterbusSdk.listener.onMesssageChanged?.call(
+        MessageSocketEvent(
+          event: MessageEventEnum.create,
+          message: msg.copyWith(data: decrypted),
+        ),
+      );
+    });
 
-        _rtcManager.setVideoEnabled(
-          targetId: participantId,
-          isEnabled: isEnabled,
-        );
-      });
+    _socket?.on(WsEvent.chatUpdate, (data) async {
+      if (data == null) return;
+      final msg = MessageModel.fromJson(data);
+      final decrypted = await EncryptAES().decryptAES256(cipherText: msg.data);
+      WaterbusSdk.listener.onMesssageChanged?.call(
+        MessageSocketEvent(
+          event: MessageEventEnum.update,
+          message: msg.copyWith(data: decrypted),
+        ),
+      );
+    });
 
-      _socket?.on(WsEvent.setCameraTypeSSC, (data) {
-        /// targetId, isEnabled
-        if (data == null) return;
-
-        final String participantId = data['participantId'];
-        final int type = data['type'];
-
-        _rtcManager.setCameraType(
-          targetId: participantId,
-          type: CameraType.values[type],
-        );
-      });
-
-      _socket?.on(WsEvent.setScreenSharingSSC, (data) {
-        /// targetId, isSharing
-        if (data == null) return;
-
-        final String participantId = data['participantId'];
-        final bool isSharing = data['isSharing'];
-        final String? screenTrackId = data['screenTrackId'];
-
-        _rtcManager.setScreenSharing(
-          targetId: participantId,
-          isSharing: isSharing,
-          screenTrackId: screenTrackId,
-        );
-      });
-
-      _socket!.on(WsEvent.publisherRenegotiationSSC, (data) {
-        if (data == null) return;
-
-        final String sdp = data['sdp'];
-
-        _rtcManager.setPublisherRemoteSdp(sdp);
-      });
-
-      _socket!.on(WsEvent.subscriberRenegotiationSSC, (data) {
-        if (data == null) return;
-
-        final String targetId = data['targetId'];
-        final String sdp = data['sdp'];
-
-        _rtcManager.renegotiateSubscriber(
-          targetId: targetId,
-          sdp: sdp,
-        );
-      });
-
-      _socket?.on(WsEvent.handRaisingSSC, (data) {
-        if (data == null) return;
-
-        final String participantId = data['participantId'];
-        final bool isRaising = data['isRaising'];
-        _rtcManager.setHandRaising(
-          targetId: participantId,
-          isRaising: isRaising,
-        );
-      });
-
-      _socket?.on(WsEvent.destroy, (data) {
-        if (data == null) return;
-
-        final String podName = data['podName'];
-
-        if (_podName == podName && _rtcManager.roomId != null) {
-          reconnect(
-            callbackConnected: () {
-              _rtcManager.reconnect();
-            },
-          );
-        }
-      });
-
-      _socket?.on(WsEvent.sendMessageSSC, (data) async {
-        if (data == null) return;
-
-        final MessageModel message = MessageModel.fromMapSocket(data);
-
-        final String dataDecrypted =
-            await EncryptAES().decryptAES256(cipherText: message.data);
-
-        WaterbusSdk.listener.onMesssageChanged?.call(
-          MessageSocketEvent(
-            event: MessageEventEnum.create,
-            message: message.copyWith(data: dataDecrypted),
-          ),
-        );
-      });
-
-      _socket?.on(WsEvent.updateMessageSSC, (data) async {
-        if (data == null) return;
-
-        final MessageModel message = MessageModel.fromMapSocket(data);
-
-        final String dataDecrypted =
-            await EncryptAES().decryptAES256(cipherText: message.data);
-
-        WaterbusSdk.listener.onMesssageChanged?.call(
-          MessageSocketEvent(
-            event: MessageEventEnum.update,
-            message: message.copyWith(data: dataDecrypted),
-          ),
-        );
-      });
-
-      _socket?.on(WsEvent.deleteMessageSSC, (data) {
-        if (data == null) return;
-
-        final MessageModel message = MessageModel.fromMapSocket(data);
-
-        WaterbusSdk.listener.onMesssageChanged?.call(
-          MessageSocketEvent(event: MessageEventEnum.delete, message: message),
-        );
-      });
-
-      _socket?.on(WsEvent.newInvitationSSC, (data) {
-        if (data == null) return;
-        final Meeting meeting = Meeting.fromMapSocket(data['meeting']);
-
-        WaterbusSdk.listener.onConversationChanged?.call(
-          ConversationSocketEvent(
-            event: ConversationEventEnum.newInvitaion,
-            conversation: meeting,
-          ),
-        );
-      });
-
-      _socket?.on(WsEvent.newMemberJoinedSSC, (data) {
-        if (data == null) return;
-        final Member member = Member.fromMapSocket(data);
-
-        WaterbusSdk.listener.onConversationChanged?.call(
-          ConversationSocketEvent(
-            event: ConversationEventEnum.newMemberJoined,
-            member: member,
-          ),
-        );
-      });
+    _socket?.on(WsEvent.chatDelete, (data) {
+      if (data == null) return;
+      final msg = MessageModel.fromJson(data);
+      WaterbusSdk.listener.onMesssageChanged?.call(
+        MessageSocketEvent(event: MessageEventEnum.delete, message: msg),
+      );
     });
   }
 

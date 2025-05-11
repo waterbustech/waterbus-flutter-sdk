@@ -22,7 +22,6 @@ abstract class CallSetting with _$CallSetting {
     @Default(false) bool e2eeEnabled,
     @Default(RTCVideoCodec.h264) RTCVideoCodec preferedCodec,
     @Default(VideoQuality.high) VideoQuality videoQuality,
-    // @Default(VideoLayout.gridView) VideoLayout videoLayout,
   }) = _CallSetting;
 
   factory CallSetting.fromJson(Map<String, Object?> json) =>
@@ -45,18 +44,30 @@ extension CallSettingX on CallSetting {
     };
   }
 
-  Map<String, String> get audioMandatory {
+  Map<String, dynamic> get audioMandatory {
     return {
-      'googEchoCancellation': '$echoCancellationEnabled',
-      'googEchoCancellation2': '$echoCancellationEnabled',
-      'googNoiseSuppression': '$noiseSuppressionEnabled',
-      'googNoiseSuppression2': '$noiseSuppressionEnabled',
-      'googAutoGainControl': '$agcEnabled',
-      'googAutoGainControl2': '$agcEnabled',
-      'googDAEchoCancellation': 'true',
+      // Echo cancellation
+      'googEchoCancellation': echoCancellationEnabled,
+      'googEchoCancellation2': echoCancellationEnabled,
+      'echoCancellation': echoCancellationEnabled,
+      'googDAEchoCancellation': echoCancellationEnabled,
+
+      // Noise suppression - reduces background noise
+      'googNoiseSuppression': noiseSuppressionEnabled,
+      'googNoiseSuppression2': noiseSuppressionEnabled,
+      'noiseSuppression': noiseSuppressionEnabled,
+
+      // Auto gain control - maintains consistent volume levels
+      'googAutoGainControl': agcEnabled,
+      'googAutoGainControl2': agcEnabled,
+      'autoGainControl': agcEnabled,
+
+      // Additional quality enhancements
+      'googHighpassFilter': 'true',
       'googTypingNoiseDetection': 'true',
       'googAudioMirroring': 'false',
-      'googHighpassFilter': 'true',
+
+      'voiceIsolation': 'false',
     };
   }
 }
