@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:waterbus_sdk/types/models/user_model.dart';
+import 'package:waterbus_sdk/types/externals/models/index.dart';
 
 part "participant_model.freezed.dart";
 part "participant_model.g.dart";

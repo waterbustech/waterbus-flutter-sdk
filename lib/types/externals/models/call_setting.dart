@@ -4,7 +4,8 @@ import 'package:flutter/foundation.dart';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:waterbus_sdk/types/index.dart';
+import 'package:waterbus_sdk/types/externals/enums/rtc_video_codec.dart';
+import 'package:waterbus_sdk/types/externals/enums/video_quality.dart';
 
 part 'call_setting.freezed.dart';
 part 'call_setting.g.dart';

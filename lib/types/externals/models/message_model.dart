@@ -2,7 +2,8 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:waterbus_sdk/types/index.dart';
+import 'package:waterbus_sdk/types/externals/enums/index.dart';
+import 'package:waterbus_sdk/types/externals/models/index.dart';
 
 part 'message_model.freezed.dart';
 part 'message_model.g.dart';

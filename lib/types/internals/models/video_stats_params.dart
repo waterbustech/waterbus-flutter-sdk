@@ -1,7 +1,7 @@
 import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:waterbus_sdk/types/models/rtc_participant_stats.dart';
+import 'package:waterbus_sdk/types/internals/models/rtc_participant_stats.dart';
 
 part 'video_stats_params.freezed.dart';
 

@@ -3,9 +3,7 @@ import 'dart:async';
 import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 import 'package:injectable/injectable.dart';
 
-import 'package:waterbus_sdk/types/enums/audio_level.dart';
-import 'package:waterbus_sdk/types/models/audio_stats_params.dart';
-import 'package:waterbus_sdk/types/models/stats.dart';
+import 'package:waterbus_sdk/types/index.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extensions.dart';
 
 @singleton

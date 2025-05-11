@@ -1,4 +1,4 @@
-import 'package:waterbus_sdk/types/index.dart';
+import 'package:waterbus_sdk/types/externals/models/index.dart';
 
 enum MessageEventEnum { create, update, delete }
 

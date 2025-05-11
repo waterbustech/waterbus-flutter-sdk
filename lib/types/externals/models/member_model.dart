@@ -1,8 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:waterbus_sdk/types/enums/meeting_role.dart';
-import 'package:waterbus_sdk/types/enums/status_enum.dart';
-import 'package:waterbus_sdk/types/models/user_model.dart';
+import 'package:waterbus_sdk/types/externals/models/index.dart';
+import 'package:waterbus_sdk/types/externals/enums/meeting_role.dart';
+import 'package:waterbus_sdk/types/externals/enums/member_status_enum.dart';
 
 part 'member_model.freezed.dart';
 part 'member_model.g.dart';

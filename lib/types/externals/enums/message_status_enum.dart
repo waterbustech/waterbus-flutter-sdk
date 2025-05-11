@@ -1,5 +1,10 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+@JsonEnum()
 enum MessageStatusEnum {
+  @JsonValue(1)
   inactive(1),
+  @JsonValue(2)
   active(0);
 
   const MessageStatusEnum(this.status);

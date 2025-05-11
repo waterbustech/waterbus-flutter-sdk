@@ -3,9 +3,6 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/types/enums/audio_level.dart';
-import 'package:waterbus_sdk/types/enums/track_type.dart';
-import 'package:waterbus_sdk/types/models/rtc_participant_stats.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 // ignore: must_be_immutable

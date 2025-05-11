@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:waterbus_sdk/types/enums/meeting_role.dart';
+import 'package:waterbus_sdk/types/externals/enums/index.dart';
 
 void main() {
   group('MeetingRole', () {

@@ -1,6 +1,12 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+@JsonEnum()
 enum MemberStatusEnum {
+  @JsonValue(0)
   inviting(0),
+  @JsonValue(1)
   invisible(1),
+  @JsonValue(2)
   joined(2);
 
   const MemberStatusEnum(this.value);

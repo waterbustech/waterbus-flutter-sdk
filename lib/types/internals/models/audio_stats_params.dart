@@ -1,7 +1,7 @@
 import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:waterbus_sdk/types/enums/audio_level.dart';
+import 'package:waterbus_sdk/types/externals/enums/audio_level.dart';
 
 part 'audio_stats_params.freezed.dart';
 

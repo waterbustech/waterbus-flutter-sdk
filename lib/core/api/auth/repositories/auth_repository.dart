@@ -3,9 +3,8 @@ import 'package:injectable/injectable.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_remote_datasource.dart';
 import 'package:waterbus_sdk/types/error/failures.dart';
-import 'package:waterbus_sdk/types/error/result.dart';
-import 'package:waterbus_sdk/types/models/auth_payload_model.dart';
-import 'package:waterbus_sdk/types/models/user_model.dart';
+import 'package:waterbus_sdk/types/result.dart';
+import 'package:waterbus_sdk/types/externals/models/index.dart';
 
 abstract class AuthRepository {
   Future<Result<bool>> refreshToken();

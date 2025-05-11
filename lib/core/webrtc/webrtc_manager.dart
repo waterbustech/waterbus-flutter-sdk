@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/types/models/subscribe_response.dart';
 
 abstract class WebRTCManager {
   // Room Management

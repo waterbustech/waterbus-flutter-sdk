@@ -1,10 +1,9 @@
 import 'package:injectable/injectable.dart';
 
 import 'package:waterbus_sdk/core/api/meetings/datasources/meeting_remote_datesource.dart';
-import 'package:waterbus_sdk/types/error/result.dart';
-import 'package:waterbus_sdk/types/index.dart';
-import 'package:waterbus_sdk/types/models/create_meeting_params.dart';
-import 'package:waterbus_sdk/types/models/record_model.dart';
+import 'package:waterbus_sdk/types/result.dart';
+import 'package:waterbus_sdk/types/externals/models/index.dart';
+import 'package:waterbus_sdk/types/internals/models/create_meeting_params.dart';
 
 abstract class MeetingRepository {
   Future<Result<Meeting>> createMeeting(CreateMeetingParams params);

@@ -1,5 +1,10 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+@JsonEnum()
 enum MeetingRole {
+  @JsonValue(0)
   host(0),
+  @JsonValue(1)
   attendee(1);
 
   const MeetingRole(this.value);

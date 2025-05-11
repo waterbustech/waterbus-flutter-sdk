@@ -1,11 +1,16 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/native/native_channel.dart';
 
+@JsonEnum()
 enum RTCVideoCodec {
+  @JsonValue('vp8')
   vp8('vp8', true),
+  @JsonValue('vp9')
   vp9('vp9', true),
+  @JsonValue('h264')
   h264('h264', true),
-  // h265('h265', false),
+  @JsonValue('av1')
   av1('av1', false);
 
   const RTCVideoCodec(this.codec, this.isSFrameSuported);

@@ -1,8 +1,8 @@
-import 'package:waterbus_sdk/types/models/callback_payload.dart';
-import 'package:waterbus_sdk/types/models/conversation_socket_event.dart';
-import 'package:waterbus_sdk/types/models/message_socket_event.dart';
-import 'package:waterbus_sdk/types/models/stats.dart';
-import 'package:waterbus_sdk/types/models/subtitle.dart';
+import 'package:waterbus_sdk/types/externals/models/callback_payload.dart';
+import 'package:waterbus_sdk/types/externals/models/conversation_socket_event.dart';
+import 'package:waterbus_sdk/types/externals/models/message_socket_event.dart';
+import 'package:waterbus_sdk/types/internals/models/stats.dart';
+import 'package:waterbus_sdk/types/internals/models/subtitle.dart';
 
 class WaterBusEventListener {
   final Function(CallbackPayload)? onEventChanged;

@@ -12,8 +12,8 @@ import 'package:waterbus_sdk/constants/http_status_code.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/types/error/app_exception.dart';
 import 'package:waterbus_sdk/types/error/failures.dart';
-import 'package:waterbus_sdk/types/error/result.dart';
-import 'package:waterbus_sdk/types/models/user_model.dart';
+import 'package:waterbus_sdk/types/result.dart';
+import 'package:waterbus_sdk/types/externals/models/index.dart';
 
 abstract class UserRemoteDataSource {
   Future<Result<User>> getUserProfile();
@@ -81,7 +81,7 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
   @override
   Future<Result<User>> getUserProfile() async {
     final Response response = await _remoteData.getRoute(ApiEndpoints.users);
-
+    print("response $response");
     if (response.statusCode == StatusCode.ok) {
       final Map<String, dynamic> rawData = response.data;
       return Result.success(User.fromJson(rawData));

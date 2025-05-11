@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:waterbus_sdk/types/models/participant_sfu.dart';
+import 'package:waterbus_sdk/types/externals/models/participant_sfu.dart';
 
 part 'call_state.freezed.dart';
 
