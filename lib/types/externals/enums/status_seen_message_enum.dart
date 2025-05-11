@@ -1,5 +1,10 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+@JsonEnum()
 enum StatusSeenMessage {
+  @JsonValue(0)
   unseen(0),
+  @JsonValue(1)
   seen(1);
 
   const StatusSeenMessage(this.status);

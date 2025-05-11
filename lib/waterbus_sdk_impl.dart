@@ -152,32 +152,6 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<Result<List<RecordModel>>> getRecords({
-    required int skip,
-    required int limit,
-  }) async {
-    return await _meetingRepository.getRecords(skip: skip, limit: limit);
-  }
-
-  @override
-  Future<Result<int>> startRecord() async {
-    final String? meetingId = _rtcManager.roomId;
-
-    if (meetingId == null) return Result.failure(ServerFailure());
-
-    return await _meetingRepository.startRecord(int.parse(meetingId));
-  }
-
-  @override
-  Future<Result<bool>> stopRecord() async {
-    final String? meetingId = _rtcManager.roomId;
-
-    if (meetingId == null) return Result.failure(ServerFailure());
-
-    return await _meetingRepository.stopRecord(int.parse(meetingId));
-  }
-
-  @override
   Future<void> leaveRoom() async {
     try {
       await _rtcManager.dispose();

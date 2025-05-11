@@ -9,7 +9,6 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
@@ -20,7 +19,11 @@ import '../core/api/base/base_remote_data.dart' as _i182;
 import '../core/api/base/dio_configuration.dart' as _i314;
 import '../core/api/chat/datasources/chat_remote_datasource.dart' as _i712;
 import '../core/api/chat/repositories/chat_repository.dart' as _i613;
+import '../core/api/meetings/datasources/meeting_remote_datesource.dart'
+    as _i377;
 import '../core/api/meetings/repositories/meeting_repository.dart' as _i1023;
+import '../core/api/messages/datasources/message_remote_datasource.dart'
+    as _i242;
 import '../core/api/messages/repositories/message_repository.dart' as _i575;
 import '../core/api/user/datasources/user_remote_datasource.dart' as _i1054;
 import '../core/api/user/repositories/user_repository.dart' as _i895;
@@ -39,11 +42,6 @@ import '../utils/callkit/callkit_listener.dart' as _i324;
 import '../utils/logger/logger.dart' as _i944;
 import '../waterbus_sdk_impl.dart' as _i1039;
 import '../waterbus_sdk_interface.dart' as _i513;
-
-import '../core/api/meetings/datasources/meeting_remote_datesource.dart'
-    as _i377;
-import '../core/api/messages/datasources/message_remote_datasource.dart'
-    as _i242;
 
 // initializes the registration of main-scope dependencies inside of GetIt
 _i174.GetIt $initGetIt(

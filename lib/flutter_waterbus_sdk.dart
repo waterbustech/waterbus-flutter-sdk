@@ -118,21 +118,6 @@ class WaterbusSdk {
     return await _sdk.getRoomInfo(code);
   }
 
-  Future<Result<List<RecordModel>>> getRecords({
-    int skip = 0,
-    int limit = 10,
-  }) async {
-    return await _sdk.getRecords(skip: skip, limit: limit);
-  }
-
-  Future<Result<int>> startRecord() async {
-    return await _sdk.startRecord();
-  }
-
-  Future<Result<bool>> stopRecord() async {
-    return await _sdk.stopRecord();
-  }
-
   Future<void> leaveRoom() async {
     await _sdk.leaveRoom();
   }

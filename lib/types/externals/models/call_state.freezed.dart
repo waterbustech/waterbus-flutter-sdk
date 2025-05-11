@@ -61,6 +61,8 @@ abstract mixin class $CallStateCopyWith<$Res> {
   @useResult
   $Res call(
       {ParticipantSFU? mParticipant, Map<String, ParticipantSFU> participants});
+
+  $ParticipantSFUCopyWith<$Res>? get mParticipant;
 }
 
 /// @nodoc
@@ -88,6 +90,20 @@ class _$CallStateCopyWithImpl<$Res> implements $CallStateCopyWith<$Res> {
           : participants // ignore: cast_nullable_to_non_nullable
               as Map<String, ParticipantSFU>,
     ));
+  }
+
+  /// Create a copy of CallState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $ParticipantSFUCopyWith<$Res>? get mParticipant {
+    if (_self.mParticipant == null) {
+      return null;
+    }
+
+    return $ParticipantSFUCopyWith<$Res>(_self.mParticipant!, (value) {
+      return _then(_self.copyWith(mParticipant: value));
+    });
   }
 }
 
@@ -156,6 +172,9 @@ abstract mixin class _$CallStateCopyWith<$Res>
   @useResult
   $Res call(
       {ParticipantSFU? mParticipant, Map<String, ParticipantSFU> participants});
+
+  @override
+  $ParticipantSFUCopyWith<$Res>? get mParticipant;
 }
 
 /// @nodoc
@@ -183,6 +202,20 @@ class __$CallStateCopyWithImpl<$Res> implements _$CallStateCopyWith<$Res> {
           : participants // ignore: cast_nullable_to_non_nullable
               as Map<String, ParticipantSFU>,
     ));
+  }
+
+  /// Create a copy of CallState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $ParticipantSFUCopyWith<$Res>? get mParticipant {
+    if (_self.mParticipant == null) {
+      return null;
+    }
+
+    return $ParticipantSFUCopyWith<$Res>(_self.mParticipant!, (value) {
+      return _then(_self.copyWith(mParticipant: value));
+    });
   }
 }
 

@@ -10,7 +10,7 @@ abstract class AvatarModel with _$AvatarModel {
     required String name,
     required String src,
     required String location,
-    required int version,
+    int? version,
   }) = _AvatarModel;
 
   factory AvatarModel.fromJson(Map<String, Object?> json) =>

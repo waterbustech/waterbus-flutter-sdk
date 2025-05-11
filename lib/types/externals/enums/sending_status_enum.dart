@@ -1,6 +1,12 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+@JsonEnum()
 enum SendingStatusEnum {
+  @JsonValue(-1)
   error(-1),
+  @JsonValue(0)
   sending(0),
+  @JsonValue(1)
   sent(1);
 
   const SendingStatusEnum(this.status);

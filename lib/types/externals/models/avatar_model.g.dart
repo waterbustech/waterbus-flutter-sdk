@@ -11,7 +11,7 @@ _AvatarModel _$AvatarModelFromJson(Map<String, dynamic> json) => _AvatarModel(
       name: json['name'] as String,
       src: json['src'] as String,
       location: json['location'] as String,
-      version: (json['version'] ?? 0).toInt(),
+      version: (json['version'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$AvatarModelToJson(_AvatarModel instance) =>

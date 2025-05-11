@@ -17,7 +17,8 @@ T _$identity<T>(T value) => value;
 mixin _$MessageModel {
   int get id;
   String get data;
-  int get meeting;
+  @IntConverter()
+  int? get meeting;
   User? get createdBy;
   SendingStatusEnum get sendingStatus;
   MessageStatusEnum get status;
@@ -76,7 +77,7 @@ abstract mixin class $MessageModelCopyWith<$Res> {
   $Res call(
       {int id,
       String data,
-      int meeting,
+      @IntConverter() int? meeting,
       User? createdBy,
       SendingStatusEnum sendingStatus,
       MessageStatusEnum status,
@@ -101,7 +102,7 @@ class _$MessageModelCopyWithImpl<$Res> implements $MessageModelCopyWith<$Res> {
   $Res call({
     Object? id = null,
     Object? data = null,
-    Object? meeting = null,
+    Object? meeting = freezed,
     Object? createdBy = freezed,
     Object? sendingStatus = null,
     Object? status = null,
@@ -118,10 +119,10 @@ class _$MessageModelCopyWithImpl<$Res> implements $MessageModelCopyWith<$Res> {
           ? _self.data
           : data // ignore: cast_nullable_to_non_nullable
               as String,
-      meeting: null == meeting
+      meeting: freezed == meeting
           ? _self.meeting
           : meeting // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       createdBy: freezed == createdBy
           ? _self.createdBy
           : createdBy // ignore: cast_nullable_to_non_nullable
@@ -170,7 +171,7 @@ class _MessageModel implements MessageModel {
   const _MessageModel(
       {required this.id,
       required this.data,
-      required this.meeting,
+      @IntConverter() this.meeting,
       required this.createdBy,
       this.sendingStatus = SendingStatusEnum.sent,
       required this.status,
@@ -185,7 +186,8 @@ class _MessageModel implements MessageModel {
   @override
   final String data;
   @override
-  final int meeting;
+  @IntConverter()
+  final int? meeting;
   @override
   final User? createdBy;
   @override
@@ -257,7 +259,7 @@ abstract mixin class _$MessageModelCopyWith<$Res>
   $Res call(
       {int id,
       String data,
-      int meeting,
+      @IntConverter() int? meeting,
       User? createdBy,
       SendingStatusEnum sendingStatus,
       MessageStatusEnum status,
@@ -284,7 +286,7 @@ class __$MessageModelCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? data = null,
-    Object? meeting = null,
+    Object? meeting = freezed,
     Object? createdBy = freezed,
     Object? sendingStatus = null,
     Object? status = null,
@@ -301,10 +303,10 @@ class __$MessageModelCopyWithImpl<$Res>
           ? _self.data
           : data // ignore: cast_nullable_to_non_nullable
               as String,
-      meeting: null == meeting
+      meeting: freezed == meeting
           ? _self.meeting
           : meeting // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       createdBy: freezed == createdBy
           ? _self.createdBy
           : createdBy // ignore: cast_nullable_to_non_nullable

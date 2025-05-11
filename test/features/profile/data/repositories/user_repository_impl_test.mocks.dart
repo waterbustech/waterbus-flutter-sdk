@@ -3,17 +3,14 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-
 import 'dart:async' as _i4;
 import 'dart:typed_data' as _i6;
 
 import 'package:mockito/mockito.dart' as _i1;
-
-import 'package:waterbus_sdk/types/result.dart' as _i2;
-import 'package:waterbus_sdk/types/externals/models/index.dart' as _i5;
-
 import 'package:waterbus_sdk/core/api/user/datasources/user_remote_datasource.dart'
     as _i3;
+import 'package:waterbus_sdk/types/externals/models/index.dart' as _i5;
+import 'package:waterbus_sdk/types/result.dart' as _i2;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values

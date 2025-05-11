@@ -102,7 +102,7 @@ class WebRTCManagerIpml extends WebRTCManager {
         stopScreenSharing();
       };
 
-      _mParticipant?.setScreenSharing(true);
+      _mParticipant = await _mParticipant?.setScreenSharing(true);
 
       _notify(CallbackEvents.shouldBeUpdateState);
     } catch (e) {
@@ -374,7 +374,7 @@ class WebRTCManagerIpml extends WebRTCManager {
 
     await Helper.switchCamera(videoTracks.first);
 
-    _mParticipant?.switchCamera();
+    _mParticipant = _mParticipant?.switchCamera;
 
     _wsEmitter.setCameraType(_mParticipant?.cameraType ?? CameraType.front);
 
@@ -418,8 +418,9 @@ class WebRTCManagerIpml extends WebRTCManager {
 
     if (ignoreUpdateValue) return;
 
-    _mParticipant!.isVideoEnabled =
-        forceValue ?? !_mParticipant!.isVideoEnabled;
+    _mParticipant = _mParticipant?.copyWith(
+      isVideoEnabled: forceValue ?? !_mParticipant!.isVideoEnabled,
+    );
 
     _notify(CallbackEvents.shouldBeUpdateState);
 
@@ -446,8 +447,9 @@ class WebRTCManagerIpml extends WebRTCManager {
       }
     }
 
-    _mParticipant!.isAudioEnabled =
-        forceValue ?? !_mParticipant!.isAudioEnabled;
+    _mParticipant = _mParticipant?.copyWith(
+      isAudioEnabled: forceValue ?? !_mParticipant!.isAudioEnabled,
+    );
 
     _notify(CallbackEvents.shouldBeUpdateState);
 
@@ -462,8 +464,10 @@ class WebRTCManagerIpml extends WebRTCManager {
   Future<void> toggleSpeakerPhone({bool? forceValue}) async {
     if (_mParticipant == null) return;
 
-    _mParticipant?.isSpeakerPhoneEnabled =
-        forceValue ?? !_mParticipant!.isSpeakerPhoneEnabled;
+    _mParticipant = _mParticipant?.copyWith(
+      isSpeakerPhoneEnabled:
+          forceValue ?? !_mParticipant!.isSpeakerPhoneEnabled,
+    );
 
     if (WebRTC.platformIsMobile) {
       await Helper.setSpeakerphoneOn(_mParticipant!.isSpeakerPhoneEnabled);
@@ -480,7 +484,9 @@ class WebRTCManagerIpml extends WebRTCManager {
   void toggleRaiseHand() {
     if (_mParticipant == null) return;
 
-    _mParticipant!.isHandRaising = !_mParticipant!.isHandRaising;
+    _mParticipant = _mParticipant?.copyWith(
+      isHandRaising: !_mParticipant!.isHandRaising,
+    );
 
     _notify(CallbackEvents.shouldBeUpdateState);
 
@@ -493,7 +499,11 @@ class WebRTCManagerIpml extends WebRTCManager {
     required String targetId,
     required bool isEnabled,
   }) async {
-    _remoteSubscribers[targetId]?.isE2eeEnabled = isEnabled;
+    if (_remoteSubscribers[targetId] != null) {
+      _remoteSubscribers[targetId] = _remoteSubscribers[targetId]!.copyWith(
+        isE2eeEnabled: isEnabled,
+      );
+    }
 
     await _e2eeManager.addRtpReceiver(
       receiver: receiver,
@@ -506,7 +516,8 @@ class WebRTCManagerIpml extends WebRTCManager {
   void setVideoEnabled({required String targetId, required bool isEnabled}) {
     if (_remoteSubscribers[targetId]?.isVideoEnabled == isEnabled) return;
 
-    _remoteSubscribers[targetId]?.isVideoEnabled = isEnabled;
+    _remoteSubscribers[targetId] =
+        _remoteSubscribers[targetId]!.copyWith(isVideoEnabled: isEnabled);
     _notify(CallbackEvents.shouldBeUpdateState);
   }
 
@@ -514,7 +525,8 @@ class WebRTCManagerIpml extends WebRTCManager {
   void setCameraType({required String targetId, required CameraType type}) {
     if (_remoteSubscribers[targetId]?.cameraType == type) return;
 
-    _remoteSubscribers[targetId]?.cameraType = type;
+    _remoteSubscribers[targetId] =
+        _remoteSubscribers[targetId]!.copyWith(cameraType: type);
     _notify(CallbackEvents.shouldBeUpdateState);
   }
 
@@ -522,7 +534,9 @@ class WebRTCManagerIpml extends WebRTCManager {
   void setAudioEnabled({required String targetId, required bool isEnabled}) {
     if (_remoteSubscribers[targetId]?.isAudioEnabled == isEnabled) return;
 
-    _remoteSubscribers[targetId]?.isAudioEnabled = isEnabled;
+    _remoteSubscribers[targetId] =
+        _remoteSubscribers[targetId]!.copyWith(isAudioEnabled: isEnabled);
+
     _notify(CallbackEvents.shouldBeUpdateState);
   }
 
@@ -543,7 +557,8 @@ class WebRTCManagerIpml extends WebRTCManager {
   void setHandRaising({required String targetId, required bool isRaising}) {
     if (_remoteSubscribers[targetId]?.isHandRaising == isRaising) return;
 
-    _remoteSubscribers[targetId]?.isHandRaising = isRaising;
+    _remoteSubscribers[targetId] =
+        _remoteSubscribers[targetId]!.copyWith(isHandRaising: isRaising);
 
     _notify(CallbackEvents.raiseHand);
   }
@@ -750,7 +765,7 @@ class WebRTCManagerIpml extends WebRTCManager {
           ownerId: kIsMine,
           pc: peerConnection,
           callBack: (audioLevel) {
-            _mParticipant?.sinkAudioLevel(audioLevel);
+            _mParticipant = _mParticipant?.sinkAudioLevel(audioLevel);
           },
         );
       } else {
@@ -1020,7 +1035,7 @@ class WebRTCManagerIpml extends WebRTCManager {
 
     await Future.wait(futureTasks);
 
-    _mParticipant?.isE2eeEnabled = enabled;
+    _mParticipant = _mParticipant?.copyWith(isE2eeEnabled: enabled);
   }
 
   Future<void> _renegotiation() async {

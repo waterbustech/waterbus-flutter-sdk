@@ -9,7 +9,6 @@ export 'user_model.dart';
 export 'participant_model.dart';
 export 'call_state.dart';
 export 'callback_payload.dart';
-export 'record_model.dart';
 export 'media_source.dart';
 export 'message_socket_event.dart';
 export 'conversation_socket_event.dart';

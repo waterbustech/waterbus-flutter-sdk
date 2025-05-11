@@ -1,6 +1,12 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+@JsonEnum()
 enum VideoQuality {
+  @JsonValue('Data Saver')
   low('Data Saver'),
+  @JsonValue('Balance')
   auto('Balance'),
+  @JsonValue('High Quality')
   high('High Quality');
 
   const VideoQuality(this.label);

@@ -10,10 +10,7 @@ _MessageModel _$MessageModelFromJson(Map<String, dynamic> json) =>
     _MessageModel(
       id: (json['id'] as num).toInt(),
       data: json['data'] as String,
-      meeting: (json['meeting'] is Map<String, dynamic>
-              ? json['meeting']['id']
-              : json['meeting']) ??
-          0,
+      meeting: const IntConverter().fromJson(json['meeting']),
       createdBy: json['createdBy'] == null
           ? null
           : User.fromJson(json['createdBy'] as Map<String, dynamic>),
@@ -30,7 +27,7 @@ Map<String, dynamic> _$MessageModelToJson(_MessageModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'data': instance.data,
-      'meeting': instance.meeting,
+      'meeting': const IntConverter().toJson(instance.meeting),
       'createdBy': instance.createdBy?.toJson(),
       'sendingStatus': _$SendingStatusEnumEnumMap[instance.sendingStatus]!,
       'status': _$MessageStatusEnumEnumMap[instance.status]!,
@@ -47,5 +44,5 @@ const _$SendingStatusEnumEnumMap = {
 
 const _$MessageStatusEnumEnumMap = {
   MessageStatusEnum.inactive: 1,
-  MessageStatusEnum.active: 0,
+  MessageStatusEnum.active: 2,
 };

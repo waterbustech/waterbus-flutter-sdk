@@ -22,7 +22,6 @@ abstract class Meeting with _$Meeting {
 
   factory Meeting.fromJson(Map<String, Object?> json) =>
       _$MeetingFromJson(json);
-  // Map<String, dynamic> toJson() => _$MeetingToJson(this);
 
   factory Meeting.fromMapSocket(Map<String, dynamic> map) {
     return Meeting(
@@ -62,7 +61,7 @@ extension MeetingExtention on Meeting {
 
   bool get isNoOneElse => members.length < 2;
 
-  String get inviteLink => 'https:/waterbus.tech/meeting/$code';
+  // String get inviteLink => 'https:/waterbus.tech/meeting/$code';
 
   String? get participantsOnlineTile {
     if (participants.isEmpty) return null;

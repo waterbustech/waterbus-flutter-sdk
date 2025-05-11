@@ -5,8 +5,8 @@ import 'package:waterbus_sdk/constants/api_enpoints.dart';
 import 'package:waterbus_sdk/constants/http_status_code.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/types/error/app_exception.dart';
-import 'package:waterbus_sdk/types/result.dart';
 import 'package:waterbus_sdk/types/externals/models/index.dart';
+import 'package:waterbus_sdk/types/result.dart';
 
 abstract class MeetingRemoteDataSource {
   Future<Result<Meeting>> createMeeting({
@@ -25,12 +25,6 @@ abstract class MeetingRemoteDataSource {
     required Meeting meeting,
   });
   Future<Result<Meeting>> getInfoMeeting(int code);
-  Future<Result<List<RecordModel>>> getRecords({
-    required int skip,
-    required int limit,
-  });
-  Future<Result<int>> startRecord(int roomId);
-  Future<Result<bool>> stopRecord(int roomId);
 }
 
 @LazySingleton(as: MeetingRemoteDataSource)
@@ -130,33 +124,5 @@ class MeetingRemoteDataSourceImpl extends MeetingRemoteDataSource {
     }
 
     return Result.failure(response.data['message'].toString().toFailure);
-  }
-
-  @override
-  Future<Result<List<RecordModel>>> getRecords({
-    required int skip,
-    required int limit,
-  }) async {
-    return Result.success([]);
-  }
-
-  @override
-  Future<Result<int>> startRecord(int roomId) async {
-    // final Response response = await _remoteData.postRoute(
-    //   ApiEndpoints.startRecord,
-    //   queryParameters: {"code": roomId},
-    // );
-
-    // if (response.statusCode == StatusCode.created) {
-    //   return Result.success(response.data['id']);
-    // }
-
-    // return Result.failure(response.data['message'].toString().toFailure);
-    return Result.success(1);
-  }
-
-  @override
-  Future<Result<bool>> stopRecord(int roomId) async {
-    return Result.success(true);
   }
 }

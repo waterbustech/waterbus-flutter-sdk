@@ -19,7 +19,7 @@ mixin _$AvatarModel {
   String get name;
   String get src;
   String get location;
-  int get version;
+  int? get version;
 
   /// Create a copy of AvatarModel
   /// with the given fields replaced by the non-null parameter values.
@@ -62,7 +62,7 @@ abstract mixin class $AvatarModelCopyWith<$Res> {
       _$AvatarModelCopyWithImpl;
   @useResult
   $Res call(
-      {String? id, String name, String src, String location, int version});
+      {String? id, String name, String src, String location, int? version});
 }
 
 /// @nodoc
@@ -81,7 +81,7 @@ class _$AvatarModelCopyWithImpl<$Res> implements $AvatarModelCopyWith<$Res> {
     Object? name = null,
     Object? src = null,
     Object? location = null,
-    Object? version = null,
+    Object? version = freezed,
   }) {
     return _then(_self.copyWith(
       id: freezed == id
@@ -100,10 +100,10 @@ class _$AvatarModelCopyWithImpl<$Res> implements $AvatarModelCopyWith<$Res> {
           ? _self.location
           : location // ignore: cast_nullable_to_non_nullable
               as String,
-      version: null == version
+      version: freezed == version
           ? _self.version
           : version // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
     ));
   }
 }
@@ -116,7 +116,7 @@ class _AvatarModel implements AvatarModel {
       required this.name,
       required this.src,
       required this.location,
-      required this.version});
+      this.version});
   factory _AvatarModel.fromJson(Map<String, dynamic> json) =>
       _$AvatarModelFromJson(json);
 
@@ -129,7 +129,7 @@ class _AvatarModel implements AvatarModel {
   @override
   final String location;
   @override
-  final int version;
+  final int? version;
 
   /// Create a copy of AvatarModel
   /// with the given fields replaced by the non-null parameter values.
@@ -179,7 +179,7 @@ abstract mixin class _$AvatarModelCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String? id, String name, String src, String location, int version});
+      {String? id, String name, String src, String location, int? version});
 }
 
 /// @nodoc
@@ -198,7 +198,7 @@ class __$AvatarModelCopyWithImpl<$Res> implements _$AvatarModelCopyWith<$Res> {
     Object? name = null,
     Object? src = null,
     Object? location = null,
-    Object? version = null,
+    Object? version = freezed,
   }) {
     return _then(_AvatarModel(
       id: freezed == id
@@ -217,10 +217,10 @@ class __$AvatarModelCopyWithImpl<$Res> implements _$AvatarModelCopyWith<$Res> {
           ? _self.location
           : location // ignore: cast_nullable_to_non_nullable
               as String,
-      version: null == version
+      version: freezed == version
           ? _self.version
           : version // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
     ));
   }
 }

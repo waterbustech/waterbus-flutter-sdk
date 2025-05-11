@@ -11,7 +11,7 @@ _Member _$MemberFromJson(Map<String, dynamic> json) => _Member(
       role: $enumDecode(_$MeetingRoleEnumMap, json['role']),
       user: User.fromJson(json['user'] as Map<String, dynamic>),
       isMe: json['isMe'] as bool? ?? false,
-      meetingId: (json['meetingId'] as num?)?.toInt(),
+      meetingId: const IntConverter().fromJson(json['meetingId']),
       status: $enumDecodeNullable(_$MemberStatusEnumEnumMap, json['status']) ??
           MemberStatusEnum.joined,
     );
@@ -21,7 +21,7 @@ Map<String, dynamic> _$MemberToJson(_Member instance) => <String, dynamic>{
       'role': _$MeetingRoleEnumMap[instance.role]!,
       'user': instance.user.toJson(),
       'isMe': instance.isMe,
-      'meetingId': instance.meetingId,
+      'meetingId': const IntConverter().toJson(instance.meetingId),
       'status': _$MemberStatusEnumEnumMap[instance.status]!,
     };
 

@@ -36,9 +36,8 @@ _Meeting _$MeetingFromJson(Map<String, dynamic> json) => _Meeting(
 Map<String, dynamic> _$MeetingToJson(_Meeting instance) => <String, dynamic>{
       'id': instance.id,
       'title': instance.title,
-      'participants':
-          instance.participants.map((item) => item.toJson()).toList(),
-      'members': instance.members.map((item) => item.toJson()).toList(),
+      'participants': instance.participants.map((e) => e.toJson()).toList(),
+      'members': instance.members.map((e) => e.toJson()).toList(),
       'code': instance.code,
       'createdAt': instance.createdAt?.toIso8601String(),
       'latestJoinedAt': instance.latestJoinedAt?.toIso8601String(),

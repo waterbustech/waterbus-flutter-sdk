@@ -1,8 +1,9 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:waterbus_sdk/types/externals/models/index.dart';
 import 'package:waterbus_sdk/types/externals/enums/meeting_role.dart';
 import 'package:waterbus_sdk/types/externals/enums/member_status_enum.dart';
+import 'package:waterbus_sdk/types/externals/models/index.dart';
+import 'package:waterbus_sdk/types/internals/models/int_converter.dart';
 
 part 'member_model.freezed.dart';
 part 'member_model.g.dart';
@@ -14,7 +15,7 @@ abstract class Member with _$Member {
     required MeetingRole role,
     required User user,
     @Default(false) bool isMe,
-    int? meetingId,
+    @IntConverter() int? meetingId,
     @Default(MemberStatusEnum.joined) MemberStatusEnum status,
   }) = _Member;
 

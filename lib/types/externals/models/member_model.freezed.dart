@@ -19,6 +19,7 @@ mixin _$Member {
   MeetingRole get role;
   User get user;
   bool get isMe;
+  @IntConverter()
   int? get meetingId;
   MemberStatusEnum get status;
 
@@ -67,7 +68,7 @@ abstract mixin class $MemberCopyWith<$Res> {
       MeetingRole role,
       User user,
       bool isMe,
-      int? meetingId,
+      @IntConverter() int? meetingId,
       MemberStatusEnum status});
 
   $UserCopyWith<$Res> get user;
@@ -139,7 +140,7 @@ class _Member implements Member {
       required this.role,
       required this.user,
       this.isMe = false,
-      this.meetingId,
+      @IntConverter() this.meetingId,
       this.status = MemberStatusEnum.joined});
   factory _Member.fromJson(Map<String, dynamic> json) => _$MemberFromJson(json);
 
@@ -153,6 +154,7 @@ class _Member implements Member {
   @JsonKey()
   final bool isMe;
   @override
+  @IntConverter()
   final int? meetingId;
   @override
   @JsonKey()
@@ -209,7 +211,7 @@ abstract mixin class _$MemberCopyWith<$Res> implements $MemberCopyWith<$Res> {
       MeetingRole role,
       User user,
       bool isMe,
-      int? meetingId,
+      @IntConverter() int? meetingId,
       MemberStatusEnum status});
 
   @override

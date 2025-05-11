@@ -1,9 +1,9 @@
 import 'package:injectable/injectable.dart';
 
 import 'package:waterbus_sdk/core/api/meetings/datasources/meeting_remote_datesource.dart';
-import 'package:waterbus_sdk/types/result.dart';
 import 'package:waterbus_sdk/types/externals/models/index.dart';
 import 'package:waterbus_sdk/types/internals/models/create_meeting_params.dart';
+import 'package:waterbus_sdk/types/result.dart';
 
 abstract class MeetingRepository {
   Future<Result<Meeting>> createMeeting(CreateMeetingParams params);
@@ -15,12 +15,6 @@ abstract class MeetingRepository {
     CreateMeetingParams params,
   );
   Future<Result<Meeting>> getInfoMeeting(int code);
-  Future<Result<List<RecordModel>>> getRecords({
-    required int skip,
-    required int limit,
-  });
-  Future<Result<int>> startRecord(int roomId);
-  Future<Result<bool>> stopRecord(int roomId);
 }
 
 @LazySingleton(as: MeetingRepository)
@@ -126,23 +120,5 @@ class MeetingRepositoryImpl extends MeetingRepository {
     participants.removeAt(indexOfMyParticipant);
 
     return meeting.copyWith(participants: participants);
-  }
-
-  @override
-  Future<Result<List<RecordModel>>> getRecords({
-    required int skip,
-    required int limit,
-  }) async {
-    return await _remoteDataSource.getRecords(skip: skip, limit: limit);
-  }
-
-  @override
-  Future<Result<int>> startRecord(int roomId) async {
-    return await _remoteDataSource.startRecord(roomId);
-  }
-
-  @override
-  Future<Result<bool>> stopRecord(int roomId) async {
-    return await _remoteDataSource.stopRecord(roomId);
   }
 }

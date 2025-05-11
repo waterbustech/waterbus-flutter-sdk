@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
-import 'package:waterbus_sdk/types/externals/enums/index.dart';
 
+import 'package:waterbus_sdk/types/externals/enums/index.dart';
 import 'package:waterbus_sdk/types/externals/models/index.dart';
 import '../../../../constants/sample_file_path.dart';
 import '../../../../fixtures/fixture_reader.dart';
@@ -204,11 +204,6 @@ void main() {
 
     test('should return false for isNoOneElse when multiple active users', () {
       expect(meetingWithParticipants.isNoOneElse, false);
-    });
-
-    test('inviteLink - should return the invite link', () {
-      final meeting = Meeting(code: 123, title: '1');
-      expect(meeting.inviteLink, 'https:/waterbus.tech/meeting/123');
     });
 
     test('participantsOnlineTile - should return the appropriate text', () {

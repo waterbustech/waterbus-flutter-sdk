@@ -83,12 +83,6 @@ abstract class WaterbusSdkInterface {
     required int? userId,
   });
   Future<Result<Meeting>> getRoomInfo(int code);
-  Future<Result<List<RecordModel>>> getRecords({
-    required int skip,
-    required int limit,
-  });
-  Future<Result<int>> startRecord();
-  Future<Result<bool>> stopRecord();
   Future<void> leaveRoom();
   void toggleRaiseHand();
 
