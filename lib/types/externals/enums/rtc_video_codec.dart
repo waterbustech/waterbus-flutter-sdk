@@ -41,7 +41,6 @@ extension CodecStringX on String {
       'vp8' || 'video/vp8' => RTCVideoCodec.vp8,
       'vp9' || 'video/vp9' => RTCVideoCodec.vp9,
       'h264' || 'video/h264' => RTCVideoCodec.h264,
-      // 'h265' || 'video/h265' => WebRTCCodec.h265,
       'av1' || 'video/av1' => RTCVideoCodec.av1,
       _ => RTCVideoCodec.h264,
     };

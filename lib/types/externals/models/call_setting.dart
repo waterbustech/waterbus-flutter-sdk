@@ -4,31 +4,26 @@ import 'package:flutter/foundation.dart';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:waterbus_sdk/types/externals/enums/rtc_video_codec.dart';
 import 'package:waterbus_sdk/types/externals/enums/video_quality.dart';
+import 'package:waterbus_sdk/types/externals/models/audio_config.dart';
+import 'package:waterbus_sdk/types/externals/models/video_config.dart';
 
 part 'call_setting.freezed.dart';
 part 'call_setting.g.dart';
 
 @freezed
-abstract class CallSetting with _$CallSetting {
-  const factory CallSetting({
-    @Default(false) bool isLowBandwidthMode,
-    @Default(false) bool isAudioMuted,
-    @Default(true) bool echoCancellationEnabled,
-    @Default(true) bool noiseSuppressionEnabled,
-    @Default(true) bool agcEnabled,
-    @Default(false) bool isVideoMuted,
+abstract class MediaConfig with _$MediaConfig {
+  const factory MediaConfig({
+    @Default(AudioConfig()) AudioConfig audioConfig,
+    @Default(VideoConfig()) VideoConfig videoConfig,
     @Default(false) bool e2eeEnabled,
-    @Default(RTCVideoCodec.h264) RTCVideoCodec preferedCodec,
-    @Default(VideoQuality.high) VideoQuality videoQuality,
-  }) = _CallSetting;
+  }) = _MediaConfig;
 
-  factory CallSetting.fromJson(Map<String, Object?> json) =>
-      _$CallSettingFromJson(json);
+  factory MediaConfig.fromJson(Map<String, Object?> json) =>
+      _$MediaConfigFromJson(json);
 }
 
-extension CallSettingX on CallSetting {
+extension CallSettingX on MediaConfig {
   Map<String, dynamic> get mediaConstraints {
     return {
       'audio': {
@@ -38,7 +33,7 @@ extension CallSettingX on CallSetting {
         ...(kIsWeb ? audioMandatory : {'mandatory': audioMandatory}),
       },
       'video': {
-        'mandatory': videoQuality.videoProfile,
+        'mandatory': videoConfig.videoQuality.videoProfile,
         'facingMode': 'user',
       },
     };
@@ -47,20 +42,20 @@ extension CallSettingX on CallSetting {
   Map<String, dynamic> get audioMandatory {
     return {
       // Echo cancellation
-      'googEchoCancellation': echoCancellationEnabled,
-      'googEchoCancellation2': echoCancellationEnabled,
-      'echoCancellation': echoCancellationEnabled,
-      'googDAEchoCancellation': echoCancellationEnabled,
+      'googEchoCancellation': audioConfig.echoCancellationEnabled,
+      'googEchoCancellation2': audioConfig.echoCancellationEnabled,
+      'echoCancellation': audioConfig.echoCancellationEnabled,
+      'googDAEchoCancellation': audioConfig.echoCancellationEnabled,
 
       // Noise suppression - reduces background noise
-      'googNoiseSuppression': noiseSuppressionEnabled,
-      'googNoiseSuppression2': noiseSuppressionEnabled,
-      'noiseSuppression': noiseSuppressionEnabled,
+      'googNoiseSuppression': audioConfig.noiseSuppressionEnabled,
+      'googNoiseSuppression2': audioConfig.noiseSuppressionEnabled,
+      'noiseSuppression': audioConfig.noiseSuppressionEnabled,
 
       // Auto gain control - maintains consistent volume levels
-      'googAutoGainControl': agcEnabled,
-      'googAutoGainControl2': agcEnabled,
-      'autoGainControl': agcEnabled,
+      'googAutoGainControl': audioConfig.agcEnabled,
+      'googAutoGainControl2': audioConfig.agcEnabled,
+      'autoGainControl': audioConfig.agcEnabled,
 
       // Additional quality enhancements
       'googHighpassFilter': 'true',

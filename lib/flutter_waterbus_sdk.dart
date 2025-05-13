@@ -152,7 +152,7 @@ class WaterbusSdk {
     _sdk.setSubscribeSubtitle(isEnabled);
   }
 
-  Future<void> changeCallSetting(CallSetting setting) async {
+  Future<void> changeCallSetting(MediaConfig setting) async {
     await _sdk.changeCallSettings(setting);
   }
 

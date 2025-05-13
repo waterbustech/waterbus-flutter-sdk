@@ -23,7 +23,7 @@ abstract class WebRTCManager {
   Future<void> dispose();
 
   // Control Settings
-  Future<void> applySettings(CallSetting setting);
+  Future<void> applySettings(MediaConfig setting);
   Future<void> prepareMedia();
   Future<void> startScreenSharing({DesktopCapturerSource? source});
   Future<void> stopScreenSharing({bool stayInRoom = true});

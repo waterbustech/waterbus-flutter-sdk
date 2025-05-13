@@ -48,7 +48,7 @@ class MediaSource {
       key: textureId == null ? null : Key(textureId!.toString()),
       objectFit: objectFit,
       mirror: mirror,
-      filterQuality: FilterQuality.none,
+      // filterQuality: FilterQuality.none,
     );
   }
 

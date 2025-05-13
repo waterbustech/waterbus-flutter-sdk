@@ -6,44 +6,19 @@ part of 'call_setting.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_CallSetting _$CallSettingFromJson(Map<String, dynamic> json) => _CallSetting(
-      isLowBandwidthMode: json['isLowBandwidthMode'] as bool? ?? false,
-      isAudioMuted: json['isAudioMuted'] as bool? ?? false,
-      echoCancellationEnabled: json['echoCancellationEnabled'] as bool? ?? true,
-      noiseSuppressionEnabled: json['noiseSuppressionEnabled'] as bool? ?? true,
-      agcEnabled: json['agcEnabled'] as bool? ?? true,
-      isVideoMuted: json['isVideoMuted'] as bool? ?? false,
+_MediaConfig _$MediaConfigFromJson(Map<String, dynamic> json) => _MediaConfig(
+      audioConfig: json['audioConfig'] == null
+          ? const AudioConfig()
+          : AudioConfig.fromJson(json['audioConfig'] as Map<String, dynamic>),
+      videoConfig: json['videoConfig'] == null
+          ? const VideoConfig()
+          : VideoConfig.fromJson(json['videoConfig'] as Map<String, dynamic>),
       e2eeEnabled: json['e2eeEnabled'] as bool? ?? false,
-      preferedCodec:
-          $enumDecodeNullable(_$RTCVideoCodecEnumMap, json['preferedCodec']) ??
-              RTCVideoCodec.h264,
-      videoQuality:
-          $enumDecodeNullable(_$VideoQualityEnumMap, json['videoQuality']) ??
-              VideoQuality.high,
     );
 
-Map<String, dynamic> _$CallSettingToJson(_CallSetting instance) =>
+Map<String, dynamic> _$MediaConfigToJson(_MediaConfig instance) =>
     <String, dynamic>{
-      'isLowBandwidthMode': instance.isLowBandwidthMode,
-      'isAudioMuted': instance.isAudioMuted,
-      'echoCancellationEnabled': instance.echoCancellationEnabled,
-      'noiseSuppressionEnabled': instance.noiseSuppressionEnabled,
-      'agcEnabled': instance.agcEnabled,
-      'isVideoMuted': instance.isVideoMuted,
+      'audioConfig': instance.audioConfig.toJson(),
+      'videoConfig': instance.videoConfig.toJson(),
       'e2eeEnabled': instance.e2eeEnabled,
-      'preferedCodec': _$RTCVideoCodecEnumMap[instance.preferedCodec]!,
-      'videoQuality': _$VideoQualityEnumMap[instance.videoQuality]!,
     };
-
-const _$RTCVideoCodecEnumMap = {
-  RTCVideoCodec.vp8: 'vp8',
-  RTCVideoCodec.vp9: 'vp9',
-  RTCVideoCodec.h264: 'h264',
-  RTCVideoCodec.av1: 'av1',
-};
-
-const _$VideoQualityEnumMap = {
-  VideoQuality.low: 'Data Saver',
-  VideoQuality.auto: 'Balance',
-  VideoQuality.high: 'High Quality',
-};

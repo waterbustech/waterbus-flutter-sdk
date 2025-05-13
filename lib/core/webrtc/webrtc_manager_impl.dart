@@ -44,7 +44,7 @@ class WebRTCManagerIpml extends WebRTCManager {
   ParticipantSFU? _mParticipant;
   bool _canPublisherAddIceCandidate = false;
   bool _isSessionBeingRecorded = false;
-  CallSetting _currentCallSetting = CallSetting();
+  MediaConfig _currentCallSetting = MediaConfig();
   final Map<String, ParticipantSFU> _remoteSubscribers = {};
   final Map<String, List<RTCIceCandidate>> _iceCandidateQueueForSubscribers =
       {};
@@ -75,7 +75,7 @@ class WebRTCManagerIpml extends WebRTCManager {
 
       final sender = await _mParticipant!.peerConnection.addSimulcastTrack(
         screenTrack,
-        vCodec: _currentCallSetting.preferedCodec,
+        vCodec: _currentCallSetting.videoConfig.preferedCodec,
         stream: _screenSharingStream!,
       );
 
@@ -169,7 +169,7 @@ class WebRTCManagerIpml extends WebRTCManager {
     await Future.wait([
       _e2eeManager.initialize(
         roomId,
-        codec: _currentCallSetting.preferedCodec,
+        codec: _currentCallSetting.videoConfig.preferedCodec,
         participantId: participantId.toString(),
         enabled: _currentCallSetting.e2eeEnabled,
       ),
@@ -333,8 +333,9 @@ class WebRTCManagerIpml extends WebRTCManager {
 
   // MARK: Control Media
   @override
-  Future<void> applySettings(CallSetting setting) async {
-    if (_currentCallSetting.videoQuality == setting.videoQuality) {
+  Future<void> applySettings(MediaConfig setting) async {
+    if (_currentCallSetting.videoConfig.videoQuality ==
+        setting.videoConfig.videoQuality) {
       if (_currentCallSetting.e2eeEnabled != setting.e2eeEnabled) {
         await _enableEncryption(setting.e2eeEnabled);
       }
@@ -646,11 +647,11 @@ class WebRTCManagerIpml extends WebRTCManager {
       constraints: RTCConfigurations.offerPublisherSdpConstraints,
     );
 
-    _mParticipant = ParticipantSFU(
+    _mParticipant = ParticipantSFU.init(
       ownerId: kIsMine,
       peerConnection: peerConnection,
       onFirstFrameRendered: () => _notify(CallbackEvents.shouldBeUpdateState),
-      videoCodec: _currentCallSetting.preferedCodec,
+      videoCodec: _currentCallSetting.videoConfig.preferedCodec,
       isE2eeEnabled: _currentCallSetting.e2eeEnabled,
     );
 
@@ -679,11 +680,11 @@ class WebRTCManagerIpml extends WebRTCManager {
 
       if (onlyStream) return stream;
 
-      if (_currentCallSetting.isAudioMuted) {
+      if (_currentCallSetting.audioConfig.isAudioMuted) {
         toggleAudio(forceValue: false);
       }
 
-      if (_currentCallSetting.isVideoMuted) {
+      if (_currentCallSetting.videoConfig.isVideoMuted) {
         toggleVideo(forceValue: false);
       }
 
@@ -750,7 +751,7 @@ class WebRTCManagerIpml extends WebRTCManager {
     for (final track in tracks) {
       final sender = await peerConnection.addSimulcastTrack(
         track,
-        vCodec: _currentCallSetting.preferedCodec,
+        vCodec: _currentCallSetting.videoConfig.preferedCodec,
         stream: _localCameraStream!,
         kind: track.kind == RtcTrackKind.video.kind
             ? RtcTrackKind.video
@@ -785,7 +786,7 @@ class WebRTCManagerIpml extends WebRTCManager {
 
     if (_localCameraStream?.getVideoTracks().isNotEmpty ?? false) {
       sdp = sdp.optimizeSdp(
-        codec: _currentCallSetting.preferedCodec,
+        codec: _currentCallSetting.videoConfig.preferedCodec,
       );
     }
 
@@ -878,7 +879,7 @@ class WebRTCManagerIpml extends WebRTCManager {
 
     final targetId = payload.targetId;
 
-    _remoteSubscribers[targetId] = ParticipantSFU(
+    _remoteSubscribers[targetId] = ParticipantSFU.init(
       ownerId: targetId,
       peerConnection: rtcPeerConnection,
       onFirstFrameRendered: () => _notify(CallbackEvents.shouldBeUpdateState),
@@ -1047,7 +1048,7 @@ class WebRTCManagerIpml extends WebRTCManager {
 
     if (_localCameraStream?.getVideoTracks().isNotEmpty ?? false) {
       sdp = sdp.optimizeSdp(
-        codec: _currentCallSetting.preferedCodec,
+        codec: _currentCallSetting.videoConfig.preferedCodec,
       );
     }
 

@@ -89,7 +89,7 @@ abstract class WaterbusSdkInterface {
   // WebRTC
   Future<void> reconnect();
   Future<void> prepareMedia();
-  Future<void> changeCallSettings(CallSetting setting);
+  Future<void> changeCallSettings(MediaConfig setting);
   Future<void> switchCamera();
   Future<void> toggleVideo();
   Future<void> toggleAudio();
