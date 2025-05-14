@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'call_setting.dart';
+part of 'media_config.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

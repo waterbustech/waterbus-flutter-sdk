@@ -17,7 +17,7 @@ T _$identity<T>(T value) => value;
 mixin _$VideoConfig {
   bool get isVideoMuted;
   RTCVideoCodec get preferedCodec;
-  VideoQuality get videoQuality;
+  VideoQualityEnum get videoQuality;
 
   /// Create a copy of VideoConfig
   /// with the given fields replaced by the non-null parameter values.
@@ -62,7 +62,7 @@ abstract mixin class $VideoConfigCopyWith<$Res> {
   $Res call(
       {bool isVideoMuted,
       RTCVideoCodec preferedCodec,
-      VideoQuality videoQuality});
+      VideoQualityEnum videoQuality});
 }
 
 /// @nodoc
@@ -93,7 +93,7 @@ class _$VideoConfigCopyWithImpl<$Res> implements $VideoConfigCopyWith<$Res> {
       videoQuality: null == videoQuality
           ? _self.videoQuality
           : videoQuality // ignore: cast_nullable_to_non_nullable
-              as VideoQuality,
+              as VideoQualityEnum,
     ));
   }
 }
@@ -104,7 +104,7 @@ class _VideoConfig implements VideoConfig {
   const _VideoConfig(
       {this.isVideoMuted = false,
       this.preferedCodec = RTCVideoCodec.h264,
-      this.videoQuality = VideoQuality.high});
+      this.videoQuality = VideoQualityEnum.p1080});
   factory _VideoConfig.fromJson(Map<String, dynamic> json) =>
       _$VideoConfigFromJson(json);
 
@@ -116,7 +116,7 @@ class _VideoConfig implements VideoConfig {
   final RTCVideoCodec preferedCodec;
   @override
   @JsonKey()
-  final VideoQuality videoQuality;
+  final VideoQualityEnum videoQuality;
 
   /// Create a copy of VideoConfig
   /// with the given fields replaced by the non-null parameter values.
@@ -168,7 +168,7 @@ abstract mixin class _$VideoConfigCopyWith<$Res>
   $Res call(
       {bool isVideoMuted,
       RTCVideoCodec preferedCodec,
-      VideoQuality videoQuality});
+      VideoQualityEnum videoQuality});
 }
 
 /// @nodoc
@@ -199,7 +199,7 @@ class __$VideoConfigCopyWithImpl<$Res> implements _$VideoConfigCopyWith<$Res> {
       videoQuality: null == videoQuality
           ? _self.videoQuality
           : videoQuality // ignore: cast_nullable_to_non_nullable
-              as VideoQuality,
+              as VideoQualityEnum,
     ));
   }
 }

@@ -4,12 +4,11 @@ import 'package:flutter/foundation.dart';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:waterbus_sdk/types/externals/enums/video_quality.dart';
 import 'package:waterbus_sdk/types/externals/models/audio_config.dart';
 import 'package:waterbus_sdk/types/externals/models/video_config.dart';
 
-part 'call_setting.freezed.dart';
-part 'call_setting.g.dart';
+part 'media_config.freezed.dart';
+part 'media_config.g.dart';
 
 @freezed
 abstract class MediaConfig with _$MediaConfig {
@@ -23,7 +22,7 @@ abstract class MediaConfig with _$MediaConfig {
       _$MediaConfigFromJson(json);
 }
 
-extension CallSettingX on MediaConfig {
+extension MediaConfigX on MediaConfig {
   Map<String, dynamic> get mediaConstraints {
     return {
       'audio': {
@@ -33,7 +32,7 @@ extension CallSettingX on MediaConfig {
         ...(kIsWeb ? audioMandatory : {'mandatory': audioMandatory}),
       },
       'video': {
-        'mandatory': videoConfig.videoQuality.videoProfile,
+        'mandatory': videoConfig.videoQuality.quality.toJson(),
         'facingMode': 'user',
       },
     };

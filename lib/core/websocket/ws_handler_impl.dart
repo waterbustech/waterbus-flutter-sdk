@@ -97,12 +97,12 @@ class WsHandlerImpl extends WsHandler {
   void _listenToRoomEvents() {
     _socket?.on(WsEvent.roomPublish, (data) {
       if (data == null) return;
-      _rtcManager.setPublisherRemoteSdp(data['sdp'], data['isRecording']);
+      _rtcManager.setLocalSdpAsPublisher(data['sdp'], data['isRecording']);
     });
 
     _socket?.on(WsEvent.roomNewParticipant, (data) {
       if (data == null) return;
-      _rtcManager.handleNewParticipant(
+      _rtcManager.handleParticipantJoined(
         Participant.fromJson(Map<String, dynamic>.from(data)),
       );
     });
@@ -123,19 +123,19 @@ class WsHandlerImpl extends WsHandler {
         codec: (data['videoCodec'] ?? '').videoCodec,
       );
 
-      await _rtcManager.setSubscriberRemoteSdp(payload);
+      await _rtcManager.setRemoteSdpAsSubscriber(payload);
     });
 
     _socket?.on(WsEvent.roomParticipantLeft, (data) {
       if (data == null) return;
-      _rtcManager.handleParticipantLeave(data['targetId']);
+      _rtcManager.handleParticipantLeft(data['targetId']);
     });
   }
 
   void _listenToMediaEvents() {
     _socket?.on(WsEvent.roomPublisherCandidate, (data) {
       if (data == null) return;
-      _rtcManager.addPublisherCandidate(
+      _rtcManager.addIceCandidateToPublisher(
         RTCIceCandidate(
           data['candidate'],
           data['sdpMid'],
@@ -147,7 +147,7 @@ class WsHandlerImpl extends WsHandler {
     _socket?.on(WsEvent.roomSubscriberCandidate, (data) {
       if (data == null) return;
       final c = data['candidate'];
-      _rtcManager.addSubscriberCandidate(
+      _rtcManager.addIceCandidateToSubscriber(
         data['targetId'],
         RTCIceCandidate(c['candidate'], c['sdpMid'], c['sdpMLineIndex']),
       );
@@ -155,7 +155,7 @@ class WsHandlerImpl extends WsHandler {
 
     _socket?.on(WsEvent.roomAudioEnabled, (data) {
       if (data == null) return;
-      _rtcManager.setAudioEnabled(
+      _rtcManager.setParticipantAudioEnabled(
         targetId: data['participantId'],
         isEnabled: data['isEnabled'],
       );
@@ -163,7 +163,7 @@ class WsHandlerImpl extends WsHandler {
 
     _socket?.on(WsEvent.roomVideoEnabled, (data) {
       if (data == null) return;
-      _rtcManager.setVideoEnabled(
+      _rtcManager.setParticipantVideoEnabled(
         targetId: data['participantId'],
         isEnabled: data['isEnabled'],
       );
@@ -171,7 +171,7 @@ class WsHandlerImpl extends WsHandler {
 
     _socket?.on(WsEvent.roomCameraType, (data) {
       if (data == null) return;
-      _rtcManager.setCameraType(
+      _rtcManager.setParticipantCameraType(
         targetId: data['participantId'],
         type: CameraType.values[data['type']],
       );
@@ -179,16 +179,15 @@ class WsHandlerImpl extends WsHandler {
 
     _socket?.on(WsEvent.roomScreenSharing, (data) {
       if (data == null) return;
-      _rtcManager.setScreenSharing(
-        targetId: data['participantId'],
-        isSharing: data['isSharing'],
-        screenTrackId: data['screenTrackId'],
+
+      _rtcManager.setParticipantScreenSharing(
+        config: ParticipantScreenSharingConfig.fromJson(data),
       );
     });
 
     _socket?.on(WsEvent.roomHandRaising, (data) {
       if (data == null) return;
-      _rtcManager.setHandRaising(
+      _rtcManager.setParticipantHandRaising(
         targetId: data['participantId'],
         isRaising: data['isRaising'],
       );
@@ -198,12 +197,12 @@ class WsHandlerImpl extends WsHandler {
   void _listenToRenegotiationEvents() {
     _socket?.on(WsEvent.roomPublisherRenegotiation, (data) {
       if (data == null) return;
-      _rtcManager.setPublisherRemoteSdp(data['sdp']);
+      _rtcManager.setLocalSdpAsPublisher(data['sdp']);
     });
 
     _socket?.on(WsEvent.roomSubscriberRenegotiation, (data) {
       if (data == null) return;
-      _rtcManager.renegotiateSubscriber(
+      _rtcManager.renegotiateWithParticipant(
         targetId: data['targetId'],
         sdp: data['sdp'],
       );
@@ -214,8 +213,8 @@ class WsHandlerImpl extends WsHandler {
     _socket?.on(WsEvent.systemDestroy, (data) {
       if (data == null) return;
 
-      if (_podName == data['podName'] && _rtcManager.roomId != null) {
-        reconnect(callbackConnected: _rtcManager.reconnect);
+      if (_podName == data['podName'] && _rtcManager.currentRoomId != null) {
+        reconnect(callbackConnected: _rtcManager.reconnectRoom);
       }
     });
   }

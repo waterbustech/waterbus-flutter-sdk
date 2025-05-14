@@ -32,7 +32,7 @@ class CallKitListener {
           case Event.actionCallDecline:
             break;
           case Event.actionCallEnded:
-            _rtcManager.dispose();
+            _rtcManager.leaveRoom();
             break;
           case Event.actionCallTimeout:
             break;
@@ -42,7 +42,7 @@ class CallKitListener {
             break;
           case Event.actionCallToggleMute:
             final isMuted = event.body['isMuted'];
-            _rtcManager.toggleAudio(forceValue: !isMuted);
+            _rtcManager.toggleAudioInput(forceValue: !isMuted);
             break;
           case Event.actionCallToggleDmtf:
             break;

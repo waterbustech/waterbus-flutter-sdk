@@ -8,4 +8,3 @@ export 'rtc_video_codec.dart';
 export 'sending_status_enum.dart';
 export 'status_message.dart';
 export 'status_seen_message_enum.dart';
-export 'video_quality.dart';

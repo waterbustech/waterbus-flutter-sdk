@@ -41,8 +41,6 @@ extension MeetingExtention on Meeting {
 
   bool get isNoOneElse => members.length < 2;
 
-  // String get inviteLink => 'https:/waterbus.tech/meeting/$code';
-
   String? get participantsOnlineTile {
     if (participants.isEmpty) return null;
 
@@ -65,19 +63,4 @@ extension MeetingExtention on Meeting {
   DateTime get latestJoinedTime {
     return latestJoinedAt ?? createdAt ?? DateTime.now();
   }
-
-  bool get isGroup => memberJoined.length >= 2;
-
-  StatusSeenMessage get statusLastedMessage => StatusSeenMessage.seen;
-
-  List<Member> get memberJoined => members
-      .where((member) => member.status == MemberStatusEnum.joined)
-      .toList();
-
-  StatusMessage get statusMessage => StatusMessage.none;
-
-  int get countUnreadMessage => 10;
-
-  DateTime get updatedAt =>
-      (latestMessage?.updatedAt ?? createdAt ?? DateTime.now()).toLocal();
 }

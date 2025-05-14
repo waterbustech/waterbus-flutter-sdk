@@ -18,9 +18,6 @@ mixin _$VideoQualityModel {
   int get minHeight;
   int get minWidth;
   int get minFrameRate;
-  int? get frameRate;
-  int? get height;
-  int? get width;
 
   /// Create a copy of VideoQualityModel
   /// with the given fields replaced by the non-null parameter values.
@@ -29,6 +26,9 @@ mixin _$VideoQualityModel {
   $VideoQualityModelCopyWith<VideoQualityModel> get copyWith =>
       _$VideoQualityModelCopyWithImpl<VideoQualityModel>(
           this as VideoQualityModel, _$identity);
+
+  /// Serializes this VideoQualityModel to a JSON map.
+  Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
@@ -40,20 +40,17 @@ mixin _$VideoQualityModel {
             (identical(other.minWidth, minWidth) ||
                 other.minWidth == minWidth) &&
             (identical(other.minFrameRate, minFrameRate) ||
-                other.minFrameRate == minFrameRate) &&
-            (identical(other.frameRate, frameRate) ||
-                other.frameRate == frameRate) &&
-            (identical(other.height, height) || other.height == height) &&
-            (identical(other.width, width) || other.width == width));
+                other.minFrameRate == minFrameRate));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, minHeight, minWidth, minFrameRate, frameRate, height, width);
+  int get hashCode =>
+      Object.hash(runtimeType, minHeight, minWidth, minFrameRate);
 
   @override
   String toString() {
-    return 'VideoQualityModel(minHeight: $minHeight, minWidth: $minWidth, minFrameRate: $minFrameRate, frameRate: $frameRate, height: $height, width: $width)';
+    return 'VideoQualityModel(minHeight: $minHeight, minWidth: $minWidth, minFrameRate: $minFrameRate)';
   }
 }
 
@@ -63,13 +60,7 @@ abstract mixin class $VideoQualityModelCopyWith<$Res> {
           VideoQualityModel value, $Res Function(VideoQualityModel) _then) =
       _$VideoQualityModelCopyWithImpl;
   @useResult
-  $Res call(
-      {int minHeight,
-      int minWidth,
-      int minFrameRate,
-      int? frameRate,
-      int? height,
-      int? width});
+  $Res call({int minHeight, int minWidth, int minFrameRate});
 }
 
 /// @nodoc
@@ -88,9 +79,6 @@ class _$VideoQualityModelCopyWithImpl<$Res>
     Object? minHeight = null,
     Object? minWidth = null,
     Object? minFrameRate = null,
-    Object? frameRate = freezed,
-    Object? height = freezed,
-    Object? width = freezed,
   }) {
     return _then(_self.copyWith(
       minHeight: null == minHeight
@@ -105,32 +93,19 @@ class _$VideoQualityModelCopyWithImpl<$Res>
           ? _self.minFrameRate
           : minFrameRate // ignore: cast_nullable_to_non_nullable
               as int,
-      frameRate: freezed == frameRate
-          ? _self.frameRate
-          : frameRate // ignore: cast_nullable_to_non_nullable
-              as int?,
-      height: freezed == height
-          ? _self.height
-          : height // ignore: cast_nullable_to_non_nullable
-              as int?,
-      width: freezed == width
-          ? _self.width
-          : width // ignore: cast_nullable_to_non_nullable
-              as int?,
     ));
   }
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _VideoQualityModel implements VideoQualityModel {
   const _VideoQualityModel(
       {required this.minHeight,
       required this.minWidth,
-      required this.minFrameRate,
-      this.frameRate,
-      this.height,
-      this.width});
+      required this.minFrameRate});
+  factory _VideoQualityModel.fromJson(Map<String, dynamic> json) =>
+      _$VideoQualityModelFromJson(json);
 
   @override
   final int minHeight;
@@ -138,12 +113,6 @@ class _VideoQualityModel implements VideoQualityModel {
   final int minWidth;
   @override
   final int minFrameRate;
-  @override
-  final int? frameRate;
-  @override
-  final int? height;
-  @override
-  final int? width;
 
   /// Create a copy of VideoQualityModel
   /// with the given fields replaced by the non-null parameter values.
@@ -152,6 +121,13 @@ class _VideoQualityModel implements VideoQualityModel {
   @pragma('vm:prefer-inline')
   _$VideoQualityModelCopyWith<_VideoQualityModel> get copyWith =>
       __$VideoQualityModelCopyWithImpl<_VideoQualityModel>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$VideoQualityModelToJson(
+      this,
+    );
+  }
 
   @override
   bool operator ==(Object other) {
@@ -163,20 +139,17 @@ class _VideoQualityModel implements VideoQualityModel {
             (identical(other.minWidth, minWidth) ||
                 other.minWidth == minWidth) &&
             (identical(other.minFrameRate, minFrameRate) ||
-                other.minFrameRate == minFrameRate) &&
-            (identical(other.frameRate, frameRate) ||
-                other.frameRate == frameRate) &&
-            (identical(other.height, height) || other.height == height) &&
-            (identical(other.width, width) || other.width == width));
+                other.minFrameRate == minFrameRate));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, minHeight, minWidth, minFrameRate, frameRate, height, width);
+  int get hashCode =>
+      Object.hash(runtimeType, minHeight, minWidth, minFrameRate);
 
   @override
   String toString() {
-    return 'VideoQualityModel(minHeight: $minHeight, minWidth: $minWidth, minFrameRate: $minFrameRate, frameRate: $frameRate, height: $height, width: $width)';
+    return 'VideoQualityModel(minHeight: $minHeight, minWidth: $minWidth, minFrameRate: $minFrameRate)';
   }
 }
 
@@ -188,13 +161,7 @@ abstract mixin class _$VideoQualityModelCopyWith<$Res>
       __$VideoQualityModelCopyWithImpl;
   @override
   @useResult
-  $Res call(
-      {int minHeight,
-      int minWidth,
-      int minFrameRate,
-      int? frameRate,
-      int? height,
-      int? width});
+  $Res call({int minHeight, int minWidth, int minFrameRate});
 }
 
 /// @nodoc
@@ -213,9 +180,6 @@ class __$VideoQualityModelCopyWithImpl<$Res>
     Object? minHeight = null,
     Object? minWidth = null,
     Object? minFrameRate = null,
-    Object? frameRate = freezed,
-    Object? height = freezed,
-    Object? width = freezed,
   }) {
     return _then(_VideoQualityModel(
       minHeight: null == minHeight
@@ -230,18 +194,6 @@ class __$VideoQualityModelCopyWithImpl<$Res>
           ? _self.minFrameRate
           : minFrameRate // ignore: cast_nullable_to_non_nullable
               as int,
-      frameRate: freezed == frameRate
-          ? _self.frameRate
-          : frameRate // ignore: cast_nullable_to_non_nullable
-              as int?,
-      height: freezed == height
-          ? _self.height
-          : height // ignore: cast_nullable_to_non_nullable
-              as int?,
-      width: freezed == width
-          ? _self.width
-          : width // ignore: cast_nullable_to_non_nullable
-              as int?,
     ));
   }
 }

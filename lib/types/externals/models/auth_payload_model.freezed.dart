@@ -16,10 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AuthPayloadModel {
   String get fullName;
-  String? get facebookId;
-  String? get googleId;
-  String? get appleId;
-  String? get email;
+  String? get authId;
 
   /// Create a copy of AuthPayloadModel
   /// with the given fields replaced by the non-null parameter values.
@@ -39,22 +36,16 @@ mixin _$AuthPayloadModel {
             other is AuthPayloadModel &&
             (identical(other.fullName, fullName) ||
                 other.fullName == fullName) &&
-            (identical(other.facebookId, facebookId) ||
-                other.facebookId == facebookId) &&
-            (identical(other.googleId, googleId) ||
-                other.googleId == googleId) &&
-            (identical(other.appleId, appleId) || other.appleId == appleId) &&
-            (identical(other.email, email) || other.email == email));
+            (identical(other.authId, authId) || other.authId == authId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, fullName, facebookId, googleId, appleId, email);
+  int get hashCode => Object.hash(runtimeType, fullName, authId);
 
   @override
   String toString() {
-    return 'AuthPayloadModel(fullName: $fullName, facebookId: $facebookId, googleId: $googleId, appleId: $appleId, email: $email)';
+    return 'AuthPayloadModel(fullName: $fullName, authId: $authId)';
   }
 }
 
@@ -64,12 +55,7 @@ abstract mixin class $AuthPayloadModelCopyWith<$Res> {
           AuthPayloadModel value, $Res Function(AuthPayloadModel) _then) =
       _$AuthPayloadModelCopyWithImpl;
   @useResult
-  $Res call(
-      {String fullName,
-      String? facebookId,
-      String? googleId,
-      String? appleId,
-      String? email});
+  $Res call({String fullName, String? authId});
 }
 
 /// @nodoc
@@ -86,31 +72,16 @@ class _$AuthPayloadModelCopyWithImpl<$Res>
   @override
   $Res call({
     Object? fullName = null,
-    Object? facebookId = freezed,
-    Object? googleId = freezed,
-    Object? appleId = freezed,
-    Object? email = freezed,
+    Object? authId = freezed,
   }) {
     return _then(_self.copyWith(
       fullName: null == fullName
           ? _self.fullName
           : fullName // ignore: cast_nullable_to_non_nullable
               as String,
-      facebookId: freezed == facebookId
-          ? _self.facebookId
-          : facebookId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      googleId: freezed == googleId
-          ? _self.googleId
-          : googleId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      appleId: freezed == appleId
-          ? _self.appleId
-          : appleId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      email: freezed == email
-          ? _self.email
-          : email // ignore: cast_nullable_to_non_nullable
+      authId: freezed == authId
+          ? _self.authId
+          : authId // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -119,25 +90,14 @@ class _$AuthPayloadModelCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _AuthPayloadModel implements AuthPayloadModel {
-  const _AuthPayloadModel(
-      {required this.fullName,
-      this.facebookId,
-      this.googleId,
-      this.appleId,
-      this.email});
+  const _AuthPayloadModel({required this.fullName, this.authId});
   factory _AuthPayloadModel.fromJson(Map<String, dynamic> json) =>
       _$AuthPayloadModelFromJson(json);
 
   @override
   final String fullName;
   @override
-  final String? facebookId;
-  @override
-  final String? googleId;
-  @override
-  final String? appleId;
-  @override
-  final String? email;
+  final String? authId;
 
   /// Create a copy of AuthPayloadModel
   /// with the given fields replaced by the non-null parameter values.
@@ -161,22 +121,16 @@ class _AuthPayloadModel implements AuthPayloadModel {
             other is _AuthPayloadModel &&
             (identical(other.fullName, fullName) ||
                 other.fullName == fullName) &&
-            (identical(other.facebookId, facebookId) ||
-                other.facebookId == facebookId) &&
-            (identical(other.googleId, googleId) ||
-                other.googleId == googleId) &&
-            (identical(other.appleId, appleId) || other.appleId == appleId) &&
-            (identical(other.email, email) || other.email == email));
+            (identical(other.authId, authId) || other.authId == authId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, fullName, facebookId, googleId, appleId, email);
+  int get hashCode => Object.hash(runtimeType, fullName, authId);
 
   @override
   String toString() {
-    return 'AuthPayloadModel(fullName: $fullName, facebookId: $facebookId, googleId: $googleId, appleId: $appleId, email: $email)';
+    return 'AuthPayloadModel(fullName: $fullName, authId: $authId)';
   }
 }
 
@@ -188,12 +142,7 @@ abstract mixin class _$AuthPayloadModelCopyWith<$Res>
       __$AuthPayloadModelCopyWithImpl;
   @override
   @useResult
-  $Res call(
-      {String fullName,
-      String? facebookId,
-      String? googleId,
-      String? appleId,
-      String? email});
+  $Res call({String fullName, String? authId});
 }
 
 /// @nodoc
@@ -210,31 +159,16 @@ class __$AuthPayloadModelCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   $Res call({
     Object? fullName = null,
-    Object? facebookId = freezed,
-    Object? googleId = freezed,
-    Object? appleId = freezed,
-    Object? email = freezed,
+    Object? authId = freezed,
   }) {
     return _then(_AuthPayloadModel(
       fullName: null == fullName
           ? _self.fullName
           : fullName // ignore: cast_nullable_to_non_nullable
               as String,
-      facebookId: freezed == facebookId
-          ? _self.facebookId
-          : facebookId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      googleId: freezed == googleId
-          ? _self.googleId
-          : googleId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      appleId: freezed == appleId
-          ? _self.appleId
-          : appleId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      email: freezed == email
-          ? _self.email
-          : email // ignore: cast_nullable_to_non_nullable
+      authId: freezed == authId
+          ? _self.authId
+          : authId // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }

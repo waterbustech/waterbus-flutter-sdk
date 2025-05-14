@@ -7,10 +7,7 @@ part 'auth_payload_model.g.dart';
 abstract class AuthPayloadModel with _$AuthPayloadModel {
   const factory AuthPayloadModel({
     required String fullName,
-    String? facebookId,
-    String? googleId,
-    String? appleId,
-    String? email,
+    String? authId,
   }) = _AuthPayloadModel;
 
   factory AuthPayloadModel.fromJson(Map<String, Object?> json) =>

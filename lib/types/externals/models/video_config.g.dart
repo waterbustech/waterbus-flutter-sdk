@@ -11,16 +11,16 @@ _VideoConfig _$VideoConfigFromJson(Map<String, dynamic> json) => _VideoConfig(
       preferedCodec:
           $enumDecodeNullable(_$RTCVideoCodecEnumMap, json['preferedCodec']) ??
               RTCVideoCodec.h264,
-      videoQuality:
-          $enumDecodeNullable(_$VideoQualityEnumMap, json['videoQuality']) ??
-              VideoQuality.high,
+      videoQuality: $enumDecodeNullable(
+              _$VideoQualityEnumEnumMap, json['videoQuality']) ??
+          VideoQualityEnum.p1080,
     );
 
 Map<String, dynamic> _$VideoConfigToJson(_VideoConfig instance) =>
     <String, dynamic>{
       'isVideoMuted': instance.isVideoMuted,
       'preferedCodec': _$RTCVideoCodecEnumMap[instance.preferedCodec]!,
-      'videoQuality': _$VideoQualityEnumMap[instance.videoQuality]!,
+      'videoQuality': _$VideoQualityEnumEnumMap[instance.videoQuality]!,
     };
 
 const _$RTCVideoCodecEnumMap = {
@@ -30,8 +30,8 @@ const _$RTCVideoCodecEnumMap = {
   RTCVideoCodec.av1: 'av1',
 };
 
-const _$VideoQualityEnumMap = {
-  VideoQuality.low: 'Data Saver',
-  VideoQuality.auto: 'Balance',
-  VideoQuality.high: 'High Quality',
+const _$VideoQualityEnumEnumMap = {
+  VideoQualityEnum.p1080: 'p1080',
+  VideoQualityEnum.p720: 'p720',
+  VideoQualityEnum.p360: 'p360',
 };

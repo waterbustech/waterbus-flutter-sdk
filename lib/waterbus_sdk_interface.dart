@@ -97,11 +97,11 @@ abstract class WaterbusSdkInterface {
   void setSubscribeSubtitle(bool isEnabled);
   Future<void> startScreenSharing({DesktopCapturerSource? source});
   Future<void> stopScreenSharing();
-  Future<void> enableVirtualBackground({
+  Future<void> enableVirtualBg({
     required Uint8List backgroundImage,
     double thresholdConfidence = 0.7,
   });
-  Future<void> disableVirtualBackground();
+  Future<void> disableVirtualBg();
   Future<void> setPiPEnabled({required String textureId, bool enabled = true});
 
   CallState get callState;

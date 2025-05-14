@@ -160,14 +160,14 @@ class WaterbusSdk {
     required Uint8List backgroundImage,
     double thresholdConfidence = 0.7,
   }) async {
-    await _sdk.enableVirtualBackground(
+    await _sdk.enableVirtualBg(
       backgroundImage: backgroundImage,
       thresholdConfidence: thresholdConfidence,
     );
   }
 
-  Future<void> disableVirtualBackground() async {
-    await _sdk.disableVirtualBackground();
+  Future<void> disableVirtualBg() async {
+    await _sdk.disableVirtualBg();
   }
 
   Future<void> setPiPEnabled({
