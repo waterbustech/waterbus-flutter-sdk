@@ -25,12 +25,12 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   @override
   Future<Result<User>> createToken(AuthPayload authPayload) async {
     final Map<String, dynamic> body = authPayload.toJson();
-    print("body $body");
+
     final Response response = await _baseRemoteData.post(
       Endpoints.auth,
       body: body,
     );
-    print("response $response");
+
     if (response.statusCode == StatusCode.created) {
       final String accessToken = response.data['token'];
       final String refreshToken = response.data['refreshToken'];
