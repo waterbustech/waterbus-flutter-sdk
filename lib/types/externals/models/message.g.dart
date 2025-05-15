@@ -1,13 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'message_model.dart';
+part of 'message.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_MessageModel _$MessageModelFromJson(Map<String, dynamic> json) =>
-    _MessageModel(
+_Message _$MessageFromJson(Map<String, dynamic> json) => _Message(
       id: (json['id'] as num).toInt(),
       data: json['data'] as String,
       meeting: const IntConverter().fromJson(json['meeting']),
@@ -23,8 +22,7 @@ _MessageModel _$MessageModelFromJson(Map<String, dynamic> json) =>
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
 
-Map<String, dynamic> _$MessageModelToJson(_MessageModel instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$MessageToJson(_Message instance) => <String, dynamic>{
       'id': instance.id,
       'data': instance.data,
       'meeting': const IntConverter().toJson(instance.meeting),

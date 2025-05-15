@@ -7,9 +7,9 @@ import 'package:waterbus_sdk/types/externals/models/index.dart';
 import 'package:waterbus_sdk/types/result.dart';
 
 abstract class AuthRepository {
-  Future<Result<bool>> refreshToken();
-  Future<Result<User>> loginWithSocial(AuthPayloadModel params);
-  Future<Result<bool>> logOut();
+  Future<Result<bool>> renewToken();
+  Future<Result<User>> createToken(AuthPayload params);
+  Future<Result<bool>> deleteToken();
 }
 
 @LazySingleton(as: AuthRepository)
@@ -20,17 +20,16 @@ class AuthRepositoryImpl extends AuthRepository {
   AuthRepositoryImpl(this._localDataSource, this._remoteDataSource);
 
   @override
-  Future<Result<User>> loginWithSocial(AuthPayloadModel params) async {
-    final Result<User> result =
-        await _remoteDataSource.signInWithSocial(params);
+  Future<Result<User>> createToken(AuthPayload params) async {
+    final Result<User> result = await _remoteDataSource.createToken(params);
 
     return result;
   }
 
   @override
-  Future<Result<bool>> refreshToken() async {
+  Future<Result<bool>> renewToken() async {
     final (String? accessToken, String? refreshToken) =
-        await _remoteDataSource.refreshToken();
+        await _remoteDataSource.renewToken();
 
     if (accessToken == null || refreshToken == null) {
       return Result.failure(ServerFailure());
@@ -45,10 +44,10 @@ class AuthRepositoryImpl extends AuthRepository {
   }
 
   @override
-  Future<Result<bool>> logOut() async {
-    final Result<bool> result = await _remoteDataSource.logOut();
+  Future<Result<bool>> deleteToken() async {
+    final Result<bool> result = await _remoteDataSource.deleteToken();
 
-    _localDataSource.clearToken();
+    _localDataSource.deleteToken();
 
     return result;
   }

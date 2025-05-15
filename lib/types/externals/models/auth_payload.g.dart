@@ -1,19 +1,18 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'auth_payload_model.dart';
+part of 'auth_payload.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_AuthPayloadModel _$AuthPayloadModelFromJson(Map<String, dynamic> json) =>
-    _AuthPayloadModel(
+_AuthPayload _$AuthPayloadFromJson(Map<String, dynamic> json) => _AuthPayload(
       fullName: json['fullName'] as String,
-      authId: json['authId'] as String?,
+      externalId: json['externalId'] as String?,
     );
 
-Map<String, dynamic> _$AuthPayloadModelToJson(_AuthPayloadModel instance) =>
+Map<String, dynamic> _$AuthPayloadToJson(_AuthPayload instance) =>
     <String, dynamic>{
       'fullName': instance.fullName,
-      'authId': instance.authId,
+      'externalId': instance.externalId,
     };

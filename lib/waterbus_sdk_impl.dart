@@ -333,7 +333,7 @@ class SdkCore extends WaterbusSdkInterface {
 
   // Messages
   @override
-  Future<Result<List<MessageModel>>> getMessageByRoom({
+  Future<Result<List<Message>>> getMessageByRoom({
     required int meetingId,
     required int skip,
     int limit = 10,
@@ -346,7 +346,7 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<Result<MessageModel>> sendMessage({
+  Future<Result<Message>> sendMessage({
     required int meetingId,
     required String data,
   }) async {
@@ -357,7 +357,7 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<Result<MessageModel>> editMessage({
+  Future<Result<Message>> editMessage({
     required int messageId,
     required String data,
   }) async {
@@ -368,7 +368,7 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<Result<MessageModel>> deleteMessage({required int messageId}) async {
+  Future<Result<Message>> deleteMessage({required int messageId}) async {
     return await _messageRepository.deleteMessage(messageId: messageId);
   }
 
@@ -428,8 +428,8 @@ class SdkCore extends WaterbusSdkInterface {
 
   // Auth
   @override
-  Future<Result<User>> createToken({required AuthPayloadModel payload}) async {
-    final Result<User> user = await _authRepository.loginWithSocial(payload);
+  Future<Result<User>> createToken({required AuthPayload payload}) async {
+    final Result<User> user = await _authRepository.createToken(payload);
 
     if (user.isSuccess) {
       _wsHandler.establishConnection(forceConnection: true);
@@ -442,12 +442,12 @@ class SdkCore extends WaterbusSdkInterface {
   Future<Result<bool>> deleteToken() async {
     _wsHandler.disconnection();
 
-    return await _authRepository.logOut();
+    return await _authRepository.deleteToken();
   }
 
   @override
-  Future<Result<bool>> refreshToken() async {
-    return await _authRepository.refreshToken();
+  Future<Result<bool>> renewToken() async {
+    return await _authRepository.renewToken();
   }
 
   // MARK: Private

@@ -10,9 +10,9 @@ import 'package:waterbus_sdk/types/externals/models/index.dart';
 import 'package:waterbus_sdk/types/result.dart';
 
 abstract class AuthRemoteDataSource {
-  Future<(String?, String?)> refreshToken();
-  Future<Result<User>> signInWithSocial(AuthPayloadModel authPayload);
-  Future<Result<bool>> logOut();
+  Future<(String?, String?)> renewToken();
+  Future<Result<User>> createToken(AuthPayload authPayload);
+  Future<Result<bool>> deleteToken();
 }
 
 @LazySingleton(as: AuthRemoteDataSource)
@@ -23,14 +23,14 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   AuthRemoteDataSourceImpl(this._baseRemoteData, this._localDataSource);
 
   @override
-  Future<Result<User>> signInWithSocial(AuthPayloadModel authPayload) async {
+  Future<Result<User>> createToken(AuthPayload authPayload) async {
     final Map<String, dynamic> body = authPayload.toJson();
-
+    print("body $body");
     final Response response = await _baseRemoteData.post(
       Endpoints.auth,
       body: body,
     );
-
+    print("response $response");
     if (response.statusCode == StatusCode.created) {
       final String accessToken = response.data['token'];
       final String refreshToken = response.data['refreshToken'];
@@ -47,7 +47,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   }
 
   @override
-  Future<(String?, String?)> refreshToken() async {
+  Future<(String?, String?)> renewToken() async {
     final Response response = await _baseRemoteData.dio.get(
       Endpoints.auth,
       options: _baseRemoteData.getOptionsRefreshToken,
@@ -62,7 +62,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   }
 
   @override
-  Future<Result<bool>> logOut() async {
+  Future<Result<bool>> deleteToken() async {
     final Response response = await _baseRemoteData.delete(
       Endpoints.auth,
     );

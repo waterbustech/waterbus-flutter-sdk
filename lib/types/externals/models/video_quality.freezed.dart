@@ -4,7 +4,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'video_quality_model.dart';
+part of 'video_quality.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,27 +14,27 @@ part of 'video_quality_model.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$VideoQualityModel {
+mixin _$VideoQuality {
   int get minHeight;
   int get minWidth;
   int get minFrameRate;
 
-  /// Create a copy of VideoQualityModel
+  /// Create a copy of VideoQuality
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $VideoQualityModelCopyWith<VideoQualityModel> get copyWith =>
-      _$VideoQualityModelCopyWithImpl<VideoQualityModel>(
-          this as VideoQualityModel, _$identity);
+  $VideoQualityCopyWith<VideoQuality> get copyWith =>
+      _$VideoQualityCopyWithImpl<VideoQuality>(
+          this as VideoQuality, _$identity);
 
-  /// Serializes this VideoQualityModel to a JSON map.
+  /// Serializes this VideoQuality to a JSON map.
   Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is VideoQualityModel &&
+            other is VideoQuality &&
             (identical(other.minHeight, minHeight) ||
                 other.minHeight == minHeight) &&
             (identical(other.minWidth, minWidth) ||
@@ -50,28 +50,27 @@ mixin _$VideoQualityModel {
 
   @override
   String toString() {
-    return 'VideoQualityModel(minHeight: $minHeight, minWidth: $minWidth, minFrameRate: $minFrameRate)';
+    return 'VideoQuality(minHeight: $minHeight, minWidth: $minWidth, minFrameRate: $minFrameRate)';
   }
 }
 
 /// @nodoc
-abstract mixin class $VideoQualityModelCopyWith<$Res> {
-  factory $VideoQualityModelCopyWith(
-          VideoQualityModel value, $Res Function(VideoQualityModel) _then) =
-      _$VideoQualityModelCopyWithImpl;
+abstract mixin class $VideoQualityCopyWith<$Res> {
+  factory $VideoQualityCopyWith(
+          VideoQuality value, $Res Function(VideoQuality) _then) =
+      _$VideoQualityCopyWithImpl;
   @useResult
   $Res call({int minHeight, int minWidth, int minFrameRate});
 }
 
 /// @nodoc
-class _$VideoQualityModelCopyWithImpl<$Res>
-    implements $VideoQualityModelCopyWith<$Res> {
-  _$VideoQualityModelCopyWithImpl(this._self, this._then);
+class _$VideoQualityCopyWithImpl<$Res> implements $VideoQualityCopyWith<$Res> {
+  _$VideoQualityCopyWithImpl(this._self, this._then);
 
-  final VideoQualityModel _self;
-  final $Res Function(VideoQualityModel) _then;
+  final VideoQuality _self;
+  final $Res Function(VideoQuality) _then;
 
-  /// Create a copy of VideoQualityModel
+  /// Create a copy of VideoQuality
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -99,13 +98,13 @@ class _$VideoQualityModelCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _VideoQualityModel implements VideoQualityModel {
-  const _VideoQualityModel(
+class _VideoQuality implements VideoQuality {
+  const _VideoQuality(
       {required this.minHeight,
       required this.minWidth,
       required this.minFrameRate});
-  factory _VideoQualityModel.fromJson(Map<String, dynamic> json) =>
-      _$VideoQualityModelFromJson(json);
+  factory _VideoQuality.fromJson(Map<String, dynamic> json) =>
+      _$VideoQualityFromJson(json);
 
   @override
   final int minHeight;
@@ -114,17 +113,17 @@ class _VideoQualityModel implements VideoQualityModel {
   @override
   final int minFrameRate;
 
-  /// Create a copy of VideoQualityModel
+  /// Create a copy of VideoQuality
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  _$VideoQualityModelCopyWith<_VideoQualityModel> get copyWith =>
-      __$VideoQualityModelCopyWithImpl<_VideoQualityModel>(this, _$identity);
+  _$VideoQualityCopyWith<_VideoQuality> get copyWith =>
+      __$VideoQualityCopyWithImpl<_VideoQuality>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$VideoQualityModelToJson(
+    return _$VideoQualityToJson(
       this,
     );
   }
@@ -133,7 +132,7 @@ class _VideoQualityModel implements VideoQualityModel {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _VideoQualityModel &&
+            other is _VideoQuality &&
             (identical(other.minHeight, minHeight) ||
                 other.minHeight == minHeight) &&
             (identical(other.minWidth, minWidth) ||
@@ -149,30 +148,30 @@ class _VideoQualityModel implements VideoQualityModel {
 
   @override
   String toString() {
-    return 'VideoQualityModel(minHeight: $minHeight, minWidth: $minWidth, minFrameRate: $minFrameRate)';
+    return 'VideoQuality(minHeight: $minHeight, minWidth: $minWidth, minFrameRate: $minFrameRate)';
   }
 }
 
 /// @nodoc
-abstract mixin class _$VideoQualityModelCopyWith<$Res>
-    implements $VideoQualityModelCopyWith<$Res> {
-  factory _$VideoQualityModelCopyWith(
-          _VideoQualityModel value, $Res Function(_VideoQualityModel) _then) =
-      __$VideoQualityModelCopyWithImpl;
+abstract mixin class _$VideoQualityCopyWith<$Res>
+    implements $VideoQualityCopyWith<$Res> {
+  factory _$VideoQualityCopyWith(
+          _VideoQuality value, $Res Function(_VideoQuality) _then) =
+      __$VideoQualityCopyWithImpl;
   @override
   @useResult
   $Res call({int minHeight, int minWidth, int minFrameRate});
 }
 
 /// @nodoc
-class __$VideoQualityModelCopyWithImpl<$Res>
-    implements _$VideoQualityModelCopyWith<$Res> {
-  __$VideoQualityModelCopyWithImpl(this._self, this._then);
+class __$VideoQualityCopyWithImpl<$Res>
+    implements _$VideoQualityCopyWith<$Res> {
+  __$VideoQualityCopyWithImpl(this._self, this._then);
 
-  final _VideoQualityModel _self;
-  final $Res Function(_VideoQualityModel) _then;
+  final _VideoQuality _self;
+  final $Res Function(_VideoQuality) _then;
 
-  /// Create a copy of VideoQualityModel
+  /// Create a copy of VideoQuality
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -181,7 +180,7 @@ class __$VideoQualityModelCopyWithImpl<$Res>
     Object? minWidth = null,
     Object? minFrameRate = null,
   }) {
-    return _then(_VideoQualityModel(
+    return _then(_VideoQuality(
       minHeight: null == minHeight
           ? _self.minHeight
           : minHeight // ignore: cast_nullable_to_non_nullable

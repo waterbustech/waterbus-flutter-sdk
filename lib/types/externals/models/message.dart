@@ -6,12 +6,12 @@ import 'package:waterbus_sdk/types/externals/enums/index.dart';
 import 'package:waterbus_sdk/types/externals/models/index.dart';
 import 'package:waterbus_sdk/types/internals/models/int_converter.dart';
 
-part 'message_model.freezed.dart';
-part 'message_model.g.dart';
+part 'message.freezed.dart';
+part 'message.g.dart';
 
 @freezed
-abstract class MessageModel with _$MessageModel {
-  const factory MessageModel({
+abstract class Message with _$Message {
+  const factory Message({
     required int id,
     required String data,
     @IntConverter() int? meeting,
@@ -21,12 +21,12 @@ abstract class MessageModel with _$MessageModel {
     required int type,
     required DateTime createdAt,
     required DateTime updatedAt,
-  }) = _MessageModel;
+  }) = _Message;
 
-  factory MessageModel.fromJson(Map<String, Object?> json) =>
-      _$MessageModelFromJson(json);
+  factory Message.fromJson(Map<String, Object?> json) =>
+      _$MessageFromJson(json);
 }
 
-extension MessageModelExtension on MessageModel {
+extension MessageExtension on Message {
   bool get isDeleted => status == MessageStatusEnum.inactive;
 }

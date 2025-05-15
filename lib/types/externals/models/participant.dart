@@ -2,8 +2,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:waterbus_sdk/types/externals/models/index.dart';
 
-part "participant_model.freezed.dart";
-part "participant_model.g.dart";
+part "participant.freezed.dart";
+part "participant.g.dart";
 
 @freezed
 abstract class Participant with _$Participant {

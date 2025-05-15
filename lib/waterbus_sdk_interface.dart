@@ -6,9 +6,9 @@ abstract class WaterbusSdkInterface {
   Future<void> initializeApp();
 
   // Auth
-  Future<Result<User>> createToken({required AuthPayloadModel payload});
+  Future<Result<User>> createToken({required AuthPayload payload});
   Future<Result<bool>> deleteToken();
-  Future<Result<bool>> refreshToken();
+  Future<Result<bool>> renewToken();
 
   // User
   Future<Result<User>> getProfile();
@@ -51,20 +51,20 @@ abstract class WaterbusSdkInterface {
   Future<Result<Meeting>> archivedConversation({required int code});
 
   // Messages
-  Future<Result<List<MessageModel>>> getMessageByRoom({
+  Future<Result<List<Message>>> getMessageByRoom({
     required int skip,
     required int meetingId,
     int limit = 10,
   });
-  Future<Result<MessageModel?>> sendMessage({
+  Future<Result<Message?>> sendMessage({
     required int meetingId,
     required String data,
   });
-  Future<Result<MessageModel>> editMessage({
+  Future<Result<Message>> editMessage({
     required int messageId,
     required String data,
   });
-  Future<Result<MessageModel>> deleteMessage({required int messageId});
+  Future<Result<Message>> deleteMessage({required int messageId});
 
   // Meeting
   Future<Result<Meeting>> createRoom({

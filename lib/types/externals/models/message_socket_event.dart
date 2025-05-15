@@ -4,7 +4,7 @@ enum MessageEventEnum { create, update, delete }
 
 class MessageSocketEvent {
   final MessageEventEnum event;
-  final MessageModel message;
+  final Message message;
   MessageSocketEvent({
     required this.event,
     required this.message,

@@ -222,7 +222,7 @@ class WsHandlerImpl extends WsHandler {
   void _listenToChatEvents() {
     _socket?.on(WsEvent.chatSend, (data) async {
       if (data == null) return;
-      final msg = MessageModel.fromJson(data);
+      final msg = Message.fromJson(data);
       final decrypted = await EncryptAES().decryptAES256(cipherText: msg.data);
       WaterbusSdk.listener.onMesssageChanged?.call(
         MessageSocketEvent(
@@ -234,7 +234,7 @@ class WsHandlerImpl extends WsHandler {
 
     _socket?.on(WsEvent.chatUpdate, (data) async {
       if (data == null) return;
-      final msg = MessageModel.fromJson(data);
+      final msg = Message.fromJson(data);
       final decrypted = await EncryptAES().decryptAES256(cipherText: msg.data);
       WaterbusSdk.listener.onMesssageChanged?.call(
         MessageSocketEvent(
@@ -246,7 +246,7 @@ class WsHandlerImpl extends WsHandler {
 
     _socket?.on(WsEvent.chatDelete, (data) {
       if (data == null) return;
-      final msg = MessageModel.fromJson(data);
+      final msg = Message.fromJson(data);
       WaterbusSdk.listener.onMesssageChanged?.call(
         MessageSocketEvent(event: MessageEventEnum.delete, message: msg),
       );

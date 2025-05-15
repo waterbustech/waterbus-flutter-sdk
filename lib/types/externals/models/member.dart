@@ -5,8 +5,8 @@ import 'package:waterbus_sdk/types/externals/enums/member_status_enum.dart';
 import 'package:waterbus_sdk/types/externals/models/index.dart';
 import 'package:waterbus_sdk/types/internals/models/int_converter.dart';
 
-part 'member_model.freezed.dart';
-part 'member_model.g.dart';
+part 'member.freezed.dart';
+part 'member.g.dart';
 
 @freezed
 abstract class Member with _$Member {

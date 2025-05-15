@@ -8,7 +8,7 @@ abstract class AuthLocalDataSource {
     required String? accessToken,
     required String? refreshToken,
   });
-  void clearToken();
+  void deleteToken();
   String get accessToken;
   String get refreshToken;
 }
@@ -27,7 +27,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   }
 
   @override
-  void clearToken() {
+  void deleteToken() {
     _hiveBox.delete(StorageKeys.accessToken);
     _hiveBox.delete(StorageKeys.refreshToken);
   }

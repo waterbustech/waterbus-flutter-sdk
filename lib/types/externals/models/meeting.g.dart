@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'meeting_model.dart';
+part of 'meeting.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
@@ -28,8 +28,7 @@ _Meeting _$MeetingFromJson(Map<String, dynamic> json) => _Meeting(
           MeetingStatus.active,
       latestMessage: json['latestMessage'] == null
           ? null
-          : MessageModel.fromJson(
-              json['latestMessage'] as Map<String, dynamic>),
+          : Message.fromJson(json['latestMessage'] as Map<String, dynamic>),
       avatar: json['avatar'] as String?,
     );
 

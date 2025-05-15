@@ -4,7 +4,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'meeting_model.dart';
+part of 'meeting.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -23,7 +23,7 @@ mixin _$Meeting {
   DateTime? get createdAt;
   DateTime? get latestJoinedAt;
   MeetingStatus get status;
-  MessageModel? get latestMessage;
+  Message? get latestMessage;
   String? get avatar;
 
   /// Create a copy of Meeting
@@ -92,10 +92,10 @@ abstract mixin class $MeetingCopyWith<$Res> {
       DateTime? createdAt,
       DateTime? latestJoinedAt,
       MeetingStatus status,
-      MessageModel? latestMessage,
+      Message? latestMessage,
       String? avatar});
 
-  $MessageModelCopyWith<$Res>? get latestMessage;
+  $MessageCopyWith<$Res>? get latestMessage;
 }
 
 /// @nodoc
@@ -157,7 +157,7 @@ class _$MeetingCopyWithImpl<$Res> implements $MeetingCopyWith<$Res> {
       latestMessage: freezed == latestMessage
           ? _self.latestMessage
           : latestMessage // ignore: cast_nullable_to_non_nullable
-              as MessageModel?,
+              as Message?,
       avatar: freezed == avatar
           ? _self.avatar
           : avatar // ignore: cast_nullable_to_non_nullable
@@ -169,12 +169,12 @@ class _$MeetingCopyWithImpl<$Res> implements $MeetingCopyWith<$Res> {
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $MessageModelCopyWith<$Res>? get latestMessage {
+  $MessageCopyWith<$Res>? get latestMessage {
     if (_self.latestMessage == null) {
       return null;
     }
 
-    return $MessageModelCopyWith<$Res>(_self.latestMessage!, (value) {
+    return $MessageCopyWith<$Res>(_self.latestMessage!, (value) {
       return _then(_self.copyWith(latestMessage: value));
     });
   }
@@ -233,7 +233,7 @@ class _Meeting implements Meeting {
   @JsonKey()
   final MeetingStatus status;
   @override
-  final MessageModel? latestMessage;
+  final Message? latestMessage;
   @override
   final String? avatar;
 
@@ -309,11 +309,11 @@ abstract mixin class _$MeetingCopyWith<$Res> implements $MeetingCopyWith<$Res> {
       DateTime? createdAt,
       DateTime? latestJoinedAt,
       MeetingStatus status,
-      MessageModel? latestMessage,
+      Message? latestMessage,
       String? avatar});
 
   @override
-  $MessageModelCopyWith<$Res>? get latestMessage;
+  $MessageCopyWith<$Res>? get latestMessage;
 }
 
 /// @nodoc
@@ -375,7 +375,7 @@ class __$MeetingCopyWithImpl<$Res> implements _$MeetingCopyWith<$Res> {
       latestMessage: freezed == latestMessage
           ? _self.latestMessage
           : latestMessage // ignore: cast_nullable_to_non_nullable
-              as MessageModel?,
+              as Message?,
       avatar: freezed == avatar
           ? _self.avatar
           : avatar // ignore: cast_nullable_to_non_nullable
@@ -387,12 +387,12 @@ class __$MeetingCopyWithImpl<$Res> implements _$MeetingCopyWith<$Res> {
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $MessageModelCopyWith<$Res>? get latestMessage {
+  $MessageCopyWith<$Res>? get latestMessage {
     if (_self.latestMessage == null) {
       return null;
     }
 
-    return $MessageModelCopyWith<$Res>(_self.latestMessage!, (value) {
+    return $MessageCopyWith<$Res>(_self.latestMessage!, (value) {
       return _then(_self.copyWith(latestMessage: value));
     });
   }

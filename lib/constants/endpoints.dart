@@ -17,9 +17,6 @@ class Endpoints {
   static const String meetingMembers = 'meetings/members';
   static const String archivedMeeeting = 'meetings/archived';
   static const String acceptInvite = 'meetings/members/accept';
-  static const String records = 'meetings/records';
-  static const String startRecord = 'meetings/record/start';
-  static const String stopRecord = 'meetings/record/stop';
 
   // Chats
   static const String chats = 'chats';

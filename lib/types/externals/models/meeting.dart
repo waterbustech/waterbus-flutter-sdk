@@ -2,8 +2,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 
-part 'meeting_model.freezed.dart';
-part 'meeting_model.g.dart';
+part 'meeting.freezed.dart';
+part 'meeting.g.dart';
 
 @freezed
 abstract class Meeting with _$Meeting {
@@ -16,7 +16,7 @@ abstract class Meeting with _$Meeting {
     DateTime? createdAt,
     DateTime? latestJoinedAt,
     @Default(MeetingStatus.active) MeetingStatus status,
-    MessageModel? latestMessage,
+    Message? latestMessage,
     String? avatar,
   }) = _Meeting;
 

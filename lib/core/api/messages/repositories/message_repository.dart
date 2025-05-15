@@ -1,25 +1,24 @@
 import 'package:injectable/injectable.dart';
 
 import 'package:waterbus_sdk/core/api/messages/datasources/message_remote_datasource.dart';
-import 'package:waterbus_sdk/types/externals/models/index.dart';
-import 'package:waterbus_sdk/types/result.dart';
+import 'package:waterbus_sdk/types/index.dart';
 
 abstract class MessageRepository {
-  Future<Result<List<MessageModel>>> getMessageByRoom({
+  Future<Result<List<Message>>> getMessageByRoom({
     required int meetingId,
     required int limit,
     required int skip,
   });
 
-  Future<Result<MessageModel>> sendMessage({
+  Future<Result<Message>> sendMessage({
     required int meetingId,
     required String data,
   });
-  Future<Result<MessageModel>> editMessage({
+  Future<Result<Message>> editMessage({
     required int messageId,
     required String data,
   });
-  Future<Result<MessageModel>> deleteMessage({required int messageId});
+  Future<Result<Message>> deleteMessage({required int messageId});
 }
 
 @Injectable(as: MessageRepository)
@@ -31,31 +30,31 @@ class MessageRepositoryImpl extends MessageRepository {
   );
 
   @override
-  Future<Result<MessageModel>> deleteMessage({required int messageId}) async {
-    final Result<MessageModel> messageModel =
+  Future<Result<Message>> deleteMessage({required int messageId}) async {
+    final Result<Message> messageModel =
         await _remoteDataSource.deleteMessage(messageId: messageId);
 
     return messageModel;
   }
 
   @override
-  Future<Result<MessageModel>> editMessage({
+  Future<Result<Message>> editMessage({
     required int messageId,
     required String data,
   }) async {
-    final Result<MessageModel> messageModel =
+    final Result<Message> messageModel =
         await _remoteDataSource.editMessage(messageId: messageId, data: data);
 
     return messageModel;
   }
 
   @override
-  Future<Result<List<MessageModel>>> getMessageByRoom({
+  Future<Result<List<Message>>> getMessageByRoom({
     required int meetingId,
     required int limit,
     required int skip,
   }) async {
-    final Result<List<MessageModel>> result =
+    final Result<List<Message>> result =
         await _remoteDataSource.getMessageByRoom(
       meetingId: meetingId,
       skip: skip,
@@ -66,11 +65,11 @@ class MessageRepositoryImpl extends MessageRepository {
   }
 
   @override
-  Future<Result<MessageModel>> sendMessage({
+  Future<Result<Message>> sendMessage({
     required int meetingId,
     required String data,
   }) async {
-    final Result<MessageModel> message =
+    final Result<Message> message =
         await _remoteDataSource.sendMessage(meetingId: meetingId, data: data);
 
     return message;

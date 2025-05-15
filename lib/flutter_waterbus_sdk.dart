@@ -287,7 +287,7 @@ class WaterbusSdk {
   }
 
   // Messages
-  Future<Result<List<MessageModel>>> getMessageByRoom({
+  Future<Result<List<Message>>> getMessageByRoom({
     required int meetingId,
     required int skip,
     int limit = 10,
@@ -299,26 +299,26 @@ class WaterbusSdk {
     );
   }
 
-  Future<Result<MessageModel?>> sendMessage({
+  Future<Result<Message?>> sendMessage({
     required int meetingId,
     required String data,
   }) async {
     return await _sdk.sendMessage(meetingId: meetingId, data: data);
   }
 
-  Future<Result<MessageModel>> editMessage({
+  Future<Result<Message>> editMessage({
     required int messageId,
     required String data,
   }) async {
     return await _sdk.editMessage(messageId: messageId, data: data);
   }
 
-  Future<Result<MessageModel>> deleteMessage({required int messageId}) async {
+  Future<Result<Message>> deleteMessage({required int messageId}) async {
     return await _sdk.deleteMessage(messageId: messageId);
   }
 
   // Auth
-  Future<Result<User>> createToken(AuthPayloadModel payload) async {
+  Future<Result<User>> createToken(AuthPayload payload) async {
     return await _sdk.createToken(payload: payload);
   }
 
@@ -327,7 +327,7 @@ class WaterbusSdk {
   }
 
   Future<Result<bool>> renewToken() async {
-    return await _sdk.refreshToken();
+    return await _sdk.renewToken();
   }
 
   CallState get callState => _sdk.callState;

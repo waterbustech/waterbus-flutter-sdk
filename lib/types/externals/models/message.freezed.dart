@@ -4,7 +4,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'message_model.dart';
+part of 'message.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,7 +14,7 @@ part of 'message_model.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$MessageModel {
+mixin _$Message {
   int get id;
   String get data;
   @IntConverter()
@@ -26,22 +26,21 @@ mixin _$MessageModel {
   DateTime get createdAt;
   DateTime get updatedAt;
 
-  /// Create a copy of MessageModel
+  /// Create a copy of Message
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $MessageModelCopyWith<MessageModel> get copyWith =>
-      _$MessageModelCopyWithImpl<MessageModel>(
-          this as MessageModel, _$identity);
+  $MessageCopyWith<Message> get copyWith =>
+      _$MessageCopyWithImpl<Message>(this as Message, _$identity);
 
-  /// Serializes this MessageModel to a JSON map.
+  /// Serializes this Message to a JSON map.
   Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is MessageModel &&
+            other is Message &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.data, data) || other.data == data) &&
             (identical(other.meeting, meeting) || other.meeting == meeting) &&
@@ -64,15 +63,14 @@ mixin _$MessageModel {
 
   @override
   String toString() {
-    return 'MessageModel(id: $id, data: $data, meeting: $meeting, createdBy: $createdBy, sendingStatus: $sendingStatus, status: $status, type: $type, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'Message(id: $id, data: $data, meeting: $meeting, createdBy: $createdBy, sendingStatus: $sendingStatus, status: $status, type: $type, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 }
 
 /// @nodoc
-abstract mixin class $MessageModelCopyWith<$Res> {
-  factory $MessageModelCopyWith(
-          MessageModel value, $Res Function(MessageModel) _then) =
-      _$MessageModelCopyWithImpl;
+abstract mixin class $MessageCopyWith<$Res> {
+  factory $MessageCopyWith(Message value, $Res Function(Message) _then) =
+      _$MessageCopyWithImpl;
   @useResult
   $Res call(
       {int id,
@@ -89,13 +87,13 @@ abstract mixin class $MessageModelCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$MessageModelCopyWithImpl<$Res> implements $MessageModelCopyWith<$Res> {
-  _$MessageModelCopyWithImpl(this._self, this._then);
+class _$MessageCopyWithImpl<$Res> implements $MessageCopyWith<$Res> {
+  _$MessageCopyWithImpl(this._self, this._then);
 
-  final MessageModel _self;
-  final $Res Function(MessageModel) _then;
+  final Message _self;
+  final $Res Function(Message) _then;
 
-  /// Create a copy of MessageModel
+  /// Create a copy of Message
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -150,7 +148,7 @@ class _$MessageModelCopyWithImpl<$Res> implements $MessageModelCopyWith<$Res> {
     ));
   }
 
-  /// Create a copy of MessageModel
+  /// Create a copy of Message
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -167,8 +165,8 @@ class _$MessageModelCopyWithImpl<$Res> implements $MessageModelCopyWith<$Res> {
 
 /// @nodoc
 @JsonSerializable()
-class _MessageModel implements MessageModel {
-  const _MessageModel(
+class _Message implements Message {
+  const _Message(
       {required this.id,
       required this.data,
       @IntConverter() this.meeting,
@@ -178,8 +176,8 @@ class _MessageModel implements MessageModel {
       required this.type,
       required this.createdAt,
       required this.updatedAt});
-  factory _MessageModel.fromJson(Map<String, dynamic> json) =>
-      _$MessageModelFromJson(json);
+  factory _Message.fromJson(Map<String, dynamic> json) =>
+      _$MessageFromJson(json);
 
   @override
   final int id;
@@ -202,17 +200,17 @@ class _MessageModel implements MessageModel {
   @override
   final DateTime updatedAt;
 
-  /// Create a copy of MessageModel
+  /// Create a copy of Message
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  _$MessageModelCopyWith<_MessageModel> get copyWith =>
-      __$MessageModelCopyWithImpl<_MessageModel>(this, _$identity);
+  _$MessageCopyWith<_Message> get copyWith =>
+      __$MessageCopyWithImpl<_Message>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$MessageModelToJson(
+    return _$MessageToJson(
       this,
     );
   }
@@ -221,7 +219,7 @@ class _MessageModel implements MessageModel {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _MessageModel &&
+            other is _Message &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.data, data) || other.data == data) &&
             (identical(other.meeting, meeting) || other.meeting == meeting) &&
@@ -244,16 +242,14 @@ class _MessageModel implements MessageModel {
 
   @override
   String toString() {
-    return 'MessageModel(id: $id, data: $data, meeting: $meeting, createdBy: $createdBy, sendingStatus: $sendingStatus, status: $status, type: $type, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'Message(id: $id, data: $data, meeting: $meeting, createdBy: $createdBy, sendingStatus: $sendingStatus, status: $status, type: $type, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 }
 
 /// @nodoc
-abstract mixin class _$MessageModelCopyWith<$Res>
-    implements $MessageModelCopyWith<$Res> {
-  factory _$MessageModelCopyWith(
-          _MessageModel value, $Res Function(_MessageModel) _then) =
-      __$MessageModelCopyWithImpl;
+abstract mixin class _$MessageCopyWith<$Res> implements $MessageCopyWith<$Res> {
+  factory _$MessageCopyWith(_Message value, $Res Function(_Message) _then) =
+      __$MessageCopyWithImpl;
   @override
   @useResult
   $Res call(
@@ -272,14 +268,13 @@ abstract mixin class _$MessageModelCopyWith<$Res>
 }
 
 /// @nodoc
-class __$MessageModelCopyWithImpl<$Res>
-    implements _$MessageModelCopyWith<$Res> {
-  __$MessageModelCopyWithImpl(this._self, this._then);
+class __$MessageCopyWithImpl<$Res> implements _$MessageCopyWith<$Res> {
+  __$MessageCopyWithImpl(this._self, this._then);
 
-  final _MessageModel _self;
-  final $Res Function(_MessageModel) _then;
+  final _Message _self;
+  final $Res Function(_Message) _then;
 
-  /// Create a copy of MessageModel
+  /// Create a copy of Message
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -294,7 +289,7 @@ class __$MessageModelCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? updatedAt = null,
   }) {
-    return _then(_MessageModel(
+    return _then(_Message(
       id: null == id
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -334,7 +329,7 @@ class __$MessageModelCopyWithImpl<$Res>
     ));
   }
 
-  /// Create a copy of MessageModel
+  /// Create a copy of Message
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')

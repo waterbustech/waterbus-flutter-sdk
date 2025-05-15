@@ -22,14 +22,6 @@ enum AppException {
   hasNotJoinedMeeting('User not joined meeting', HasNotJoinedMeeting.new),
   memberNotFound('Member Not Found', MemberNotFound.new),
   participantNotFound('Participant Not Found', ParticipantNotFound.new),
-  onlyAllowHostStartRecord(
-    'Only allow host start record',
-    OnlyAllowHostStartRecord.new,
-  ),
-  onlyAllowHostStopRecord(
-    'Only allow host stop record',
-    OnlyAllowHostStopRecord.new,
-  ),
   notAllowedToLeaveTheRoom(
     'Host not allowed to leave the room. You can archive chats if the room no longer active.',
     NotAllowedToLeaveTheRoom.new,
