@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:waterbus_sdk/types/externals/enums/meeting_role.dart';
 import 'package:waterbus_sdk/types/externals/enums/member_status_enum.dart';
+import 'package:waterbus_sdk/types/externals/enums/room_role.dart';
 import 'package:waterbus_sdk/types/externals/models/index.dart';
 import 'package:waterbus_sdk/types/internals/models/int_converter.dart';
 
@@ -12,10 +12,10 @@ part 'member.g.dart';
 abstract class Member with _$Member {
   const factory Member({
     required int id,
-    required MeetingRole role,
+    required RoomRole role,
     required User user,
     @Default(false) bool isMe,
-    @IntConverter() int? meetingId,
+    @IntConverter() int? roomId,
     @Default(MemberStatusEnum.joined) MemberStatusEnum status,
   }) = _Member;
 
@@ -25,14 +25,13 @@ abstract class Member with _$Member {
     final Map<String, dynamic> member = map['member'];
     return Member(
       id: member['id'] ?? 0,
-      role:
-          MeetingRoleX.fromValue(member['role'] ?? MeetingRole.attendee.value),
+      role: RoomRoleX.fromValue(member['role'] ?? RoomRole.attendee.value),
       user: User.fromJson(member['user'] as Map<String, dynamic>),
       isMe: member['isMe'] ?? false,
       status: MemberStatusEnum.fromValue(
         member['status'] ?? MemberStatusEnum.inviting.value,
       ),
-      meetingId: map['meetingId'],
+      roomId: map['roomId'],
     );
   }
 }

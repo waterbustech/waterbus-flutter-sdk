@@ -12,9 +12,9 @@ import '../../../../fixtures/fixture_reader.dart';
 
 @GenerateNiceMocks([])
 void main() {
-  group('Meeting entity', () {
+  group('Room entity', () {
     test(
-      'should be a subclass of Meeting entity',
+      'should be a subclass of Room entity',
       () {},
     );
 
@@ -33,83 +33,83 @@ void main() {
         user: userModel,
       );
 
-      final Meeting meeting1 = Meeting(
-        title: 'Meeting with Kai 1',
+      final Room room1 = Room(
+        title: 'Room with Kai 1',
         id: 1,
         participants: [participant1],
         code: 1,
       );
-      final Meeting meeting2 = Meeting(
-        title: 'Meeting with Kai 2',
+      final Room room2 = Room(
+        title: 'Room with Kai 2',
         id: 2,
         participants: [participant2],
         code: 2,
       );
 
       // Act
-      final Meeting meeting = meeting1.copyWith();
+      final Room room = room1.copyWith();
 
       // Assert
-      expect(meeting.title == meeting1.title, true);
-      expect(meeting == meeting1, true);
-      expect(meeting == meeting2, false);
+      expect(room.title == room1.title, true);
+      expect(room == room1, true);
+      expect(room == room2, false);
     });
 
     test('copyWith - should return a new instance with the specified changes',
         () {
       // Arrange
-      final Map<String, dynamic> meetingSampleJson =
-          jsonDecode(fixture(meetingSample));
+      final Map<String, dynamic> roomSampleJson =
+          jsonDecode(fixture(roomSample));
 
       // Act
-      final Meeting meeting = Meeting.fromJson(meetingSampleJson);
-      final Meeting updatedMeeting = meeting.copyWith(
-        title: 'Updated Meeting',
+      final Room room = Room.fromJson(roomSampleJson);
+      final Room updatedroom = room.copyWith(
+        title: 'Updated Room',
         id: 0,
       );
 
       // Assert
-      expect(updatedMeeting.title, 'Updated Meeting');
+      expect(updatedroom.title, 'Updated Room');
     });
 
-    test('toString - should return a string representation of the Meeting', () {
+    test('toString - should return a string representation of the Room', () {
       // Arrange
-      final Map<String, dynamic> meetingSampleJson =
-          jsonDecode(fixture(meetingSample));
+      final Map<String, dynamic> roomSampleJson =
+          jsonDecode(fixture(roomSample));
 
       // Act
-      final Meeting meeting = Meeting.fromJson(meetingSampleJson);
-      final String meetingString = meeting.toString();
+      final Room room = Room.fromJson(roomSampleJson);
+      final String roomString = room.toString();
 
       // Assert
-      expect(meetingString, contains('Meeting'));
-      expect(meetingString, contains(meeting.title));
+      expect(roomString, contains('Room'));
+      expect(roomString, contains(room.title));
     });
 
-    test('hashCode - should return the hash code of the Meeting', () {
+    test('hashCode - should return the hash code of the Room', () {
       // Arrange
-      final Map<String, dynamic> meetingSampleJson =
-          jsonDecode(fixture(meetingSample));
+      final Map<String, dynamic> roomSampleJson =
+          jsonDecode(fixture(roomSample));
 
       // Act
-      final Meeting meeting = Meeting.fromJson(meetingSampleJson);
-      final int hashCode = meeting.hashCode;
+      final Room room = Room.fromJson(roomSampleJson);
+      final int hashCode = room.hashCode;
 
       // Assert
       expect(hashCode, isA<int>());
     });
 
-    test('toMapCreate - should return a map for creating a Meeting', () {
+    test('toMapCreate - should return a map for creating a Room', () {
       // Arrange
-      final Meeting meeting = Meeting(title: 'Sample Meeting');
+      final Room room = Room(title: 'Sample Room');
       const String password = 'sample_password';
 
       // Act
-      final Map<String, dynamic> map = meeting.toMapCreate(password: password);
+      final Map<String, dynamic> map = room.toMapCreate(password: password);
 
       // Assert
       expect(map, isA<Map<String, dynamic>>());
-      expect(map['title'], 'Sample Meeting');
+      expect(map['title'], 'Sample Room');
       expect(map['password'], 'sample_password');
     });
   });
@@ -119,14 +119,14 @@ void main() {
       'fromJson - should return a valid model when the JSON',
       () {
         // Arrange
-        final Map<String, dynamic> meetingSampleJson =
-            jsonDecode(fixture(meetingSample));
+        final Map<String, dynamic> roomSampleJson =
+            jsonDecode(fixture(roomSample));
 
         // Act
-        final Meeting meeting = Meeting.fromJson(meetingSampleJson);
+        final Room room = Room.fromJson(roomSampleJson);
 
         // Assert
-        expect(meeting, isNotNull);
+        expect(room, isNotNull);
       },
     );
   });
@@ -136,13 +136,13 @@ void main() {
       'fromJson - should return a valid model when the JSON',
       () {
         // Arrange
-        final String meetingSampleJson = fixture(meetingSample);
+        final String roomSampleJson = fixture(roomSample);
 
         // Act
-        final Meeting meeting = Meeting.fromJson(jsonDecode(meetingSampleJson));
+        final Room room = Room.fromJson(jsonDecode(roomSampleJson));
 
         // Assert
-        expect(meeting, isNotNull);
+        expect(room, isNotNull);
       },
     );
 
@@ -150,18 +150,18 @@ void main() {
       'toJson - should return a valid model when the JSON',
       () {
         // Arrange
-        final String meetingSampleJson = fixture(meetingSample);
+        final String roomSampleJson = fixture(roomSample);
 
         // Act
-        final Meeting meeting = Meeting.fromJson(jsonDecode(meetingSampleJson));
+        final Room room = Room.fromJson(jsonDecode(roomSampleJson));
 
         // Assert
-        expect(meeting.toJson(), isNotNull);
+        expect(room.toJson(), isNotNull);
       },
     );
   });
 
-  group('MeetingX', () {
+  group('roomX', () {
     final user1 = User(id: 1, fullName: '1', userName: '1');
     final user2 = User(id: 2, fullName: '1', userName: '1');
     final user3 = User(id: 3, fullName: '1', userName: '1');
@@ -175,40 +175,40 @@ void main() {
         .map(
           (participant) => Member(
             id: participant.id,
-            role: MeetingRole.attendee,
+            role: RoomRole.attendee,
             user: participant.user!,
           ),
         )
         .toList();
 
-    final meetingWithParticipants = Meeting(
-      title: "Meeting with Kai",
+    final roomWithParticipants = Room(
+      title: "Room with Kai",
       participants: fakeParticipants,
       members: fakeMembers,
     );
 
-    final meetingWithoutParticipants = Meeting(
-      title: "Meeting with Kai",
+    final roomWithoutParticipants = Room(
+      title: "Room with Kai",
     );
 
     test('should return active users', () {
       expect(
-        meetingWithParticipants.participants,
+        roomWithParticipants.participants,
         [participant1, participant2, participant3],
       );
     });
 
     test('should return true for isNoOneElse when no users', () {
-      expect(meetingWithoutParticipants.isNoOneElse, true);
+      expect(roomWithoutParticipants.isNoOneElse, true);
     });
 
     test('should return false for isNoOneElse when multiple active users', () {
-      expect(meetingWithParticipants.isNoOneElse, false);
+      expect(roomWithParticipants.isNoOneElse, false);
     });
 
     test('participantsOnlineTile - should return the appropriate text', () {
       // Test with 1 participant
-      final meeting1Participant = Meeting(
+      final room1Participant = Room(
         title: '1',
         participants: [
           Participant(
@@ -222,12 +222,12 @@ void main() {
         ],
       );
       expect(
-        meeting1Participant.participantsOnlineTile,
+        room1Participant.participantsOnlineTile,
         'Alice is in the room',
       );
 
       // Test with 2 participants
-      final meeting2Participants = Meeting(
+      final room2Participants = Room(
         title: '1',
         participants: [
           Participant(
@@ -249,12 +249,12 @@ void main() {
         ],
       );
       expect(
-        meeting2Participants.participantsOnlineTile,
+        room2Participants.participantsOnlineTile,
         'Alice and Bob are in the room',
       );
 
       // Test with 3 or more participants
-      final meeting3Participants = Meeting(
+      final room3Participants = Room(
         title: '1',
         participants: [
           Participant(
@@ -292,13 +292,13 @@ void main() {
         ],
       );
       expect(
-        meeting3Participants.participantsOnlineTile,
+        room3Participants.participantsOnlineTile,
         'Alice, Bob and 2 others are in the room',
       );
     });
 
     group('latestJoinedTime', () {
-      final testMeeting = Meeting(
+      final testroom = Room(
         title: '1',
         participants: [
           Participant(
@@ -313,26 +313,26 @@ void main() {
       );
       test('latestJoinedAt not null', () {
         final DateTime latestJoinedAt = DateTime.now();
-        final Meeting meeting = testMeeting.copyWith(
+        final Room room = testroom.copyWith(
           latestJoinedAt: latestJoinedAt,
         );
 
-        expect(meeting.latestJoinedTime, latestJoinedAt);
+        expect(room.latestJoinedTime, latestJoinedAt);
       });
       test('latestJoinedAt is null, createdAt not null', () {
         final DateTime createdAt = DateTime.now();
-        final Meeting meeting = testMeeting.copyWith(
+        final Room room = testroom.copyWith(
           createdAt: createdAt,
         );
 
-        expect(meeting.latestJoinedTime, createdAt);
-        expect(meeting.latestJoinedAt, isNull);
+        expect(room.latestJoinedTime, createdAt);
+        expect(room.latestJoinedAt, isNull);
       });
       test('latestJoinedAt is null, createdAt is also null', () {
-        final Meeting meeting = testMeeting.copyWith();
+        final Room room = testroom.copyWith();
 
-        expect(meeting.latestJoinedAt, isNull);
-        expect(meeting.createdAt, isNull);
+        expect(room.latestJoinedAt, isNull);
+        expect(room.createdAt, isNull);
       });
     });
   });

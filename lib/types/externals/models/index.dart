@@ -1,7 +1,7 @@
 export 'media_config.dart';
 export 'beauty_filters.dart';
 export 'auth_payload.dart';
-export 'meeting.dart';
+export 'room.dart';
 export 'message.dart';
 export 'member.dart';
 export 'user.dart';

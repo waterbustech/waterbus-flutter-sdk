@@ -68,44 +68,44 @@ class WaterbusSdk {
     await _sdk.initializeApp();
   }
 
-  // Meeting
-  Future<Result<Meeting>> createRoom({
-    required Meeting meeting,
+  // Rooms
+  Future<Result<Room>> createRoom({
+    required Room room,
     required String password,
     required int? userId,
   }) async {
     return await _sdk.createRoom(
-      meeting: meeting,
+      room: room,
       password: password,
       userId: userId,
     );
   }
 
-  Future<Result<Meeting>> joinRoom({
-    required Meeting meeting,
+  Future<Result<Room>> joinRoom({
+    required Room room,
     required String password,
     required int? userId,
   }) async {
     return await _sdk.joinRoom(
-      meeting: meeting,
+      room: room,
       password: password,
       userId: userId,
     );
   }
 
   Future<Result<bool>> updateRoom({
-    required Meeting meeting,
+    required Room room,
     required String password,
     required int? userId,
   }) async {
     return await _sdk.updateRoom(
-      meeting: meeting,
+      room: room,
       password: password,
       userId: userId,
     );
   }
 
-  Future<Result<Meeting>> getRoomInfo({required int code}) async {
+  Future<Result<Room>> getRoomInfo({required int code}) async {
     return await _sdk.getRoomInfo(code);
   }
 
@@ -230,23 +230,19 @@ class WaterbusSdk {
   }
 
   // Chat
-  Future<Result<Meeting>> addMember(int code, int userId) async {
+  Future<Result<Room>> addMember(int code, int userId) async {
     return await _sdk.addMember(code: code, userId: userId);
   }
 
-  Future<Result<Meeting>> deleteMember(int code, int userId) async {
+  Future<Result<Room>> deleteMember(int code, int userId) async {
     return await _sdk.deleteMember(code: code, userId: userId);
   }
 
-  Future<Result<Meeting>> acceptInvite(int meetingId) async {
-    return await _sdk.acceptInvite(meetingId: meetingId);
-  }
-
-  Future<Result<Meeting>> leaveConversation(int code) async {
+  Future<Result<Room>> leaveConversation(int code) async {
     return await _sdk.leaveConversation(code: code);
   }
 
-  Future<Result<Meeting>> archivedConversation(int code) async {
+  Future<Result<Room>> archivedConversation(int code) async {
     return await _sdk.archivedConversation(code: code);
   }
 
@@ -254,7 +250,7 @@ class WaterbusSdk {
     return await _sdk.deleteConversation(conversationId);
   }
 
-  Future<Result<List<Meeting>>> getConversations({
+  Future<Result<List<Room>>> getConversations({
     required int skip,
     int limit = 10,
     int status = 2,
@@ -266,7 +262,7 @@ class WaterbusSdk {
     );
   }
 
-  Future<Result<List<Meeting>>> getArchivedConversations({
+  Future<Result<List<Room>>> getArchivedConversations({
     required int skip,
     int limit = 10,
   }) async {
@@ -277,33 +273,33 @@ class WaterbusSdk {
   }
 
   Future<Result<bool>> updateConversation({
-    required Meeting meeting,
+    required Room room,
     String? password,
   }) async {
     return await _sdk.updateConversation(
-      meeting: meeting,
+      room: room,
       password: password,
     );
   }
 
   // Messages
   Future<Result<List<Message>>> getMessageByRoom({
-    required int meetingId,
+    required int roomId,
     required int skip,
     int limit = 10,
   }) async {
     return await _sdk.getMessageByRoom(
-      meetingId: meetingId,
+      roomId: roomId,
       limit: limit,
       skip: skip,
     );
   }
 
   Future<Result<Message?>> sendMessage({
-    required int meetingId,
+    required int roomId,
     required String data,
   }) async {
-    return await _sdk.sendMessage(meetingId: meetingId, data: data);
+    return await _sdk.sendMessage(roomId: roomId, data: data);
   }
 
   Future<Result<Message>> editMessage({

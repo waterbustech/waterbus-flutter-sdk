@@ -1,23 +1,23 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 @JsonEnum()
-enum MeetingRole {
+enum RoomRole {
   @JsonValue(0)
   host(0),
   @JsonValue(1)
   attendee(1);
 
-  const MeetingRole(this.value);
+  const RoomRole(this.value);
   final int value;
 }
 
-extension MeetingRoleX on MeetingRole {
-  static MeetingRole fromValue(int value) {
+extension RoomRoleX on RoomRole {
+  static RoomRole fromValue(int value) {
     switch (value) {
       case 0:
-        return MeetingRole.host;
+        return RoomRole.host;
       case 1:
-        return MeetingRole.attendee;
+        return RoomRole.attendee;
       default:
         throw Exception('Unknown MeetingRole value: $value');
     }

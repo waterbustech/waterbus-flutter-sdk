@@ -27,37 +27,36 @@ abstract class WaterbusSdkInterface {
   });
 
   // Chat
-  Future<Result<List<Meeting>>> getConversations({
+  Future<Result<List<Room>>> getConversations({
     int status = 2,
     int limit = 10,
     required int skip,
   });
-  Future<Result<List<Meeting>>> getArchivedConversations({
+  Future<Result<List<Room>>> getArchivedConversations({
     int limit = 10,
     required int skip,
   });
   Future<Result<bool>> updateConversation({
-    required Meeting meeting,
+    required Room room,
     String? password,
   });
   Future<Result<bool>> deleteConversation(int conversationId);
-  Future<Result<Meeting>> leaveConversation({required int code});
-  Future<Result<Meeting>> addMember({required int code, required int userId});
-  Future<Result<Meeting>> deleteMember({
+  Future<Result<Room>> leaveConversation({required int code});
+  Future<Result<Room>> addMember({required int code, required int userId});
+  Future<Result<Room>> deleteMember({
     required int code,
     required int userId,
   });
-  Future<Result<Meeting>> acceptInvite({required int meetingId});
-  Future<Result<Meeting>> archivedConversation({required int code});
+  Future<Result<Room>> archivedConversation({required int code});
 
   // Messages
   Future<Result<List<Message>>> getMessageByRoom({
     required int skip,
-    required int meetingId,
+    required int roomId,
     int limit = 10,
   });
   Future<Result<Message?>> sendMessage({
-    required int meetingId,
+    required int roomId,
     required String data,
   });
   Future<Result<Message>> editMessage({
@@ -66,23 +65,23 @@ abstract class WaterbusSdkInterface {
   });
   Future<Result<Message>> deleteMessage({required int messageId});
 
-  // Meeting
-  Future<Result<Meeting>> createRoom({
-    required Meeting meeting,
+  // Room
+  Future<Result<Room>> createRoom({
+    required Room room,
     required String password,
     required int? userId,
   });
   Future<Result<bool>> updateRoom({
-    required Meeting meeting,
+    required Room room,
     required String password,
     required int? userId,
   });
-  Future<Result<Meeting>> joinRoom({
-    required Meeting meeting,
+  Future<Result<Room>> joinRoom({
+    required Room room,
     required String password,
     required int? userId,
   });
-  Future<Result<Meeting>> getRoomInfo(int code);
+  Future<Result<Room>> getRoomInfo(int code);
   Future<void> leaveRoom();
   void toggleRaiseHand();
 

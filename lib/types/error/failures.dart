@@ -16,7 +16,7 @@ class CacheFailure extends Failure {}
 
 class NullValue extends Failure {}
 
-// Meeting
+// Room
 class RoomNotFound extends Failure {}
 
 class NotAllowedToUpdateRoom extends Failure {}

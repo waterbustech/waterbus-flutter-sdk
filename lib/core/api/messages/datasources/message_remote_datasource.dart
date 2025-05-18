@@ -11,13 +11,13 @@ import 'package:waterbus_sdk/utils/encrypt/encrypt.dart';
 
 abstract class MessageRemoteDataSource {
   Future<Result<List<Message>>> getMessageByRoom({
-    required int meetingId,
+    required int roomId,
     required int limit,
     required int skip,
   });
 
   Future<Result<Message>> sendMessage({
-    required int meetingId,
+    required int roomId,
     required String data,
   });
   Future<Result<Message>> editMessage({
@@ -37,12 +37,12 @@ class MessageRemoteDataSourceImpl extends MessageRemoteDataSource {
 
   @override
   Future<Result<List<Message>>> getMessageByRoom({
-    required int meetingId,
+    required int roomId,
     required int limit,
     required int skip,
   }) async {
     final Response response = await _remoteData.get(
-      "${Endpoints.chats}/$meetingId",
+      "${Endpoints.chats}/$roomId",
       query: "limit=$limit&skip=$skip",
     );
 
@@ -83,14 +83,14 @@ class MessageRemoteDataSourceImpl extends MessageRemoteDataSource {
 
   @override
   Future<Result<Message>> sendMessage({
-    required int meetingId,
+    required int roomId,
     required String data,
   }) async {
     final String messageData =
         await EncryptAES().encryptAES256(cleartext: data);
 
     final Response response = await _remoteData.post(
-      "${Endpoints.chats}/$meetingId",
+      "${Endpoints.chats}/$roomId",
       body: {"data": messageData},
     );
 

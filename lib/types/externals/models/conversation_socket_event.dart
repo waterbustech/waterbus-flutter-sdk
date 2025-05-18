@@ -4,7 +4,7 @@ enum ConversationEventEnum { newMemberJoined, newInvitaion }
 
 class ConversationSocketEvent {
   final ConversationEventEnum event;
-  final Meeting? conversation;
+  final Room? conversation;
   final Member? member;
   ConversationSocketEvent({
     required this.event,

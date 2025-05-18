@@ -16,11 +16,11 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Member {
   int get id;
-  MeetingRole get role;
+  RoomRole get role;
   User get user;
   bool get isMe;
   @IntConverter()
-  int? get meetingId;
+  int? get roomId;
   MemberStatusEnum get status;
 
   /// Create a copy of Member
@@ -42,19 +42,18 @@ mixin _$Member {
             (identical(other.role, role) || other.role == role) &&
             (identical(other.user, user) || other.user == user) &&
             (identical(other.isMe, isMe) || other.isMe == isMe) &&
-            (identical(other.meetingId, meetingId) ||
-                other.meetingId == meetingId) &&
+            (identical(other.roomId, roomId) || other.roomId == roomId) &&
             (identical(other.status, status) || other.status == status));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, id, role, user, isMe, meetingId, status);
+      Object.hash(runtimeType, id, role, user, isMe, roomId, status);
 
   @override
   String toString() {
-    return 'Member(id: $id, role: $role, user: $user, isMe: $isMe, meetingId: $meetingId, status: $status)';
+    return 'Member(id: $id, role: $role, user: $user, isMe: $isMe, roomId: $roomId, status: $status)';
   }
 }
 
@@ -65,10 +64,10 @@ abstract mixin class $MemberCopyWith<$Res> {
   @useResult
   $Res call(
       {int id,
-      MeetingRole role,
+      RoomRole role,
       User user,
       bool isMe,
-      @IntConverter() int? meetingId,
+      @IntConverter() int? roomId,
       MemberStatusEnum status});
 
   $UserCopyWith<$Res> get user;
@@ -90,7 +89,7 @@ class _$MemberCopyWithImpl<$Res> implements $MemberCopyWith<$Res> {
     Object? role = null,
     Object? user = null,
     Object? isMe = null,
-    Object? meetingId = freezed,
+    Object? roomId = freezed,
     Object? status = null,
   }) {
     return _then(_self.copyWith(
@@ -101,7 +100,7 @@ class _$MemberCopyWithImpl<$Res> implements $MemberCopyWith<$Res> {
       role: null == role
           ? _self.role
           : role // ignore: cast_nullable_to_non_nullable
-              as MeetingRole,
+              as RoomRole,
       user: null == user
           ? _self.user
           : user // ignore: cast_nullable_to_non_nullable
@@ -110,9 +109,9 @@ class _$MemberCopyWithImpl<$Res> implements $MemberCopyWith<$Res> {
           ? _self.isMe
           : isMe // ignore: cast_nullable_to_non_nullable
               as bool,
-      meetingId: freezed == meetingId
-          ? _self.meetingId
-          : meetingId // ignore: cast_nullable_to_non_nullable
+      roomId: freezed == roomId
+          ? _self.roomId
+          : roomId // ignore: cast_nullable_to_non_nullable
               as int?,
       status: null == status
           ? _self.status
@@ -140,14 +139,14 @@ class _Member implements Member {
       required this.role,
       required this.user,
       this.isMe = false,
-      @IntConverter() this.meetingId,
+      @IntConverter() this.roomId,
       this.status = MemberStatusEnum.joined});
   factory _Member.fromJson(Map<String, dynamic> json) => _$MemberFromJson(json);
 
   @override
   final int id;
   @override
-  final MeetingRole role;
+  final RoomRole role;
   @override
   final User user;
   @override
@@ -155,7 +154,7 @@ class _Member implements Member {
   final bool isMe;
   @override
   @IntConverter()
-  final int? meetingId;
+  final int? roomId;
   @override
   @JsonKey()
   final MemberStatusEnum status;
@@ -184,19 +183,18 @@ class _Member implements Member {
             (identical(other.role, role) || other.role == role) &&
             (identical(other.user, user) || other.user == user) &&
             (identical(other.isMe, isMe) || other.isMe == isMe) &&
-            (identical(other.meetingId, meetingId) ||
-                other.meetingId == meetingId) &&
+            (identical(other.roomId, roomId) || other.roomId == roomId) &&
             (identical(other.status, status) || other.status == status));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, id, role, user, isMe, meetingId, status);
+      Object.hash(runtimeType, id, role, user, isMe, roomId, status);
 
   @override
   String toString() {
-    return 'Member(id: $id, role: $role, user: $user, isMe: $isMe, meetingId: $meetingId, status: $status)';
+    return 'Member(id: $id, role: $role, user: $user, isMe: $isMe, roomId: $roomId, status: $status)';
   }
 }
 
@@ -208,10 +206,10 @@ abstract mixin class _$MemberCopyWith<$Res> implements $MemberCopyWith<$Res> {
   @useResult
   $Res call(
       {int id,
-      MeetingRole role,
+      RoomRole role,
       User user,
       bool isMe,
-      @IntConverter() int? meetingId,
+      @IntConverter() int? roomId,
       MemberStatusEnum status});
 
   @override
@@ -234,7 +232,7 @@ class __$MemberCopyWithImpl<$Res> implements _$MemberCopyWith<$Res> {
     Object? role = null,
     Object? user = null,
     Object? isMe = null,
-    Object? meetingId = freezed,
+    Object? roomId = freezed,
     Object? status = null,
   }) {
     return _then(_Member(
@@ -245,7 +243,7 @@ class __$MemberCopyWithImpl<$Res> implements _$MemberCopyWith<$Res> {
       role: null == role
           ? _self.role
           : role // ignore: cast_nullable_to_non_nullable
-              as MeetingRole,
+              as RoomRole,
       user: null == user
           ? _self.user
           : user // ignore: cast_nullable_to_non_nullable
@@ -254,9 +252,9 @@ class __$MemberCopyWithImpl<$Res> implements _$MemberCopyWith<$Res> {
           ? _self.isMe
           : isMe // ignore: cast_nullable_to_non_nullable
               as bool,
-      meetingId: freezed == meetingId
-          ? _self.meetingId
-          : meetingId // ignore: cast_nullable_to_non_nullable
+      roomId: freezed == roomId
+          ? _self.roomId
+          : roomId // ignore: cast_nullable_to_non_nullable
               as int?,
       status: null == status
           ? _self.status

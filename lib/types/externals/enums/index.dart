@@ -1,7 +1,7 @@
 export 'audio_level.dart';
 export 'callback_events.dart';
 export 'camera_type.dart';
-export 'meeting_role.dart';
+export 'room_role.dart';
 export 'member_status_enum.dart';
 export 'message_status_enum.dart';
 export 'rtc_video_codec.dart';
