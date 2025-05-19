@@ -7,7 +7,7 @@ import 'package:mockito/mockito.dart';
 import 'package:waterbus_sdk/core/api/user/datasources/user_remote_datasource.dart';
 import 'package:waterbus_sdk/core/api/user/repositories/user_repository.dart';
 import 'package:waterbus_sdk/types/error/failures.dart';
-import 'package:waterbus_sdk/types/models/user_model.dart';
+import 'package:waterbus_sdk/types/externals/models/index.dart';
 import 'package:waterbus_sdk/types/result.dart';
 import 'user_repository_impl_test.mocks.dart';
 
@@ -21,7 +21,8 @@ void main() {
     repository = UserRepositoryImpl(mockDataSource);
   });
 
-  final testUser = User(id: 1, userName: 'testuser', fullName: 'Test User');
+  final testUser =
+      User(id: 1, userName: 'testuser', fullName: 'Test User', externalId: '');
 
   group('getUserProfile', () {
     test('should return user from remote data source', () async {

@@ -1,4 +1,4 @@
-import 'package:waterbus_sdk/types/enums/rtc_video_codec.dart';
+import 'package:waterbus_sdk/types/externals/enums/index.dart';
 import 'package:waterbus_sdk/utils/codec_selector.dart';
 
 extension SdpX on String {

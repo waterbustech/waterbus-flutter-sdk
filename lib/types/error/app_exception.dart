@@ -3,7 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:waterbus_sdk/types/error/failures.dart';
 
 enum AppException {
-  // Meeting
+  // Room
   roomNotFound("Room Not Found", RoomNotFound.new),
   notAllowedToUpdateRoom(
     'User not allowed to update rooom',
@@ -19,17 +19,8 @@ enum AppException {
   isAlreadyInRoom('User already in room', IsAlreadyInRoom.new),
   hostNotFound('Host not found', HostNotFound.new),
   notAllowToAddUser('You not allow to add user', NotAllowToAddUser.new),
-  hasNotJoinedMeeting('User not joined meeting', HasNotJoinedMeeting.new),
   memberNotFound('Member Not Found', MemberNotFound.new),
   participantNotFound('Participant Not Found', ParticipantNotFound.new),
-  onlyAllowHostStartRecord(
-    'Only allow host start record',
-    OnlyAllowHostStartRecord.new,
-  ),
-  onlyAllowHostStopRecord(
-    'Only allow host stop record',
-    OnlyAllowHostStopRecord.new,
-  ),
   notAllowedToLeaveTheRoom(
     'Host not allowed to leave the room. You can archive chats if the room no longer active.',
     NotAllowedToLeaveTheRoom.new,

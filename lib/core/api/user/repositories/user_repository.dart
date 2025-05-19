@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:injectable/injectable.dart';
 
 import 'package:waterbus_sdk/core/api/user/datasources/user_remote_datasource.dart';
-import 'package:waterbus_sdk/types/models/user_model.dart';
+import 'package:waterbus_sdk/types/externals/models/index.dart';
 import 'package:waterbus_sdk/types/result.dart';
 
 abstract class UserRepository {

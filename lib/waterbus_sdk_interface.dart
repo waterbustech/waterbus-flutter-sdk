@@ -1,16 +1,14 @@
 import 'dart:typed_data';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/types/models/record_model.dart';
-import 'package:waterbus_sdk/types/result.dart';
 
 abstract class WaterbusSdkInterface {
   Future<void> initializeApp();
 
   // Auth
-  Future<Result<User>> createToken({required AuthPayloadModel payload});
+  Future<Result<User>> createToken({required AuthPayload payload});
   Future<Result<bool>> deleteToken();
-  Future<Result<bool>> refreshToken();
+  Future<Result<bool>> renewToken();
 
   // User
   Future<Result<User>> getProfile();
@@ -29,75 +27,67 @@ abstract class WaterbusSdkInterface {
   });
 
   // Chat
-  Future<Result<List<Meeting>>> getConversations({
-    int status = 2,
+  Future<Result<List<Room>>> getConversations({
     int limit = 10,
     required int skip,
   });
-  Future<Result<List<Meeting>>> getArchivedConversations({
+  Future<Result<List<Room>>> getArchivedConversations({
     int limit = 10,
     required int skip,
   });
   Future<Result<bool>> updateConversation({
-    required Meeting meeting,
+    required Room room,
     String? password,
   });
   Future<Result<bool>> deleteConversation(int conversationId);
-  Future<Result<Meeting>> leaveConversation({required int code});
-  Future<Result<Meeting>> addMember({required int code, required int userId});
-  Future<Result<Meeting>> deleteMember({
-    required int code,
+  Future<Result<Room>> leaveConversation({required int roomId});
+  Future<Result<Room>> addMember({required int roomId, required int userId});
+  Future<Result<Room>> deleteMember({
+    required int roomId,
     required int userId,
   });
-  Future<Result<Meeting>> acceptInvite({required int meetingId});
-  Future<Result<Meeting>> archivedConversation({required int code});
+  Future<Result<Room>> archivedConversation({required int roomId});
 
   // Messages
-  Future<Result<List<MessageModel>>> getMessageByRoom({
+  Future<Result<List<Message>>> getMessageByRoom({
     required int skip,
-    required int meetingId,
+    required int roomId,
     int limit = 10,
   });
-  Future<Result<MessageModel?>> sendMessage({
-    required int meetingId,
+  Future<Result<Message?>> sendMessage({
+    required int roomId,
     required String data,
   });
-  Future<Result<MessageModel>> editMessage({
+  Future<Result<Message>> editMessage({
     required int messageId,
     required String data,
   });
-  Future<Result<MessageModel>> deleteMessage({required int messageId});
+  Future<Result<Message>> deleteMessage({required int messageId});
 
-  // Meeting
-  Future<Result<Meeting>> createRoom({
-    required Meeting meeting,
+  // Room
+  Future<Result<Room>> createRoom({
+    required Room room,
     required String password,
     required int? userId,
   });
   Future<Result<bool>> updateRoom({
-    required Meeting meeting,
+    required Room room,
     required String password,
     required int? userId,
   });
-  Future<Result<Meeting>> joinRoom({
-    required Meeting meeting,
-    required String password,
+  Future<Result<Room>> joinRoom({
+    required Room room,
+    required String? password,
     required int? userId,
   });
-  Future<Result<Meeting>> getRoomInfo(int code);
-  Future<Result<List<RecordModel>>> getRecords({
-    required int skip,
-    required int limit,
-  });
-  Future<Result<int>> startRecord();
-  Future<Result<bool>> stopRecord();
+  Future<Result<Room>> getRoomInfo(int code);
   Future<void> leaveRoom();
   void toggleRaiseHand();
 
   // WebRTC
   Future<void> reconnect();
   Future<void> prepareMedia();
-  Future<void> changeCallSettings(CallSetting setting);
+  Future<void> changeCallSettings(MediaConfig setting);
   Future<void> switchCamera();
   Future<void> toggleVideo();
   Future<void> toggleAudio();
@@ -105,11 +95,11 @@ abstract class WaterbusSdkInterface {
   void setSubscribeSubtitle(bool isEnabled);
   Future<void> startScreenSharing({DesktopCapturerSource? source});
   Future<void> stopScreenSharing();
-  Future<void> enableVirtualBackground({
+  Future<void> enableVirtualBg({
     required Uint8List backgroundImage,
     double thresholdConfidence = 0.7,
   });
-  Future<void> disableVirtualBackground();
+  Future<void> disableVirtualBg();
   Future<void> setPiPEnabled({required String textureId, bool enabled = true});
 
   CallState get callState;

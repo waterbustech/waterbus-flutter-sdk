@@ -11,39 +11,17 @@ import 'package:waterbus_sdk/injection/injection_container.dart';
 class WsEmitterImpl extends WsEmitter {
   // ====== Room Events ======
   @override
-  void publish({
-    required String sdp,
-    required String roomId,
-    required String participantId,
-    required ParticipantSFU participant,
-    required int totalTracks,
-  }) {
-    _socket?.emit(WsEvent.roomPublish, {
-      "roomId": roomId,
-      "sdp": sdp,
-      "participantId": participantId,
-      "isVideoEnabled": participant.isVideoEnabled,
-      "isAudioEnabled": participant.isAudioEnabled,
-      "isE2eeEnabled": participant.isE2eeEnabled,
-      "totalTracks": totalTracks,
-    });
+  void publishRoom({required PublishWsEmitterPayLoad payload}) {
+    _socket?.emit(WsEvent.roomPublish, payload.toJson());
   }
 
   @override
-  void subscribe({
-    required String roomId,
-    required String participantId,
-    required String targetId,
-  }) {
-    _socket?.emit(WsEvent.roomSubscribe, {
-      "roomId": roomId,
-      "targetId": targetId,
-      "participantId": participantId,
-    });
+  void subscribeRoom({required SubscribePayload payload}) {
+    _socket?.emit(WsEvent.roomSubscribe, payload.toJson());
   }
 
   @override
-  void answerSubscribe({
+  void answerSubscription({
     required String targetId,
     required String sdp,
   }) {
@@ -54,7 +32,7 @@ class WsEmitterImpl extends WsEmitter {
   }
 
   @override
-  void sendRenegotiateSdp(String sdp) {
+  void renegotiateSdp(String sdp) {
     _socket?.emit(WsEvent.roomPublisherRenegotiation, {'sdp': sdp});
   }
 
@@ -70,12 +48,12 @@ class WsEmitterImpl extends WsEmitter {
 
   // ====== ICE Candidate Events ======
   @override
-  void sendPublisherCandidate(RTCIceCandidate candidate) {
+  void sendPublisherIceCandidate(RTCIceCandidate candidate) {
     _socket?.emit(WsEvent.roomPublisherCandidate, candidate.toMap());
   }
 
   @override
-  void sendSubscriberCandidate({
+  void sendSubscriberIceCandidate({
     required RTCIceCandidate candidate,
     required targetId,
   }) {
@@ -87,22 +65,22 @@ class WsEmitterImpl extends WsEmitter {
 
   // ====== Media Controls Events ======
   @override
-  void setCameraType(CameraType cameraType) {
+  void switchCamera(CameraType cameraType) {
     _socket?.emit(WsEvent.roomCameraType, {'type': cameraType.type});
   }
 
   @override
-  void setVideoEnabled(bool isEnabled) {
+  void toggleVideo(bool isEnabled) {
     _socket?.emit(WsEvent.roomVideoEnabled, {'isEnabled': isEnabled});
   }
 
   @override
-  void setAudioEnabled(bool isEnabled) {
+  void toggleAudio(bool isEnabled) {
     _socket?.emit(WsEvent.roomAudioEnabled, {'isEnabled': isEnabled});
   }
 
   @override
-  void setScreenSharing(bool isSharing, {String? screenTrackId}) {
+  void toggleScreenSharing(bool isSharing, {String? screenTrackId}) {
     final payload = <String, dynamic>{
       'isSharing': isSharing,
     };
@@ -115,12 +93,12 @@ class WsEmitterImpl extends WsEmitter {
   }
 
   @override
-  void setSubtitle(bool isEnabled) {
+  void toggleSubtitle(bool isEnabled) {
     _socket?.emit(WsEvent.roomSubtitleTrack, {'isEnabled': isEnabled});
   }
 
   @override
-  void setHandRaising(bool isRaising) {
+  void toggleHandRaise(bool isRaising) {
     _socket?.emit(WsEvent.roomHandRaising, {'isRaising': isRaising});
   }
 

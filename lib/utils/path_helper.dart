@@ -3,18 +3,10 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 
 import 'package:path_provider/path_provider.dart';
 
 class PathHelper {
-  static Future<void> deleteCacheImageDir(String path) async {
-    final cacheDir = Directory(path);
-    if (cacheDir.existsSync()) {
-      cacheDir.deleteSync(recursive: true);
-    }
-  }
-
   static Future<void> createDirWaterbus() async {
     if (kIsWeb) return;
 
@@ -55,45 +47,5 @@ class PathHelper {
     if (kIsWeb) return null;
 
     return await getApplicationDocumentsDirectory();
-  }
-
-  static Future<Directory?> get downloadsDir async {
-    Directory downloadsDirectory;
-    try {
-      if (Platform.isIOS) {
-        downloadsDirectory = await getLibraryDirectory();
-      } else {
-        downloadsDirectory = await getApplicationSupportDirectory();
-      }
-
-      return downloadsDirectory;
-    } on PlatformException {
-      return null;
-    }
-  }
-
-  static Future<int> getTempSize() async {
-    final String? tempWaterbusDir = await tempDirWaterbus;
-
-    if (tempWaterbusDir == null) return 0;
-
-    final Directory myDir = Directory(tempWaterbusDir);
-
-    if (!myDir.existsSync()) return 0;
-
-    return myDir.listSync().isEmpty ? 0 : ((myDir.statSync().size - 64) * 1024);
-  }
-
-  static Future<void> clearTempDir() async {
-    final String? tempWaterbusDir = await tempDirWaterbus;
-
-    if (tempWaterbusDir == null) return;
-
-    final Directory myDir = Directory(tempWaterbusDir);
-
-    if (!myDir.existsSync()) return;
-
-    myDir.deleteSync(recursive: true);
-    myDir.create();
   }
 }

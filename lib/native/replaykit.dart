@@ -14,9 +14,9 @@ class ReplayKitChannel {
 
     rkChannel.setMethodCallHandler((call) async {
       if (call.method == "closeReplayKitFromNative") {
-        rtcManager.stopScreenSharing();
+        rtcManager.stopScreenShare();
       } else if (call.method == "hasSampleBroadcast") {
-        rtcManager.startScreenSharing();
+        rtcManager.startScreenShare();
       }
     });
   }

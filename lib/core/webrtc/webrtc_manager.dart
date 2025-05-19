@@ -1,62 +1,78 @@
 import 'dart:typed_data';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/types/models/subscribe_response.dart';
 
 abstract class WebRTCManager {
-  // Room Management
+  // ====== Room Management ======
   Future<void> joinRoom({required String roomId, required int participantId});
-  Future<void> reconnect();
-  Future<void> subscribe(List<String> targetIds);
-  Future<void> setPublisherRemoteSdp(String sdp, [bool? isRecording]);
-  Future<void> setSubscriberRemoteSdp(SubscribeResponsePayload payload);
-  Future<void> renegotiateSubscriber({
+  Future<void> reconnectRoom();
+  Future<void> subscribeToParticipants(List<String> targetIds);
+  Future<void> leaveRoom();
+
+  // ====== Signaling / SDP / ICE ======
+  Future<void> setLocalSdpAsPublisher(String sdp, [bool? isRecording]);
+  Future<void> setRemoteSdpAsSubscriber(SubscribeResponsePayload payload);
+  Future<void> renegotiateWithParticipant({
     required String targetId,
     required String sdp,
   });
-  Future<void> addPublisherCandidate(RTCIceCandidate candidate);
-  Future<void> addSubscriberCandidate(
+  Future<void> addIceCandidateToPublisher(RTCIceCandidate candidate);
+  Future<void> addIceCandidateToSubscriber(
     String targetId,
     RTCIceCandidate candidate,
   );
-  Future<void> handleNewParticipant(Participant participant);
-  Future<void> handleParticipantLeave(String targetId);
-  Future<void> dispose();
 
-  // Control Settings
-  Future<void> applySettings(CallSetting setting);
-  Future<void> prepareMedia();
-  Future<void> startScreenSharing({DesktopCapturerSource? source});
-  Future<void> stopScreenSharing({bool stayInRoom = true});
-  Future<void> toggleAudio({bool? forceValue});
-  Future<void> toggleSpeakerPhone({bool? forceValue});
-  Future<void> toggleVideo();
-  Future<void> switchCamera();
-  void toggleRaiseHand();
-  void setE2eeEnabled({
-    required RTCRtpReceiver receiver,
-    required String targetId,
-    required bool isEnabled,
-  });
-  void setVideoEnabled({required String targetId, required bool isEnabled});
-  void setCameraType({required String targetId, required CameraType type});
-  void setAudioEnabled({required String targetId, required bool isEnabled});
-  void setScreenSharing({
-    required String targetId,
-    required bool isSharing,
-    required String? screenTrackId,
-  });
-  void setHandRaising({required String targetId, required bool isRaising});
-  void setIsRecording({required bool isRecording});
-  Future<void> enableVirtualBackground({
+  // ====== Participant Handling ======
+  Future<void> handleParticipantJoined(Participant participant);
+  Future<void> handleParticipantLeft(String targetId);
+
+  // ====== Media & Device Control ======
+  Future<void> initializeMediaDevices();
+  Future<void> applyMediaSettings(MediaConfig setting);
+
+  Future<void> toggleAudioInput({bool? forceValue});
+  Future<void> toggleVideoInput();
+  Future<void> toggleSpeakerOutput({bool? forceValue});
+  Future<void> switchCameraInput();
+
+  // ====== Screen Sharing ======
+  Future<void> startScreenShare({DesktopCapturerSource? source});
+  Future<void> stopScreenShare({bool stayInRoom = true});
+
+  // ====== Virtual Background ======
+  Future<void> enableVirtualBg({
     required Uint8List backgroundImage,
     double thresholdConfidence = 0.7,
   });
-  Future<void> disableVirtualBackground({bool reset = false});
+  Future<void> disableVirtualBg({bool reset = false});
 
-  // Expose states
-  CallState callState();
-  Stream<CallbackPayload> get notifyChanged;
-  String? get roomId;
-  bool get isRecording;
+  // ====== Raise Hand & State Toggling ======
+  void toggleHandRaise();
+  void setParticipantHandRaising({
+    required String targetId,
+    required bool isRaising,
+  });
+  void setRecordingStatus({required bool isRecording});
+  void setParticipantCameraType({
+    required String targetId,
+    required CameraType type,
+  });
+  void setParticipantVideoEnabled({
+    required String targetId,
+    required bool isEnabled,
+  });
+  void setParticipantAudioEnabled({
+    required String targetId,
+    required bool isEnabled,
+  });
+  void setParticipantScreenSharing({
+    required ParticipantScreenSharingConfig config,
+  });
+  void setParticipantE2ee({required ParticipantE2eeConfig config});
+
+  // ====== State Exposure ======
+  CallState getCallState();
+  Stream<CallbackPayload> get onCallChanged;
+  String? get currentRoomId;
+  bool get isRecordingActive;
 }

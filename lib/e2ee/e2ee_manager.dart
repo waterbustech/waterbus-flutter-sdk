@@ -4,8 +4,6 @@ import 'package:injectable/injectable.dart';
 
 import 'package:waterbus_sdk/e2ee/key_provider.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/types/enums/rtc_audio_codec.dart';
-import 'package:waterbus_sdk/types/enums/rtc_track_kind.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 @singleton

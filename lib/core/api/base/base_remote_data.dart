@@ -135,7 +135,7 @@ class BaseRemoteData {
       validateStatus: (status) {
         if (status == StatusCode.notAcceptable &&
             _authLocal.accessToken.isNotEmpty) {
-          _authLocal.clearToken();
+          _authLocal.deleteToken();
         }
 
         return true;
@@ -146,6 +146,7 @@ class BaseRemoteData {
         'Connection': 'keep-alive',
         'Accept': '*/*',
         'Accept-Encoding': 'gzip, deflate, br',
+        'X-API-Key': WaterbusSdk.apiKey,
       },
     );
   }
@@ -166,6 +167,7 @@ class BaseRemoteData {
       'Connection': 'keep-alive',
       'Accept': '*/*',
       'Accept-Encoding': 'gzip, deflate, br',
+      'X-API-Key': WaterbusSdk.apiKey,
     };
   }
 

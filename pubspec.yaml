@@ -50,7 +50,9 @@ dependencies:
   get_it: ^8.0.3
   injectable: ^2.5.0
   freezed_annotation: ^3.0.0
+  json_annotation: ^4.9.0
 
+  socket_io_common: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:waterbus_sdk/types/index.dart';
+import 'package:waterbus_sdk/types/externals/models/index.dart';
 import '../../../../constants/sample_file_path.dart';
 import '../../../../fixtures/fixture_reader.dart';
 
@@ -18,12 +18,14 @@ void main() {
         userName: "lambiengcode",
         fullName: "Kai Dao",
         bio: "bio1",
+        externalId: '',
       );
       final User userModel2 = User(
         id: 2,
         userName: "lambiengcode",
         fullName: "Kai Dao",
         bio: "bio2",
+        externalId: '',
       );
 
       // arrange

@@ -8,20 +8,14 @@ class Endpoints {
   static const String username = 'users/username';
   static const String searchUsers = 'users/search';
 
-  // Meetings
-  static const String meetings = 'meetings';
-  static const String joinWithPassword = 'meetings/join/password';
-  static const String joinWithoutPassword = 'meetings/join';
-  static const String meetingConversations = 'meetings/conversations';
-  static const String archivedConversations = 'meetings/conversations/archived';
-  static const String meetingMembers = 'meetings/members';
-  static const String archivedMeeeting = 'meetings/archived';
-  static const String acceptInvite = 'meetings/members/accept';
-  static const String records = 'meetings/records';
-  static const String startRecord = 'meetings/record/start';
-  static const String stopRecord = 'meetings/record/stop';
+  // Room
+  static const String rooms = 'rooms';
+  static const String join = 'join';
+  static const String members = 'members';
+  static const String inactive = 'rooms/inactive';
+  static const String deactivate = 'deactivate';
 
   // Chats
   static const String chats = 'chats';
-  static const String chatsConversations = 'chats/conversations';
+  static const String conversations = 'conversations';
 }

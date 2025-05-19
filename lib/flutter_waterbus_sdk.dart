@@ -7,8 +7,6 @@ import 'package:waterbus_sdk/core/api/base/base_local_storage.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_manager.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
 import 'package:waterbus_sdk/types/index.dart';
-import 'package:waterbus_sdk/types/models/record_model.dart';
-import 'package:waterbus_sdk/types/result.dart';
 import 'package:waterbus_sdk/utils/callkit/callkit_listener.dart';
 import 'package:waterbus_sdk/waterbus_event_listener.dart';
 import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
@@ -23,6 +21,7 @@ class WaterbusSdk {
   static String wsUrl = '';
   static String messageEncryptionKey = '';
   static String webrtcE2eeKey = 'waterbus';
+  static String? apiKey;
   static HttpVersionPref httpVersionPref = HttpVersionPref.all;
   static WaterbusEventListener listener = WaterbusEventListener();
 
@@ -44,6 +43,7 @@ class WaterbusSdk {
   Future<void> initializeApp({
     required String wsUrl,
     required String apiUrl,
+    String? apiKey,
 
     /// Encryption message will be disabled if the key is empty
     String messageEncryptionKey = '',
@@ -52,6 +52,7 @@ class WaterbusSdk {
   }) async {
     WaterbusSdk.wsUrl = wsUrl;
     WaterbusSdk.apiUrl = apiUrl;
+    WaterbusSdk.apiKey = apiKey;
     WaterbusSdk.messageEncryptionKey = messageEncryptionKey;
     WaterbusSdk.webrtcE2eeKey = webrtcE2eeKey;
     WaterbusSdk.httpVersionPref = httpVersionPref;
@@ -70,60 +71,45 @@ class WaterbusSdk {
     await _sdk.initializeApp();
   }
 
-  // Meeting
-  Future<Result<Meeting>> createRoom({
-    required Meeting meeting,
+  // Rooms
+  Future<Result<Room>> createRoom({
+    required Room room,
     required String password,
     required int? userId,
   }) async {
     return await _sdk.createRoom(
-      meeting: meeting,
+      room: room,
       password: password,
       userId: userId,
     );
   }
 
-  Future<Result<Meeting>> joinRoom({
-    required Meeting meeting,
+  Future<Result<Room>> joinRoom({
+    required Room room,
     required String password,
     required int? userId,
   }) async {
     return await _sdk.joinRoom(
-      meeting: meeting,
+      room: room,
       password: password,
       userId: userId,
     );
   }
 
   Future<Result<bool>> updateRoom({
-    required Meeting meeting,
+    required Room room,
     required String password,
     required int? userId,
   }) async {
     return await _sdk.updateRoom(
-      meeting: meeting,
+      room: room,
       password: password,
       userId: userId,
     );
   }
 
-  Future<Result<Meeting>> getRoomInfo({required int code}) async {
+  Future<Result<Room>> getRoomInfo({required int code}) async {
     return await _sdk.getRoomInfo(code);
-  }
-
-  Future<Result<List<RecordModel>>> getRecords({
-    int skip = 0,
-    int limit = 10,
-  }) async {
-    return await _sdk.getRecords(skip: skip, limit: limit);
-  }
-
-  Future<Result<int>> startRecord() async {
-    return await _sdk.startRecord();
-  }
-
-  Future<Result<bool>> stopRecord() async {
-    return await _sdk.stopRecord();
   }
 
   Future<void> leaveRoom() async {
@@ -169,7 +155,7 @@ class WaterbusSdk {
     _sdk.setSubscribeSubtitle(isEnabled);
   }
 
-  Future<void> changeCallSetting(CallSetting setting) async {
+  Future<void> changeCallSetting(MediaConfig setting) async {
     await _sdk.changeCallSettings(setting);
   }
 
@@ -177,14 +163,14 @@ class WaterbusSdk {
     required Uint8List backgroundImage,
     double thresholdConfidence = 0.7,
   }) async {
-    await _sdk.enableVirtualBackground(
+    await _sdk.enableVirtualBg(
       backgroundImage: backgroundImage,
       thresholdConfidence: thresholdConfidence,
     );
   }
 
-  Future<void> disableVirtualBackground() async {
-    await _sdk.disableVirtualBackground();
+  Future<void> disableVirtualBg() async {
+    await _sdk.disableVirtualBg();
   }
 
   Future<void> setPiPEnabled({
@@ -247,43 +233,37 @@ class WaterbusSdk {
   }
 
   // Chat
-  Future<Result<Meeting>> addMember(int code, int userId) async {
-    return await _sdk.addMember(code: code, userId: userId);
+  Future<Result<Room>> addMember(int roomId, int userId) async {
+    return await _sdk.addMember(roomId: roomId, userId: userId);
   }
 
-  Future<Result<Meeting>> deleteMember(int code, int userId) async {
-    return await _sdk.deleteMember(code: code, userId: userId);
+  Future<Result<Room>> deleteMember(int roomId, int userId) async {
+    return await _sdk.deleteMember(roomId: roomId, userId: userId);
   }
 
-  Future<Result<Meeting>> acceptInvite(int meetingId) async {
-    return await _sdk.acceptInvite(meetingId: meetingId);
+  Future<Result<Room>> leaveConversation(int roomId) async {
+    return await _sdk.leaveConversation(roomId: roomId);
   }
 
-  Future<Result<Meeting>> leaveConversation(int code) async {
-    return await _sdk.leaveConversation(code: code);
-  }
-
-  Future<Result<Meeting>> archivedConversation(int code) async {
-    return await _sdk.archivedConversation(code: code);
+  Future<Result<Room>> archivedConversation(int roomId) async {
+    return await _sdk.archivedConversation(roomId: roomId);
   }
 
   Future<Result<bool>> deleteConversation(int conversationId) async {
     return await _sdk.deleteConversation(conversationId);
   }
 
-  Future<Result<List<Meeting>>> getConversations({
+  Future<Result<List<Room>>> getConversations({
     required int skip,
     int limit = 10,
-    int status = 2,
   }) async {
     return await _sdk.getConversations(
-      status: status,
       limit: limit,
       skip: skip,
     );
   }
 
-  Future<Result<List<Meeting>>> getArchivedConversations({
+  Future<Result<List<Room>>> getArchivedConversations({
     required int skip,
     int limit = 10,
   }) async {
@@ -294,48 +274,48 @@ class WaterbusSdk {
   }
 
   Future<Result<bool>> updateConversation({
-    required Meeting meeting,
+    required Room room,
     String? password,
   }) async {
     return await _sdk.updateConversation(
-      meeting: meeting,
+      room: room,
       password: password,
     );
   }
 
   // Messages
-  Future<Result<List<MessageModel>>> getMessageByRoom({
-    required int meetingId,
+  Future<Result<List<Message>>> getMessageByRoom({
+    required int roomId,
     required int skip,
     int limit = 10,
   }) async {
     return await _sdk.getMessageByRoom(
-      meetingId: meetingId,
+      roomId: roomId,
       limit: limit,
       skip: skip,
     );
   }
 
-  Future<Result<MessageModel?>> sendMessage({
-    required int meetingId,
+  Future<Result<Message?>> sendMessage({
+    required int roomId,
     required String data,
   }) async {
-    return await _sdk.sendMessage(meetingId: meetingId, data: data);
+    return await _sdk.sendMessage(roomId: roomId, data: data);
   }
 
-  Future<Result<MessageModel>> editMessage({
+  Future<Result<Message>> editMessage({
     required int messageId,
     required String data,
   }) async {
     return await _sdk.editMessage(messageId: messageId, data: data);
   }
 
-  Future<Result<MessageModel>> deleteMessage({required int messageId}) async {
+  Future<Result<Message>> deleteMessage({required int messageId}) async {
     return await _sdk.deleteMessage(messageId: messageId);
   }
 
   // Auth
-  Future<Result<User>> createToken(AuthPayloadModel payload) async {
+  Future<Result<User>> createToken(AuthPayload payload) async {
     return await _sdk.createToken(payload: payload);
   }
 
@@ -344,7 +324,7 @@ class WaterbusSdk {
   }
 
   Future<Result<bool>> renewToken() async {
-    return await _sdk.refreshToken();
+    return await _sdk.renewToken();
   }
 
   CallState get callState => _sdk.callState;

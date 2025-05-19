@@ -9,8 +9,7 @@ import 'dart:async' as _i6;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i4;
 
-import 'package:waterbus_sdk/types/models/auth_payload_model.dart' as _i8;
-import 'package:waterbus_sdk/types/models/user_model.dart' as _i7;
+import 'package:waterbus_sdk/types/externals/models/index.dart' as _i7;
 import 'package:waterbus_sdk/types/result.dart' as _i2;
 
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart'
@@ -91,9 +90,9 @@ class MockAuthLocalDataSource extends _i1.Mock
       );
 
   @override
-  void clearToken() => super.noSuchMethod(
+  void deleteToken() => super.noSuchMethod(
         Invocation.method(
-          #clearToken,
+          #deleteToken,
           [],
         ),
         returnValueForMissingStub: null,
@@ -106,9 +105,9 @@ class MockAuthLocalDataSource extends _i1.Mock
 class MockAuthRemoteDataSource extends _i1.Mock
     implements _i5.AuthRemoteDataSource {
   @override
-  _i6.Future<(String?, String?)> refreshToken() => (super.noSuchMethod(
+  _i6.Future<(String?, String?)> renewToken() => (super.noSuchMethod(
         Invocation.method(
-          #refreshToken,
+          #renewToken,
           [],
         ),
         returnValue: _i6.Future<(String?, String?)>.value((null, null)),
@@ -117,18 +116,17 @@ class MockAuthRemoteDataSource extends _i1.Mock
       ) as _i6.Future<(String?, String?)>);
 
   @override
-  _i6.Future<_i2.Result<_i7.User>> signInWithSocial(
-          _i8.AuthPayloadModel? authPayload) =>
+  _i6.Future<_i2.Result<_i7.User>> createToken(_i7.AuthPayload? authPayload) =>
       (super.noSuchMethod(
         Invocation.method(
-          #signInWithSocial,
+          #createToken,
           [authPayload],
         ),
         returnValue:
             _i6.Future<_i2.Result<_i7.User>>.value(_FakeResult_0<_i7.User>(
           this,
           Invocation.method(
-            #signInWithSocial,
+            #createToken,
             [authPayload],
           ),
         )),
@@ -136,22 +134,22 @@ class MockAuthRemoteDataSource extends _i1.Mock
             _i6.Future<_i2.Result<_i7.User>>.value(_FakeResult_0<_i7.User>(
           this,
           Invocation.method(
-            #signInWithSocial,
+            #createToken,
             [authPayload],
           ),
         )),
       ) as _i6.Future<_i2.Result<_i7.User>>);
 
   @override
-  _i6.Future<_i2.Result<bool>> logOut() => (super.noSuchMethod(
+  _i6.Future<_i2.Result<bool>> deleteToken() => (super.noSuchMethod(
         Invocation.method(
-          #logOut,
+          #deleteToken,
           [],
         ),
         returnValue: _i6.Future<_i2.Result<bool>>.value(_FakeResult_0<bool>(
           this,
           Invocation.method(
-            #logOut,
+            #deleteToken,
             [],
           ),
         )),
@@ -159,7 +157,7 @@ class MockAuthRemoteDataSource extends _i1.Mock
             _i6.Future<_i2.Result<bool>>.value(_FakeResult_0<bool>(
           this,
           Invocation.method(
-            #logOut,
+            #deleteToken,
             [],
           ),
         )),

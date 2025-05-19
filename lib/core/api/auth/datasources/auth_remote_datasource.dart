@@ -6,14 +6,13 @@ import 'package:waterbus_sdk/constants/status_code.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/types/error/failures.dart';
-import 'package:waterbus_sdk/types/models/auth_payload_model.dart';
-import 'package:waterbus_sdk/types/models/user_model.dart';
+import 'package:waterbus_sdk/types/externals/models/index.dart';
 import 'package:waterbus_sdk/types/result.dart';
 
 abstract class AuthRemoteDataSource {
-  Future<(String?, String?)> refreshToken();
-  Future<Result<User>> signInWithSocial(AuthPayloadModel authPayload);
-  Future<Result<bool>> logOut();
+  Future<(String?, String?)> renewToken();
+  Future<Result<User>> createToken(AuthPayload authPayload);
+  Future<Result<bool>> deleteToken();
 }
 
 @LazySingleton(as: AuthRemoteDataSource)
@@ -24,7 +23,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   AuthRemoteDataSourceImpl(this._baseRemoteData, this._localDataSource);
 
   @override
-  Future<Result<User>> signInWithSocial(AuthPayloadModel authPayload) async {
+  Future<Result<User>> createToken(AuthPayload authPayload) async {
     final Map<String, dynamic> body = authPayload.toJson();
 
     final Response response = await _baseRemoteData.post(
@@ -48,7 +47,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   }
 
   @override
-  Future<(String?, String?)> refreshToken() async {
+  Future<(String?, String?)> renewToken() async {
     final Response response = await _baseRemoteData.dio.get(
       Endpoints.auth,
       options: _baseRemoteData.getOptionsRefreshToken,
@@ -63,7 +62,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   }
 
   @override
-  Future<Result<bool>> logOut() async {
+  Future<Result<bool>> deleteToken() async {
     final Response response = await _baseRemoteData.delete(
       Endpoints.auth,
     );

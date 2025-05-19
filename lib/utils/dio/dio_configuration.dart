@@ -175,6 +175,6 @@ class DioConfiguration {
   }
 
   void _logOut() {
-    _authLocal.clearToken();
+    _authLocal.deleteToken();
   }
 }

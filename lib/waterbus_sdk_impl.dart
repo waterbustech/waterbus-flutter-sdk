@@ -6,8 +6,8 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:waterbus_sdk/core/api/auth/repositories/auth_repository.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/core/api/chat/repositories/chat_repository.dart';
-import 'package:waterbus_sdk/core/api/meetings/repositories/meeting_repository.dart';
 import 'package:waterbus_sdk/core/api/messages/repositories/message_repository.dart';
+import 'package:waterbus_sdk/core/api/rooms/repositories/room_repository.dart';
 import 'package:waterbus_sdk/core/api/user/repositories/user_repository.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_manager.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/ws_emitter.dart';
@@ -15,10 +15,6 @@ import 'package:waterbus_sdk/core/websocket/interfaces/ws_handler.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/native/picture-in-picture/index.dart';
 import 'package:waterbus_sdk/native/replaykit.dart';
-import 'package:waterbus_sdk/types/error/failures.dart';
-import 'package:waterbus_sdk/types/models/create_meeting_params.dart';
-import 'package:waterbus_sdk/types/models/record_model.dart';
-import 'package:waterbus_sdk/types/result.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 import 'package:waterbus_sdk/utils/replaykit/replaykit_helper.dart';
 import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
@@ -31,7 +27,7 @@ class SdkCore extends WaterbusSdkInterface {
   final ReplayKitChannel _replayKitChannel;
   final BaseRemoteData _baseRepository;
   final AuthRepository _authRepository;
-  final MeetingRepository _meetingRepository;
+  final RoomRepository _roomRepository;
   final UserRepository _userRepository;
   final ChatRepository _chatRepository;
   final MessageRepository _messageRepository;
@@ -44,7 +40,7 @@ class SdkCore extends WaterbusSdkInterface {
     this._replayKitChannel,
     this._baseRepository,
     this._authRepository,
-    this._meetingRepository,
+    this._roomRepository,
     this._userRepository,
     this._chatRepository,
     this._messageRepository,
@@ -57,21 +53,21 @@ class SdkCore extends WaterbusSdkInterface {
 
     _wsHandler.establishConnection(forceConnection: true);
 
-    _rtcManager.notifyChanged.listen((event) {
+    _rtcManager.onCallChanged.listen((event) {
       WaterbusSdk.listener.onEventChanged?.call(event);
     });
   }
 
-  // Meeting
+  // Room
   @override
-  Future<Result<Meeting>> createRoom({
-    required Meeting meeting,
+  Future<Result<Room>> createRoom({
+    required Room room,
     required String password,
     required int? userId,
   }) async {
-    return await _meetingRepository.createMeeting(
-      CreateMeetingParams(
-        meeting: meeting,
+    return await _roomRepository.createRoom(
+      RoomParams(
+        room: room,
         password: password,
         userId: userId,
       ),
@@ -79,71 +75,57 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<Result<Meeting>> joinRoom({
-    required Meeting meeting,
-    required String password,
+  Future<Result<Room>> joinRoom({
+    required Room room,
+    required String? password,
     required int? userId,
   }) async {
     if (!_wsHandler.isConnected) return Result.failure(ServerFailure());
 
-    late final Result<Meeting> room;
+    final Result<Room> roomCurrent = await _roomRepository.joinRoom(
+      RoomParams(room: room, password: password ?? "", userId: userId),
+    );
 
-    if (password.isEmpty) {
-      room = await _meetingRepository.joinMeetingWithoutPassword(
-        CreateMeetingParams(
-          meeting: meeting,
-          password: password,
-          userId: userId,
-        ),
-      );
-    } else {
-      room = await _meetingRepository.joinMeetingWithPassword(
-        CreateMeetingParams(
-          meeting: meeting,
-          password: password,
-          userId: userId,
-        ),
-      );
-    }
+    if (roomCurrent.isSuccess) {
+      final Room? room = roomCurrent.value;
 
-    if (room.isSuccess) {
-      final Meeting? meeting = room.value;
+      if (room == null) {
+        return Result.failure(roomCurrent.error ?? ServerFailure());
+      }
 
-      if (meeting == null) return Result.failure(room.error ?? ServerFailure());
-
-      final int mParticipantIndex = meeting.participants.lastIndexWhere(
+      final int mParticipantIndex = room.participants.lastIndexWhere(
         (participant) => participant.isMe,
       );
 
       if (mParticipantIndex < 0) return Result.failure(ServerFailure());
 
       await _joinRoom(
-        roomId: meeting.code.toString(),
-        participantId: meeting.participants[mParticipantIndex].id,
+        roomId: room.code.toString(),
+        participantId: room.participants[mParticipantIndex].id,
       );
 
-      final List<String> targetIds = meeting.participants
+      final List<String> targetIds = room.participants
           .where((participant) => !participant.isMe)
           .map((participant) => participant.id.toString())
           .toList();
 
       _subscribe(targetIds);
 
-      return Result.success(meeting);
+      return Result.success(room);
     } else {
-      return Result.failure(room.error ?? ServerFailure());
+      return Result.failure(roomCurrent.error ?? ServerFailure());
     }
   }
 
   @override
   Future<Result<bool>> updateRoom({
-    required Meeting meeting,
+    required Room room,
     required String password,
     required int? userId,
   }) async {
-    return await _meetingRepository.updateMeeting(
-      CreateMeetingParams(
-        meeting: meeting,
+    return await _roomRepository.updateRoom(
+      RoomParams(
+        room: room,
         password: password,
         userId: userId,
       ),
@@ -151,40 +133,14 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<Result<Meeting>> getRoomInfo(int code) async {
-    return await _meetingRepository.getInfoMeeting(code);
-  }
-
-  @override
-  Future<Result<List<RecordModel>>> getRecords({
-    required int skip,
-    required int limit,
-  }) async {
-    return await _meetingRepository.getRecords(skip: skip, limit: limit);
-  }
-
-  @override
-  Future<Result<int>> startRecord() async {
-    final String? meetingId = _rtcManager.roomId;
-
-    if (meetingId == null) return Result.failure(ServerFailure());
-
-    return await _meetingRepository.startRecord(int.parse(meetingId));
-  }
-
-  @override
-  Future<Result<bool>> stopRecord() async {
-    final String? meetingId = _rtcManager.roomId;
-
-    if (meetingId == null) return Result.failure(ServerFailure());
-
-    return await _meetingRepository.stopRecord(int.parse(meetingId));
+  Future<Result<Room>> getRoomInfo(int code) async {
+    return await _roomRepository.getInfoRoom(code);
   }
 
   @override
   Future<void> leaveRoom() async {
     try {
-      await _rtcManager.dispose();
+      await _rtcManager.leaveRoom();
       WakelockPlus.disable();
     } catch (error) {
       _logger.bug(error.toString());
@@ -196,49 +152,49 @@ class SdkCore extends WaterbusSdkInterface {
     _wsEmitter.reconnect();
     _wsHandler.reconnect(
       callbackConnected: () async {
-        await _rtcManager.reconnect();
+        await _rtcManager.reconnectRoom();
       },
     );
   }
 
   @override
   Future<void> prepareMedia() async {
-    await _rtcManager.prepareMedia();
+    await _rtcManager.initializeMediaDevices();
   }
 
   @override
-  Future<void> changeCallSettings(CallSetting setting) async {
-    await _rtcManager.applySettings(setting);
+  Future<void> changeCallSettings(MediaConfig setting) async {
+    await _rtcManager.applyMediaSettings(setting);
   }
 
   @override
   Future<void> switchCamera() async {
-    await _rtcManager.switchCamera();
+    await _rtcManager.switchCameraInput();
   }
 
   @override
   Future<void> toggleVideo() async {
-    await _rtcManager.toggleVideo();
+    await _rtcManager.toggleVideoInput();
   }
 
   @override
   Future<void> toggleAudio() async {
-    await _rtcManager.toggleAudio();
+    await _rtcManager.toggleAudioInput();
   }
 
   @override
   void toggleRaiseHand() {
-    _rtcManager.toggleRaiseHand();
+    _rtcManager.toggleHandRaise();
   }
 
   @override
   Future<void> toggleSpeakerPhone() async {
-    await _rtcManager.toggleSpeakerPhone();
+    await _rtcManager.toggleSpeakerOutput();
   }
 
   @override
   void setSubscribeSubtitle(bool isEnabled) {
-    _wsEmitter.setSubtitle(isEnabled);
+    _wsEmitter.toggleSubtitle(isEnabled);
   }
 
   @override
@@ -248,7 +204,7 @@ class SdkCore extends WaterbusSdkInterface {
       _replayKitChannel.startReplayKit();
       _replayKitChannel.listenEvents(_rtcManager);
     } else {
-      await _rtcManager.startScreenSharing(source: source);
+      await _rtcManager.startScreenShare(source: source);
     }
   }
 
@@ -258,7 +214,7 @@ class SdkCore extends WaterbusSdkInterface {
       if (WebRTC.platformIsIOS) {
         ReplayKitHelper().openReplayKit();
       } else {
-        await _rtcManager.stopScreenSharing();
+        await _rtcManager.stopScreenShare();
       }
     } catch (error) {
       _logger.bug(error.toString());
@@ -266,19 +222,19 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<void> enableVirtualBackground({
+  Future<void> enableVirtualBg({
     required Uint8List backgroundImage,
     double thresholdConfidence = 0.7,
   }) async {
-    await _rtcManager.enableVirtualBackground(
+    await _rtcManager.enableVirtualBg(
       backgroundImage: backgroundImage,
       thresholdConfidence: thresholdConfidence,
     );
   }
 
   @override
-  Future<void> disableVirtualBackground() async {
-    await _rtcManager.disableVirtualBackground();
+  Future<void> disableVirtualBg() async {
+    await _rtcManager.disableVirtualBg();
   }
 
   @override
@@ -296,20 +252,18 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<Result<List<Meeting>>> getConversations({
+  Future<Result<List<Room>>> getConversations({
     required int skip,
     int limit = 10,
-    int status = 2,
   }) async {
     return await _chatRepository.getConversations(
-      status: status,
       limit: limit,
       skip: skip,
     );
   }
 
   @override
-  Future<Result<List<Meeting>>> getArchivedConversations({
+  Future<Result<List<Room>>> getArchivedConversations({
     int limit = 10,
     required int skip,
   }) async {
@@ -321,73 +275,68 @@ class SdkCore extends WaterbusSdkInterface {
 
   @override
   Future<Result<bool>> updateConversation({
-    required Meeting meeting,
+    required Room room,
     String? password,
   }) async {
     return await _chatRepository.updateConversation(
-      meeting: meeting,
+      room: room,
       password: password,
     );
   }
 
   @override
-  Future<Result<Meeting>> acceptInvite({required int meetingId}) async {
-    return await _chatRepository.acceptInvite(meetingId: meetingId);
-  }
-
-  @override
-  Future<Result<Meeting>> addMember({
-    required int code,
+  Future<Result<Room>> addMember({
+    required int roomId,
     required int userId,
   }) async {
-    return await _chatRepository.addMember(code: code, userId: userId);
+    return await _chatRepository.addMember(roomId: roomId, userId: userId);
   }
 
   @override
-  Future<Result<Meeting>> leaveConversation({required int code}) async {
-    return await _chatRepository.leaveConversation(code: code);
+  Future<Result<Room>> leaveConversation({required int roomId}) async {
+    return await _chatRepository.leaveConversation(roomId: roomId);
   }
 
   @override
-  Future<Result<Meeting>> archivedConversation({required int code}) async {
-    return await _chatRepository.archivedConversation(code: code);
+  Future<Result<Room>> archivedConversation({required int roomId}) async {
+    return await _chatRepository.archivedConversation(roomId: roomId);
   }
 
   @override
-  Future<Result<Meeting>> deleteMember({
-    required int code,
+  Future<Result<Room>> deleteMember({
+    required int roomId,
     required int userId,
   }) async {
-    return await _chatRepository.deleteMember(code: code, userId: userId);
+    return await _chatRepository.deleteMember(roomId: roomId, userId: userId);
   }
 
   // Messages
   @override
-  Future<Result<List<MessageModel>>> getMessageByRoom({
-    required int meetingId,
+  Future<Result<List<Message>>> getMessageByRoom({
+    required int roomId,
     required int skip,
     int limit = 10,
   }) async {
     return await _messageRepository.getMessageByRoom(
-      meetingId: meetingId,
+      roomId: roomId,
       limit: limit,
       skip: skip,
     );
   }
 
   @override
-  Future<Result<MessageModel>> sendMessage({
-    required int meetingId,
+  Future<Result<Message>> sendMessage({
+    required int roomId,
     required String data,
   }) async {
     return await _messageRepository.sendMessage(
-      meetingId: meetingId,
+      roomId: roomId,
       data: data,
     );
   }
 
   @override
-  Future<Result<MessageModel>> editMessage({
+  Future<Result<Message>> editMessage({
     required int messageId,
     required String data,
   }) async {
@@ -398,7 +347,7 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<Result<MessageModel>> deleteMessage({required int messageId}) async {
+  Future<Result<Message>> deleteMessage({required int messageId}) async {
     return await _messageRepository.deleteMessage(messageId: messageId);
   }
 
@@ -458,8 +407,8 @@ class SdkCore extends WaterbusSdkInterface {
 
   // Auth
   @override
-  Future<Result<User>> createToken({required AuthPayloadModel payload}) async {
-    final Result<User> user = await _authRepository.loginWithSocial(payload);
+  Future<Result<User>> createToken({required AuthPayload payload}) async {
+    final Result<User> user = await _authRepository.createToken(payload);
 
     if (user.isSuccess) {
       _wsHandler.establishConnection(forceConnection: true);
@@ -472,12 +421,12 @@ class SdkCore extends WaterbusSdkInterface {
   Future<Result<bool>> deleteToken() async {
     _wsHandler.disconnection();
 
-    return await _authRepository.logOut();
+    return await _authRepository.deleteToken();
   }
 
   @override
-  Future<Result<bool>> refreshToken() async {
-    return await _authRepository.refreshToken();
+  Future<Result<bool>> renewToken() async {
+    return await _authRepository.renewToken();
   }
 
   // MARK: Private
@@ -499,12 +448,12 @@ class SdkCore extends WaterbusSdkInterface {
 
   Future<void> _subscribe(List<String> targetIds) async {
     try {
-      _rtcManager.subscribe(targetIds);
+      _rtcManager.subscribeToParticipants(targetIds);
     } catch (error) {
       _logger.bug(error.toString());
     }
   }
 
   @override
-  CallState get callState => _rtcManager.callState();
+  CallState get callState => _rtcManager.getCallState();
 }
