@@ -34,7 +34,7 @@ void main() {
   });
 
   group('logInWithSocial', () {
-    final AuthPayload authParams = AuthPayload(fullName: '');
+    final AuthPayload authParams = AuthPayload(fullName: '', externalId: '');
     test('login success', () async {
       // arrange
       final Map<String, dynamic> userJson = jsonDecode(

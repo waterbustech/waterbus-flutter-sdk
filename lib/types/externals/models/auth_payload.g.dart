@@ -8,7 +8,7 @@ part of 'auth_payload.dart';
 
 _AuthPayload _$AuthPayloadFromJson(Map<String, dynamic> json) => _AuthPayload(
       fullName: json['fullName'] as String,
-      externalId: json['externalId'] as String?,
+      externalId: json['externalId'] as String,
     );
 
 Map<String, dynamic> _$AuthPayloadToJson(_AuthPayload instance) =>

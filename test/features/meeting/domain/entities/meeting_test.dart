@@ -23,6 +23,7 @@ void main() {
         id: 1,
         userName: 'lambiengcode',
         fullName: 'Kai',
+        externalId: '',
       );
       final participant1 = Participant(
         id: 1,
@@ -162,9 +163,9 @@ void main() {
   });
 
   group('MeetingX', () {
-    final user1 = User(id: 1, fullName: '1', userName: '1');
-    final user2 = User(id: 2, fullName: '1', userName: '1');
-    final user3 = User(id: 3, fullName: '1', userName: '1');
+    final user1 = User(id: 1, fullName: '1', userName: '1', externalId: '');
+    final user2 = User(id: 2, fullName: '1', userName: '1', externalId: '');
+    final user3 = User(id: 3, fullName: '1', userName: '1', externalId: '');
 
     final participant1 = Participant(user: user1, id: 1);
     final participant2 = Participant(user: user2, id: 2);
@@ -217,6 +218,7 @@ void main() {
               id: 1,
               fullName: 'Alice',
               userName: 'alice',
+              externalId: '',
             ),
           ),
         ],
@@ -236,6 +238,7 @@ void main() {
               id: 1,
               fullName: 'Alice',
               userName: 'alice',
+              externalId: '',
             ),
           ),
           Participant(
@@ -244,6 +247,7 @@ void main() {
               id: 1,
               fullName: 'Bob',
               userName: 'bob',
+              externalId: '',
             ),
           ),
         ],
@@ -263,6 +267,7 @@ void main() {
               id: 1,
               fullName: 'Alice',
               userName: 'alice',
+              externalId: '',
             ),
           ),
           Participant(
@@ -271,6 +276,7 @@ void main() {
               id: 1,
               fullName: 'Bob',
               userName: 'bob',
+              externalId: '',
             ),
           ),
           Participant(
@@ -279,6 +285,7 @@ void main() {
               id: 1,
               fullName: 'Kai',
               userName: 'kai',
+              externalId: '',
             ),
           ),
           Participant(
@@ -287,6 +294,7 @@ void main() {
               id: 1,
               fullName: 'lambiengcode',
               userName: 'lambiengcode',
+              externalId: '',
             ),
           ),
         ],
@@ -307,6 +315,7 @@ void main() {
               id: 1,
               fullName: 'Alice',
               userName: 'alice',
+              externalId: '',
             ),
           ),
         ],

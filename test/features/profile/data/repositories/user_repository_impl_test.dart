@@ -21,7 +21,8 @@ void main() {
     repository = UserRepositoryImpl(mockDataSource);
   });
 
-  final testUser = User(id: 1, userName: 'testuser', fullName: 'Test User');
+  final testUser =
+      User(id: 1, userName: 'testuser', fullName: 'Test User', externalId: '');
 
   group('getUserProfile', () {
     test('should return user from remote data source', () async {

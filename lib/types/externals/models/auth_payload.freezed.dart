@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AuthPayload {
   String get fullName;
-  String? get externalId;
+  String get externalId;
 
   /// Create a copy of AuthPayload
   /// with the given fields replaced by the non-null parameter values.
@@ -55,7 +55,7 @@ abstract mixin class $AuthPayloadCopyWith<$Res> {
           AuthPayload value, $Res Function(AuthPayload) _then) =
       _$AuthPayloadCopyWithImpl;
   @useResult
-  $Res call({String fullName, String? externalId});
+  $Res call({String fullName, String externalId});
 }
 
 /// @nodoc
@@ -71,17 +71,17 @@ class _$AuthPayloadCopyWithImpl<$Res> implements $AuthPayloadCopyWith<$Res> {
   @override
   $Res call({
     Object? fullName = null,
-    Object? externalId = freezed,
+    Object? externalId = null,
   }) {
     return _then(_self.copyWith(
       fullName: null == fullName
           ? _self.fullName
           : fullName // ignore: cast_nullable_to_non_nullable
               as String,
-      externalId: freezed == externalId
+      externalId: null == externalId
           ? _self.externalId
           : externalId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
     ));
   }
 }
@@ -89,14 +89,14 @@ class _$AuthPayloadCopyWithImpl<$Res> implements $AuthPayloadCopyWith<$Res> {
 /// @nodoc
 @JsonSerializable()
 class _AuthPayload implements AuthPayload {
-  const _AuthPayload({required this.fullName, this.externalId});
+  const _AuthPayload({required this.fullName, required this.externalId});
   factory _AuthPayload.fromJson(Map<String, dynamic> json) =>
       _$AuthPayloadFromJson(json);
 
   @override
   final String fullName;
   @override
-  final String? externalId;
+  final String externalId;
 
   /// Create a copy of AuthPayload
   /// with the given fields replaced by the non-null parameter values.
@@ -142,7 +142,7 @@ abstract mixin class _$AuthPayloadCopyWith<$Res>
       __$AuthPayloadCopyWithImpl;
   @override
   @useResult
-  $Res call({String fullName, String? externalId});
+  $Res call({String fullName, String externalId});
 }
 
 /// @nodoc
@@ -158,17 +158,17 @@ class __$AuthPayloadCopyWithImpl<$Res> implements _$AuthPayloadCopyWith<$Res> {
   @pragma('vm:prefer-inline')
   $Res call({
     Object? fullName = null,
-    Object? externalId = freezed,
+    Object? externalId = null,
   }) {
     return _then(_AuthPayload(
       fullName: null == fullName
           ? _self.fullName
           : fullName // ignore: cast_nullable_to_non_nullable
               as String,
-      externalId: freezed == externalId
+      externalId: null == externalId
           ? _self.externalId
           : externalId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
     ));
   }
 }

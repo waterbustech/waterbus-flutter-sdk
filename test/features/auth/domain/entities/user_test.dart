@@ -18,12 +18,14 @@ void main() {
         userName: "lambiengcode",
         fullName: "Kai Dao",
         bio: "bio1",
+        externalId: '',
       );
       final User userModel2 = User(
         id: 2,
         userName: "lambiengcode",
         fullName: "Kai Dao",
         bio: "bio2",
+        externalId: '',
       );
 
       // arrange

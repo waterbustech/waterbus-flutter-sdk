@@ -9,6 +9,7 @@ abstract class User with _$User {
     required int id,
     required String fullName,
     required String userName,
+    required String externalId,
     String? bio,
     String? avatar,
   }) = _User;

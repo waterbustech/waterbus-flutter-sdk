@@ -7,7 +7,7 @@ part 'auth_payload.g.dart';
 abstract class AuthPayload with _$AuthPayload {
   const factory AuthPayload({
     required String fullName,
-    String? externalId,
+    required String externalId,
   }) = _AuthPayload;
 
   factory AuthPayload.fromJson(Map<String, Object?> json) =>

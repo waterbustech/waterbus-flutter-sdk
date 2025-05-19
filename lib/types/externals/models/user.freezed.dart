@@ -18,6 +18,7 @@ mixin _$User {
   int get id;
   String get fullName;
   String get userName;
+  String get externalId;
   String? get bio;
   String? get avatar;
 
@@ -41,6 +42,8 @@ mixin _$User {
                 other.fullName == fullName) &&
             (identical(other.userName, userName) ||
                 other.userName == userName) &&
+            (identical(other.externalId, externalId) ||
+                other.externalId == externalId) &&
             (identical(other.bio, bio) || other.bio == bio) &&
             (identical(other.avatar, avatar) || other.avatar == avatar));
   }
@@ -48,11 +51,11 @@ mixin _$User {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, id, fullName, userName, bio, avatar);
+      Object.hash(runtimeType, id, fullName, userName, externalId, bio, avatar);
 
   @override
   String toString() {
-    return 'User(id: $id, fullName: $fullName, userName: $userName, bio: $bio, avatar: $avatar)';
+    return 'User(id: $id, fullName: $fullName, userName: $userName, externalId: $externalId, bio: $bio, avatar: $avatar)';
   }
 }
 
@@ -62,7 +65,12 @@ abstract mixin class $UserCopyWith<$Res> {
       _$UserCopyWithImpl;
   @useResult
   $Res call(
-      {int id, String fullName, String userName, String? bio, String? avatar});
+      {int id,
+      String fullName,
+      String userName,
+      String externalId,
+      String? bio,
+      String? avatar});
 }
 
 /// @nodoc
@@ -80,6 +88,7 @@ class _$UserCopyWithImpl<$Res> implements $UserCopyWith<$Res> {
     Object? id = null,
     Object? fullName = null,
     Object? userName = null,
+    Object? externalId = null,
     Object? bio = freezed,
     Object? avatar = freezed,
   }) {
@@ -95,6 +104,10 @@ class _$UserCopyWithImpl<$Res> implements $UserCopyWith<$Res> {
       userName: null == userName
           ? _self.userName
           : userName // ignore: cast_nullable_to_non_nullable
+              as String,
+      externalId: null == externalId
+          ? _self.externalId
+          : externalId // ignore: cast_nullable_to_non_nullable
               as String,
       bio: freezed == bio
           ? _self.bio
@@ -115,6 +128,7 @@ class _User implements User {
       {required this.id,
       required this.fullName,
       required this.userName,
+      required this.externalId,
       this.bio,
       this.avatar});
   factory _User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
@@ -125,6 +139,8 @@ class _User implements User {
   final String fullName;
   @override
   final String userName;
+  @override
+  final String externalId;
   @override
   final String? bio;
   @override
@@ -155,6 +171,8 @@ class _User implements User {
                 other.fullName == fullName) &&
             (identical(other.userName, userName) ||
                 other.userName == userName) &&
+            (identical(other.externalId, externalId) ||
+                other.externalId == externalId) &&
             (identical(other.bio, bio) || other.bio == bio) &&
             (identical(other.avatar, avatar) || other.avatar == avatar));
   }
@@ -162,11 +180,11 @@ class _User implements User {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, id, fullName, userName, bio, avatar);
+      Object.hash(runtimeType, id, fullName, userName, externalId, bio, avatar);
 
   @override
   String toString() {
-    return 'User(id: $id, fullName: $fullName, userName: $userName, bio: $bio, avatar: $avatar)';
+    return 'User(id: $id, fullName: $fullName, userName: $userName, externalId: $externalId, bio: $bio, avatar: $avatar)';
   }
 }
 
@@ -177,7 +195,12 @@ abstract mixin class _$UserCopyWith<$Res> implements $UserCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {int id, String fullName, String userName, String? bio, String? avatar});
+      {int id,
+      String fullName,
+      String userName,
+      String externalId,
+      String? bio,
+      String? avatar});
 }
 
 /// @nodoc
@@ -195,6 +218,7 @@ class __$UserCopyWithImpl<$Res> implements _$UserCopyWith<$Res> {
     Object? id = null,
     Object? fullName = null,
     Object? userName = null,
+    Object? externalId = null,
     Object? bio = freezed,
     Object? avatar = freezed,
   }) {
@@ -210,6 +234,10 @@ class __$UserCopyWithImpl<$Res> implements _$UserCopyWith<$Res> {
       userName: null == userName
           ? _self.userName
           : userName // ignore: cast_nullable_to_non_nullable
+              as String,
+      externalId: null == externalId
+          ? _self.externalId
+          : externalId // ignore: cast_nullable_to_non_nullable
               as String,
       bio: freezed == bio
           ? _self.bio

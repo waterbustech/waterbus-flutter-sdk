@@ -21,6 +21,7 @@ class WaterbusSdk {
   static String wsUrl = '';
   static String messageEncryptionKey = '';
   static String webrtcE2eeKey = 'waterbus';
+  static String? apiKey;
   static HttpVersionPref httpVersionPref = HttpVersionPref.all;
   static WaterbusEventListener listener = WaterbusEventListener();
 
@@ -42,6 +43,7 @@ class WaterbusSdk {
   Future<void> initializeApp({
     required String wsUrl,
     required String apiUrl,
+    String? apiKey,
 
     /// Encryption message will be disabled if the key is empty
     String messageEncryptionKey = '',
@@ -50,6 +52,7 @@ class WaterbusSdk {
   }) async {
     WaterbusSdk.wsUrl = wsUrl;
     WaterbusSdk.apiUrl = apiUrl;
+    WaterbusSdk.apiKey = apiKey;
     WaterbusSdk.messageEncryptionKey = messageEncryptionKey;
     WaterbusSdk.webrtcE2eeKey = webrtcE2eeKey;
     WaterbusSdk.httpVersionPref = httpVersionPref;

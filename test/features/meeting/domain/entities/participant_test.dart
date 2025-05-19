@@ -14,12 +14,14 @@ void main() {
       userName: 'lambiengcode',
       fullName: 'Kai',
       bio: "",
+      externalId: '',
     );
     final User hostModel = User(
       id: 2,
       userName: 'lambiencode1',
       fullName: 'KaiDao',
       bio: "",
+      externalId: '',
     );
 
     test('Should create a Participant instance', () {
@@ -38,12 +40,14 @@ void main() {
         id: 1,
         userName: 'lambiengcode',
         fullName: 'Kai',
+        externalId: '',
       );
 
       final User updatedUserModel = User(
         id: 2,
         userName: 'updatedUserName',
         fullName: 'UpdatedName',
+        externalId: '',
       );
 
       final participant = Participant(
