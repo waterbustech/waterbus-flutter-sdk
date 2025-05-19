@@ -3,7 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:waterbus_sdk/types/error/failures.dart';
 
 enum AppException {
-  // Meeting
+  // Room
   roomNotFound("Room Not Found", RoomNotFound.new),
   notAllowedToUpdateRoom(
     'User not allowed to update rooom',

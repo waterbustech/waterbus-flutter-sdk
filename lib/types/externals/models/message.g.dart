@@ -9,7 +9,7 @@ part of 'message.dart';
 _Message _$MessageFromJson(Map<String, dynamic> json) => _Message(
       id: (json['id'] as num).toInt(),
       data: json['data'] as String,
-      meeting: const IntConverter().fromJson(json['meeting']),
+      roomId: const IntConverter().fromJson(json['roomId']),
       createdBy: json['createdBy'] == null
           ? null
           : User.fromJson(json['createdBy'] as Map<String, dynamic>),
@@ -25,7 +25,7 @@ _Message _$MessageFromJson(Map<String, dynamic> json) => _Message(
 Map<String, dynamic> _$MessageToJson(_Message instance) => <String, dynamic>{
       'id': instance.id,
       'data': instance.data,
-      'meeting': const IntConverter().toJson(instance.meeting),
+      'roomId': const IntConverter().toJson(instance.roomId),
       'createdBy': instance.createdBy?.toJson(),
       'sendingStatus': _$SendingStatusEnumEnumMap[instance.sendingStatus]!,
       'status': _$MessageStatusEnumEnumMap[instance.status]!,

@@ -6,8 +6,8 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:waterbus_sdk/core/api/auth/repositories/auth_repository.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/core/api/chat/repositories/chat_repository.dart';
-import 'package:waterbus_sdk/core/api/meetings/repositories/meeting_repository.dart';
 import 'package:waterbus_sdk/core/api/messages/repositories/message_repository.dart';
+import 'package:waterbus_sdk/core/api/rooms/repositories/room_repository.dart';
 import 'package:waterbus_sdk/core/api/user/repositories/user_repository.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_manager.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/ws_emitter.dart';
@@ -27,7 +27,7 @@ class SdkCore extends WaterbusSdkInterface {
   final ReplayKitChannel _replayKitChannel;
   final BaseRemoteData _baseRepository;
   final AuthRepository _authRepository;
-  final MeetingRepository _meetingRepository;
+  final RoomRepository _roomRepository;
   final UserRepository _userRepository;
   final ChatRepository _chatRepository;
   final MessageRepository _messageRepository;
@@ -40,7 +40,7 @@ class SdkCore extends WaterbusSdkInterface {
     this._replayKitChannel,
     this._baseRepository,
     this._authRepository,
-    this._meetingRepository,
+    this._roomRepository,
     this._userRepository,
     this._chatRepository,
     this._messageRepository,
@@ -58,16 +58,16 @@ class SdkCore extends WaterbusSdkInterface {
     });
   }
 
-  // Meeting
+  // Room
   @override
-  Future<Result<Meeting>> createRoom({
-    required Meeting meeting,
+  Future<Result<Room>> createRoom({
+    required Room room,
     required String password,
     required int? userId,
   }) async {
-    return await _meetingRepository.createMeeting(
-      CreateMeetingParams(
-        meeting: meeting,
+    return await _roomRepository.createRoom(
+      CreateRoomParams(
+        room: room,
         password: password,
         userId: userId,
       ),
@@ -75,71 +75,73 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<Result<Meeting>> joinRoom({
-    required Meeting meeting,
+  Future<Result<Room>> joinRoom({
+    required Room room,
     required String password,
     required int? userId,
   }) async {
     if (!_wsHandler.isConnected) return Result.failure(ServerFailure());
 
-    late final Result<Meeting> room;
+    late final Result<Room> roomCurrent;
 
     if (password.isEmpty) {
-      room = await _meetingRepository.joinMeetingWithoutPassword(
-        CreateMeetingParams(
-          meeting: meeting,
+      roomCurrent = await _roomRepository.joinRoomWithoutPassword(
+        CreateRoomParams(
+          room: room,
           password: password,
           userId: userId,
         ),
       );
     } else {
-      room = await _meetingRepository.joinMeetingWithPassword(
-        CreateMeetingParams(
-          meeting: meeting,
+      roomCurrent = await _roomRepository.joinRoomWithPassword(
+        CreateRoomParams(
+          room: room,
           password: password,
           userId: userId,
         ),
       );
     }
 
-    if (room.isSuccess) {
-      final Meeting? meeting = room.value;
+    if (roomCurrent.isSuccess) {
+      final Room? room = roomCurrent.value;
 
-      if (meeting == null) return Result.failure(room.error ?? ServerFailure());
+      if (room == null) {
+        return Result.failure(roomCurrent.error ?? ServerFailure());
+      }
 
-      final int mParticipantIndex = meeting.participants.lastIndexWhere(
+      final int mParticipantIndex = room.participants.lastIndexWhere(
         (participant) => participant.isMe,
       );
 
       if (mParticipantIndex < 0) return Result.failure(ServerFailure());
 
       await _joinRoom(
-        roomId: meeting.code.toString(),
-        participantId: meeting.participants[mParticipantIndex].id,
+        roomId: room.code.toString(),
+        participantId: room.participants[mParticipantIndex].id,
       );
 
-      final List<String> targetIds = meeting.participants
+      final List<String> targetIds = room.participants
           .where((participant) => !participant.isMe)
           .map((participant) => participant.id.toString())
           .toList();
 
       _subscribe(targetIds);
 
-      return Result.success(meeting);
+      return Result.success(room);
     } else {
-      return Result.failure(room.error ?? ServerFailure());
+      return Result.failure(roomCurrent.error ?? ServerFailure());
     }
   }
 
   @override
   Future<Result<bool>> updateRoom({
-    required Meeting meeting,
+    required Room room,
     required String password,
     required int? userId,
   }) async {
-    return await _meetingRepository.updateMeeting(
-      CreateMeetingParams(
-        meeting: meeting,
+    return await _roomRepository.updateRoom(
+      CreateRoomParams(
+        room: room,
         password: password,
         userId: userId,
       ),
@@ -147,8 +149,8 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<Result<Meeting>> getRoomInfo(int code) async {
-    return await _meetingRepository.getInfoMeeting(code);
+  Future<Result<Room>> getRoomInfo(int code) async {
+    return await _roomRepository.getInfoRoom(code);
   }
 
   @override
@@ -266,7 +268,7 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<Result<List<Meeting>>> getConversations({
+  Future<Result<List<Room>>> getConversations({
     required int skip,
     int limit = 10,
     int status = 2,
@@ -279,7 +281,7 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<Result<List<Meeting>>> getArchivedConversations({
+  Future<Result<List<Room>>> getArchivedConversations({
     int limit = 10,
     required int skip,
   }) async {
@@ -291,22 +293,17 @@ class SdkCore extends WaterbusSdkInterface {
 
   @override
   Future<Result<bool>> updateConversation({
-    required Meeting meeting,
+    required Room room,
     String? password,
   }) async {
     return await _chatRepository.updateConversation(
-      meeting: meeting,
+      room: room,
       password: password,
     );
   }
 
   @override
-  Future<Result<Meeting>> acceptInvite({required int meetingId}) async {
-    return await _chatRepository.acceptInvite(meetingId: meetingId);
-  }
-
-  @override
-  Future<Result<Meeting>> addMember({
+  Future<Result<Room>> addMember({
     required int code,
     required int userId,
   }) async {
@@ -314,17 +311,17 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<Result<Meeting>> leaveConversation({required int code}) async {
+  Future<Result<Room>> leaveConversation({required int code}) async {
     return await _chatRepository.leaveConversation(code: code);
   }
 
   @override
-  Future<Result<Meeting>> archivedConversation({required int code}) async {
+  Future<Result<Room>> archivedConversation({required int code}) async {
     return await _chatRepository.archivedConversation(code: code);
   }
 
   @override
-  Future<Result<Meeting>> deleteMember({
+  Future<Result<Room>> deleteMember({
     required int code,
     required int userId,
   }) async {
@@ -334,12 +331,12 @@ class SdkCore extends WaterbusSdkInterface {
   // Messages
   @override
   Future<Result<List<Message>>> getMessageByRoom({
-    required int meetingId,
+    required int roomId,
     required int skip,
     int limit = 10,
   }) async {
     return await _messageRepository.getMessageByRoom(
-      meetingId: meetingId,
+      roomId: roomId,
       limit: limit,
       skip: skip,
     );
@@ -347,11 +344,11 @@ class SdkCore extends WaterbusSdkInterface {
 
   @override
   Future<Result<Message>> sendMessage({
-    required int meetingId,
+    required int roomId,
     required String data,
   }) async {
     return await _messageRepository.sendMessage(
-      meetingId: meetingId,
+      roomId: roomId,
       data: data,
     );
   }

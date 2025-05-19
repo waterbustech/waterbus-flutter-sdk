@@ -22,7 +22,7 @@ enum MemberStatusEnum {
       case 2:
         return MemberStatusEnum.joined;
       default:
-        throw Exception('Unknown MeetingRole value: $value');
+        throw Exception('Unknown Room Role value: $value');
     }
   }
 }

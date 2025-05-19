@@ -8,79 +8,79 @@ import 'package:waterbus_sdk/types/error/app_exception.dart';
 import 'package:waterbus_sdk/types/externals/models/index.dart';
 import 'package:waterbus_sdk/types/result.dart';
 
-abstract class MeetingRemoteDataSource {
-  Future<Result<Meeting>> createMeeting({
-    required Meeting meeting,
+abstract class RoomRemoteDataSource {
+  Future<Result<Room>> createRoom({
+    required Room room,
     required String password,
   });
-  Future<Result<bool>> updateMeeting({
-    required Meeting meeting,
+  Future<Result<bool>> updateRoom({
+    required Room room,
     required String password,
   });
-  Future<Result<Meeting>> joinMeetingWithPassword({
-    required Meeting meeting,
+  Future<Result<Room>> joinRoomWithPassword({
+    required Room room,
     required String password,
   });
-  Future<Result<Meeting>> joinMeetingWithoutPassword({
-    required Meeting meeting,
+  Future<Result<Room>> joinRoomWithoutPassword({
+    required Room room,
   });
-  Future<Result<Meeting>> getInfoMeeting(int code);
+  Future<Result<Room>> getInfoRoom(int code);
 }
 
-@LazySingleton(as: MeetingRemoteDataSource)
-class MeetingRemoteDataSourceImpl extends MeetingRemoteDataSource {
+@LazySingleton(as: RoomRemoteDataSource)
+class RoomRemoteDataSourceImpl extends RoomRemoteDataSource {
   final BaseRemoteData _remoteData;
-  MeetingRemoteDataSourceImpl(
+  RoomRemoteDataSourceImpl(
     this._remoteData,
   );
 
   @override
-  Future<Result<Meeting>> createMeeting({
-    required Meeting meeting,
+  Future<Result<Room>> createRoom({
+    required Room room,
     required String password,
   }) async {
     final Response response = await _remoteData.post(
-      Endpoints.meetings,
-      body: meeting.toMapCreate(password: password),
+      Endpoints.rooms,
+      body: room.toMapCreate(password: password),
     );
 
     if (response.statusCode == StatusCode.created) {
       final Map<String, dynamic> rawData = response.data;
-      return Result.success(Meeting.fromJson(rawData));
+      return Result.success(Room.fromJson(rawData));
     }
 
     return Result.failure(response.data['message'].toString().toFailure);
   }
 
   @override
-  Future<Result<Meeting>> getInfoMeeting(int code) async {
+  Future<Result<Room>> getInfoRoom(int code) async {
     final Response response = await _remoteData.get(
-      '${Endpoints.meetings}/$code',
+      '${Endpoints.rooms}/$code',
     );
 
     if (response.statusCode == StatusCode.ok &&
         response.data.toString().isNotEmpty) {
       final Map<String, dynamic> rawData = response.data;
-      return Result.success(Meeting.fromJson(rawData));
+      return Result.success(Room.fromJson(rawData));
     }
 
     return Result.failure(response.data['message'].toString().toFailure);
   }
 
   @override
-  Future<Result<Meeting>> joinMeetingWithPassword({
-    required Meeting meeting,
+  Future<Result<Room>> joinRoomWithPassword({
+    required Room room,
     required String password,
   }) async {
     final Response response = await _remoteData.post(
-      '${Endpoints.joinWithPassword}/${meeting.code}',
+      '${Endpoints.joinWithPassword}/${room.code}',
       body: {'password': password},
     );
 
     if (response.statusCode == StatusCode.created) {
       final Map<String, dynamic> rawData = response.data;
       return Result.success(
-        Meeting.fromJson(rawData).copyWith(
+        Room.fromJson(rawData).copyWith(
           latestJoinedAt: DateTime.now(),
         ),
       );
@@ -90,17 +90,17 @@ class MeetingRemoteDataSourceImpl extends MeetingRemoteDataSource {
   }
 
   @override
-  Future<Result<Meeting>> joinMeetingWithoutPassword({
-    required Meeting meeting,
+  Future<Result<Room>> joinRoomWithoutPassword({
+    required Room room,
   }) async {
     final Response response = await _remoteData.post(
-      '${Endpoints.joinWithoutPassword}/${meeting.code}',
+      '${Endpoints.joinWithoutPassword}/${room.code}',
     );
 
     if (response.statusCode == StatusCode.created) {
       final Map<String, dynamic> rawData = response.data;
       return Result.success(
-        Meeting.fromJson(rawData).copyWith(
+        Room.fromJson(rawData).copyWith(
           latestJoinedAt: DateTime.now(),
         ),
       );
@@ -110,13 +110,13 @@ class MeetingRemoteDataSourceImpl extends MeetingRemoteDataSource {
   }
 
   @override
-  Future<Result<bool>> updateMeeting({
-    required Meeting meeting,
+  Future<Result<bool>> updateRoom({
+    required Room room,
     required String password,
   }) async {
     final Response response = await _remoteData.put(
-      Endpoints.meetings,
-      meeting.toMapCreate(password: password),
+      Endpoints.rooms,
+      room.toMapCreate(password: password),
     );
 
     if (response.statusCode == StatusCode.ok) {

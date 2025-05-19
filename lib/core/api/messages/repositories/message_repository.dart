@@ -5,13 +5,13 @@ import 'package:waterbus_sdk/types/index.dart';
 
 abstract class MessageRepository {
   Future<Result<List<Message>>> getMessageByRoom({
-    required int meetingId,
+    required int roomId,
     required int limit,
     required int skip,
   });
 
   Future<Result<Message>> sendMessage({
-    required int meetingId,
+    required int roomId,
     required String data,
   });
   Future<Result<Message>> editMessage({
@@ -50,13 +50,13 @@ class MessageRepositoryImpl extends MessageRepository {
 
   @override
   Future<Result<List<Message>>> getMessageByRoom({
-    required int meetingId,
+    required int roomId,
     required int limit,
     required int skip,
   }) async {
     final Result<List<Message>> result =
         await _remoteDataSource.getMessageByRoom(
-      meetingId: meetingId,
+      roomId: roomId,
       skip: skip,
       limit: limit,
     );
@@ -66,11 +66,11 @@ class MessageRepositoryImpl extends MessageRepository {
 
   @override
   Future<Result<Message>> sendMessage({
-    required int meetingId,
+    required int roomId,
     required String data,
   }) async {
     final Result<Message> message =
-        await _remoteDataSource.sendMessage(meetingId: meetingId, data: data);
+        await _remoteDataSource.sendMessage(roomId: roomId, data: data);
 
     return message;
   }

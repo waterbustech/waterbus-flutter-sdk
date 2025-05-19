@@ -8,26 +8,26 @@ part of 'member.dart';
 
 _Member _$MemberFromJson(Map<String, dynamic> json) => _Member(
       id: (json['id'] as num).toInt(),
-      role: $enumDecode(_$MeetingRoleEnumMap, json['role']),
+      role: $enumDecode(_$RoomRoleEnumMap, json['role']),
       user: User.fromJson(json['user'] as Map<String, dynamic>),
       isMe: json['isMe'] as bool? ?? false,
-      meetingId: const IntConverter().fromJson(json['meetingId']),
+      roomId: const IntConverter().fromJson(json['roomId']),
       status: $enumDecodeNullable(_$MemberStatusEnumEnumMap, json['status']) ??
           MemberStatusEnum.joined,
     );
 
 Map<String, dynamic> _$MemberToJson(_Member instance) => <String, dynamic>{
       'id': instance.id,
-      'role': _$MeetingRoleEnumMap[instance.role]!,
+      'role': _$RoomRoleEnumMap[instance.role]!,
       'user': instance.user.toJson(),
       'isMe': instance.isMe,
-      'meetingId': const IntConverter().toJson(instance.meetingId),
+      'roomId': const IntConverter().toJson(instance.roomId),
       'status': _$MemberStatusEnumEnumMap[instance.status]!,
     };
 
-const _$MeetingRoleEnumMap = {
-  MeetingRole.host: 0,
-  MeetingRole.attendee: 1,
+const _$RoomRoleEnumMap = {
+  RoomRole.host: 0,
+  RoomRole.attendee: 1,
 };
 
 const _$MemberStatusEnumEnumMap = {

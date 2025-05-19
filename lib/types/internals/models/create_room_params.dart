@@ -1,12 +1,12 @@
 import 'package:waterbus_sdk/types/externals/models/index.dart';
 
-class CreateMeetingParams {
-  final Meeting meeting;
+class CreateRoomParams {
+  final Room room;
   final String password;
   final int? userId;
 
-  const CreateMeetingParams({
-    required this.meeting,
+  const CreateRoomParams({
+    required this.room,
     required this.password,
     this.userId,
   });

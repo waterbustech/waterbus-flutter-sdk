@@ -14,7 +14,7 @@ abstract class Message with _$Message {
   const factory Message({
     required int id,
     required String data,
-    @IntConverter() int? meeting,
+    @IntConverter() int? roomId,
     required User? createdBy,
     @Default(SendingStatusEnum.sent) SendingStatusEnum sendingStatus,
     required MessageStatusEnum status,

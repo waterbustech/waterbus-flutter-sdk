@@ -5,28 +5,27 @@ import 'package:waterbus_sdk/types/externals/models/index.dart';
 import 'package:waterbus_sdk/types/result.dart';
 
 abstract class ChatRepository {
-  Future<Result<List<Meeting>>> getConversations({
+  Future<Result<List<Room>>> getConversations({
     required int status,
     required int limit,
     required int skip,
   });
-  Future<Result<List<Meeting>>> getArchivedConversations({
+  Future<Result<List<Room>>> getArchivedConversations({
     required int skip,
     required int limit,
   });
   Future<Result<bool>> updateConversation({
-    required Meeting meeting,
+    required Room room,
     String? password,
   });
-  Future<Result<bool>> deleteConversation(int meetingId);
-  Future<Result<Meeting>> leaveConversation({required int code});
-  Future<Result<Meeting>> addMember({required int code, required int userId});
-  Future<Result<Meeting>> deleteMember({
+  Future<Result<bool>> deleteConversation(int roomId);
+  Future<Result<Room>> leaveConversation({required int code});
+  Future<Result<Room>> addMember({required int code, required int userId});
+  Future<Result<Room>> deleteMember({
     required int code,
     required int userId,
   });
-  Future<Result<Meeting>> acceptInvite({required int meetingId});
-  Future<Result<Meeting>> archivedConversation({required int code});
+  Future<Result<Room>> archivedConversation({required int code});
 }
 
 @Injectable(as: ChatRepository)
@@ -38,12 +37,12 @@ class ChatRepositoryImpl extends ChatRepository {
   );
 
   @override
-  Future<Result<List<Meeting>>> getConversations({
+  Future<Result<List<Room>>> getConversations({
     required int status,
     required limit,
     required skip,
   }) async {
-    final Result<List<Meeting>> conversations =
+    final Result<List<Room>> conversations =
         await _remoteDataSource.getConversations(
       skip: skip,
       limit: limit,
@@ -54,11 +53,11 @@ class ChatRepositoryImpl extends ChatRepository {
   }
 
   @override
-  Future<Result<List<Meeting>>> getArchivedConversations({
+  Future<Result<List<Room>>> getArchivedConversations({
     required limit,
     required skip,
   }) async {
-    final Result<List<Meeting>> archivedConversations =
+    final Result<List<Room>> archivedConversations =
         await _remoteDataSource.getArchivedConversations(
       skip: skip,
       limit: limit,
@@ -68,38 +67,29 @@ class ChatRepositoryImpl extends ChatRepository {
   }
 
   @override
-  Future<Result<bool>> deleteConversation(int meetingId) async {
+  Future<Result<bool>> deleteConversation(int roomId) async {
     final Result<bool> isSucceed = await _remoteDataSource.deleteConversation(
-      meetingId: meetingId,
+      roomId: roomId,
     );
 
     return isSucceed;
   }
 
   @override
-  Future<Result<Meeting>> leaveConversation({required int code}) async {
-    final Result<Meeting> meeting = await _remoteDataSource.leaveConversation(
+  Future<Result<Room>> leaveConversation({required int code}) async {
+    final Result<Room> roomId = await _remoteDataSource.leaveConversation(
       code: code,
     );
 
-    return meeting;
+    return roomId;
   }
 
   @override
-  Future<Result<Meeting>> acceptInvite({required int meetingId}) async {
-    final Result<Meeting> meeting = await _remoteDataSource.acceptInvite(
-      meetingId: meetingId,
-    );
-
-    return meeting;
-  }
-
-  @override
-  Future<Result<Meeting>> addMember({
+  Future<Result<Room>> addMember({
     required int code,
     required int userId,
   }) async {
-    final Result<Meeting> member = await _remoteDataSource.addMember(
+    final Result<Room> member = await _remoteDataSource.addMember(
       code: code,
       userId: userId,
     );
@@ -108,25 +98,25 @@ class ChatRepositoryImpl extends ChatRepository {
   }
 
   @override
-  Future<Result<Meeting>> deleteMember({
+  Future<Result<Room>> deleteMember({
     required int code,
     required int userId,
   }) async {
-    final Result<Meeting> meeting = await _remoteDataSource.deleteMember(
+    final Result<Room> roomId = await _remoteDataSource.deleteMember(
       code: code,
       userId: userId,
     );
 
-    return meeting;
+    return roomId;
   }
 
   @override
   Future<Result<bool>> updateConversation({
-    required Meeting meeting,
+    required Room room,
     String? password,
   }) async {
     final Result<bool> isSucceed = await _remoteDataSource.updateConversation(
-      meeting: meeting,
+      room: room,
       password: password,
     );
 
@@ -134,12 +124,11 @@ class ChatRepositoryImpl extends ChatRepository {
   }
 
   @override
-  Future<Result<Meeting>> archivedConversation({required int code}) async {
-    final Result<Meeting> meeting =
-        await _remoteDataSource.archivedConversation(
+  Future<Result<Room>> archivedConversation({required int code}) async {
+    final Result<Room> room = await _remoteDataSource.archivedConversation(
       code: code,
     );
 
-    return meeting;
+    return room;
   }
 }

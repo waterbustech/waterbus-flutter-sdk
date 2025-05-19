@@ -1,5 +1,5 @@
 export 'video_layout.dart';
-export 'meeting_status.dart';
+export 'room_status.dart';
 export 'description_type.dart';
 export 'rtc_track_kind.dart';
 export 'rtc_audio_codec.dart';

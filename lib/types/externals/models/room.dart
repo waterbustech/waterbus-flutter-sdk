@@ -2,12 +2,12 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 
-part 'meeting.freezed.dart';
-part 'meeting.g.dart';
+part 'room.freezed.dart';
+part 'room.g.dart';
 
 @freezed
-abstract class Meeting with _$Meeting {
-  const factory Meeting({
+abstract class Room with _$Room {
+  const factory Room({
     @Default(-1) int id,
     required String title,
     @Default([]) List<Participant> participants,
@@ -15,16 +15,15 @@ abstract class Meeting with _$Meeting {
     @Default(-1) int code,
     DateTime? createdAt,
     DateTime? latestJoinedAt,
-    @Default(MeetingStatus.active) MeetingStatus status,
+    @Default(RoomStatus.active) RoomStatus status,
     Message? latestMessage,
     String? avatar,
-  }) = _Meeting;
+  }) = _Room;
 
-  factory Meeting.fromJson(Map<String, Object?> json) =>
-      _$MeetingFromJson(json);
+  factory Room.fromJson(Map<String, Object?> json) => _$RoomFromJson(json);
 }
 
-extension MeetingExtention on Meeting {
+extension RoomExtention on Room {
   Map<String, dynamic> toMapCreate({String? password}) {
     final Map<String, dynamic> body = {
       'title': title,

@@ -18,7 +18,7 @@ mixin _$Message {
   int get id;
   String get data;
   @IntConverter()
-  int? get meeting;
+  int? get roomId;
   User? get createdBy;
   SendingStatusEnum get sendingStatus;
   MessageStatusEnum get status;
@@ -43,7 +43,7 @@ mixin _$Message {
             other is Message &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.data, data) || other.data == data) &&
-            (identical(other.meeting, meeting) || other.meeting == meeting) &&
+            (identical(other.roomId, roomId) || other.roomId == roomId) &&
             (identical(other.createdBy, createdBy) ||
                 other.createdBy == createdBy) &&
             (identical(other.sendingStatus, sendingStatus) ||
@@ -58,12 +58,12 @@ mixin _$Message {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, data, meeting, createdBy,
+  int get hashCode => Object.hash(runtimeType, id, data, roomId, createdBy,
       sendingStatus, status, type, createdAt, updatedAt);
 
   @override
   String toString() {
-    return 'Message(id: $id, data: $data, meeting: $meeting, createdBy: $createdBy, sendingStatus: $sendingStatus, status: $status, type: $type, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'Message(id: $id, data: $data, roomId: $roomId, createdBy: $createdBy, sendingStatus: $sendingStatus, status: $status, type: $type, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 }
 
@@ -75,7 +75,7 @@ abstract mixin class $MessageCopyWith<$Res> {
   $Res call(
       {int id,
       String data,
-      @IntConverter() int? meeting,
+      @IntConverter() int? roomId,
       User? createdBy,
       SendingStatusEnum sendingStatus,
       MessageStatusEnum status,
@@ -100,7 +100,7 @@ class _$MessageCopyWithImpl<$Res> implements $MessageCopyWith<$Res> {
   $Res call({
     Object? id = null,
     Object? data = null,
-    Object? meeting = freezed,
+    Object? roomId = freezed,
     Object? createdBy = freezed,
     Object? sendingStatus = null,
     Object? status = null,
@@ -117,9 +117,9 @@ class _$MessageCopyWithImpl<$Res> implements $MessageCopyWith<$Res> {
           ? _self.data
           : data // ignore: cast_nullable_to_non_nullable
               as String,
-      meeting: freezed == meeting
-          ? _self.meeting
-          : meeting // ignore: cast_nullable_to_non_nullable
+      roomId: freezed == roomId
+          ? _self.roomId
+          : roomId // ignore: cast_nullable_to_non_nullable
               as int?,
       createdBy: freezed == createdBy
           ? _self.createdBy
@@ -169,7 +169,7 @@ class _Message implements Message {
   const _Message(
       {required this.id,
       required this.data,
-      @IntConverter() this.meeting,
+      @IntConverter() this.roomId,
       required this.createdBy,
       this.sendingStatus = SendingStatusEnum.sent,
       required this.status,
@@ -185,7 +185,7 @@ class _Message implements Message {
   final String data;
   @override
   @IntConverter()
-  final int? meeting;
+  final int? roomId;
   @override
   final User? createdBy;
   @override
@@ -222,7 +222,7 @@ class _Message implements Message {
             other is _Message &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.data, data) || other.data == data) &&
-            (identical(other.meeting, meeting) || other.meeting == meeting) &&
+            (identical(other.roomId, roomId) || other.roomId == roomId) &&
             (identical(other.createdBy, createdBy) ||
                 other.createdBy == createdBy) &&
             (identical(other.sendingStatus, sendingStatus) ||
@@ -237,12 +237,12 @@ class _Message implements Message {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, data, meeting, createdBy,
+  int get hashCode => Object.hash(runtimeType, id, data, roomId, createdBy,
       sendingStatus, status, type, createdAt, updatedAt);
 
   @override
   String toString() {
-    return 'Message(id: $id, data: $data, meeting: $meeting, createdBy: $createdBy, sendingStatus: $sendingStatus, status: $status, type: $type, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'Message(id: $id, data: $data, roomId: $roomId, createdBy: $createdBy, sendingStatus: $sendingStatus, status: $status, type: $type, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 }
 
@@ -255,7 +255,7 @@ abstract mixin class _$MessageCopyWith<$Res> implements $MessageCopyWith<$Res> {
   $Res call(
       {int id,
       String data,
-      @IntConverter() int? meeting,
+      @IntConverter() int? roomId,
       User? createdBy,
       SendingStatusEnum sendingStatus,
       MessageStatusEnum status,
@@ -281,7 +281,7 @@ class __$MessageCopyWithImpl<$Res> implements _$MessageCopyWith<$Res> {
   $Res call({
     Object? id = null,
     Object? data = null,
-    Object? meeting = freezed,
+    Object? roomId = freezed,
     Object? createdBy = freezed,
     Object? sendingStatus = null,
     Object? status = null,
@@ -298,9 +298,9 @@ class __$MessageCopyWithImpl<$Res> implements _$MessageCopyWith<$Res> {
           ? _self.data
           : data // ignore: cast_nullable_to_non_nullable
               as String,
-      meeting: freezed == meeting
-          ? _self.meeting
-          : meeting // ignore: cast_nullable_to_non_nullable
+      roomId: freezed == roomId
+          ? _self.roomId
+          : roomId // ignore: cast_nullable_to_non_nullable
               as int?,
       createdBy: freezed == createdBy
           ? _self.createdBy

@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'meeting.dart';
+part of 'room.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_Meeting _$MeetingFromJson(Map<String, dynamic> json) => _Meeting(
+_Room _$RoomFromJson(Map<String, dynamic> json) => _Room(
       id: (json['id'] as num?)?.toInt() ?? -1,
       title: json['title'] as String,
       participants: (json['participants'] as List<dynamic>?)
@@ -24,15 +24,15 @@ _Meeting _$MeetingFromJson(Map<String, dynamic> json) => _Meeting(
       latestJoinedAt: json['latestJoinedAt'] == null
           ? null
           : DateTime.parse(json['latestJoinedAt'] as String),
-      status: $enumDecodeNullable(_$MeetingStatusEnumMap, json['status']) ??
-          MeetingStatus.active,
+      status: $enumDecodeNullable(_$RoomStatusEnumMap, json['status']) ??
+          RoomStatus.active,
       latestMessage: json['latestMessage'] == null
           ? null
           : Message.fromJson(json['latestMessage'] as Map<String, dynamic>),
       avatar: json['avatar'] as String?,
     );
 
-Map<String, dynamic> _$MeetingToJson(_Meeting instance) => <String, dynamic>{
+Map<String, dynamic> _$RoomToJson(_Room instance) => <String, dynamic>{
       'id': instance.id,
       'title': instance.title,
       'participants': instance.participants.map((e) => e.toJson()).toList(),
@@ -40,12 +40,12 @@ Map<String, dynamic> _$MeetingToJson(_Meeting instance) => <String, dynamic>{
       'code': instance.code,
       'createdAt': instance.createdAt?.toIso8601String(),
       'latestJoinedAt': instance.latestJoinedAt?.toIso8601String(),
-      'status': _$MeetingStatusEnumMap[instance.status]!,
+      'status': _$RoomStatusEnumMap[instance.status]!,
       'latestMessage': instance.latestMessage?.toJson(),
       'avatar': instance.avatar,
     };
 
-const _$MeetingStatusEnumMap = {
-  MeetingStatus.archived: 1,
-  MeetingStatus.active: 0,
+const _$RoomStatusEnumMap = {
+  RoomStatus.archived: 1,
+  RoomStatus.active: 0,
 };
