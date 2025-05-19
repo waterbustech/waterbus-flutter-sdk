@@ -233,20 +233,20 @@ class WaterbusSdk {
   }
 
   // Chat
-  Future<Result<Room>> addMember(int code, int userId) async {
-    return await _sdk.addMember(code: code, userId: userId);
+  Future<Result<Room>> addMember(int roomId, int userId) async {
+    return await _sdk.addMember(roomId: roomId, userId: userId);
   }
 
-  Future<Result<Room>> deleteMember(int code, int userId) async {
-    return await _sdk.deleteMember(code: code, userId: userId);
+  Future<Result<Room>> deleteMember(int roomId, int userId) async {
+    return await _sdk.deleteMember(roomId: roomId, userId: userId);
   }
 
-  Future<Result<Room>> leaveConversation(int code) async {
-    return await _sdk.leaveConversation(code: code);
+  Future<Result<Room>> leaveConversation(int roomId) async {
+    return await _sdk.leaveConversation(roomId: roomId);
   }
 
-  Future<Result<Room>> archivedConversation(int code) async {
-    return await _sdk.archivedConversation(code: code);
+  Future<Result<Room>> archivedConversation(int roomId) async {
+    return await _sdk.archivedConversation(roomId: roomId);
   }
 
   Future<Result<bool>> deleteConversation(int conversationId) async {
@@ -256,10 +256,8 @@ class WaterbusSdk {
   Future<Result<List<Room>>> getConversations({
     required int skip,
     int limit = 10,
-    int status = 2,
   }) async {
     return await _sdk.getConversations(
-      status: status,
       limit: limit,
       skip: skip,
     );

@@ -1,11 +1,11 @@
 import 'package:waterbus_sdk/types/externals/models/index.dart';
 
-class CreateRoomParams {
+class RoomParams {
   final Room room;
   final String password;
   final int? userId;
 
-  const CreateRoomParams({
+  const RoomParams({
     required this.room,
     required this.password,
     this.userId,

@@ -19,7 +19,6 @@ enum AppException {
   isAlreadyInRoom('User already in room', IsAlreadyInRoom.new),
   hostNotFound('Host not found', HostNotFound.new),
   notAllowToAddUser('You not allow to add user', NotAllowToAddUser.new),
-  hasNotJoinedMeeting('User not joined meeting', HasNotJoinedMeeting.new),
   memberNotFound('Member Not Found', MemberNotFound.new),
   participantNotFound('Participant Not Found', ParticipantNotFound.new),
   notAllowedToLeaveTheRoom(

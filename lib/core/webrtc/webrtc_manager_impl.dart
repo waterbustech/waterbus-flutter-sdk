@@ -152,7 +152,7 @@ class WebRTCManagerIpml extends WebRTCManager {
       _localCameraStream = null;
       _e2eeManager.dispose();
 
-      _notify(CallbackEvents.meetingEnded);
+      _notify(CallbackEvents.roomEnded);
 
       // Clear for next time
       disableVirtualBg(reset: true);

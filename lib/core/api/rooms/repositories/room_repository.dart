@@ -6,10 +6,9 @@ import 'package:waterbus_sdk/types/internals/models/create_room_params.dart';
 import 'package:waterbus_sdk/types/result.dart';
 
 abstract class RoomRepository {
-  Future<Result<Room>> createRoom(CreateRoomParams params);
-  Future<Result<bool>> updateRoom(CreateRoomParams params);
-  Future<Result<Room>> joinRoomWithPassword(CreateRoomParams params);
-  Future<Result<Room>> joinRoomWithoutPassword(CreateRoomParams params);
+  Future<Result<Room>> createRoom(RoomParams params);
+  Future<Result<bool>> updateRoom(RoomParams params);
+  Future<Result<Room>> joinRoom(RoomParams params);
   Future<Result<Room>> getInfoRoom(int code);
 }
 
@@ -20,11 +19,8 @@ class RoomRepositoryImpl extends RoomRepository {
   RoomRepositoryImpl(this._remoteDataSource);
 
   @override
-  Future<Result<Room>> createRoom(CreateRoomParams params) async {
-    Result<Room> result = await _remoteDataSource.createRoom(
-      room: params.room,
-      password: params.password,
-    );
+  Future<Result<Room>> createRoom(RoomParams params) async {
+    Result<Room> result = await _remoteDataSource.createRoom(params: params);
 
     if (result.isFailure) return result;
 
@@ -43,13 +39,8 @@ class RoomRepositoryImpl extends RoomRepository {
   }
 
   @override
-  Future<Result<Room>> joinRoomWithPassword(
-    CreateRoomParams params,
-  ) async {
-    Result<Room> result = await _remoteDataSource.joinRoomWithPassword(
-      room: params.room,
-      password: params.password,
-    );
+  Future<Result<Room>> joinRoom(RoomParams params) async {
+    Result<Room> result = await _remoteDataSource.joinRoom(params: params);
 
     if (result.isFailure) return result;
 
@@ -61,29 +52,9 @@ class RoomRepositoryImpl extends RoomRepository {
   }
 
   @override
-  Future<Result<Room>> joinRoomWithoutPassword(CreateRoomParams params) async {
-    Result<Room> result = await _remoteDataSource.joinRoomWithoutPassword(
-      room: params.room,
-    );
-
-    if (result.isFailure) return result;
-
-    result = Result.success(
-      findMyParticipantObject(
-        result.value!,
-        userId: params.userId,
-      ),
-    );
-
-    return result;
-  }
-
-  @override
-  Future<Result<bool>> updateRoom(CreateRoomParams params) async {
-    final Result<bool> isUpdateSucceed = await _remoteDataSource.updateRoom(
-      room: params.room,
-      password: params.password,
-    );
+  Future<Result<bool>> updateRoom(RoomParams params) async {
+    final Result<bool> isUpdateSucceed =
+        await _remoteDataSource.updateRoom(params: params);
 
     return isUpdateSucceed;
   }

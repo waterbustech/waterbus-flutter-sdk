@@ -28,7 +28,6 @@ abstract class WaterbusSdkInterface {
 
   // Chat
   Future<Result<List<Room>>> getConversations({
-    int status = 2,
     int limit = 10,
     required int skip,
   });
@@ -41,13 +40,13 @@ abstract class WaterbusSdkInterface {
     String? password,
   });
   Future<Result<bool>> deleteConversation(int conversationId);
-  Future<Result<Room>> leaveConversation({required int code});
-  Future<Result<Room>> addMember({required int code, required int userId});
+  Future<Result<Room>> leaveConversation({required int roomId});
+  Future<Result<Room>> addMember({required int roomId, required int userId});
   Future<Result<Room>> deleteMember({
-    required int code,
+    required int roomId,
     required int userId,
   });
-  Future<Result<Room>> archivedConversation({required int code});
+  Future<Result<Room>> archivedConversation({required int roomId});
 
   // Messages
   Future<Result<List<Message>>> getMessageByRoom({
@@ -78,7 +77,7 @@ abstract class WaterbusSdkInterface {
   });
   Future<Result<Room>> joinRoom({
     required Room room,
-    required String password,
+    required String? password,
     required int? userId,
   });
   Future<Result<Room>> getRoomInfo(int code);

@@ -3,5 +3,5 @@ enum CallbackEvents {
   participantHasLeft,
   shouldBeUpdateState,
   raiseHand,
-  meetingEnded,
+  roomEnded,
 }

@@ -17,7 +17,7 @@ _Room _$RoomFromJson(Map<String, dynamic> json) => _Room(
               ?.map((e) => Member.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
-      code: (json['code'] as num?)?.toInt() ?? -1,
+      code: json['code'] as String?,
       createdAt: json['createdAt'] == null
           ? null
           : DateTime.parse(json['createdAt'] as String),

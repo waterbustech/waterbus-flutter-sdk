@@ -19,7 +19,7 @@ mixin _$Room {
   String get title;
   List<Participant> get participants;
   List<Member> get members;
-  int get code;
+  String? get code;
   DateTime? get createdAt;
   DateTime? get latestJoinedAt;
   RoomStatus get status;
@@ -88,7 +88,7 @@ abstract mixin class $RoomCopyWith<$Res> {
       String title,
       List<Participant> participants,
       List<Member> members,
-      int code,
+      String? code,
       DateTime? createdAt,
       DateTime? latestJoinedAt,
       RoomStatus status,
@@ -114,7 +114,7 @@ class _$RoomCopyWithImpl<$Res> implements $RoomCopyWith<$Res> {
     Object? title = null,
     Object? participants = null,
     Object? members = null,
-    Object? code = null,
+    Object? code = freezed,
     Object? createdAt = freezed,
     Object? latestJoinedAt = freezed,
     Object? status = null,
@@ -138,10 +138,10 @@ class _$RoomCopyWithImpl<$Res> implements $RoomCopyWith<$Res> {
           ? _self.members
           : members // ignore: cast_nullable_to_non_nullable
               as List<Member>,
-      code: null == code
+      code: freezed == code
           ? _self.code
           : code // ignore: cast_nullable_to_non_nullable
-              as int,
+              as String?,
       createdAt: freezed == createdAt
           ? _self.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -188,7 +188,7 @@ class _Room implements Room {
       required this.title,
       final List<Participant> participants = const [],
       final List<Member> members = const [],
-      this.code = -1,
+      this.code,
       this.createdAt,
       this.latestJoinedAt,
       this.status = RoomStatus.active,
@@ -222,8 +222,7 @@ class _Room implements Room {
   }
 
   @override
-  @JsonKey()
-  final int code;
+  final String? code;
   @override
   final DateTime? createdAt;
   @override
@@ -304,7 +303,7 @@ abstract mixin class _$RoomCopyWith<$Res> implements $RoomCopyWith<$Res> {
       String title,
       List<Participant> participants,
       List<Member> members,
-      int code,
+      String? code,
       DateTime? createdAt,
       DateTime? latestJoinedAt,
       RoomStatus status,
@@ -331,7 +330,7 @@ class __$RoomCopyWithImpl<$Res> implements _$RoomCopyWith<$Res> {
     Object? title = null,
     Object? participants = null,
     Object? members = null,
-    Object? code = null,
+    Object? code = freezed,
     Object? createdAt = freezed,
     Object? latestJoinedAt = freezed,
     Object? status = null,
@@ -355,10 +354,10 @@ class __$RoomCopyWithImpl<$Res> implements _$RoomCopyWith<$Res> {
           ? _self._members
           : members // ignore: cast_nullable_to_non_nullable
               as List<Member>,
-      code: null == code
+      code: freezed == code
           ? _self.code
           : code // ignore: cast_nullable_to_non_nullable
-              as int,
+              as String?,
       createdAt: freezed == createdAt
           ? _self.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable

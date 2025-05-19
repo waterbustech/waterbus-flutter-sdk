@@ -6,24 +6,14 @@ import 'package:waterbus_sdk/constants/status_code.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/types/error/app_exception.dart';
 import 'package:waterbus_sdk/types/externals/models/index.dart';
+import 'package:waterbus_sdk/types/internals/models/create_room_params.dart';
 import 'package:waterbus_sdk/types/result.dart';
 
 abstract class RoomRemoteDataSource {
-  Future<Result<Room>> createRoom({
-    required Room room,
-    required String password,
-  });
-  Future<Result<bool>> updateRoom({
-    required Room room,
-    required String password,
-  });
-  Future<Result<Room>> joinRoomWithPassword({
-    required Room room,
-    required String password,
-  });
-  Future<Result<Room>> joinRoomWithoutPassword({
-    required Room room,
-  });
+  Future<Result<Room>> createRoom({required RoomParams params});
+  Future<Result<bool>> updateRoom({required RoomParams params});
+  Future<Result<Room>> joinRoom({required RoomParams params});
+
   Future<Result<Room>> getInfoRoom(int code);
 }
 
@@ -35,13 +25,10 @@ class RoomRemoteDataSourceImpl extends RoomRemoteDataSource {
   );
 
   @override
-  Future<Result<Room>> createRoom({
-    required Room room,
-    required String password,
-  }) async {
+  Future<Result<Room>> createRoom({required RoomParams params}) async {
     final Response response = await _remoteData.post(
       Endpoints.rooms,
-      body: room.toMapCreate(password: password),
+      body: params.room.toMapCreate(password: params.password),
     );
 
     if (response.statusCode == StatusCode.created) {
@@ -68,13 +55,10 @@ class RoomRemoteDataSourceImpl extends RoomRemoteDataSource {
   }
 
   @override
-  Future<Result<Room>> joinRoomWithPassword({
-    required Room room,
-    required String password,
-  }) async {
+  Future<Result<Room>> joinRoom({required RoomParams params}) async {
     final Response response = await _remoteData.post(
-      '${Endpoints.joinWithPassword}/${room.code}',
-      body: {'password': password},
+      '${Endpoints.rooms}/${params.room.id}/${Endpoints.join}',
+      body: params.password.isEmpty ? {} : {'password': params.password},
     );
 
     if (response.statusCode == StatusCode.created) {
@@ -90,33 +74,10 @@ class RoomRemoteDataSourceImpl extends RoomRemoteDataSource {
   }
 
   @override
-  Future<Result<Room>> joinRoomWithoutPassword({
-    required Room room,
-  }) async {
-    final Response response = await _remoteData.post(
-      '${Endpoints.joinWithoutPassword}/${room.code}',
-    );
-
-    if (response.statusCode == StatusCode.created) {
-      final Map<String, dynamic> rawData = response.data;
-      return Result.success(
-        Room.fromJson(rawData).copyWith(
-          latestJoinedAt: DateTime.now(),
-        ),
-      );
-    }
-
-    return Result.failure(response.data['message'].toString().toFailure);
-  }
-
-  @override
-  Future<Result<bool>> updateRoom({
-    required Room room,
-    required String password,
-  }) async {
+  Future<Result<bool>> updateRoom({required RoomParams params}) async {
     final Response response = await _remoteData.put(
       Endpoints.rooms,
-      room.toMapCreate(password: password),
+      params.room.toMapCreate(password: params.password),
     );
 
     if (response.statusCode == StatusCode.ok) {

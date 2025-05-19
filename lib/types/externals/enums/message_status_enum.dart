@@ -4,7 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 enum MessageStatusEnum {
   @JsonValue(1)
   inactive(1),
-  @JsonValue(2)
+  @JsonValue(0)
   active(0);
 
   const MessageStatusEnum(this.status);

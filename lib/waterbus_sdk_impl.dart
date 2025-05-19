@@ -66,7 +66,7 @@ class SdkCore extends WaterbusSdkInterface {
     required int? userId,
   }) async {
     return await _roomRepository.createRoom(
-      CreateRoomParams(
+      RoomParams(
         room: room,
         password: password,
         userId: userId,
@@ -77,30 +77,14 @@ class SdkCore extends WaterbusSdkInterface {
   @override
   Future<Result<Room>> joinRoom({
     required Room room,
-    required String password,
+    required String? password,
     required int? userId,
   }) async {
     if (!_wsHandler.isConnected) return Result.failure(ServerFailure());
 
-    late final Result<Room> roomCurrent;
-
-    if (password.isEmpty) {
-      roomCurrent = await _roomRepository.joinRoomWithoutPassword(
-        CreateRoomParams(
-          room: room,
-          password: password,
-          userId: userId,
-        ),
-      );
-    } else {
-      roomCurrent = await _roomRepository.joinRoomWithPassword(
-        CreateRoomParams(
-          room: room,
-          password: password,
-          userId: userId,
-        ),
-      );
-    }
+    final Result<Room> roomCurrent = await _roomRepository.joinRoom(
+      RoomParams(room: room, password: password ?? "", userId: userId),
+    );
 
     if (roomCurrent.isSuccess) {
       final Room? room = roomCurrent.value;
@@ -140,7 +124,7 @@ class SdkCore extends WaterbusSdkInterface {
     required int? userId,
   }) async {
     return await _roomRepository.updateRoom(
-      CreateRoomParams(
+      RoomParams(
         room: room,
         password: password,
         userId: userId,
@@ -271,10 +255,8 @@ class SdkCore extends WaterbusSdkInterface {
   Future<Result<List<Room>>> getConversations({
     required int skip,
     int limit = 10,
-    int status = 2,
   }) async {
     return await _chatRepository.getConversations(
-      status: status,
       limit: limit,
       skip: skip,
     );
@@ -304,28 +286,28 @@ class SdkCore extends WaterbusSdkInterface {
 
   @override
   Future<Result<Room>> addMember({
-    required int code,
+    required int roomId,
     required int userId,
   }) async {
-    return await _chatRepository.addMember(code: code, userId: userId);
+    return await _chatRepository.addMember(roomId: roomId, userId: userId);
   }
 
   @override
-  Future<Result<Room>> leaveConversation({required int code}) async {
-    return await _chatRepository.leaveConversation(code: code);
+  Future<Result<Room>> leaveConversation({required int roomId}) async {
+    return await _chatRepository.leaveConversation(roomId: roomId);
   }
 
   @override
-  Future<Result<Room>> archivedConversation({required int code}) async {
-    return await _chatRepository.archivedConversation(code: code);
+  Future<Result<Room>> archivedConversation({required int roomId}) async {
+    return await _chatRepository.archivedConversation(roomId: roomId);
   }
 
   @override
   Future<Result<Room>> deleteMember({
-    required int code,
+    required int roomId,
     required int userId,
   }) async {
-    return await _chatRepository.deleteMember(code: code, userId: userId);
+    return await _chatRepository.deleteMember(roomId: roomId, userId: userId);
   }
 
   // Messages

@@ -13,18 +13,17 @@ abstract class ChatRemoteDataSource {
   Future<Result<List<Room>>> getConversations({
     required int skip,
     required int limit,
-    required int status,
   });
   Future<Result<List<Room>>> getArchivedConversations({
     required int skip,
     required int limit,
   });
   Future<Result<bool>> deleteConversation({required int roomId});
-  Future<Result<Room>> archivedConversation({required int code});
-  Future<Result<Room>> leaveConversation({required int code});
-  Future<Result<Room>> addMember({required int code, required int userId});
+  Future<Result<Room>> archivedConversation({required int roomId});
+  Future<Result<Room>> leaveConversation({required int roomId});
+  Future<Result<Room>> addMember({required int roomId, required int userId});
   Future<Result<Room>> deleteMember({
-    required int code,
+    required int roomId,
     required int userId,
   });
   Future<Result<bool>> updateConversation({
@@ -44,10 +43,9 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
   Future<Result<List<Room>>> getConversations({
     required int skip,
     required int limit,
-    required int status,
   }) async {
     final Response response = await _remoteData.get(
-      "${Endpoints.roomChat}/$status",
+      Endpoints.rooms,
       query: "limit=$limit&skip=$skip",
     );
 
@@ -70,7 +68,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
     required int limit,
   }) async {
     final Response response = await _remoteData.get(
-      Endpoints.archivedConversations,
+      Endpoints.inactive,
       query: "limit=$limit&skip=$skip",
     );
 
@@ -134,7 +132,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
   @override
   Future<Result<bool>> deleteConversation({required int roomId}) async {
     final response = await _remoteData.delete(
-      "${Endpoints.chatsConversations}/$roomId",
+      "${Endpoints.chats}/${Endpoints.conversations}/$roomId",
     );
 
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
@@ -145,9 +143,9 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
   }
 
   @override
-  Future<Result<Room>> leaveConversation({required int code}) async {
+  Future<Result<Room>> leaveConversation({required int roomId}) async {
     final Response response = await _remoteData.delete(
-      '${Endpoints.rooms}/$code',
+      '${Endpoints.rooms}/$roomId',
     );
 
     if (response.statusCode == StatusCode.ok) {
@@ -166,11 +164,11 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
 
   @override
   Future<Result<Room>> addMember({
-    required int code,
+    required int roomId,
     required int userId,
   }) async {
     final Response response = await _remoteData.post(
-      '${Endpoints.roomMembers}/$code',
+      '${Endpoints.rooms}/$roomId/${Endpoints.members}',
       body: {"userId": userId},
     );
 
@@ -190,11 +188,11 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
 
   @override
   Future<Result<Room>> deleteMember({
-    required int code,
+    required int roomId,
     required int userId,
   }) async {
     final Response response = await _remoteData.delete(
-      '${Endpoints.roomMembers}/$code',
+      '${Endpoints.rooms}/$roomId/${Endpoints.members}',
       body: {"userId": userId},
     );
 
@@ -213,9 +211,9 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
   }
 
   @override
-  Future<Result<Room>> archivedConversation({required int code}) async {
+  Future<Result<Room>> archivedConversation({required int roomId}) async {
     final Response response = await _remoteData.post(
-      '${Endpoints.archivedMeeeting}/$code',
+      '${Endpoints.rooms}/$roomId/${Endpoints.deactivate}',
     );
 
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {

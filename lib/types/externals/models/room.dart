@@ -12,7 +12,7 @@ abstract class Room with _$Room {
     required String title,
     @Default([]) List<Participant> participants,
     @Default([]) List<Member> members,
-    @Default(-1) int code,
+    String? code,
     DateTime? createdAt,
     DateTime? latestJoinedAt,
     @Default(RoomStatus.active) RoomStatus status,

@@ -9,16 +9,13 @@ class Endpoints {
   static const String searchUsers = 'users/search';
 
   // Room
-  static const String rooms = 'meetings';
-  static const String joinWithPassword = 'meetings/join/password';
-  static const String joinWithoutPassword = 'meetings/join';
-  static const String roomChat = 'meetings/conversations';
-  static const String archivedConversations = 'meetings/conversations/archived';
-  static const String roomMembers = 'meetings/members';
-  static const String archivedMeeeting = 'meetings/archived';
-  static const String acceptInvite = 'meetings/members/accept';
+  static const String rooms = 'rooms';
+  static const String join = 'join';
+  static const String members = 'members';
+  static const String inactive = 'rooms/inactive';
+  static const String deactivate = 'deactivate';
 
   // Chats
   static const String chats = 'chats';
-  static const String chatsConversations = 'chats/conversations';
+  static const String conversations = 'conversations';
 }

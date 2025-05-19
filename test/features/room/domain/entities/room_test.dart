@@ -38,13 +38,13 @@ void main() {
         title: 'Room with Kai 1',
         id: 1,
         participants: [participant1],
-        code: 1,
+        code: "1",
       );
       final Room room2 = Room(
         title: 'Room with Kai 2',
         id: 2,
         participants: [participant2],
-        code: 2,
+        code: "2",
       );
 
       // Act

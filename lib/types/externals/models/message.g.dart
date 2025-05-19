@@ -42,5 +42,5 @@ const _$SendingStatusEnumEnumMap = {
 
 const _$MessageStatusEnumEnumMap = {
   MessageStatusEnum.inactive: 1,
-  MessageStatusEnum.active: 2,
+  MessageStatusEnum.active: 0,
 };
