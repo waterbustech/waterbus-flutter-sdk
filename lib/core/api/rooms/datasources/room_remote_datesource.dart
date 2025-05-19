@@ -14,7 +14,7 @@ abstract class RoomRemoteDataSource {
   Future<Result<bool>> updateRoom({required RoomParams params});
   Future<Result<Room>> joinRoom({required RoomParams params});
 
-  Future<Result<Room>> getInfoRoom(int code);
+  Future<Result<Room>> getInfoRoom(String code);
 }
 
 @LazySingleton(as: RoomRemoteDataSource)
@@ -40,7 +40,7 @@ class RoomRemoteDataSourceImpl extends RoomRemoteDataSource {
   }
 
   @override
-  Future<Result<Room>> getInfoRoom(int code) async {
+  Future<Result<Room>> getInfoRoom(String code) async {
     final Response response = await _remoteData.get(
       '${Endpoints.rooms}/$code',
     );

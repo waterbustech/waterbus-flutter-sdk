@@ -9,7 +9,7 @@ abstract class RoomRepository {
   Future<Result<Room>> createRoom(RoomParams params);
   Future<Result<bool>> updateRoom(RoomParams params);
   Future<Result<Room>> joinRoom(RoomParams params);
-  Future<Result<Room>> getInfoRoom(int code);
+  Future<Result<Room>> getInfoRoom(String code);
 }
 
 @LazySingleton(as: RoomRepository)
@@ -32,7 +32,7 @@ class RoomRepositoryImpl extends RoomRepository {
   }
 
   @override
-  Future<Result<Room>> getInfoRoom(int code) async {
+  Future<Result<Room>> getInfoRoom(String code) async {
     final Result<Room> room = await _remoteDataSource.getInfoRoom(code);
 
     return room;

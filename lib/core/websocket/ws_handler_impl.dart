@@ -28,7 +28,6 @@ class WsHandlerImpl extends WsHandler {
   );
 
   Socket? _socket;
-  String _podName = '';
 
   @override
   void establishConnection({
@@ -212,10 +211,6 @@ class WsHandlerImpl extends WsHandler {
   void _listenToSystemEvents() {
     _socket?.on(WsEvent.systemDestroy, (data) {
       if (data == null) return;
-
-      if (_podName == data['podName'] && _rtcManager.currentRoomId != null) {
-        reconnect(callbackConnected: _rtcManager.reconnectRoom);
-      }
     });
   }
 
@@ -259,7 +254,6 @@ class WsHandlerImpl extends WsHandler {
 
     _socket?.disconnect();
     _socket = null;
-    _podName = '';
   }
 
   @override

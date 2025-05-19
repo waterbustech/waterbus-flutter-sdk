@@ -80,7 +80,7 @@ abstract class WaterbusSdkInterface {
     required String? password,
     required int? userId,
   });
-  Future<Result<Room>> getRoomInfo(int code);
+  Future<Result<Room>> getRoomInfo(String code);
   Future<void> leaveRoom();
   void toggleRaiseHand();
 

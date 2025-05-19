@@ -133,7 +133,7 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<Result<Room>> getRoomInfo(int code) async {
+  Future<Result<Room>> getRoomInfo(String code) async {
     return await _roomRepository.getInfoRoom(code);
   }
 

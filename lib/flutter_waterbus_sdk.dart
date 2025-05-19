@@ -108,7 +108,7 @@ class WaterbusSdk {
     );
   }
 
-  Future<Result<Room>> getRoomInfo({required int code}) async {
+  Future<Result<Room>> getRoomInfo({required String code}) async {
     return await _sdk.getRoomInfo(code);
   }
 

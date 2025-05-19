@@ -1,6 +1,6 @@
 class StorageKeys {
   // Box
-  static const String boxAuth = 'boxAuth';
+  static const String boxAuth = 'boxAuth3';
 
   // In Box - Auth
   static const String accessToken = 'accessToken';
