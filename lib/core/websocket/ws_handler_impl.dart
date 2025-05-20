@@ -109,6 +109,9 @@ class WsHandlerImpl extends WsHandler {
     _socket?.on(WsEvent.roomAnswerSubscriber, (data) async {
       if (data == null || data['offer'] == null) return;
 
+      final RTCVideoCodec codec =
+          ((data['videoCodec'] ?? '') as String).toLowerCase().videoCodec;
+
       final payload = SubscribeResponsePayload(
         targetId: data['targetId'],
         sdp: data['offer'],
@@ -119,7 +122,7 @@ class WsHandlerImpl extends WsHandler {
         isHandRaising: data['isHandRaising'] ?? false,
         screenTrackId: data['screenTrackId'],
         type: CameraType.values[data['cameraType'] ?? CameraType.front.type],
-        codec: (data['videoCodec'] ?? '').videoCodec,
+        codec: codec,
       );
 
       await _rtcManager.setRemoteSdpAsSubscriber(payload);

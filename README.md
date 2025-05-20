@@ -2,8 +2,6 @@
 
 Flutter plugin of [Waterbus](https://docs.waterbus.tech). Build video call or online meeting application with SFU model. Supports iOS, Android. [ExampleApp](https://github.com/waterbustech/waterbus)
 
-<img src="https://github.com/waterbustech/waterbus-flutter-sdk/blob/migration/v2/.github/waterbus-sdk-banner.png?raw=true" width="100%"/>
-
 <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg"/></a>
 <img src="https://img.shields.io/github/issues/waterbustech/waterbus-flutter-sdk" alt="GitHub issues"><a href="https://chromium.googlesource.com/external/webrtc/+/branch-heads/6099"><img src="https://img.shields.io/badge/libwebrtc-125.6422.02-yellow.svg" alt="libwebrtc"></a><img src="https://img.shields.io/cocoapods/v/KaiRTC" alt="Cocoapods Version"><a href="https://github.com/lambiengcode"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat&amp;logo=github" alt="PRs Welcome"></a>
 
