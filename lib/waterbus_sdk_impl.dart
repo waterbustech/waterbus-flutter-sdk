@@ -392,19 +392,6 @@ class SdkCore extends WaterbusSdkInterface {
     );
   }
 
-  @override
-  Future<Result<List<User>>> searchUsers({
-    required String keyword,
-    required int skip,
-    required int limit,
-  }) async {
-    return await _userRepository.searchUsers(
-      keyword: keyword,
-      skip: skip,
-      limit: limit,
-    );
-  }
-
   // Auth
   @override
   Future<Result<User>> createToken({required AuthPayload payload}) async {

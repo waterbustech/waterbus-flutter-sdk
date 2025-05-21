@@ -20,11 +20,6 @@ abstract class WaterbusSdkInterface {
     required Uint8List image,
     required String uploadUrl,
   });
-  Future<Result<List<User>>> searchUsers({
-    required String keyword,
-    required int skip,
-    required int limit,
-  });
 
   // Chat
   Future<Result<List<Room>>> getConversations({

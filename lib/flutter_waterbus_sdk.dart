@@ -224,14 +224,6 @@ class WaterbusSdk {
     return await _sdk.uploadAvatar(image: image, uploadUrl: uploadUrl);
   }
 
-  Future<Result<List<User>>> searchUsers({
-    required String keyword,
-    required int skip,
-    int limit = 10,
-  }) async {
-    return await _sdk.searchUsers(keyword: keyword, skip: skip, limit: limit);
-  }
-
   // Chat
   Future<Result<Room>> addMember(int roomId, int userId) async {
     return await _sdk.addMember(roomId: roomId, userId: userId);
