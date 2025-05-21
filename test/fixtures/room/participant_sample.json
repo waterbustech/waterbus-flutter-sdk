@@ -5,7 +5,8 @@
         "fullName": "Kai",
         "userName": "lambiengcode",
         "avatar": null,
-        "bio": ""
+        "bio": "",
+        "externalId": ""
     },
     "isMe": false
 }
