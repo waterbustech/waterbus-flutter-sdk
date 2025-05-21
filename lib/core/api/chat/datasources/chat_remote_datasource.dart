@@ -118,7 +118,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
     String? password,
   }) async {
     final Response response = await _remoteData.put(
-      Endpoints.rooms,
+      "${Endpoints.rooms}/${room.id}",
       room.toMapCreate(password: password),
     );
 
