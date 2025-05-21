@@ -5,11 +5,11 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
-part 'participant_sfu.freezed.dart';
+part 'participant_media_state.freezed.dart';
 
 @freezed
-abstract class ParticipantSFU with _$ParticipantSFU {
-  const factory ParticipantSFU({
+abstract class ParticipantMediaState with _$ParticipantMediaState {
+  const factory ParticipantMediaState({
     required String ownerId,
     @Default(true) bool isVideoEnabled,
     @Default(true) bool isAudioEnabled,
@@ -28,9 +28,9 @@ abstract class ParticipantSFU with _$ParticipantSFU {
     StreamController<RtcParticipantStats>? webcamStatsController,
     StreamController<RtcParticipantStats>? screenStatsController,
     String? screenTrackId,
-  }) = _ParticipantSFU;
+  }) = _ParticipantMediaState;
 
-  factory ParticipantSFU.init({
+  factory ParticipantMediaState.init({
     required String ownerId,
     bool isVideoEnabled = true,
     bool isAudioEnabled = true,
@@ -52,7 +52,7 @@ abstract class ParticipantSFU with _$ParticipantSFU {
   }) {
     final hasCustomSources = cameraSource != null || screenSource != null;
 
-    return ParticipantSFU(
+    return ParticipantMediaState(
       ownerId: ownerId,
       isVideoEnabled: isVideoEnabled,
       isAudioEnabled: isAudioEnabled,
@@ -82,8 +82,8 @@ abstract class ParticipantSFU with _$ParticipantSFU {
   }
 }
 
-extension ParticipantSFUX on ParticipantSFU {
-  ParticipantSFU sinkAudioLevel(AudioLevel level) {
+extension ParticipantSFUX on ParticipantMediaState {
+  ParticipantMediaState sinkAudioLevel(AudioLevel level) {
     if (level == audioLevel) return this;
 
     audioLevelController?.sink.add(level);
@@ -115,7 +115,7 @@ extension ParticipantSFUX on ParticipantSFU {
     }
   }
 
-  ParticipantSFU get switchCamera {
+  ParticipantMediaState get switchCamera {
     if (cameraType == CameraType.front) {
       return copyWith(cameraType: CameraType.rear);
     } else {
@@ -149,11 +149,11 @@ extension ParticipantSFUX on ParticipantSFU {
     }
   }
 
-  Future<ParticipantSFU> setScreenSharing(
+  Future<ParticipantMediaState> setScreenSharing(
     bool isSharing, {
     String? screenTrackId,
   }) async {
-    ParticipantSFU participantSFU =
+    ParticipantMediaState participantSFU =
         copyWith(isSharingScreen: isSharing, screenTrackId: screenTrackId);
 
     if (!isSharing) {
@@ -166,7 +166,7 @@ extension ParticipantSFUX on ParticipantSFU {
     return participantSFU;
   }
 
-  Future<ParticipantSFU> setHandRaising(bool isRaising) async {
+  Future<ParticipantMediaState> setHandRaising(bool isRaising) async {
     return copyWith(isHandRaising: isRaising);
   }
 
@@ -180,7 +180,7 @@ extension ParticipantSFUX on ParticipantSFU {
   }
 }
 
-extension ParticipantSFUPublic on ParticipantSFU {
+extension ParticipantSFUPublic on ParticipantMediaState {
   Stream<AudioLevel>? get audioLevelStream => audioLevelController?.stream;
 
   Stream<RtcParticipantStats>? get webcamStatsStream =>

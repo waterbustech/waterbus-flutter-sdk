@@ -4,7 +4,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'participant_sfu.dart';
+part of 'participant_media_state.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,7 +14,7 @@ part of 'participant_sfu.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$ParticipantSFU {
+mixin _$ParticipantMediaState {
   String get ownerId;
   bool get isVideoEnabled;
   bool get isAudioEnabled;
@@ -34,19 +34,19 @@ mixin _$ParticipantSFU {
   StreamController<RtcParticipantStats>? get screenStatsController;
   String? get screenTrackId;
 
-  /// Create a copy of ParticipantSFU
+  /// Create a copy of ParticipantMediaState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $ParticipantSFUCopyWith<ParticipantSFU> get copyWith =>
-      _$ParticipantSFUCopyWithImpl<ParticipantSFU>(
-          this as ParticipantSFU, _$identity);
+  $ParticipantMediaStateCopyWith<ParticipantMediaState> get copyWith =>
+      _$ParticipantMediaStateCopyWithImpl<ParticipantMediaState>(
+          this as ParticipantMediaState, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is ParticipantSFU &&
+            other is ParticipantMediaState &&
             (identical(other.ownerId, ownerId) || other.ownerId == ownerId) &&
             (identical(other.isVideoEnabled, isVideoEnabled) ||
                 other.isVideoEnabled == isVideoEnabled) &&
@@ -108,15 +108,15 @@ mixin _$ParticipantSFU {
 
   @override
   String toString() {
-    return 'ParticipantSFU(ownerId: $ownerId, isVideoEnabled: $isVideoEnabled, isAudioEnabled: $isAudioEnabled, isSharingScreen: $isSharingScreen, isE2eeEnabled: $isE2eeEnabled, isSpeakerPhoneEnabled: $isSpeakerPhoneEnabled, isHandRaising: $isHandRaising, cameraType: $cameraType, peerConnection: $peerConnection, onFirstFrameRendered: $onFirstFrameRendered, videoCodec: $videoCodec, audioLevel: $audioLevel, cameraSource: $cameraSource, screenSource: $screenSource, audioLevelController: $audioLevelController, webcamStatsController: $webcamStatsController, screenStatsController: $screenStatsController, screenTrackId: $screenTrackId)';
+    return 'ParticipantMediaState(ownerId: $ownerId, isVideoEnabled: $isVideoEnabled, isAudioEnabled: $isAudioEnabled, isSharingScreen: $isSharingScreen, isE2eeEnabled: $isE2eeEnabled, isSpeakerPhoneEnabled: $isSpeakerPhoneEnabled, isHandRaising: $isHandRaising, cameraType: $cameraType, peerConnection: $peerConnection, onFirstFrameRendered: $onFirstFrameRendered, videoCodec: $videoCodec, audioLevel: $audioLevel, cameraSource: $cameraSource, screenSource: $screenSource, audioLevelController: $audioLevelController, webcamStatsController: $webcamStatsController, screenStatsController: $screenStatsController, screenTrackId: $screenTrackId)';
   }
 }
 
 /// @nodoc
-abstract mixin class $ParticipantSFUCopyWith<$Res> {
-  factory $ParticipantSFUCopyWith(
-          ParticipantSFU value, $Res Function(ParticipantSFU) _then) =
-      _$ParticipantSFUCopyWithImpl;
+abstract mixin class $ParticipantMediaStateCopyWith<$Res> {
+  factory $ParticipantMediaStateCopyWith(ParticipantMediaState value,
+          $Res Function(ParticipantMediaState) _then) =
+      _$ParticipantMediaStateCopyWithImpl;
   @useResult
   $Res call(
       {String ownerId,
@@ -140,14 +140,14 @@ abstract mixin class $ParticipantSFUCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$ParticipantSFUCopyWithImpl<$Res>
-    implements $ParticipantSFUCopyWith<$Res> {
-  _$ParticipantSFUCopyWithImpl(this._self, this._then);
+class _$ParticipantMediaStateCopyWithImpl<$Res>
+    implements $ParticipantMediaStateCopyWith<$Res> {
+  _$ParticipantMediaStateCopyWithImpl(this._self, this._then);
 
-  final ParticipantSFU _self;
-  final $Res Function(ParticipantSFU) _then;
+  final ParticipantMediaState _self;
+  final $Res Function(ParticipantMediaState) _then;
 
-  /// Create a copy of ParticipantSFU
+  /// Create a copy of ParticipantMediaState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -250,8 +250,8 @@ class _$ParticipantSFUCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _ParticipantSFU implements ParticipantSFU {
-  const _ParticipantSFU(
+class _ParticipantMediaState implements ParticipantMediaState {
+  const _ParticipantMediaState(
       {required this.ownerId,
       this.isVideoEnabled = true,
       this.isAudioEnabled = true,
@@ -316,19 +316,20 @@ class _ParticipantSFU implements ParticipantSFU {
   @override
   final String? screenTrackId;
 
-  /// Create a copy of ParticipantSFU
+  /// Create a copy of ParticipantMediaState
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  _$ParticipantSFUCopyWith<_ParticipantSFU> get copyWith =>
-      __$ParticipantSFUCopyWithImpl<_ParticipantSFU>(this, _$identity);
+  _$ParticipantMediaStateCopyWith<_ParticipantMediaState> get copyWith =>
+      __$ParticipantMediaStateCopyWithImpl<_ParticipantMediaState>(
+          this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _ParticipantSFU &&
+            other is _ParticipantMediaState &&
             (identical(other.ownerId, ownerId) || other.ownerId == ownerId) &&
             (identical(other.isVideoEnabled, isVideoEnabled) ||
                 other.isVideoEnabled == isVideoEnabled) &&
@@ -390,16 +391,16 @@ class _ParticipantSFU implements ParticipantSFU {
 
   @override
   String toString() {
-    return 'ParticipantSFU(ownerId: $ownerId, isVideoEnabled: $isVideoEnabled, isAudioEnabled: $isAudioEnabled, isSharingScreen: $isSharingScreen, isE2eeEnabled: $isE2eeEnabled, isSpeakerPhoneEnabled: $isSpeakerPhoneEnabled, isHandRaising: $isHandRaising, cameraType: $cameraType, peerConnection: $peerConnection, onFirstFrameRendered: $onFirstFrameRendered, videoCodec: $videoCodec, audioLevel: $audioLevel, cameraSource: $cameraSource, screenSource: $screenSource, audioLevelController: $audioLevelController, webcamStatsController: $webcamStatsController, screenStatsController: $screenStatsController, screenTrackId: $screenTrackId)';
+    return 'ParticipantMediaState(ownerId: $ownerId, isVideoEnabled: $isVideoEnabled, isAudioEnabled: $isAudioEnabled, isSharingScreen: $isSharingScreen, isE2eeEnabled: $isE2eeEnabled, isSpeakerPhoneEnabled: $isSpeakerPhoneEnabled, isHandRaising: $isHandRaising, cameraType: $cameraType, peerConnection: $peerConnection, onFirstFrameRendered: $onFirstFrameRendered, videoCodec: $videoCodec, audioLevel: $audioLevel, cameraSource: $cameraSource, screenSource: $screenSource, audioLevelController: $audioLevelController, webcamStatsController: $webcamStatsController, screenStatsController: $screenStatsController, screenTrackId: $screenTrackId)';
   }
 }
 
 /// @nodoc
-abstract mixin class _$ParticipantSFUCopyWith<$Res>
-    implements $ParticipantSFUCopyWith<$Res> {
-  factory _$ParticipantSFUCopyWith(
-          _ParticipantSFU value, $Res Function(_ParticipantSFU) _then) =
-      __$ParticipantSFUCopyWithImpl;
+abstract mixin class _$ParticipantMediaStateCopyWith<$Res>
+    implements $ParticipantMediaStateCopyWith<$Res> {
+  factory _$ParticipantMediaStateCopyWith(_ParticipantMediaState value,
+          $Res Function(_ParticipantMediaState) _then) =
+      __$ParticipantMediaStateCopyWithImpl;
   @override
   @useResult
   $Res call(
@@ -424,14 +425,14 @@ abstract mixin class _$ParticipantSFUCopyWith<$Res>
 }
 
 /// @nodoc
-class __$ParticipantSFUCopyWithImpl<$Res>
-    implements _$ParticipantSFUCopyWith<$Res> {
-  __$ParticipantSFUCopyWithImpl(this._self, this._then);
+class __$ParticipantMediaStateCopyWithImpl<$Res>
+    implements _$ParticipantMediaStateCopyWith<$Res> {
+  __$ParticipantMediaStateCopyWithImpl(this._self, this._then);
 
-  final _ParticipantSFU _self;
-  final $Res Function(_ParticipantSFU) _then;
+  final _ParticipantMediaState _self;
+  final $Res Function(_ParticipantMediaState) _then;
 
-  /// Create a copy of ParticipantSFU
+  /// Create a copy of ParticipantMediaState
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -455,7 +456,7 @@ class __$ParticipantSFUCopyWithImpl<$Res>
     Object? screenStatsController = freezed,
     Object? screenTrackId = freezed,
   }) {
-    return _then(_ParticipantSFU(
+    return _then(_ParticipantMediaState(
       ownerId: null == ownerId
           ? _self.ownerId
           : ownerId // ignore: cast_nullable_to_non_nullable

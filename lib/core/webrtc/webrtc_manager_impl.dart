@@ -41,11 +41,11 @@ class WebRTCManagerIpml extends WebRTCManager {
   String? _currentParticipantId;
   MediaStream? _localCameraStream;
   MediaStream? _screenSharingStream;
-  ParticipantSFU? _mParticipant;
+  ParticipantMediaState? _mParticipant;
   bool _canPublisherAddIceCandidate = false;
   bool _isSessionBeingRecorded = false;
   MediaConfig _currentCallSetting = MediaConfig();
-  final Map<String, ParticipantSFU> _remoteSubscribers = {};
+  final Map<String, ParticipantMediaState> _remoteSubscribers = {};
   final Map<String, List<RTCIceCandidate>> _iceCandidateQueueForSubscribers =
       {};
   final List<RTCIceCandidate> _iceCandidateQueueForPublisher = [];
@@ -285,7 +285,7 @@ class WebRTCManagerIpml extends WebRTCManager {
       constraints: RTCConfigurations.offerPublisherSdpConstraints,
     );
 
-    _mParticipant = ParticipantSFU.init(
+    _mParticipant = ParticipantMediaState.init(
       ownerId: kIsMine,
       peerConnection: peerConnection,
       onFirstFrameRendered: () => _notify(CallbackEvents.shouldBeUpdateState),
@@ -925,7 +925,7 @@ class WebRTCManagerIpml extends WebRTCManager {
 
     final targetId = payload.targetId;
 
-    _remoteSubscribers[targetId] = ParticipantSFU.init(
+    _remoteSubscribers[targetId] = ParticipantMediaState.init(
       ownerId: targetId,
       peerConnection: rtcPeerConnection,
       onFirstFrameRendered: () => _notify(CallbackEvents.shouldBeUpdateState),

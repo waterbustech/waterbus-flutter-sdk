@@ -15,8 +15,8 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$CallState implements DiagnosticableTreeMixin {
-  ParticipantSFU? get mParticipant;
-  Map<String, ParticipantSFU> get participants;
+  ParticipantMediaState? get mParticipant;
+  Map<String, ParticipantMediaState> get participants;
 
   /// Create a copy of CallState
   /// with the given fields replaced by the non-null parameter values.
@@ -60,9 +60,10 @@ abstract mixin class $CallStateCopyWith<$Res> {
       _$CallStateCopyWithImpl;
   @useResult
   $Res call(
-      {ParticipantSFU? mParticipant, Map<String, ParticipantSFU> participants});
+      {ParticipantMediaState? mParticipant,
+      Map<String, ParticipantMediaState> participants});
 
-  $ParticipantSFUCopyWith<$Res>? get mParticipant;
+  $ParticipantMediaStateCopyWith<$Res>? get mParticipant;
 }
 
 /// @nodoc
@@ -84,11 +85,11 @@ class _$CallStateCopyWithImpl<$Res> implements $CallStateCopyWith<$Res> {
       mParticipant: freezed == mParticipant
           ? _self.mParticipant
           : mParticipant // ignore: cast_nullable_to_non_nullable
-              as ParticipantSFU?,
+              as ParticipantMediaState?,
       participants: null == participants
           ? _self.participants
           : participants // ignore: cast_nullable_to_non_nullable
-              as Map<String, ParticipantSFU>,
+              as Map<String, ParticipantMediaState>,
     ));
   }
 
@@ -96,12 +97,12 @@ class _$CallStateCopyWithImpl<$Res> implements $CallStateCopyWith<$Res> {
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $ParticipantSFUCopyWith<$Res>? get mParticipant {
+  $ParticipantMediaStateCopyWith<$Res>? get mParticipant {
     if (_self.mParticipant == null) {
       return null;
     }
 
-    return $ParticipantSFUCopyWith<$Res>(_self.mParticipant!, (value) {
+    return $ParticipantMediaStateCopyWith<$Res>(_self.mParticipant!, (value) {
       return _then(_self.copyWith(mParticipant: value));
     });
   }
@@ -112,14 +113,14 @@ class _$CallStateCopyWithImpl<$Res> implements $CallStateCopyWith<$Res> {
 class _CallState with DiagnosticableTreeMixin implements CallState {
   const _CallState(
       {this.mParticipant,
-      required final Map<String, ParticipantSFU> participants})
+      required final Map<String, ParticipantMediaState> participants})
       : _participants = participants;
 
   @override
-  final ParticipantSFU? mParticipant;
-  final Map<String, ParticipantSFU> _participants;
+  final ParticipantMediaState? mParticipant;
+  final Map<String, ParticipantMediaState> _participants;
   @override
-  Map<String, ParticipantSFU> get participants {
+  Map<String, ParticipantMediaState> get participants {
     if (_participants is EqualUnmodifiableMapView) return _participants;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableMapView(_participants);
@@ -171,10 +172,11 @@ abstract mixin class _$CallStateCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {ParticipantSFU? mParticipant, Map<String, ParticipantSFU> participants});
+      {ParticipantMediaState? mParticipant,
+      Map<String, ParticipantMediaState> participants});
 
   @override
-  $ParticipantSFUCopyWith<$Res>? get mParticipant;
+  $ParticipantMediaStateCopyWith<$Res>? get mParticipant;
 }
 
 /// @nodoc
@@ -196,11 +198,11 @@ class __$CallStateCopyWithImpl<$Res> implements _$CallStateCopyWith<$Res> {
       mParticipant: freezed == mParticipant
           ? _self.mParticipant
           : mParticipant // ignore: cast_nullable_to_non_nullable
-              as ParticipantSFU?,
+              as ParticipantMediaState?,
       participants: null == participants
           ? _self._participants
           : participants // ignore: cast_nullable_to_non_nullable
-              as Map<String, ParticipantSFU>,
+              as Map<String, ParticipantMediaState>,
     ));
   }
 
@@ -208,12 +210,12 @@ class __$CallStateCopyWithImpl<$Res> implements _$CallStateCopyWith<$Res> {
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $ParticipantSFUCopyWith<$Res>? get mParticipant {
+  $ParticipantMediaStateCopyWith<$Res>? get mParticipant {
     if (_self.mParticipant == null) {
       return null;
     }
 
-    return $ParticipantSFUCopyWith<$Res>(_self.mParticipant!, (value) {
+    return $ParticipantMediaStateCopyWith<$Res>(_self.mParticipant!, (value) {
       return _then(_self.copyWith(mParticipant: value));
     });
   }
