@@ -19,7 +19,7 @@ extension PeerX on RTCPeerConnection {
       if (vCodec == RTCVideoCodec.vp9) {
         encodings.addAll(RTCConfigurations.svcEncodings);
       } else {
-        encodings.addAll(RTCConfigurations.simulcastEncodings);
+        // encodings.addAll(RTCConfigurations.simulcastEncodings);
       }
     }
 
@@ -121,7 +121,7 @@ extension PeerX on RTCPeerConnection {
     final parameters = sender.parameters;
 
     parameters.degradationPreference =
-        RTCDegradationPreference.MAINTAIN_FRAMERATE;
+        RTCDegradationPreference.MAINTAIN_RESOLUTION;
 
     await sender.setParameters(parameters);
   }

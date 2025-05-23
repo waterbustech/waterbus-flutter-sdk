@@ -1,33 +1,35 @@
+import 'package:sdp_transform/sdp_transform.dart';
 import 'package:waterbus_sdk/types/externals/enums/index.dart';
 import 'package:waterbus_sdk/utils/codec_selector.dart';
+import 'package:h264_profile_level_id/h264_profile_level_id.dart';
 
 extension SdpX on String {
   String optimizeSdp({RTCVideoCodec codec = RTCVideoCodec.h264}) {
-    return _setPreferredCodec(codec: codec);
+    return setPreferredCodec(codec: codec);
   }
 
-  // String _enableAudioDTX() {
-  //   return replaceAll(
-  //     'a=fmtp:111 minptime=10;useinbandfec=1',
-  //     'a=fmtp:111 minptime=10;useinbandfec=1;usedtx=1',
-  //   );
-  // }
+  String enableAudioDTX() {
+    return replaceAll(
+      'a=fmtp:111 minptime=10;useinbandfec=1',
+      'a=fmtp:111 minptime=10;useinbandfec=1;usedtx=1',
+    );
+  }
 
-  // String _useH264HighLevel() {
-  //   final profileLevelId = ProfileLevelId(
-  //     profile: H264Utils.ProfileConstrainedBaseline,
-  //     level: H264Utils.Level3_1,
-  //   );
-  //   final session = parse(this);
-  //   session['media'][0]['profile-level-id'] = H264Utils.profileLevelIdToString(
-  //     profileLevelId,
-  //   );
-  //   final newSdp = write(session, null);
+  String updateH264Profile() {
+    final profileLevelId = ProfileLevelId(
+      profile: H264Utils.ProfileBaseline,
+      level: H264Utils.Level3_1,
+    );
+    final session = parse(this);
+    session['media'][0]['profile-level-id'] = H264Utils.profileLevelIdToString(
+      profileLevelId,
+    );
+    final newSdp = write(session, null);
 
-  //   return newSdp;
-  // }
+    return newSdp;
+  }
 
-  String _setPreferredCodec({RTCVideoCodec codec = RTCVideoCodec.h264}) {
+  String setPreferredCodec({RTCVideoCodec codec = RTCVideoCodec.h264}) {
     final capSel = CodecCapabilitySelector(this);
 
     final vcaps = capSel.getCapabilities('video');
@@ -41,6 +43,10 @@ extension SdpX on String {
       vcaps.codecs = codecsFiltered;
       vcaps.setCodecPreferences('video', vcaps.codecs);
       capSel.setCapabilities(vcaps);
+    }
+
+    if (codec == RTCVideoCodec.h264) {
+      return capSel.sdp().updateH264Profile();
     }
 
     return capSel.sdp();
