@@ -377,18 +377,20 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<Result<String>> getPresignedUrl() async {
+  Future<Result<PresignedUrl>> getPresignedUrl() async {
     return await _userRepository.getPresignedUrl();
   }
 
   @override
   Future<Result<String>> uploadAvatar({
     required Uint8List image,
-    required String uploadUrl,
+    required String presignedUrl,
+    required String sourceUrl,
   }) async {
-    return await _userRepository.uploadImageToS3(
+    return await _userRepository.uploadAvatarToCloud(
       image: image,
-      uploadUrl: uploadUrl,
+      presignedUrl: presignedUrl,
+      sourceUrl: sourceUrl,
     );
   }
 

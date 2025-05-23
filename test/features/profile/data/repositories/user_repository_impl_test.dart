@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'package:waterbus_sdk/core/api/user/datasources/user_remote_datasource.dart';
+import 'package:waterbus_sdk/core/api/user/datasources/user_remote_data_source.dart';
 import 'package:waterbus_sdk/core/api/user/repositories/user_repository.dart';
 import 'package:waterbus_sdk/types/error/failures.dart';
 import 'package:waterbus_sdk/types/externals/models/index.dart';
@@ -163,14 +163,17 @@ void main() {
     test('should return presigned URL from remote data source', () async {
       // Arrange
       const testUrl = 'https://example.com/presigned-url';
-      when(mockDataSource.getPresignedUrl())
-          .thenAnswer((_) async => Result.success(testUrl));
+      when(mockDataSource.getPresignedUrl()).thenAnswer(
+        (_) async => Result.success(
+          PresignedUrl(presignedUrl: testUrl, sourceUrl: testUrl),
+        ),
+      );
 
       // Act
       final result = await repository.getPresignedUrl();
 
       // Assert
-      expect(result.value, testUrl);
+      expect(result.value?.presignedUrl, testUrl);
       verify(mockDataSource.getPresignedUrl());
       verifyNoMoreInteractions(mockDataSource);
     });
@@ -199,23 +202,26 @@ void main() {
     test('should return the uploaded image URL', () async {
       // Arrange
       when(
-        mockDataSource.uploadImageToS3(
-          uploadUrl: anyNamed('uploadUrl'),
+        mockDataSource.uploadAvatarToCloud(
+          presignedUrl: anyNamed('presignedUrl'),
+          sourceUrl: anyNamed('sourceUrl'),
           image: anyNamed('image'),
         ),
       ).thenAnswer((_) async => Result.success(testImageUrl));
 
       // Act
-      final result = await repository.uploadImageToS3(
-        uploadUrl: testUploadUrl,
+      final result = await repository.uploadAvatarToCloud(
+        presignedUrl: testUploadUrl,
+        sourceUrl: testImageUrl,
         image: testImage,
       );
 
       // Assert
       expect(result.value, testImageUrl);
       verify(
-        mockDataSource.uploadImageToS3(
-          uploadUrl: testUploadUrl,
+        mockDataSource.uploadAvatarToCloud(
+          presignedUrl: testUploadUrl,
+          sourceUrl: testImageUrl,
           image: testImage,
         ),
       );
@@ -225,23 +231,26 @@ void main() {
     test('should return a failure when upload fails', () async {
       // Arrange
       when(
-        mockDataSource.uploadImageToS3(
-          uploadUrl: anyNamed('uploadUrl'),
+        mockDataSource.uploadAvatarToCloud(
+          presignedUrl: anyNamed('presignedUrl'),
+          sourceUrl: anyNamed('sourceUrl'),
           image: anyNamed('image'),
         ),
       ).thenAnswer((_) async => Result.failure(ServerFailure()));
 
       // Act
-      final result = await repository.uploadImageToS3(
-        uploadUrl: testUploadUrl,
+      final result = await repository.uploadAvatarToCloud(
+        presignedUrl: testUploadUrl,
+        sourceUrl: testImageUrl,
         image: testImage,
       );
 
       // Assert
       expect(result.error, ServerFailure());
       verify(
-        mockDataSource.uploadImageToS3(
-          uploadUrl: testUploadUrl,
+        mockDataSource.uploadAvatarToCloud(
+          presignedUrl: testUploadUrl,
+          sourceUrl: testImageUrl,
           image: testImage,
         ),
       );

@@ -213,15 +213,20 @@ class WaterbusSdk {
     return await _sdk.checkUsername(username: username);
   }
 
-  Future<Result<String>> getPresignedUrl() async {
+  Future<Result<PresignedUrl>> getPresignedUrl() async {
     return await _sdk.getPresignedUrl();
   }
 
   Future<Result<String>> uploadAvatar({
     required Uint8List image,
-    required String uploadUrl,
+    required String presignedUrl,
+    required String sourceUrl,
   }) async {
-    return await _sdk.uploadAvatar(image: image, uploadUrl: uploadUrl);
+    return await _sdk.uploadAvatar(
+      image: image,
+      presignedUrl: presignedUrl,
+      sourceUrl: sourceUrl,
+    );
   }
 
   // Chat

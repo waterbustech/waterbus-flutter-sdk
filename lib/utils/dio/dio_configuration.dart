@@ -9,7 +9,7 @@ import 'package:injectable/injectable.dart';
 
 import 'package:waterbus_sdk/constants/endpoints.dart';
 import 'package:waterbus_sdk/constants/status_code.dart';
-import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
+import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_data_source.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extension.dart';

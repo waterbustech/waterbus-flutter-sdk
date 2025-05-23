@@ -15,3 +15,4 @@ export 'participant_media_state.dart';
 export 'subscribe_payload.dart';
 export 'video_config.dart';
 export 'video_quality.dart';
+export 'presigned_url.dart';

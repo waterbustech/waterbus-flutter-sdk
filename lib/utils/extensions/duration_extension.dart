@@ -7,6 +7,10 @@ extension DurationX on int {
     return Duration(seconds: this);
   }
 
+  Duration get minutes {
+    return Duration(minutes: this);
+  }
+
   Duration get hours {
     return Duration(hours: this);
   }

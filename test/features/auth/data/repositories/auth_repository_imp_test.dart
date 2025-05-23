@@ -4,8 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
-import 'package:waterbus_sdk/core/api/auth/datasources/auth_remote_datasource.dart';
+import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_data_source.dart';
+import 'package:waterbus_sdk/core/api/auth/datasources/auth_remote_data_source.dart';
 import 'package:waterbus_sdk/core/api/auth/repositories/auth_repository.dart';
 import 'package:waterbus_sdk/types/externals/models/index.dart';
 import 'package:waterbus_sdk/types/result.dart';

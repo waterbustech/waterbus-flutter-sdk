@@ -4,7 +4,7 @@ import 'package:injectable/injectable.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 import 'package:waterbus_sdk/constants/ws_event.dart';
-import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_datasource.dart';
+import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_data_source.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_manager.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/ws_handler.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';

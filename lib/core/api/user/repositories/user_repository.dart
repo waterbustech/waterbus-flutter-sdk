@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:injectable/injectable.dart';
 
-import 'package:waterbus_sdk/core/api/user/datasources/user_remote_datasource.dart';
+import 'package:waterbus_sdk/core/api/user/datasources/user_remote_data_source.dart';
 import 'package:waterbus_sdk/types/externals/models/index.dart';
 import 'package:waterbus_sdk/types/result.dart';
 
@@ -11,9 +11,10 @@ abstract class UserRepository {
   Future<Result<bool>> updateUserProfile(User user);
   Future<Result<bool>> updateUsername(String username);
   Future<Result<bool>> checkUsername(String username);
-  Future<Result<String>> getPresignedUrl();
-  Future<Result<String>> uploadImageToS3({
-    required String uploadUrl,
+  Future<Result<PresignedUrl>> getPresignedUrl();
+  Future<Result<String>> uploadAvatarToCloud({
+    required String presignedUrl,
+    required String sourceUrl,
     required Uint8List image,
   });
 }
@@ -41,19 +42,22 @@ class UserRepositoryImpl extends UserRepository {
   }
 
   @override
-  Future<Result<String>> getPresignedUrl() async {
-    final Result<String> result = await _remoteDataSource.getPresignedUrl();
+  Future<Result<PresignedUrl>> getPresignedUrl() async {
+    final Result<PresignedUrl> result =
+        await _remoteDataSource.getPresignedUrl();
 
     return result;
   }
 
   @override
-  Future<Result<String>> uploadImageToS3({
-    required String uploadUrl,
+  Future<Result<String>> uploadAvatarToCloud({
+    required String presignedUrl,
+    required String sourceUrl,
     required Uint8List image,
   }) async {
-    final Result<String> result = await _remoteDataSource.uploadImageToS3(
-      uploadUrl: uploadUrl,
+    final Result<String> result = await _remoteDataSource.uploadAvatarToCloud(
+      presignedUrl: presignedUrl,
+      sourceUrl: sourceUrl,
       image: image,
     );
 

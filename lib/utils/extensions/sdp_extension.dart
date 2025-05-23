@@ -1,7 +1,8 @@
+import 'package:h264_profile_level_id/h264_profile_level_id.dart';
 import 'package:sdp_transform/sdp_transform.dart';
+
 import 'package:waterbus_sdk/types/externals/enums/index.dart';
 import 'package:waterbus_sdk/utils/codec_selector.dart';
-import 'package:h264_profile_level_id/h264_profile_level_id.dart';
 
 extension SdpX on String {
   String optimizeSdp({RTCVideoCodec codec = RTCVideoCodec.h264}) {

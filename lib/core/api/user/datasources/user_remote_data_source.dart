@@ -25,9 +25,10 @@ abstract class UserRemoteDataSource {
     required int skip,
     required int limit,
   });
-  Future<Result<String>> getPresignedUrl();
-  Future<Result<String>> uploadImageToS3({
-    required String uploadUrl,
+  Future<Result<PresignedUrl>> getPresignedUrl();
+  Future<Result<String>> uploadAvatarToCloud({
+    required String presignedUrl,
+    required String sourceUrl,
     required Uint8List image,
   });
 }
@@ -38,26 +39,27 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
   UserRemoteDataSourceImpl(this._remoteData);
 
   @override
-  Future<Result<String>> getPresignedUrl() async {
+  Future<Result<PresignedUrl>> getPresignedUrl() async {
     final Response response = await _remoteData.post(
       Endpoints.presignedUrlS3,
     );
 
     if (response.statusCode == StatusCode.created) {
       final Map<String, dynamic> rawData = response.data;
-      return Result.success(rawData['presignedUrl']);
+      return Result.success(PresignedUrl.fromJson(rawData));
     }
 
     return Result.failure(ServerFailure());
   }
 
   @override
-  Future<Result<String>> uploadImageToS3({
-    required String uploadUrl,
+  Future<Result<String>> uploadAvatarToCloud({
+    required String presignedUrl,
+    required String sourceUrl,
     required Uint8List image,
   }) async {
     try {
-      final Uri uri = Uri.parse(uploadUrl);
+      final Uri uri = Uri.parse(presignedUrl);
 
       final http.Response response = await http.put(
         uri,
@@ -69,7 +71,7 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
       );
 
       if (response.statusCode == StatusCode.ok) {
-        return Result.success(uploadUrl.split('?').first);
+        return Result.success(sourceUrl.split('?').first);
       }
 
       return Result.failure(ServerFailure());

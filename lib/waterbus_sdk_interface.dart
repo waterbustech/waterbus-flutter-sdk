@@ -15,10 +15,11 @@ abstract class WaterbusSdkInterface {
   Future<Result<bool>> updateProfile({required User user});
   Future<Result<bool>> updateUsername({required String username});
   Future<Result<bool>> checkUsername({required String username});
-  Future<Result<String>> getPresignedUrl();
+  Future<Result<PresignedUrl>> getPresignedUrl();
   Future<Result<String>> uploadAvatar({
     required Uint8List image,
-    required String uploadUrl,
+    required String presignedUrl,
+    required String sourceUrl,
   });
 
   // Chat
