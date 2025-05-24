@@ -544,7 +544,7 @@ class WebRTCManagerIpml extends WebRTCManager {
       await track.stop();
     }
 
-    _mParticipant?.setScreenSharing(false);
+    _mParticipant = await _mParticipant?.setScreenSharing(false);
     _screenSharingStream?.dispose();
     _screenSharingStream = null;
 
@@ -648,15 +648,19 @@ class WebRTCManagerIpml extends WebRTCManager {
   }
 
   @override
-  void setParticipantScreenSharing({
+  Future<void> setParticipantScreenSharing({
     required ParticipantScreenSharingConfig config,
-  }) {
-    _remoteSubscribers[config.participantId]?.setScreenSharing(
+  }) async {
+    final state =
+        await _remoteSubscribers[config.participantId]?.setScreenSharing(
       config.isSharing,
       screenTrackId: config.screenTrackId,
     );
 
-    _notify(CallbackEvents.shouldBeUpdateState);
+    if (state != null) {
+      _remoteSubscribers[config.participantId] = state;
+      _notify(CallbackEvents.shouldBeUpdateState);
+    }
   }
 
   @override

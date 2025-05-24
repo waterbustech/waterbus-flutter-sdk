@@ -153,17 +153,17 @@ extension ParticipantSFUX on ParticipantMediaState {
     bool isSharing, {
     String? screenTrackId,
   }) async {
-    ParticipantMediaState participantSFU =
+    ParticipantMediaState mediaState =
         copyWith(isSharingScreen: isSharing, screenTrackId: screenTrackId);
 
     if (!isSharing) {
       await screenSource?.dispose();
-      participantSFU = copyWith(
+      mediaState = mediaState.copyWith(
         screenSource: MediaSource(onFirstFrameRendered: onFirstFrameRendered),
       );
     }
 
-    return participantSFU;
+    return mediaState;
   }
 
   Future<ParticipantMediaState> setHandRaising(bool isRaising) async {
