@@ -100,7 +100,7 @@ class SdkCore extends WaterbusSdkInterface {
       if (mParticipantIndex < 0) return Result.failure(ServerFailure());
 
       await _joinRoom(
-        roomId: room.code.toString(),
+        roomId: room.id.toString(),
         participantId: room.participants[mParticipantIndex].id,
       );
 

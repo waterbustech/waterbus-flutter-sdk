@@ -17,7 +17,6 @@ import 'package:waterbus_sdk/stats/webrtc_audio_stats.dart';
 import 'package:waterbus_sdk/stats/webrtc_video_stats.dart';
 import 'package:waterbus_sdk/utils/extensions/pc_extension.dart';
 import 'package:waterbus_sdk/utils/extensions/sdp_extension.dart';
-import 'package:waterbus_sdk/utils/extensions/string_extension.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 @LazySingleton(as: WebRTCManager)
@@ -87,7 +86,7 @@ class WebRTCManagerIpml extends WebRTCManager {
 
     await _establishBroadcastConnection();
 
-    _nativeService.startCallKit(roomId.roomCodeFormatted);
+    _nativeService.startCallKit(roomId);
   }
 
   @override
