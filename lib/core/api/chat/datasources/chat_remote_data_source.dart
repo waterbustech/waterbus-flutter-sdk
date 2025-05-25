@@ -51,9 +51,8 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
 
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
       final Map<String, dynamic> message = {
-        "conversations": (response.data['rooms'] as List)
-            .map((room) => Room.fromJson(room))
-            .toList(),
+        "conversations":
+            (response.data as List).map((room) => Room.fromJson(room)).toList(),
         "key": WaterbusSdk.messageEncryptionKey,
       };
 

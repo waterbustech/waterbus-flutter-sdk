@@ -5,12 +5,11 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 
 import 'dart:async' as _i4;
-import 'dart:typed_data' as _i7;
+import 'dart:typed_data' as _i6;
 
 import 'package:mockito/mockito.dart' as _i1;
 
 import 'package:waterbus_sdk/types/externals/models/index.dart' as _i5;
-import 'package:waterbus_sdk/types/externals/models/presigned_url.dart' as _i6;
 import 'package:waterbus_sdk/types/result.dart' as _i2;
 
 import 'package:waterbus_sdk/core/api/user/datasources/user_remote_data_source.dart'
@@ -186,14 +185,14 @@ class MockUserRemoteDataSource extends _i1.Mock
       ) as _i4.Future<_i2.Result<List<_i5.User>>>);
 
   @override
-  _i4.Future<_i2.Result<_i6.PresignedUrl>> getPresignedUrl() =>
+  _i4.Future<_i2.Result<_i5.PresignedUrl>> getPresignedUrl() =>
       (super.noSuchMethod(
         Invocation.method(
           #getPresignedUrl,
           [],
         ),
-        returnValue: _i4.Future<_i2.Result<_i6.PresignedUrl>>.value(
-            _FakeResult_0<_i6.PresignedUrl>(
+        returnValue: _i4.Future<_i2.Result<_i5.PresignedUrl>>.value(
+            _FakeResult_0<_i5.PresignedUrl>(
           this,
           Invocation.method(
             #getPresignedUrl,
@@ -201,21 +200,21 @@ class MockUserRemoteDataSource extends _i1.Mock
           ),
         )),
         returnValueForMissingStub:
-            _i4.Future<_i2.Result<_i6.PresignedUrl>>.value(
-                _FakeResult_0<_i6.PresignedUrl>(
+            _i4.Future<_i2.Result<_i5.PresignedUrl>>.value(
+                _FakeResult_0<_i5.PresignedUrl>(
           this,
           Invocation.method(
             #getPresignedUrl,
             [],
           ),
         )),
-      ) as _i4.Future<_i2.Result<_i6.PresignedUrl>>);
+      ) as _i4.Future<_i2.Result<_i5.PresignedUrl>>);
 
   @override
   _i4.Future<_i2.Result<String>> uploadAvatarToCloud({
     required String? presignedUrl,
     required String? sourceUrl,
-    required _i7.Uint8List? image,
+    required _i6.Uint8List? image,
   }) =>
       (super.noSuchMethod(
         Invocation.method(

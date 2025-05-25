@@ -21,7 +21,7 @@ class BaseRemoteData {
 
   Dio dio = Dio(
     BaseOptions(
-      baseUrl: WaterbusSdk.apiUrl,
+      baseUrl: WaterbusSdk.baseUrl.baseUrlApi,
       connectTimeout: 10.seconds,
       receiveTimeout: 10.seconds,
       sendTimeout: 10.seconds,
@@ -146,7 +146,7 @@ class BaseRemoteData {
         'Connection': 'keep-alive',
         'Accept': '*/*',
         'Accept-Encoding': 'gzip, deflate, br',
-        'X-API-Key': WaterbusSdk.apiKey,
+        'X-API-Key': WaterbusSdk.baseUrl.apiKey,
       },
     );
   }
@@ -167,14 +167,14 @@ class BaseRemoteData {
       'Connection': 'keep-alive',
       'Accept': '*/*',
       'Accept-Encoding': 'gzip, deflate, br',
-      'X-API-Key': WaterbusSdk.apiKey,
+      'X-API-Key': WaterbusSdk.baseUrl.apiKey,
     };
   }
 
   initialize() async {
     dio = Dio(
       BaseOptions(
-        baseUrl: WaterbusSdk.apiUrl,
+        baseUrl: WaterbusSdk.baseUrl.baseUrlApi,
         connectTimeout: 10.seconds,
         receiveTimeout: 10.seconds,
         sendTimeout: 10.seconds,
