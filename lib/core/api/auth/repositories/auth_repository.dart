@@ -2,9 +2,7 @@ import 'package:injectable/injectable.dart';
 
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_data_source.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_remote_data_source.dart';
-import 'package:waterbus_sdk/types/error/failures.dart';
-import 'package:waterbus_sdk/types/externals/models/index.dart';
-import 'package:waterbus_sdk/types/result.dart';
+import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 
 abstract class AuthRepository {
   Future<Result<bool>> renewToken();

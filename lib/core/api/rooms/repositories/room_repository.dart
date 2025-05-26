@@ -2,7 +2,6 @@ import 'package:injectable/injectable.dart';
 
 import 'package:waterbus_sdk/core/api/rooms/datasources/room_remote_data_source.dart';
 import 'package:waterbus_sdk/types/externals/models/index.dart';
-import 'package:waterbus_sdk/types/internals/models/create_room_params.dart';
 import 'package:waterbus_sdk/types/result.dart';
 
 abstract class RoomRepository {

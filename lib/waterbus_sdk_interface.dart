@@ -61,21 +61,9 @@ abstract class WaterbusSdkInterface {
   Future<Result<Message>> deleteMessage({required int messageId});
 
   // Room
-  Future<Result<Room>> createRoom({
-    required Room room,
-    required String password,
-    required int? userId,
-  });
-  Future<Result<bool>> updateRoom({
-    required Room room,
-    required String password,
-    required int? userId,
-  });
-  Future<Result<Room>> joinRoom({
-    required Room room,
-    required String? password,
-    required int? userId,
-  });
+  Future<Result<Room>> createRoom({required RoomParams params});
+  Future<Result<bool>> updateRoom({required RoomParams params});
+  Future<Result<Room>> joinRoom({required RoomParams params});
   Future<Result<Room>> getRoomInfo(String code);
   Future<void> leaveRoom();
   void toggleRaiseHand();

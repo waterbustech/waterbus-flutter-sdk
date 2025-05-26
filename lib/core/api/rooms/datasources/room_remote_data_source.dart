@@ -6,7 +6,6 @@ import 'package:waterbus_sdk/constants/status_code.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/types/error/app_exception.dart';
 import 'package:waterbus_sdk/types/externals/models/index.dart';
-import 'package:waterbus_sdk/types/internals/models/create_room_params.dart';
 import 'package:waterbus_sdk/types/result.dart';
 
 abstract class RoomRemoteDataSource {
