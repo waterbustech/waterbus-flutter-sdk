@@ -18,11 +18,10 @@ export 'package:rhttp/rhttp.dart';
 export 'ui/waterbus_media_view.dart';
 
 class WaterbusSdk {
-  static String apiUrl = '';
-  static String wsUrl = '';
+  static BaseUrl baseUrl = BaseUrl(url: "", suffixUrl: "");
   static String messageEncryptionKey = '';
   static String webrtcE2eeKey = 'waterbus';
-  static String? apiKey;
+
   static HttpVersionPref httpVersionPref = HttpVersionPref.all;
   static WaterbusEventListener listener = WaterbusEventListener();
 
@@ -42,18 +41,14 @@ class WaterbusSdk {
   }
 
   Future<void> initializeApp({
-    required String wsUrl,
-    required String apiUrl,
-    String? apiKey,
+    required BaseUrl baseUrl,
 
     /// Encryption message will be disabled if the key is empty
     String messageEncryptionKey = '',
     String webrtcE2eeKey = '',
     HttpVersionPref httpVersionPref = HttpVersionPref.all,
   }) async {
-    WaterbusSdk.wsUrl = wsUrl;
-    WaterbusSdk.apiUrl = apiUrl;
-    WaterbusSdk.apiKey = apiKey;
+    WaterbusSdk.baseUrl = baseUrl;
     WaterbusSdk.messageEncryptionKey = messageEncryptionKey;
     WaterbusSdk.webrtcE2eeKey = webrtcE2eeKey;
     WaterbusSdk.httpVersionPref = httpVersionPref;
@@ -73,40 +68,16 @@ class WaterbusSdk {
   }
 
   // Rooms
-  Future<Result<Room>> createRoom({
-    required Room room,
-    required String password,
-    required int? userId,
-  }) async {
-    return await _sdk.createRoom(
-      room: room,
-      password: password,
-      userId: userId,
-    );
+  Future<Result<Room>> createRoom({required RoomParams params}) async {
+    return await _sdk.createRoom(params: params);
   }
 
-  Future<Result<Room>> joinRoom({
-    required Room room,
-    required String password,
-    required int? userId,
-  }) async {
-    return await _sdk.joinRoom(
-      room: room,
-      password: password,
-      userId: userId,
-    );
+  Future<Result<Room>> joinRoom({required RoomParams params}) async {
+    return await _sdk.joinRoom(params: params);
   }
 
-  Future<Result<bool>> updateRoom({
-    required Room room,
-    required String password,
-    required int? userId,
-  }) async {
-    return await _sdk.updateRoom(
-      room: room,
-      password: password,
-      userId: userId,
-    );
+  Future<Result<bool>> updateRoom({required RoomParams params}) async {
+    return await _sdk.updateRoom(params: params);
   }
 
   Future<Result<Room>> getRoomInfo({required String code}) async {

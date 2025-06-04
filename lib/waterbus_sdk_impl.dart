@@ -61,31 +61,15 @@ class SdkCore extends WaterbusSdkInterface {
 
   // Room
   @override
-  Future<Result<Room>> createRoom({
-    required Room room,
-    required String password,
-    required int? userId,
-  }) async {
-    return await _roomRepository.createRoom(
-      RoomParams(
-        room: room,
-        password: password,
-        userId: userId,
-      ),
-    );
+  Future<Result<Room>> createRoom({required RoomParams params}) async {
+    return await _roomRepository.createRoom(params);
   }
 
   @override
-  Future<Result<Room>> joinRoom({
-    required Room room,
-    required String? password,
-    required int? userId,
-  }) async {
+  Future<Result<Room>> joinRoom({required RoomParams params}) async {
     if (!_wsHandler.isConnected) return Result.failure(ServerFailure());
 
-    final Result<Room> roomCurrent = await _roomRepository.joinRoom(
-      RoomParams(room: room, password: password ?? "", userId: userId),
-    );
+    final Result<Room> roomCurrent = await _roomRepository.joinRoom(params);
 
     if (roomCurrent.isSuccess) {
       final Room? room = roomCurrent.value;
@@ -121,18 +105,8 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<Result<bool>> updateRoom({
-    required Room room,
-    required String password,
-    required int? userId,
-  }) async {
-    return await _roomRepository.updateRoom(
-      RoomParams(
-        room: room,
-        password: password,
-        userId: userId,
-      ),
-    );
+  Future<Result<bool>> updateRoom({required RoomParams params}) async {
+    return await _roomRepository.updateRoom(params);
   }
 
   @override
