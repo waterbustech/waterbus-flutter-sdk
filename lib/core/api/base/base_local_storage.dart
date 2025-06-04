@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 
 import 'package:waterbus_sdk/constants/storage_keys.dart';
 import 'package:waterbus_sdk/utils/path_helper.dart';

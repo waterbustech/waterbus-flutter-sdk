@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/types/internals/enums/connection_type.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 part 'participant_media_state.freezed.dart';
@@ -28,6 +29,10 @@ abstract class ParticipantMediaState with _$ParticipantMediaState {
     StreamController<RtcParticipantStats>? webcamStatsController,
     StreamController<RtcParticipantStats>? screenStatsController,
     String? screenTrackId,
+    required ConnectionType connectionType,
+
+    // ==== Backup variables for migrate case ====
+    RTCPeerConnection? backupPc,
   }) = _ParticipantMediaState;
 
   factory ParticipantMediaState.init({
@@ -49,6 +54,7 @@ abstract class ParticipantMediaState with _$ParticipantMediaState {
     StreamController<AudioLevel>? audioLevelController,
     StreamController<RtcParticipantStats>? webcamStatsController,
     StreamController<RtcParticipantStats>? screenStatsController,
+    required ConnectionType connectionType,
   }) {
     final hasCustomSources = cameraSource != null || screenSource != null;
 
@@ -78,6 +84,7 @@ abstract class ParticipantMediaState with _$ParticipantMediaState {
           StreamController<RtcParticipantStats>.broadcast(),
       screenStatsController: screenStatsController ??
           StreamController<RtcParticipantStats>.broadcast(),
+      connectionType: connectionType,
     );
   }
 }
@@ -101,7 +108,11 @@ extension ParticipantSFUX on ParticipantMediaState {
 
   Future<void> addCandidate(RTCIceCandidate candidate) async {
     try {
-      await peerConnection.addCandidate(candidate);
+      if (backupPc != null) {
+        await backupPc?.addCandidate(candidate);
+      } else {
+        await peerConnection.addCandidate(candidate);
+      }
     } catch (error) {
       WaterbusLogger.instance.bug("====> E: ${error.toString()}");
     }
@@ -109,7 +120,11 @@ extension ParticipantSFUX on ParticipantMediaState {
 
   Future<void> setRemoteDescription(RTCSessionDescription description) async {
     try {
-      await peerConnection.setRemoteDescription(description);
+      if (backupPc != null) {
+        await backupPc?.setRemoteDescription(description);
+      } else {
+        await peerConnection.setRemoteDescription(description);
+      }
     } catch (error) {
       WaterbusLogger.instance.bug(error.toString());
     }
@@ -123,11 +138,11 @@ extension ParticipantSFUX on ParticipantMediaState {
     }
   }
 
-  Future<TrackType?> setSrcObject(
+  TrackType? setSrcObject(
     MediaStream stream, {
     String? trackId,
     bool isDisplayStream = false,
-  }) async {
+  }) {
     if (ownerId == kIsMine) {
       if (isDisplayStream) {
         screenSource?.setSrcObject(stream);
@@ -166,14 +181,16 @@ extension ParticipantSFUX on ParticipantMediaState {
     return mediaState;
   }
 
-  Future<ParticipantMediaState> setHandRaising(bool isRaising) async {
+  ParticipantMediaState setHandRaising(bool isRaising) {
     return copyWith(isHandRaising: isRaising);
   }
 
   Future<void> dispose() async {
     setScreenSharing(false);
     cameraSource?.dispose();
+    screenSource?.dispose();
     peerConnection.close();
+    backupPc?.close();
     audioLevelController?.close();
     webcamStatsController?.close();
     screenStatsController?.close();

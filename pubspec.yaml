@@ -15,8 +15,8 @@ dependencies:
 
   # Network
   connectivity_plus: ^6.1.3
-  rhttp: ^0.11.1
-  http: ^1.3.0
+  rhttp: ^0.12.0
+  http: ^1.4.0
   dio: ^5.8.0+1
   dio_smart_retry: ^7.0.1
   dio_cache_interceptor: ^4.0.3
@@ -24,7 +24,7 @@ dependencies:
   socket_io_client: ^3.0.2
 
   # Storage
-  hive: ^2.2.3
+  hive_ce: ^2.11.3
 
   # Utils
   collection: '^1.16.0'
@@ -43,8 +43,9 @@ dependencies:
   # WebRTC
   sdp_transform: ^0.3.2
   h264_profile_level_id: ^0.2.1
-  dart_webrtc_plus: ^1.4.10+4
-  flutter_webrtc_plus: ^0.12.1+7
+  dart_webrtc_plus: ^1.5.4+1
+  flutter_webrtc_plus:
+    path: /Users/lambiengcode/Documents/waterbus/flutter-webrtc-plus
     
   # Dependency Injection
   get_it: ^8.0.3

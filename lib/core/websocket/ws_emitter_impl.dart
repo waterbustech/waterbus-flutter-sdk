@@ -6,6 +6,7 @@ import 'package:waterbus_sdk/core/websocket/interfaces/ws_emitter.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/ws_handler.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
+import 'package:waterbus_sdk/types/internals/enums/connection_type.dart';
 
 @Injectable(as: WsEmitter)
 class WsEmitterImpl extends WsEmitter {
@@ -22,18 +23,30 @@ class WsEmitterImpl extends WsEmitter {
 
   @override
   void answerSubscription({
+    required String roomId,
     required String targetId,
     required String sdp,
+    required ConnectionType connectionType,
   }) {
     _socket?.emit(WsEvent.roomAnswerSubscriber, {
+      "roomId": roomId,
       "targetId": targetId,
       "sdp": sdp,
+      'connectionType': connectionType.index,
     });
   }
 
   @override
-  void renegotiateSdp(String sdp) {
-    _socket?.emit(WsEvent.roomPublisherRenegotiation, {'sdp': sdp});
+  void renegotiateSdp({
+    required String roomId,
+    required String sdp,
+    required ConnectionType connectionType,
+  }) {
+    _socket?.emit(WsEvent.roomPublisherRenegotiation, {
+      'sdp': sdp,
+      'roomId': roomId,
+      'connectionType': connectionType.index,
+    });
   }
 
   @override
@@ -46,20 +59,50 @@ class WsEmitterImpl extends WsEmitter {
     _socket?.emit(WsEvent.roomReconnect);
   }
 
+  @override
+  void migrateConnection({
+    required String roomId,
+    required String participantId,
+    required String sdp,
+    required ConnectionType connectionType,
+  }) {
+    _socket?.emit(WsEvent.roomMigrate, {
+      'roomId': roomId,
+      'sdp': sdp,
+      'participantId': participantId,
+      'connectionType': connectionType.index,
+    });
+  }
+
   // ====== ICE Candidate Events ======
   @override
-  void sendPublisherIceCandidate(RTCIceCandidate candidate) {
-    _socket?.emit(WsEvent.roomPublisherCandidate, candidate.toMap());
+  void sendPublisherIceCandidate({
+    required RTCIceCandidate candidate,
+    required ConnectionType connectionType,
+    required String roomId,
+  }) {
+    _socket?.emit(
+      WsEvent.roomPublisherCandidate,
+      {
+        'candidate': candidate.toMap(),
+        'connectionType': connectionType.index,
+        'roomId': roomId,
+      },
+    );
   }
 
   @override
   void sendSubscriberIceCandidate({
     required RTCIceCandidate candidate,
-    required targetId,
+    required String targetId,
+    required ConnectionType connectionType,
+    required String roomId,
   }) {
     _socket?.emit(WsEvent.roomSubscriberCandidate, {
       'targetId': targetId,
       'candidate': candidate.toMap(),
+      'connectionType': connectionType.index,
+      'roomId': roomId,
     });
   }
 

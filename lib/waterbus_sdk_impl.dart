@@ -15,6 +15,7 @@ import 'package:waterbus_sdk/core/websocket/interfaces/ws_handler.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/native/picture-in-picture/index.dart';
 import 'package:waterbus_sdk/native/replaykit.dart';
+import 'package:waterbus_sdk/types/internals/enums/connection_type.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 import 'package:waterbus_sdk/utils/replaykit/replaykit_helper.dart';
 import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
@@ -99,15 +100,17 @@ class SdkCore extends WaterbusSdkInterface {
 
       if (mParticipantIndex < 0) return Result.failure(ServerFailure());
 
-      await _joinRoom(
-        roomId: room.id.toString(),
-        participantId: room.participants[mParticipantIndex].id,
-      );
-
       final List<String> targetIds = room.participants
           .where((participant) => !participant.isMe)
           .map((participant) => participant.id.toString())
           .toList();
+
+      await _joinRoom(
+        roomId: room.id.toString(),
+        participantId: room.participants[mParticipantIndex].id,
+        connectionType:
+            targetIds.length <= 1 ? ConnectionType.p2p : ConnectionType.sfu,
+      );
 
       _subscribe(targetIds);
 
@@ -149,7 +152,7 @@ class SdkCore extends WaterbusSdkInterface {
 
   @override
   Future<void> reconnect() async {
-    _wsEmitter.reconnect();
+    // _wsEmitter.reconnect();
     _wsHandler.reconnect(
       callbackConnected: () async {
         await _rtcManager.reconnectRoom();
@@ -422,6 +425,7 @@ class SdkCore extends WaterbusSdkInterface {
   Future<void> _joinRoom({
     required String roomId,
     required int participantId,
+    required ConnectionType connectionType,
   }) async {
     try {
       WakelockPlus.enable();
@@ -429,6 +433,7 @@ class SdkCore extends WaterbusSdkInterface {
       await _rtcManager.joinRoom(
         roomId: roomId,
         participantId: participantId,
+        connectionType: connectionType,
       );
     } catch (error) {
       _logger.bug(error.toString());

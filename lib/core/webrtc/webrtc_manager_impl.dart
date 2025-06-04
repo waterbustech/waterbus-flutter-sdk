@@ -15,6 +15,8 @@ import 'package:waterbus_sdk/native/replaykit.dart';
 import 'package:waterbus_sdk/native/virtual_background/index.dart';
 import 'package:waterbus_sdk/stats/webrtc_audio_stats.dart';
 import 'package:waterbus_sdk/stats/webrtc_video_stats.dart';
+import 'package:waterbus_sdk/types/internals/enums/connection_type.dart';
+import 'package:waterbus_sdk/utils/extensions/duration_extension.dart';
 import 'package:waterbus_sdk/utils/extensions/pc_extension.dart';
 import 'package:waterbus_sdk/utils/extensions/sdp_extension.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
@@ -36,6 +38,7 @@ class WebRTCManagerIpml extends WebRTCManager {
     this._audioStats,
   );
 
+  ConnectionType _connectionType = ConnectionType.p2p;
   String? _currentRoomId;
   String? _currentParticipantId;
   MediaStream? _localCameraStream;
@@ -51,14 +54,17 @@ class WebRTCManagerIpml extends WebRTCManager {
   final List<RTCIceCandidate> _remoteIceCandidatesForPublisher = [];
   // ignore: close_sinks
   final StreamController<CallbackPayload> _eventStreamController =
-      StreamController<CallbackPayload>.broadcast();
+      StreamController<CallbackPayload>.broadcast(sync: true);
 
   // ====== Room Management ======
   @override
   Future<void> joinRoom({
     required String roomId,
     required int participantId,
+    required ConnectionType connectionType,
   }) async {
+    _connectionType = connectionType;
+
     await Future.wait([
       _e2eeManager.initialize(
         roomId,
@@ -72,19 +78,23 @@ class WebRTCManagerIpml extends WebRTCManager {
     if (_mParticipant?.peerConnection == null) return;
 
     if (WebRTC.platformIsMobile) {
+      final futures = <Future>[];
       if (WebRTC.platformIsIOS) {
-        await Helper.setAppleAudioIOMode(
-          AppleAudioIOMode.localAndRemote,
-          preferSpeakerOutput: true,
+        futures.add(
+          Helper.setAppleAudioIOMode(
+            AppleAudioIOMode.localAndRemote,
+            preferSpeakerOutput: true,
+          ),
         );
       }
-      await toggleSpeakerOutput(forceValue: true);
+      futures.add(toggleSpeakerOutput(forceValue: true));
+      await Future.wait(futures);
     }
 
     _currentRoomId = roomId;
     _currentParticipantId = participantId.toString();
 
-    await _establishBroadcastConnection();
+    await _establishPublisher();
 
     _nativeService.startCallKit(roomId);
   }
@@ -103,13 +113,13 @@ class WebRTCManagerIpml extends WebRTCManager {
 
     _mParticipant = _mParticipant?.copyWith(peerConnection: peerConnection);
 
-    await _establishBroadcastConnection();
+    await _establishPublisher();
   }
 
   @override
-  Future<void> subscribeToParticipants(List<String> targetIds) async {
+  void subscribeToParticipants(List<String> targetIds) {
     for (final targetId in targetIds) {
-      _establishSubscriberConnection(targetId);
+      scheduleMicrotask(() => _establishSubscriber(targetId));
     }
   }
 
@@ -122,33 +132,38 @@ class WebRTCManagerIpml extends WebRTCManager {
         _wsEmitter.leaveRoom(_currentRoomId!);
       }
 
-      _currentRoomId = null;
-      _currentParticipantId = null;
-      _iceCandidateQueueForPublisher.clear();
-      _remoteIceCandidatesForPublisher.clear();
-      _iceCandidateQueueForSubscribers.clear();
-      _canPublisherAddIceCandidate = false;
-      _nativeService.endCallKit();
-      _videoStats.dispose();
-      _audioStats.dispose();
+      _resetRoomState();
+
+      final disposeOperations = <Future>[];
 
       for (final subscriber in _remoteSubscribers.values) {
-        await subscriber.dispose();
+        disposeOperations.add(subscriber.dispose());
       }
+
+      if (_localCameraStream != null) {
+        final tracks = _localCameraStream!.getTracks();
+        for (final track in tracks) {
+          track.stop();
+        }
+        disposeOperations.add(_localCameraStream!.dispose());
+      }
+
+      if (_mParticipant != null) {
+        disposeOperations.add(_mParticipant!.dispose());
+      }
+
+      disposeOperations.addAll([
+        stopScreenShare(stayInRoom: false),
+      ]);
+
+      await Future.wait(disposeOperations);
+
+      // Clear collections efficiently
       _remoteSubscribers.clear();
-
-      await stopScreenShare(stayInRoom: false);
-
-      final tracks = _localCameraStream?.getTracks() ?? [];
-
-      for (final track in tracks) {
-        track.stop();
-      }
-
-      await _localCameraStream?.dispose();
-      await _mParticipant?.dispose();
       _mParticipant = null;
       _localCameraStream = null;
+      _videoStats.dispose();
+      _audioStats.dispose();
       _e2eeManager.dispose();
 
       _notify(CallbackEvents.roomEnded);
@@ -172,24 +187,38 @@ class WebRTCManagerIpml extends WebRTCManager {
 
     await _mParticipant?.setRemoteDescription(description);
 
+    _canPublisherAddIceCandidate = true;
+
+    final candidateOperations = <Future>[];
+
     for (final candidate in _iceCandidateQueueForPublisher) {
-      _wsEmitter.sendPublisherIceCandidate(candidate);
+      _wsEmitter.sendPublisherIceCandidate(
+        candidate: candidate,
+        connectionType: _connectionType,
+        roomId: _currentRoomId!,
+      );
     }
 
     for (final candidate in _remoteIceCandidatesForPublisher) {
-      await _mParticipant?.addCandidate(candidate);
+      candidateOperations.add(_mParticipant!.addCandidate(candidate));
+    }
+
+    if (candidateOperations.isNotEmpty) {
+      await Future.wait(candidateOperations);
     }
 
     _iceCandidateQueueForPublisher.clear();
     _remoteIceCandidatesForPublisher.clear();
-    _canPublisherAddIceCandidate = true;
   }
 
   @override
   Future<void> setRemoteSdpAsSubscriber(
     SubscribeResponsePayload payload,
   ) async {
-    if (_remoteSubscribers[payload.targetId] != null) return;
+    final subscriber = _remoteSubscribers[payload.targetId];
+    if (subscriber != null && subscriber.connectionType == ConnectionType.sfu) {
+      return;
+    }
 
     final RTCSessionDescription description = RTCSessionDescription(
       payload.sdp,
@@ -204,9 +233,23 @@ class WebRTCManagerIpml extends WebRTCManager {
     required String targetId,
     required String sdp,
   }) async {
-    if (_remoteSubscribers[targetId]?.peerConnection == null) return;
+    if (targetId.isEmpty && _remoteSubscribers.length != 1) {
+      return;
+    }
 
-    final RTCPeerConnection pc = _remoteSubscribers[targetId]!.peerConnection;
+    late String participantId;
+
+    if (targetId.isEmpty) {
+      participantId = _remoteSubscribers.keys.first;
+      await Future.delayed(1.seconds);
+    } else {
+      participantId = targetId;
+    }
+
+    if (_remoteSubscribers[participantId]?.peerConnection == null) return;
+
+    final RTCPeerConnection pc =
+        _remoteSubscribers[participantId]!.peerConnection;
 
     final RTCSessionDescription remoteDescription = RTCSessionDescription(
       sdp,
@@ -216,14 +259,19 @@ class WebRTCManagerIpml extends WebRTCManager {
     await pc.setRemoteDescription(remoteDescription);
 
     try {
-      final String ansSdp = await _createAnswerSdp(pc);
+      final String sdpAnswer = await _createAnswerSdp(pc);
       final RTCSessionDescription localDescription = RTCSessionDescription(
-        ansSdp,
+        sdpAnswer,
         DescriptionType.answer.type,
       );
       await pc.setLocalDescription(localDescription);
 
-      _wsEmitter.answerSubscription(targetId: targetId, sdp: ansSdp);
+      _wsEmitter.answerSubscription(
+        roomId: _currentRoomId!,
+        targetId: targetId,
+        sdp: sdpAnswer,
+        connectionType: _connectionType,
+      );
     } catch (_) {}
   }
 
@@ -241,38 +289,62 @@ class WebRTCManagerIpml extends WebRTCManager {
     String targetId,
     RTCIceCandidate candidate,
   ) async {
-    if (_remoteSubscribers[targetId] != null) {
-      await _remoteSubscribers[targetId]?.addCandidate(candidate);
+    if (targetId.isEmpty && _remoteSubscribers.length != 1) {
+      return;
+    }
+
+    late String participantId;
+
+    if (targetId.isEmpty) {
+      participantId = _remoteSubscribers.keys.first;
     } else {
-      final List<RTCIceCandidate> candidates =
-          _iceCandidateQueueForSubscribers[targetId] ?? [];
+      participantId = targetId;
+    }
 
-      candidates.add(candidate);
-
-      _iceCandidateQueueForSubscribers[targetId] = candidates;
+    if (_remoteSubscribers[participantId] != null &&
+        _remoteSubscribers[participantId]!.connectionType == _connectionType) {
+      await _remoteSubscribers[participantId]?.addCandidate(candidate);
+    } else {
+      _iceCandidateQueueForSubscribers
+          .putIfAbsent(participantId, () => [])
+          .add(candidate);
     }
   }
 
   // ====== Participant Handling ======
   @override
-  Future<void> handleParticipantJoined(Participant participant) async {
-    await _establishSubscriberConnection(participant.id.toString());
+  Future<void> handleParticipantJoined({
+    required Participant participant,
+    required bool isMigrate,
+  }) async {
+    final participantId = participant.id.toString();
+    final isExists = _remoteSubscribers.containsKey(participantId);
+
+    if (_remoteSubscribers.length == 1 && !isExists) {
+      _setConnectionType(ConnectionType.sfu, needMigrate: true);
+    }
+
+    scheduleMicrotask(() => _establishSubscriber(participantId));
 
     _notify(CallbackEvents.newParticipant, participant: participant);
   }
 
   @override
   Future<void> handleParticipantLeft(String targetId) async {
-    _notify(
-      CallbackEvents.participantHasLeft,
-      participantId: targetId,
-    );
+    _notify(CallbackEvents.participantHasLeft, participantId: targetId);
 
-    await _remoteSubscribers[targetId]?.dispose();
-    _remoteSubscribers.remove(targetId);
+    final subscriber = _remoteSubscribers.remove(targetId);
+    if (subscriber != null) {
+      await subscriber.dispose();
+    }
+
     _iceCandidateQueueForSubscribers.remove(targetId);
     _audioStats.removeReceiver(targetId);
     _videoStats.removeReceivers(targetId);
+
+    if (_remoteSubscribers.isEmpty) {
+      _setConnectionType(ConnectionType.p2p, needMigrate: true);
+    }
   }
 
   // ====== Media & Device Control ======
@@ -290,6 +362,7 @@ class WebRTCManagerIpml extends WebRTCManager {
       onFirstFrameRendered: () => _notify(CallbackEvents.shouldBeUpdateState),
       videoCodec: _currentCallSetting.videoConfig.preferedCodec,
       isE2eeEnabled: _currentCallSetting.e2eeEnabled,
+      connectionType: _connectionType,
     );
 
     _localCameraStream = await _getUserMedia();
@@ -333,27 +406,17 @@ class WebRTCManagerIpml extends WebRTCManager {
     if (_mParticipant == null) return;
 
     final tracks = _localCameraStream?.getAudioTracks() ?? [];
+    final newValue = forceValue ?? !_mParticipant!.isAudioEnabled;
 
-    if (_mParticipant!.isAudioEnabled) {
-      for (final track in tracks) {
-        track.enabled = forceValue ?? false;
-      }
-    } else {
-      for (final track in tracks) {
-        track.enabled = forceValue ?? true;
-      }
+    for (final track in tracks) {
+      track.enabled = newValue;
     }
 
-    _mParticipant = _mParticipant?.copyWith(
-      isAudioEnabled: forceValue ?? !_mParticipant!.isAudioEnabled,
-    );
-
+    _mParticipant = _mParticipant?.copyWith(isAudioEnabled: newValue);
     _notify(CallbackEvents.shouldBeUpdateState);
 
     if (_currentRoomId != null) {
-      _wsEmitter.toggleAudio(
-        forceValue ?? _mParticipant!.isAudioEnabled,
-      );
+      _wsEmitter.toggleAudio(newValue);
     }
   }
 
@@ -368,42 +431,49 @@ class WebRTCManagerIpml extends WebRTCManager {
     }
 
     final tracks = _localCameraStream?.getVideoTracks() ?? [];
+    final newValue = forceValue ?? !_mParticipant!.isVideoEnabled;
 
-    for (final track in tracks) {
-      track.enabled = forceValue ?? !_mParticipant!.isVideoEnabled;
-
-      if (kIsWeb) {
-        if (!track.enabled) {
-          await track.stop();
-        } else {
-          await _localCameraStream?.removeTrack(track);
-        }
-      }
-    }
-
-    if (kIsWeb && (forceValue ?? !_mParticipant!.isVideoEnabled)) {
-      final MediaStream? localStream = await _getUserMedia(onlyStream: true);
-
-      if (localStream != null) {
-        await _localCameraStream!.addTrack(localStream.getVideoTracks().first);
-        await _replaceVideoTrack(localStream.getVideoTracks().first);
-
-        _mParticipant?.setSrcObject(localStream);
+    if (kIsWeb) {
+      await _handleWebVideoToggle(tracks, newValue);
+    } else {
+      for (final track in tracks) {
+        track.enabled = newValue;
       }
     }
 
     if (ignoreUpdateValue) return;
 
-    _mParticipant = _mParticipant?.copyWith(
-      isVideoEnabled: forceValue ?? !_mParticipant!.isVideoEnabled,
-    );
-
+    _mParticipant = _mParticipant?.copyWith(isVideoEnabled: newValue);
     _notify(CallbackEvents.shouldBeUpdateState);
 
     if (_currentRoomId != null) {
-      _wsEmitter.toggleVideo(
-        forceValue ?? _mParticipant!.isVideoEnabled,
-      );
+      _wsEmitter.toggleVideo(newValue);
+    }
+  }
+
+  Future<void> _handleWebVideoToggle(
+    List<MediaStreamTrack> tracks,
+    bool enable,
+  ) async {
+    for (final track in tracks) {
+      track.enabled = enable;
+      if (!enable) {
+        await track.stop();
+      } else {
+        await _localCameraStream?.removeTrack(track);
+      }
+    }
+
+    if (enable && _localCameraStream != null) {
+      final localStream = await _getUserMedia(onlyStream: true);
+      if (localStream != null) {
+        final videoTrack = localStream.getVideoTracks().firstOrNull;
+        if (videoTrack != null) {
+          await _localCameraStream!.addTrack(videoTrack);
+          await _replaceVideoTrack(videoTrack);
+          _mParticipant?.setSrcObject(localStream);
+        }
+      }
     }
   }
 
@@ -411,15 +481,12 @@ class WebRTCManagerIpml extends WebRTCManager {
   Future<void> toggleSpeakerOutput({bool? forceValue}) async {
     if (_mParticipant == null) return;
 
-    _mParticipant = _mParticipant?.copyWith(
-      isSpeakerPhoneEnabled:
-          forceValue ?? !_mParticipant!.isSpeakerPhoneEnabled,
-    );
+    final newValue = forceValue ?? !_mParticipant!.isSpeakerPhoneEnabled;
+    _mParticipant = _mParticipant?.copyWith(isSpeakerPhoneEnabled: newValue);
 
     if (WebRTC.platformIsMobile) {
-      await Helper.setSpeakerphoneOn(_mParticipant!.isSpeakerPhoneEnabled);
-
-      if (_mParticipant?.isSpeakerPhoneEnabled ?? false) {
+      await Helper.setSpeakerphoneOn(newValue);
+      if (newValue) {
         await Helper.setSpeakerphoneOnButPreferBluetooth();
       }
     }
@@ -433,17 +500,12 @@ class WebRTCManagerIpml extends WebRTCManager {
       throw Exception('Stream is not initialized');
     }
 
-    final List<MediaStreamTrack> videoTracks =
-        _localCameraStream!.getVideoTracks();
-
+    final videoTracks = _localCameraStream!.getVideoTracks();
     if (videoTracks.isEmpty) return;
 
     await Helper.switchCamera(videoTracks.first);
-
     _mParticipant = _mParticipant?.switchCamera;
-
     _wsEmitter.switchCamera(_mParticipant?.cameraType ?? CameraType.front);
-
     _notify(CallbackEvents.shouldBeUpdateState);
   }
 
@@ -471,33 +533,25 @@ class WebRTCManagerIpml extends WebRTCManager {
         screenTrack,
         vCodec: _currentCallSetting.videoConfig.preferedCodec,
         stream: _screenSharingStream!,
+        isSingleTrack: _connectionType == ConnectionType.p2p,
       );
 
-      await _e2eeManager.addRtpSender(sender: sender);
+      await Future.wait([
+        _e2eeManager.addRtpSender(sender: sender),
+        _performRenegotiation(),
+      ]);
 
       _videoStats.addSenders(
         ownerId: '$kIsMine-${TrackType.screen.toString()}',
         senders: [sender],
-        callback: (stats) {
-          _mParticipant?.sinkScreenStats(stats);
-        },
+        callback: (stats) => _mParticipant?.sinkScreenStats(stats),
       );
 
-      await _mParticipant?.setSrcObject(
-        _screenSharingStream!,
-        isDisplayStream: true,
-      );
-
+      _mParticipant?.setSrcObject(_screenSharingStream!, isDisplayStream: true);
       _wsEmitter.toggleScreenSharing(true, screenTrackId: screenTrack.id);
 
-      await _performRenegotiation();
-
-      _screenSharingStream?.getVideoTracks().first.onEnded = () {
-        stopScreenShare();
-      };
-
+      screenTrack.onEnded = () => scheduleMicrotask(stopScreenShare);
       _mParticipant = await _mParticipant?.setScreenSharing(true);
-
       _notify(CallbackEvents.shouldBeUpdateState);
     } catch (e) {
       stopScreenShare();
@@ -507,40 +561,41 @@ class WebRTCManagerIpml extends WebRTCManager {
   @override
   Future<void> stopScreenShare({bool stayInRoom = true}) async {
     if (!(_mParticipant?.isSharingScreen ?? true)) return;
-
     if (_mParticipant == null) return;
 
     _videoStats.removeSenders('$kIsMine-${TrackType.screen.toString()}');
 
     if (stayInRoom) {
       if (WebRTC.platformIsMobile &&
-          (_localCameraStream?.getVideoTracks().isNotEmpty ?? false)) {
-        if (_mParticipant!.isVideoEnabled) {
-          await toggleVideoInput(forceValue: true);
-        }
+          (_localCameraStream?.getVideoTracks().isNotEmpty ?? false) &&
+          _mParticipant!.isVideoEnabled) {
+        await toggleVideoInput(forceValue: true);
       }
 
-      final List<RTCRtpSender> senders =
-          await _mParticipant!.peerConnection.getSenders();
-
-      final RTCRtpSender? sendersVideo = senders
-          .where((sender) => sender.track?.kind == RtcTrackKind.video.kind)
-          .toList()
+      final senders = await _mParticipant!.peerConnection.getSenders();
+      final videoSender = senders
+          .where((s) => s.track?.kind == RtcTrackKind.video.kind)
           .lastOrNull;
 
-      if (sendersVideo != null) {
-        await _mParticipant!.peerConnection.removeTrack(sendersVideo);
+      if (videoSender != null) {
+        await _mParticipant!.peerConnection.removeTrack(videoSender);
       }
     }
 
+    final operations = <Future>[];
+
     if (WebRTC.platformIsAndroid) {
-      await _nativeService.stopForegroundService();
+      operations.add(_nativeService.stopForegroundService());
     }
 
     final tracks = _screenSharingStream?.getTracks() ?? [];
 
     for (final track in tracks) {
-      await track.stop();
+      operations.add(track.stop());
+    }
+
+    if (operations.isNotEmpty) {
+      await Future.wait(operations);
     }
 
     _mParticipant = await _mParticipant?.setScreenSharing(false);
@@ -786,17 +841,19 @@ class WebRTCManagerIpml extends WebRTCManager {
       constraints,
     );
 
-    pc.createDataChannel('waterbus', RTCDataChannelInit());
-
     return pc;
   }
 
-  Future<void> _establishBroadcastConnection() async {
+  Future<void> _establishPublisher() async {
     final RTCPeerConnection peerConnection = _mParticipant!.peerConnection;
 
     peerConnection.onIceCandidate = (candidate) {
       if (_canPublisherAddIceCandidate) {
-        _wsEmitter.sendPublisherIceCandidate(candidate);
+        _wsEmitter.sendPublisherIceCandidate(
+          candidate: candidate,
+          connectionType: _connectionType,
+          roomId: _currentRoomId!,
+        );
       } else {
         _iceCandidateQueueForPublisher.add(candidate);
       }
@@ -813,6 +870,7 @@ class WebRTCManagerIpml extends WebRTCManager {
         kind: track.kind == RtcTrackKind.video.kind
             ? RtcTrackKind.video
             : RtcTrackKind.audio,
+        isSingleTrack: _connectionType == ConnectionType.p2p,
       );
 
       senders.add(sender);
@@ -844,6 +902,7 @@ class WebRTCManagerIpml extends WebRTCManager {
     if (_localCameraStream?.getVideoTracks().isNotEmpty ?? false) {
       sdp = sdp.optimizeSdp(
         codec: _currentCallSetting.videoConfig.preferedCodec,
+        isP2P: _connectionType == ConnectionType.p2p,
       );
     }
 
@@ -862,6 +921,7 @@ class WebRTCManagerIpml extends WebRTCManager {
       isVideoEnabled: _mParticipant?.isVideoEnabled ?? false,
       isAudioEnabled: _mParticipant?.isAudioEnabled ?? false,
       isE2eeEnabled: _mParticipant?.isE2eeEnabled ?? false,
+      connectionType: _connectionType,
     );
 
     _wsEmitter.publishRoom(payload: payload);
@@ -872,7 +932,7 @@ class WebRTCManagerIpml extends WebRTCManager {
     _audioStats.initialize();
   }
 
-  Future<void> _establishSubscriberConnection(String targetId) async {
+  void _establishSubscriber(String targetId) {
     if (_currentRoomId == null || _currentParticipantId == null) return;
 
     final SubscribePayload payload = SubscribePayload(
@@ -882,6 +942,138 @@ class WebRTCManagerIpml extends WebRTCManager {
     );
 
     _wsEmitter.subscribeRoom(payload: payload);
+  }
+
+  // ======== Migrate connection between P2P and SFU ========
+  Future<void> _migrateConnection() async {
+    _iceCandidateQueueForPublisher.clear();
+    _remoteIceCandidatesForPublisher.clear();
+    _canPublisherAddIceCandidate = false;
+    final pc = await _createPeerConnection(
+      constraints: RTCConfigurations.offerPublisherSdpConstraints,
+    );
+
+    _mParticipant = _mParticipant?.copyWith(backupPc: pc);
+
+    pc.onIceCandidate = (candidate) {
+      if (_canPublisherAddIceCandidate) {
+        _wsEmitter.sendPublisherIceCandidate(
+          candidate: candidate,
+          connectionType: _connectionType,
+          roomId: _currentRoomId!,
+        );
+      } else {
+        _iceCandidateQueueForPublisher.add(candidate);
+      }
+    };
+
+    pc.onConnectionState = (state) {
+      if (state == RTCPeerConnectionState.RTCPeerConnectionStateConnected) {
+        // Stop p2p connection after 10s since sfu connected
+        // to ensure other participants migrate silently
+        Future.delayed(10.seconds, () async {
+          final p2pPeerConnection = _mParticipant?.peerConnection;
+
+          _mParticipant = _mParticipant?.copyWith(
+            peerConnection: pc,
+            backupPc: null,
+          );
+
+          await p2pPeerConnection?.close();
+        });
+      }
+    };
+
+    final List<MediaStreamTrack> streamTracks =
+        _screenSharingStream?.getTracks() ?? [];
+    final List<MediaStreamTrack> tracks = _localCameraStream?.getTracks() ?? [];
+    final List<RTCRtpSender> senders = [];
+
+    tracks.addAll(streamTracks);
+
+    for (final track in tracks) {
+      final sender = await pc.addSimulcastTrack(
+        track,
+        vCodec: _currentCallSetting.videoConfig.preferedCodec,
+        stream: _localCameraStream!,
+        kind: track.kind == RtcTrackKind.video.kind
+            ? RtcTrackKind.video
+            : RtcTrackKind.audio,
+        isSingleTrack: _connectionType == ConnectionType.p2p,
+      );
+
+      senders.add(sender);
+
+      if (track.kind == RtcTrackKind.audio.kind) {
+        _audioStats.setSender = AudioStatsParams(
+          receivers: [],
+          ownerId: kIsMine,
+          pc: pc,
+          callBack: (audioLevel) {
+            _mParticipant = _mParticipant?.sinkAudioLevel(audioLevel);
+          },
+        );
+      } else {
+        _videoStats.addSenders(
+          ownerId: '$kIsMine-${TrackType.webcam.toString()}',
+          senders: [sender],
+          callback: (stats) {
+            _mParticipant?.sinkWebcamStats(stats);
+          },
+        );
+      }
+    }
+
+    await _applyEncryption(_currentCallSetting.e2eeEnabled, senders: senders);
+
+    String sdp = await _createOfferSdp(pc);
+
+    if (_localCameraStream?.getVideoTracks().isNotEmpty ?? false) {
+      sdp = sdp.optimizeSdp(
+        codec: _currentCallSetting.videoConfig.preferedCodec,
+        isP2P: _connectionType == ConnectionType.p2p,
+      );
+    }
+
+    final RTCSessionDescription description = RTCSessionDescription(
+      sdp,
+      DescriptionType.offer.type,
+    );
+
+    await pc.setLocalDescription(description);
+
+    _wsEmitter.migrateConnection(
+      roomId: _currentRoomId!,
+      participantId: _currentParticipantId!,
+      sdp: sdp,
+      connectionType: _connectionType,
+    );
+  }
+
+  void _setConnectionType(
+    ConnectionType connectionType, {
+    bool needMigrate = false,
+  }) {
+    if (_connectionType == connectionType) return;
+
+    _connectionType = connectionType;
+
+    if (needMigrate) {
+      scheduleMicrotask(() async {
+        await _migrateConnection();
+      });
+    }
+  }
+
+  void _resetRoomState() {
+    _currentRoomId = null;
+    _currentParticipantId = null;
+    _iceCandidateQueueForPublisher.clear();
+    _remoteIceCandidatesForPublisher.clear();
+    _iceCandidateQueueForSubscribers.clear();
+    _canPublisherAddIceCandidate = false;
+    _nativeService.endCallKit();
+    _connectionType = ConnectionType.p2p;
   }
 
   // ======== SDP Offer/Answer ========
@@ -903,7 +1095,7 @@ class WebRTCManagerIpml extends WebRTCManager {
     return sdp;
   }
 
-// ======== ICE Handling ========
+  // ======== ICE Handling ========
   Future<void> _answerSubscriber({
     required RTCSessionDescription remoteDescription,
     required SubscribeResponsePayload payload,
@@ -928,7 +1120,9 @@ class WebRTCManagerIpml extends WebRTCManager {
 
     final targetId = payload.targetId;
 
-    _remoteSubscribers[targetId] = ParticipantMediaState.init(
+    final isMigrate = _remoteSubscribers.containsKey(targetId);
+
+    _remoteSubscribers[targetId] ??= ParticipantMediaState.init(
       ownerId: targetId,
       peerConnection: rtcPeerConnection,
       onFirstFrameRendered: () => _notify(CallbackEvents.shouldBeUpdateState),
@@ -940,10 +1134,28 @@ class WebRTCManagerIpml extends WebRTCManager {
       screenTrackId: payload.screenTrackId,
       cameraType: payload.type,
       videoCodec: payload.codec,
+      connectionType: _connectionType,
     );
 
+    if (isMigrate) {
+      _remoteSubscribers[targetId] = _remoteSubscribers[targetId]!.copyWith(
+        backupPc: rtcPeerConnection,
+        connectionType: _connectionType,
+      );
+
+      rtcPeerConnection.onConnectionState = (state) async {
+        if (state == RTCPeerConnectionState.RTCPeerConnectionStateConnected ||
+            _remoteSubscribers[targetId]?.backupPc != null) {
+          _remoteSubscribers[targetId] = _remoteSubscribers[targetId]!.copyWith(
+            peerConnection: rtcPeerConnection,
+            backupPc: null,
+          );
+        }
+      };
+    }
+
     rtcPeerConnection.onTrack = (track) {
-      if (_remoteSubscribers[targetId] == null) return;
+      if (!_remoteSubscribers.containsKey(targetId)) return;
 
       if (track.streams.isEmpty) return;
 
@@ -957,8 +1169,7 @@ class WebRTCManagerIpml extends WebRTCManager {
 
         await setParticipantE2ee(config: config);
 
-        final TrackType? type =
-            await _remoteSubscribers[targetId]?.setSrcObject(
+        final TrackType? type = _remoteSubscribers[targetId]?.setSrcObject(
           track.streams.first,
           trackId: track.track.id,
         );
@@ -996,6 +1207,8 @@ class WebRTCManagerIpml extends WebRTCManager {
       _wsEmitter.sendSubscriberIceCandidate(
         candidate: candidate,
         targetId: targetId,
+        connectionType: _connectionType,
+        roomId: _currentRoomId!,
       );
     };
 
@@ -1008,7 +1221,12 @@ class WebRTCManagerIpml extends WebRTCManager {
     );
     await rtcPeerConnection.setLocalDescription(description);
 
-    _wsEmitter.answerSubscription(targetId: targetId, sdp: sdp);
+    _wsEmitter.answerSubscription(
+      roomId: _currentRoomId!,
+      targetId: targetId,
+      sdp: sdp,
+      connectionType: _connectionType,
+    );
 
     // Process queue candidates from server
     final List<RTCIceCandidate> candidates =
@@ -1102,6 +1320,7 @@ class WebRTCManagerIpml extends WebRTCManager {
     if (_localCameraStream?.getVideoTracks().isNotEmpty ?? false) {
       sdp = sdp.optimizeSdp(
         codec: _currentCallSetting.videoConfig.preferedCodec,
+        isP2P: _connectionType == ConnectionType.p2p,
       );
     }
 
@@ -1112,7 +1331,11 @@ class WebRTCManagerIpml extends WebRTCManager {
 
     await pc.setLocalDescription(description);
 
-    _wsEmitter.renegotiateSdp(sdp);
+    _wsEmitter.renegotiateSdp(
+      sdp: sdp,
+      roomId: _currentRoomId!,
+      connectionType: _connectionType,
+    );
   }
 
   // ======== Room / Signaling Helper Methods ========

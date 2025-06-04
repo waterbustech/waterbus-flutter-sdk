@@ -16,6 +16,8 @@ _PublishWsEmitterPayLoad _$PublishWsEmitterPayLoadFromJson(
       isAudioEnabled: json['isAudioEnabled'] as bool,
       isE2eeEnabled: json['isE2eeEnabled'] as bool,
       totalTracks: (json['totalTracks'] as num).toInt(),
+      connectionType:
+          $enumDecode(_$ConnectionTypeEnumMap, json['connectionType']),
     );
 
 Map<String, dynamic> _$PublishWsEmitterPayLoadToJson(
@@ -28,4 +30,10 @@ Map<String, dynamic> _$PublishWsEmitterPayLoadToJson(
       'isAudioEnabled': instance.isAudioEnabled,
       'isE2eeEnabled': instance.isE2eeEnabled,
       'totalTracks': instance.totalTracks,
+      'connectionType': _$ConnectionTypeEnumMap[instance.connectionType]!,
     };
+
+const _$ConnectionTypeEnumMap = {
+  ConnectionType.p2p: 0,
+  ConnectionType.sfu: 1,
+};

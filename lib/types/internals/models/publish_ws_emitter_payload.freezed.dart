@@ -22,6 +22,7 @@ mixin _$PublishWsEmitterPayLoad {
   bool get isAudioEnabled;
   bool get isE2eeEnabled;
   int get totalTracks;
+  ConnectionType get connectionType;
 
   /// Create a copy of PublishWsEmitterPayLoad
   /// with the given fields replaced by the non-null parameter values.
@@ -50,17 +51,27 @@ mixin _$PublishWsEmitterPayLoad {
             (identical(other.isE2eeEnabled, isE2eeEnabled) ||
                 other.isE2eeEnabled == isE2eeEnabled) &&
             (identical(other.totalTracks, totalTracks) ||
-                other.totalTracks == totalTracks));
+                other.totalTracks == totalTracks) &&
+            (identical(other.connectionType, connectionType) ||
+                other.connectionType == connectionType));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, sdp, roomId, participantId,
-      isVideoEnabled, isAudioEnabled, isE2eeEnabled, totalTracks);
+  int get hashCode => Object.hash(
+      runtimeType,
+      sdp,
+      roomId,
+      participantId,
+      isVideoEnabled,
+      isAudioEnabled,
+      isE2eeEnabled,
+      totalTracks,
+      connectionType);
 
   @override
   String toString() {
-    return 'PublishWsEmitterPayLoad(sdp: $sdp, roomId: $roomId, participantId: $participantId, isVideoEnabled: $isVideoEnabled, isAudioEnabled: $isAudioEnabled, isE2eeEnabled: $isE2eeEnabled, totalTracks: $totalTracks)';
+    return 'PublishWsEmitterPayLoad(sdp: $sdp, roomId: $roomId, participantId: $participantId, isVideoEnabled: $isVideoEnabled, isAudioEnabled: $isAudioEnabled, isE2eeEnabled: $isE2eeEnabled, totalTracks: $totalTracks, connectionType: $connectionType)';
   }
 }
 
@@ -77,7 +88,8 @@ abstract mixin class $PublishWsEmitterPayLoadCopyWith<$Res> {
       bool isVideoEnabled,
       bool isAudioEnabled,
       bool isE2eeEnabled,
-      int totalTracks});
+      int totalTracks,
+      ConnectionType connectionType});
 }
 
 /// @nodoc
@@ -100,6 +112,7 @@ class _$PublishWsEmitterPayLoadCopyWithImpl<$Res>
     Object? isAudioEnabled = null,
     Object? isE2eeEnabled = null,
     Object? totalTracks = null,
+    Object? connectionType = null,
   }) {
     return _then(_self.copyWith(
       sdp: null == sdp
@@ -130,6 +143,10 @@ class _$PublishWsEmitterPayLoadCopyWithImpl<$Res>
           ? _self.totalTracks
           : totalTracks // ignore: cast_nullable_to_non_nullable
               as int,
+      connectionType: null == connectionType
+          ? _self.connectionType
+          : connectionType // ignore: cast_nullable_to_non_nullable
+              as ConnectionType,
     ));
   }
 }
@@ -144,7 +161,8 @@ class _PublishWsEmitterPayLoad implements PublishWsEmitterPayLoad {
       required this.isVideoEnabled,
       required this.isAudioEnabled,
       required this.isE2eeEnabled,
-      required this.totalTracks});
+      required this.totalTracks,
+      required this.connectionType});
   factory _PublishWsEmitterPayLoad.fromJson(Map<String, dynamic> json) =>
       _$PublishWsEmitterPayLoadFromJson(json);
 
@@ -162,6 +180,8 @@ class _PublishWsEmitterPayLoad implements PublishWsEmitterPayLoad {
   final bool isE2eeEnabled;
   @override
   final int totalTracks;
+  @override
+  final ConnectionType connectionType;
 
   /// Create a copy of PublishWsEmitterPayLoad
   /// with the given fields replaced by the non-null parameter values.
@@ -195,17 +215,27 @@ class _PublishWsEmitterPayLoad implements PublishWsEmitterPayLoad {
             (identical(other.isE2eeEnabled, isE2eeEnabled) ||
                 other.isE2eeEnabled == isE2eeEnabled) &&
             (identical(other.totalTracks, totalTracks) ||
-                other.totalTracks == totalTracks));
+                other.totalTracks == totalTracks) &&
+            (identical(other.connectionType, connectionType) ||
+                other.connectionType == connectionType));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, sdp, roomId, participantId,
-      isVideoEnabled, isAudioEnabled, isE2eeEnabled, totalTracks);
+  int get hashCode => Object.hash(
+      runtimeType,
+      sdp,
+      roomId,
+      participantId,
+      isVideoEnabled,
+      isAudioEnabled,
+      isE2eeEnabled,
+      totalTracks,
+      connectionType);
 
   @override
   String toString() {
-    return 'PublishWsEmitterPayLoad(sdp: $sdp, roomId: $roomId, participantId: $participantId, isVideoEnabled: $isVideoEnabled, isAudioEnabled: $isAudioEnabled, isE2eeEnabled: $isE2eeEnabled, totalTracks: $totalTracks)';
+    return 'PublishWsEmitterPayLoad(sdp: $sdp, roomId: $roomId, participantId: $participantId, isVideoEnabled: $isVideoEnabled, isAudioEnabled: $isAudioEnabled, isE2eeEnabled: $isE2eeEnabled, totalTracks: $totalTracks, connectionType: $connectionType)';
   }
 }
 
@@ -224,7 +254,8 @@ abstract mixin class _$PublishWsEmitterPayLoadCopyWith<$Res>
       bool isVideoEnabled,
       bool isAudioEnabled,
       bool isE2eeEnabled,
-      int totalTracks});
+      int totalTracks,
+      ConnectionType connectionType});
 }
 
 /// @nodoc
@@ -247,6 +278,7 @@ class __$PublishWsEmitterPayLoadCopyWithImpl<$Res>
     Object? isAudioEnabled = null,
     Object? isE2eeEnabled = null,
     Object? totalTracks = null,
+    Object? connectionType = null,
   }) {
     return _then(_PublishWsEmitterPayLoad(
       sdp: null == sdp
@@ -277,6 +309,10 @@ class __$PublishWsEmitterPayLoadCopyWithImpl<$Res>
           ? _self.totalTracks
           : totalTracks // ignore: cast_nullable_to_non_nullable
               as int,
+      connectionType: null == connectionType
+          ? _self.connectionType
+          : connectionType // ignore: cast_nullable_to_non_nullable
+              as ConnectionType,
     ));
   }
 }

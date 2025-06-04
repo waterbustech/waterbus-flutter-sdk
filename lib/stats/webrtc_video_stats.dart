@@ -89,17 +89,17 @@ class WebRTCVideoStats {
           final List<VideoSenderStats> stats =
               await _getSenderStats(statsReport);
 
-          final Map<String, VideoSenderStats> statsMap = {};
+          // Check if stats is empty before proceeding
+          if (stats.isEmpty) continue;
 
+          final Map<String, VideoSenderStats> statsMap = {};
           for (final s in stats) {
             if (s.rid == null || s.bytesSent == 0) continue;
-
             statsMap[s.rid ?? 'f'] = s;
           }
 
-          if (_prevSenderStats.isNotEmpty) {
+          if (_prevSenderStats.isNotEmpty && statsMap.isNotEmpty) {
             num totalBitrate = 0;
-
             for (final stats in statsMap.entries) {
               final prev = _prevSenderStats[stats.key];
               final bitRateForlayer = computeBitrateForSenderStats(
@@ -109,7 +109,6 @@ class WebRTCVideoStats {
               _bitrateFoLayers[stats.key] = bitRateForlayer;
               totalBitrate += bitRateForlayer;
             }
-
             _currentSenderBitrate = totalBitrate;
 
             final RtcParticipantStats senderStats = RtcParticipantStats(
@@ -122,7 +121,6 @@ class WebRTCVideoStats {
               fps: stats.last.framesPerSecond,
               framesSent: stats.last.framesSent,
             );
-
             _senders[senders.key]?.callBack.call(senderStats);
           }
 
@@ -137,7 +135,13 @@ class WebRTCVideoStats {
   }
 
   Future<void> _monitorReceiverStats() async {
-    for (final receivers in _receivers.entries) {
+    // Create a copy of the entries to avoid concurrent modification
+    final receiversEntries = _receivers.entries.toList();
+
+    for (final receivers in receiversEntries) {
+      // Check if the receiver still exists in the map (in case it was removed)
+      if (!_receivers.containsKey(receivers.key)) continue;
+
       for (final receiver in receivers.value.receivers) {
         try {
           final List<StatsReport> statsReport = await receiver.getStats();
@@ -149,7 +153,6 @@ class WebRTCVideoStats {
                 stats,
                 _prevStats[receivers.key],
               );
-
               _currentReceiverBitrate[receivers.key] = currentBitrate;
 
               final RtcParticipantStats receiverStats = RtcParticipantStats(
@@ -162,9 +165,9 @@ class WebRTCVideoStats {
                 framesReceived: stats.framesReceived,
               );
 
+              // Check again if the receiver still exists before calling callback
               _receivers[receivers.key]?.callBack.call(receiverStats);
             }
-
             _prevStats[receivers.key] = stats;
           }
         } catch (error) {
