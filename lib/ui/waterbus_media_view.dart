@@ -16,12 +16,6 @@ class WaterbusMediaView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (mediaSource.renderer == null ||
-        (mediaSource.renderer is RTCVideoRenderer &&
-            mediaSource.renderer!.textureId == null)) {
-      return const SizedBox();
-    }
-
     if (WebRTC.platformIsIOS) {
       return RTCVideoPlatFormView(
         objectFit: objectFit,
@@ -31,6 +25,12 @@ class WaterbusMediaView extends StatelessWidget {
           mediaSource.renderer?.srcObject = mediaSource.stream;
         },
       );
+    }
+
+    if (mediaSource.renderer == null ||
+        (mediaSource.renderer is RTCVideoRenderer &&
+            mediaSource.renderer!.textureId == null)) {
+      return const SizedBox();
     }
 
     return RTCVideoView(
