@@ -121,6 +121,7 @@ class WebRTCVideoStats {
               fps: stats.last.framesPerSecond,
               framesSent: stats.last.framesSent,
             );
+
             _senders[senders.key]?.callBack.call(senderStats);
           }
 
@@ -214,7 +215,7 @@ class WebRTCVideoStats {
           vs.packetsLost = getNumValFromReport(r.values, 'packetsLost');
           vs.roundTripTime = getNumValFromReport(
             r.values,
-            'totalRoundTripTime',
+            'roundTripTime',
           );
         }
         final c = stats.firstWhereOrNull((element) => element.type == 'codec');

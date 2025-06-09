@@ -7,6 +7,7 @@ import 'package:waterbus_sdk/constants/ws_event.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_data_source.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_manager.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/ws_handler.dart';
+import 'package:waterbus_sdk/core/websocket/unload_handler/index.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/types/internals/enums/connection_type.dart';
 import 'package:waterbus_sdk/utils/dio/dio_configuration.dart';
@@ -37,6 +38,11 @@ class WsHandlerImpl extends WsHandler {
     String? forceAccessToken,
     Function? callbackConnected,
   }) {
+    unloadHandler(() {
+      _socket?.disconnect();
+      _socket = null;
+    });
+
     if (_authLocal.accessToken.isEmpty ||
         (_socket != null && !forceConnection)) {
       return;
