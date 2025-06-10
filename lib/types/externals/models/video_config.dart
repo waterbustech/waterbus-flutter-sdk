@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:waterbus_sdk/types/externals/enums/rtc_video_codec.dart';

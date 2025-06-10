@@ -519,7 +519,7 @@ class WebRTCManagerIpml extends WebRTCManager {
       await _localCameraStream!.addTrack(audioTrack);
       await _replaceAudioTrack(audioTrack);
 
-      await _mParticipant?.setSrcObject(_localCameraStream!);
+      _mParticipant?.setSrcObject(_localCameraStream!);
     }
 
     _notify(CallbackEvents.shouldBeUpdateState);
@@ -550,7 +550,7 @@ class WebRTCManagerIpml extends WebRTCManager {
       await _localCameraStream!.addTrack(videoTrack);
       await _replaceVideoTrack(videoTrack);
 
-      await _mParticipant?.setSrcObject(_localCameraStream!);
+      _mParticipant?.setSrcObject(_localCameraStream!);
     }
   }
 
