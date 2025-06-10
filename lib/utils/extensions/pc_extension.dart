@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
@@ -12,6 +10,7 @@ extension PeerX on RTCPeerConnection {
     required RTCVideoCodec vCodec,
     required MediaStream stream,
     RtcTrackKind kind = RtcTrackKind.video,
+    required bool isSingleTrack,
   }) async {
     final List<RTCRtpEncoding> encodings = [];
 
@@ -39,14 +38,11 @@ extension PeerX on RTCPeerConnection {
 
     if (kind != RtcTrackKind.video) return sender;
 
-    await Future.wait([
-      _setPreferredCodec(
-        transceiver: transceiver,
-        vCodec: vCodec.codec,
-        kind: kind,
-      ),
-      _updateParameters(sender: transceiver.sender),
-    ]);
+    await _setPreferredCodec(
+      transceiver: transceiver,
+      vCodec: vCodec.codec,
+      kind: kind,
+    );
 
     return sender;
   }
@@ -111,18 +107,5 @@ extension PeerX on RTCPeerConnection {
     } catch (e) {
       WaterbusLogger.instance.bug('setCodecPreferences failed: $e');
     }
-  }
-
-  Future<void> _updateParameters({
-    required RTCRtpSender sender,
-  }) async {
-    if (kIsWeb) return;
-
-    final parameters = sender.parameters;
-
-    parameters.degradationPreference =
-        RTCDegradationPreference.MAINTAIN_RESOLUTION;
-
-    await sender.setParameters(parameters);
   }
 }

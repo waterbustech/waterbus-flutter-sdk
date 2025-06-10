@@ -1,6 +1,6 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 
@@ -10,6 +10,7 @@ class MediaSource {
   RTCRtpSender? sender;
   bool hasFirstFrameRendered;
   final Function()? onFirstFrameRendered;
+
   MediaSource({
     this.stream,
     this.renderer,
@@ -19,42 +20,7 @@ class MediaSource {
     _initRendererIfNeeded();
   }
 
-  Widget mediaView({
-    RTCVideoViewObjectFit objectFit =
-        RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
-    bool mirror = false,
-  }) {
-    if (WebRTC.platformIsIOS) {
-      return LayoutBuilder(
-        builder: (context, constraints) {
-          return RTCVideoPlatFormView(
-            objectFit: objectFit,
-            mirror: mirror,
-            onViewReady: (controller) {
-              renderer = controller;
-              renderer?.srcObject = stream;
-            },
-          );
-        },
-      );
-    }
-
-    if (renderer == null) {
-      return const SizedBox();
-    }
-
-    return RTCVideoView(
-      renderer as RTCVideoRenderer,
-      key: textureId == null ? null : Key(textureId!.toString()),
-      objectFit: objectFit,
-      mirror: mirror,
-      // filterQuality: FilterQuality.none,
-    );
-  }
-
   Future<void> dispose() async {
-    renderer?.srcObject = null;
-    await renderer?.dispose();
     await stream?.dispose();
     renderer = null;
     stream = null;
@@ -82,11 +48,16 @@ class MediaSource {
     await sender?.setParameters(parameters);
   }
 
-  void setSrcObject(MediaStream? stream) {
-    if (stream == null) return;
-
+  void setSrcObject(MediaStream stream) {
     this.stream = stream;
 
+    renderer?.initialize().then((_) {
+      renderer?.srcObject = stream;
+    });
+  }
+
+  void setRenderer(RTCVideoPlatformViewController controller) {
+    renderer = controller;
     renderer?.srcObject = stream;
   }
 
@@ -98,7 +69,7 @@ class MediaSource {
     }
 
     renderer = RTCVideoRenderer();
-    await renderer?.initialize();
+    // await renderer?.initialize();
 
     if (kIsWeb) {
       hasFirstFrameRendered = true;

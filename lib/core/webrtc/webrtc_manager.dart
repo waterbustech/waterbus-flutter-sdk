@@ -1,12 +1,17 @@
 import 'dart:typed_data';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/types/internals/enums/connection_type.dart';
 
 abstract class WebRTCManager {
   // ====== Room Management ======
-  Future<void> joinRoom({required String roomId, required int participantId});
+  Future<void> joinRoom({
+    required String roomId,
+    required int participantId,
+    required ConnectionType connectionType,
+  });
   Future<void> reconnectRoom();
-  Future<void> subscribeToParticipants(List<String> targetIds);
+  void subscribeToParticipants(List<String> targetIds);
   Future<void> leaveRoom();
 
   // ====== Signaling / SDP / ICE ======
@@ -23,7 +28,10 @@ abstract class WebRTCManager {
   );
 
   // ====== Participant Handling ======
-  Future<void> handleParticipantJoined(Participant participant);
+  Future<void> handleParticipantJoined({
+    required Participant participant,
+    required bool isMigrate,
+  });
   Future<void> handleParticipantLeft(String targetId);
 
   // ====== Media & Device Control ======

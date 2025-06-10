@@ -15,6 +15,7 @@ export 'types/index.dart';
 export 'package:waterbus_sdk/constants/constants.dart';
 export 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 export 'package:rhttp/rhttp.dart';
+export 'ui/waterbus_media_view.dart';
 
 class WaterbusSdk {
   static BaseUrl baseUrl = BaseUrl(url: "", suffixUrl: "");

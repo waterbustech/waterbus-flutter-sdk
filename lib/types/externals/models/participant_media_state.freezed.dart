@@ -33,6 +33,9 @@ mixin _$ParticipantMediaState {
   StreamController<RtcParticipantStats>? get webcamStatsController;
   StreamController<RtcParticipantStats>? get screenStatsController;
   String? get screenTrackId;
+  ConnectionType
+      get connectionType; // ==== Backup variables for migrate case ====
+  RTCPeerConnection? get backupPc;
 
   /// Create a copy of ParticipantMediaState
   /// with the given fields replaced by the non-null parameter values.
@@ -81,34 +84,41 @@ mixin _$ParticipantMediaState {
             (identical(other.screenStatsController, screenStatsController) ||
                 other.screenStatsController == screenStatsController) &&
             (identical(other.screenTrackId, screenTrackId) ||
-                other.screenTrackId == screenTrackId));
+                other.screenTrackId == screenTrackId) &&
+            (identical(other.connectionType, connectionType) ||
+                other.connectionType == connectionType) &&
+            (identical(other.backupPc, backupPc) ||
+                other.backupPc == backupPc));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      ownerId,
-      isVideoEnabled,
-      isAudioEnabled,
-      isSharingScreen,
-      isE2eeEnabled,
-      isSpeakerPhoneEnabled,
-      isHandRaising,
-      cameraType,
-      peerConnection,
-      onFirstFrameRendered,
-      videoCodec,
-      audioLevel,
-      cameraSource,
-      screenSource,
-      audioLevelController,
-      webcamStatsController,
-      screenStatsController,
-      screenTrackId);
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        ownerId,
+        isVideoEnabled,
+        isAudioEnabled,
+        isSharingScreen,
+        isE2eeEnabled,
+        isSpeakerPhoneEnabled,
+        isHandRaising,
+        cameraType,
+        peerConnection,
+        onFirstFrameRendered,
+        videoCodec,
+        audioLevel,
+        cameraSource,
+        screenSource,
+        audioLevelController,
+        webcamStatsController,
+        screenStatsController,
+        screenTrackId,
+        connectionType,
+        backupPc
+      ]);
 
   @override
   String toString() {
-    return 'ParticipantMediaState(ownerId: $ownerId, isVideoEnabled: $isVideoEnabled, isAudioEnabled: $isAudioEnabled, isSharingScreen: $isSharingScreen, isE2eeEnabled: $isE2eeEnabled, isSpeakerPhoneEnabled: $isSpeakerPhoneEnabled, isHandRaising: $isHandRaising, cameraType: $cameraType, peerConnection: $peerConnection, onFirstFrameRendered: $onFirstFrameRendered, videoCodec: $videoCodec, audioLevel: $audioLevel, cameraSource: $cameraSource, screenSource: $screenSource, audioLevelController: $audioLevelController, webcamStatsController: $webcamStatsController, screenStatsController: $screenStatsController, screenTrackId: $screenTrackId)';
+    return 'ParticipantMediaState(ownerId: $ownerId, isVideoEnabled: $isVideoEnabled, isAudioEnabled: $isAudioEnabled, isSharingScreen: $isSharingScreen, isE2eeEnabled: $isE2eeEnabled, isSpeakerPhoneEnabled: $isSpeakerPhoneEnabled, isHandRaising: $isHandRaising, cameraType: $cameraType, peerConnection: $peerConnection, onFirstFrameRendered: $onFirstFrameRendered, videoCodec: $videoCodec, audioLevel: $audioLevel, cameraSource: $cameraSource, screenSource: $screenSource, audioLevelController: $audioLevelController, webcamStatsController: $webcamStatsController, screenStatsController: $screenStatsController, screenTrackId: $screenTrackId, connectionType: $connectionType, backupPc: $backupPc)';
   }
 }
 
@@ -136,7 +146,9 @@ abstract mixin class $ParticipantMediaStateCopyWith<$Res> {
       StreamController<AudioLevel>? audioLevelController,
       StreamController<RtcParticipantStats>? webcamStatsController,
       StreamController<RtcParticipantStats>? screenStatsController,
-      String? screenTrackId});
+      String? screenTrackId,
+      ConnectionType connectionType,
+      RTCPeerConnection? backupPc});
 }
 
 /// @nodoc
@@ -170,6 +182,8 @@ class _$ParticipantMediaStateCopyWithImpl<$Res>
     Object? webcamStatsController = freezed,
     Object? screenStatsController = freezed,
     Object? screenTrackId = freezed,
+    Object? connectionType = null,
+    Object? backupPc = freezed,
   }) {
     return _then(_self.copyWith(
       ownerId: null == ownerId
@@ -244,6 +258,14 @@ class _$ParticipantMediaStateCopyWithImpl<$Res>
           ? _self.screenTrackId
           : screenTrackId // ignore: cast_nullable_to_non_nullable
               as String?,
+      connectionType: null == connectionType
+          ? _self.connectionType
+          : connectionType // ignore: cast_nullable_to_non_nullable
+              as ConnectionType,
+      backupPc: freezed == backupPc
+          ? _self.backupPc
+          : backupPc // ignore: cast_nullable_to_non_nullable
+              as RTCPeerConnection?,
     ));
   }
 }
@@ -269,7 +291,9 @@ class _ParticipantMediaState implements ParticipantMediaState {
       this.audioLevelController,
       this.webcamStatsController,
       this.screenStatsController,
-      this.screenTrackId});
+      this.screenTrackId,
+      required this.connectionType,
+      this.backupPc});
 
   @override
   final String ownerId;
@@ -315,6 +339,11 @@ class _ParticipantMediaState implements ParticipantMediaState {
   final StreamController<RtcParticipantStats>? screenStatsController;
   @override
   final String? screenTrackId;
+  @override
+  final ConnectionType connectionType;
+// ==== Backup variables for migrate case ====
+  @override
+  final RTCPeerConnection? backupPc;
 
   /// Create a copy of ParticipantMediaState
   /// with the given fields replaced by the non-null parameter values.
@@ -364,34 +393,41 @@ class _ParticipantMediaState implements ParticipantMediaState {
             (identical(other.screenStatsController, screenStatsController) ||
                 other.screenStatsController == screenStatsController) &&
             (identical(other.screenTrackId, screenTrackId) ||
-                other.screenTrackId == screenTrackId));
+                other.screenTrackId == screenTrackId) &&
+            (identical(other.connectionType, connectionType) ||
+                other.connectionType == connectionType) &&
+            (identical(other.backupPc, backupPc) ||
+                other.backupPc == backupPc));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      ownerId,
-      isVideoEnabled,
-      isAudioEnabled,
-      isSharingScreen,
-      isE2eeEnabled,
-      isSpeakerPhoneEnabled,
-      isHandRaising,
-      cameraType,
-      peerConnection,
-      onFirstFrameRendered,
-      videoCodec,
-      audioLevel,
-      cameraSource,
-      screenSource,
-      audioLevelController,
-      webcamStatsController,
-      screenStatsController,
-      screenTrackId);
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        ownerId,
+        isVideoEnabled,
+        isAudioEnabled,
+        isSharingScreen,
+        isE2eeEnabled,
+        isSpeakerPhoneEnabled,
+        isHandRaising,
+        cameraType,
+        peerConnection,
+        onFirstFrameRendered,
+        videoCodec,
+        audioLevel,
+        cameraSource,
+        screenSource,
+        audioLevelController,
+        webcamStatsController,
+        screenStatsController,
+        screenTrackId,
+        connectionType,
+        backupPc
+      ]);
 
   @override
   String toString() {
-    return 'ParticipantMediaState(ownerId: $ownerId, isVideoEnabled: $isVideoEnabled, isAudioEnabled: $isAudioEnabled, isSharingScreen: $isSharingScreen, isE2eeEnabled: $isE2eeEnabled, isSpeakerPhoneEnabled: $isSpeakerPhoneEnabled, isHandRaising: $isHandRaising, cameraType: $cameraType, peerConnection: $peerConnection, onFirstFrameRendered: $onFirstFrameRendered, videoCodec: $videoCodec, audioLevel: $audioLevel, cameraSource: $cameraSource, screenSource: $screenSource, audioLevelController: $audioLevelController, webcamStatsController: $webcamStatsController, screenStatsController: $screenStatsController, screenTrackId: $screenTrackId)';
+    return 'ParticipantMediaState(ownerId: $ownerId, isVideoEnabled: $isVideoEnabled, isAudioEnabled: $isAudioEnabled, isSharingScreen: $isSharingScreen, isE2eeEnabled: $isE2eeEnabled, isSpeakerPhoneEnabled: $isSpeakerPhoneEnabled, isHandRaising: $isHandRaising, cameraType: $cameraType, peerConnection: $peerConnection, onFirstFrameRendered: $onFirstFrameRendered, videoCodec: $videoCodec, audioLevel: $audioLevel, cameraSource: $cameraSource, screenSource: $screenSource, audioLevelController: $audioLevelController, webcamStatsController: $webcamStatsController, screenStatsController: $screenStatsController, screenTrackId: $screenTrackId, connectionType: $connectionType, backupPc: $backupPc)';
   }
 }
 
@@ -421,7 +457,9 @@ abstract mixin class _$ParticipantMediaStateCopyWith<$Res>
       StreamController<AudioLevel>? audioLevelController,
       StreamController<RtcParticipantStats>? webcamStatsController,
       StreamController<RtcParticipantStats>? screenStatsController,
-      String? screenTrackId});
+      String? screenTrackId,
+      ConnectionType connectionType,
+      RTCPeerConnection? backupPc});
 }
 
 /// @nodoc
@@ -455,6 +493,8 @@ class __$ParticipantMediaStateCopyWithImpl<$Res>
     Object? webcamStatsController = freezed,
     Object? screenStatsController = freezed,
     Object? screenTrackId = freezed,
+    Object? connectionType = null,
+    Object? backupPc = freezed,
   }) {
     return _then(_ParticipantMediaState(
       ownerId: null == ownerId
@@ -529,6 +569,14 @@ class __$ParticipantMediaStateCopyWithImpl<$Res>
           ? _self.screenTrackId
           : screenTrackId // ignore: cast_nullable_to_non_nullable
               as String?,
+      connectionType: null == connectionType
+          ? _self.connectionType
+          : connectionType // ignore: cast_nullable_to_non_nullable
+              as ConnectionType,
+      backupPc: freezed == backupPc
+          ? _self.backupPc
+          : backupPc // ignore: cast_nullable_to_non_nullable
+              as RTCPeerConnection?,
     ));
   }
 }

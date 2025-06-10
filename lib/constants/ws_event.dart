@@ -5,6 +5,7 @@ class WsEvent {
   static const String roomAnswerSubscriber = 'room.answer_subscriber';
   static const String roomLeave = 'room.leave';
   static const String roomReconnect = 'room.reconnect';
+  static const String roomMigrate = 'room.migrate';
 
   // ====== Room Renegotiation Events ======
   static const String roomPublisherRenegotiation =

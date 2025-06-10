@@ -5,8 +5,11 @@ import 'package:waterbus_sdk/types/externals/enums/index.dart';
 import 'package:waterbus_sdk/utils/codec_selector.dart';
 
 extension SdpX on String {
-  String optimizeSdp({RTCVideoCodec codec = RTCVideoCodec.h264}) {
-    return setPreferredCodec(codec: codec);
+  String optimizeSdp({
+    RTCVideoCodec codec = RTCVideoCodec.h264,
+    bool isP2P = false,
+  }) {
+    return setPreferredCodec(codec: codec, isP2P: isP2P).enableAudioDTX();
   }
 
   String enableAudioDTX() {
@@ -18,8 +21,8 @@ extension SdpX on String {
 
   String updateH264Profile() {
     final profileLevelId = ProfileLevelId(
-      profile: H264Utils.ProfileBaseline,
-      level: H264Utils.Level3_1,
+      profile: H264Utils.ProfileConstrainedBaseline,
+      level: H264Utils.Level4,
     );
     final session = parse(this);
     session['media'][0]['profile-level-id'] = H264Utils.profileLevelIdToString(
@@ -30,7 +33,10 @@ extension SdpX on String {
     return newSdp;
   }
 
-  String setPreferredCodec({RTCVideoCodec codec = RTCVideoCodec.h264}) {
+  String setPreferredCodec({
+    RTCVideoCodec codec = RTCVideoCodec.h264,
+    bool isP2P = false,
+  }) {
     final capSel = CodecCapabilitySelector(this);
 
     final vcaps = capSel.getCapabilities('video');

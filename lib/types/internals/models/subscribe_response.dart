@@ -1,4 +1,5 @@
 import 'package:waterbus_sdk/types/externals/enums/index.dart';
+import 'package:waterbus_sdk/types/internals/enums/connection_type.dart';
 
 class SubscribeResponsePayload {
   final String targetId;
@@ -11,6 +12,7 @@ class SubscribeResponsePayload {
   final CameraType type;
   final RTCVideoCodec codec;
   final String? screenTrackId;
+  final ConnectionType connectionType;
 
   SubscribeResponsePayload({
     required this.targetId,
@@ -22,6 +24,7 @@ class SubscribeResponsePayload {
     required this.isHandRaising,
     required this.type,
     required this.codec,
+    required this.connectionType,
     this.screenTrackId,
   });
 }

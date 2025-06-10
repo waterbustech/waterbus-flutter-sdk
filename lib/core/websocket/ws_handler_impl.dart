@@ -7,7 +7,9 @@ import 'package:waterbus_sdk/constants/ws_event.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_data_source.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_manager.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/ws_handler.dart';
+import 'package:waterbus_sdk/core/websocket/unload_handler/index.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/types/internals/enums/connection_type.dart';
 import 'package:waterbus_sdk/utils/dio/dio_configuration.dart';
 import 'package:waterbus_sdk/utils/encrypt/encrypt.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extension.dart';
@@ -36,6 +38,11 @@ class WsHandlerImpl extends WsHandler {
     String? forceAccessToken,
     Function? callbackConnected,
   }) {
+    unloadHandler(() {
+      _socket?.disconnect();
+      _socket = null;
+    });
+
     if (_authLocal.accessToken.isEmpty ||
         (_socket != null && !forceConnection)) {
       return;
@@ -101,8 +108,14 @@ class WsHandlerImpl extends WsHandler {
 
     _socket?.on(WsEvent.roomNewParticipant, (data) {
       if (data == null) return;
+
+      final participant =
+          Participant.fromJson(Map<String, dynamic>.from(data['participant']));
+      final isMigrate = data['isMigrate'];
+
       _rtcManager.handleParticipantJoined(
-        Participant.fromJson(Map<String, dynamic>.from(data)),
+        participant: participant,
+        isMigrate: isMigrate,
       );
     });
 
@@ -122,6 +135,7 @@ class WsHandlerImpl extends WsHandler {
         isHandRaising: data['isHandRaising'] ?? false,
         screenTrackId: data['screenTrackId'],
         type: CameraType.values[data['cameraType'] ?? CameraType.front.type],
+        connectionType: (data['connectionType'] as int?).toConnectionType(),
         codec: codec,
       );
 
@@ -204,10 +218,16 @@ class WsHandlerImpl extends WsHandler {
 
     _socket?.on(WsEvent.roomSubscriberRenegotiation, (data) {
       if (data == null) return;
+
       _rtcManager.renegotiateWithParticipant(
         targetId: data['targetId'],
         sdp: data['sdp'],
       );
+    });
+
+    _socket?.on(WsEvent.roomMigrate, (data) {
+      if (data == null) return;
+      _rtcManager.setLocalSdpAsPublisher(data['sdp']);
     });
   }
 

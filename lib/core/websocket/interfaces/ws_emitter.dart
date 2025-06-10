@@ -1,4 +1,5 @@
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/types/internals/enums/connection_type.dart';
 
 abstract class WsEmitter {
   // ====== Room Events ======
@@ -6,20 +7,42 @@ abstract class WsEmitter {
 
   void subscribeRoom({required SubscribePayload payload});
 
-  void answerSubscription({required String targetId, required String sdp});
+  void answerSubscription({
+    required String roomId,
+    required String targetId,
+    required String sdp,
+    required ConnectionType connectionType,
+  });
 
-  void renegotiateSdp(String sdp);
+  void renegotiateSdp({
+    required String roomId,
+    required String sdp,
+    required ConnectionType connectionType,
+  });
 
   void leaveRoom(String roomId);
 
   void reconnect();
 
+  void migrateConnection({
+    required String roomId,
+    required String participantId,
+    required String sdp,
+    required ConnectionType connectionType,
+  });
+
   // ====== ICE Candidate Events ======
-  void sendPublisherIceCandidate(RTCIceCandidate candidate);
+  void sendPublisherIceCandidate({
+    required RTCIceCandidate candidate,
+    required ConnectionType connectionType,
+    required String roomId,
+  });
 
   void sendSubscriberIceCandidate({
     required RTCIceCandidate candidate,
     required String targetId,
+    required ConnectionType connectionType,
+    required String roomId,
   });
 
   // ====== Media Controls Events ======

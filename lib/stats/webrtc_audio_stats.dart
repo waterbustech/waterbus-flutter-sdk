@@ -77,8 +77,14 @@ class WebRTCAudioStats {
 
     if (type == 'media-source') {
       if (params.pc == null) return;
-      final List<StatsReport> senderStats = await params.pc!.getStats();
-      stats.addAll(senderStats);
+      final List<RTCRtpSender> senders = (await params.pc!.getSenders())
+          .where((sender) => sender.track?.kind == 'audio')
+          .toList();
+
+      for (final rtpSender in senders) {
+        final senderStats = await rtpSender.getStats();
+        stats.addAll(senderStats);
+      }
     } else {
       final List<RTCRtpReceiver> rtpReceivers = params.receivers;
 
