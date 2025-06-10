@@ -33,6 +33,8 @@ abstract class WebRTCManager {
   Future<void> toggleAudioInput({bool? forceValue});
   Future<void> toggleVideoInput();
   Future<void> toggleSpeakerOutput({bool? forceValue});
+  Future<void> toggleAudioInputDevice({required String deviceId});
+  Future<void> toggleVideoInputDevice({required String deviceId});
   Future<void> switchCameraInput();
 
   // ====== Screen Sharing ======

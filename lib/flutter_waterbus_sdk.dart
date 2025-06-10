@@ -114,6 +114,14 @@ class WaterbusSdk {
     await _sdk.toggleAudio();
   }
 
+  Future<void> toggleAudioInputDevice({required String deviceId}) async {
+    await _sdk.toggleAudioInputDevice(deviceId: deviceId);
+  }
+
+  Future<void> toggleVideoInputDevice({required String deviceId}) async {
+    await _sdk.toggleVideoInputDevice(deviceId: deviceId);
+  }
+
   void toggleRaiseHand() {
     _sdk.toggleRaiseHand();
   }
@@ -126,7 +134,7 @@ class WaterbusSdk {
     _sdk.setSubscribeSubtitle(isEnabled);
   }
 
-  Future<void> changeCallSetting(MediaConfig setting) async {
+  Future<void> changeCallSettings(MediaConfig setting) async {
     await _sdk.changeCallSettings(setting);
   }
 

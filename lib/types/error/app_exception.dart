@@ -4,12 +4,12 @@ import 'package:waterbus_sdk/types/error/failures.dart';
 
 enum AppException {
   // Room
-  roomNotFound("Room Not Found", RoomNotFound.new),
+  roomNotFound("Room with Code ", RoomNotFound.new),
   notAllowedToUpdateRoom(
     'User not allowed to update rooom',
     NotAllowedToUpdateRoom.new,
   ),
-  wrongPassword('Wrong password!', WrongPassword.new),
+  wrongPassword('Password is not correct', WrongPassword.new),
   notAllowToJoinDirectly(
     'User not allow to join directly',
     NotAllowToJoinDirectly.new,
@@ -57,7 +57,7 @@ enum AppException {
 extension AppExceptionX on String {
   Failure get toFailure {
     final match = AppException.values.firstWhereOrNull(
-      (e) => e.message == this,
+      (e) => contains(e.message),
     );
 
     return match?.failure ?? ServerFailure();

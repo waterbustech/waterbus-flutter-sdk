@@ -15,6 +15,7 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$VideoConfig {
+  String? get deviceId;
   bool get isVideoMuted;
   RTCVideoCodec get preferedCodec;
   VideoQualityEnum get videoQuality;
@@ -34,6 +35,8 @@ mixin _$VideoConfig {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is VideoConfig &&
+            (identical(other.deviceId, deviceId) ||
+                other.deviceId == deviceId) &&
             (identical(other.isVideoMuted, isVideoMuted) ||
                 other.isVideoMuted == isVideoMuted) &&
             (identical(other.preferedCodec, preferedCodec) ||
@@ -44,12 +47,12 @@ mixin _$VideoConfig {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, isVideoMuted, preferedCodec, videoQuality);
+  int get hashCode => Object.hash(
+      runtimeType, deviceId, isVideoMuted, preferedCodec, videoQuality);
 
   @override
   String toString() {
-    return 'VideoConfig(isVideoMuted: $isVideoMuted, preferedCodec: $preferedCodec, videoQuality: $videoQuality)';
+    return 'VideoConfig(deviceId: $deviceId, isVideoMuted: $isVideoMuted, preferedCodec: $preferedCodec, videoQuality: $videoQuality)';
   }
 }
 
@@ -60,7 +63,8 @@ abstract mixin class $VideoConfigCopyWith<$Res> {
       _$VideoConfigCopyWithImpl;
   @useResult
   $Res call(
-      {bool isVideoMuted,
+      {String? deviceId,
+      bool isVideoMuted,
       RTCVideoCodec preferedCodec,
       VideoQualityEnum videoQuality});
 }
@@ -77,11 +81,16 @@ class _$VideoConfigCopyWithImpl<$Res> implements $VideoConfigCopyWith<$Res> {
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? deviceId = freezed,
     Object? isVideoMuted = null,
     Object? preferedCodec = null,
     Object? videoQuality = null,
   }) {
     return _then(_self.copyWith(
+      deviceId: freezed == deviceId
+          ? _self.deviceId
+          : deviceId // ignore: cast_nullable_to_non_nullable
+              as String?,
       isVideoMuted: null == isVideoMuted
           ? _self.isVideoMuted
           : isVideoMuted // ignore: cast_nullable_to_non_nullable
@@ -102,12 +111,15 @@ class _$VideoConfigCopyWithImpl<$Res> implements $VideoConfigCopyWith<$Res> {
 @JsonSerializable()
 class _VideoConfig implements VideoConfig {
   const _VideoConfig(
-      {this.isVideoMuted = false,
+      {this.deviceId,
+      this.isVideoMuted = false,
       this.preferedCodec = RTCVideoCodec.h264,
       this.videoQuality = VideoQualityEnum.p1080});
   factory _VideoConfig.fromJson(Map<String, dynamic> json) =>
       _$VideoConfigFromJson(json);
 
+  @override
+  final String? deviceId;
   @override
   @JsonKey()
   final bool isVideoMuted;
@@ -138,6 +150,8 @@ class _VideoConfig implements VideoConfig {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _VideoConfig &&
+            (identical(other.deviceId, deviceId) ||
+                other.deviceId == deviceId) &&
             (identical(other.isVideoMuted, isVideoMuted) ||
                 other.isVideoMuted == isVideoMuted) &&
             (identical(other.preferedCodec, preferedCodec) ||
@@ -148,12 +162,12 @@ class _VideoConfig implements VideoConfig {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, isVideoMuted, preferedCodec, videoQuality);
+  int get hashCode => Object.hash(
+      runtimeType, deviceId, isVideoMuted, preferedCodec, videoQuality);
 
   @override
   String toString() {
-    return 'VideoConfig(isVideoMuted: $isVideoMuted, preferedCodec: $preferedCodec, videoQuality: $videoQuality)';
+    return 'VideoConfig(deviceId: $deviceId, isVideoMuted: $isVideoMuted, preferedCodec: $preferedCodec, videoQuality: $videoQuality)';
   }
 }
 
@@ -166,7 +180,8 @@ abstract mixin class _$VideoConfigCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {bool isVideoMuted,
+      {String? deviceId,
+      bool isVideoMuted,
       RTCVideoCodec preferedCodec,
       VideoQualityEnum videoQuality});
 }
@@ -183,11 +198,16 @@ class __$VideoConfigCopyWithImpl<$Res> implements _$VideoConfigCopyWith<$Res> {
   @override
   @pragma('vm:prefer-inline')
   $Res call({
+    Object? deviceId = freezed,
     Object? isVideoMuted = null,
     Object? preferedCodec = null,
     Object? videoQuality = null,
   }) {
     return _then(_VideoConfig(
+      deviceId: freezed == deviceId
+          ? _self.deviceId
+          : deviceId // ignore: cast_nullable_to_non_nullable
+              as String?,
       isVideoMuted: null == isVideoMuted
           ? _self.isVideoMuted
           : isVideoMuted // ignore: cast_nullable_to_non_nullable
