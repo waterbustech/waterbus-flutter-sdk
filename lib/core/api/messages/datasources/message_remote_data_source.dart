@@ -47,7 +47,7 @@ class MessageRemoteDataSourceImpl extends MessageRemoteDataSource {
     );
 
     if ([StatusCode.ok, StatusCode.created].contains(response.statusCode)) {
-      final List<Message> messages = (response.data as List)
+      final List<Message> messages = (response.data['messages'] as List)
           .map((message) => Message.fromJson(message))
           .toList();
 
