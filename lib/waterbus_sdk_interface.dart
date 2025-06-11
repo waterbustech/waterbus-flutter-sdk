@@ -71,13 +71,13 @@ abstract class WaterbusSdkInterface {
   // WebRTC
   Future<void> reconnect();
   Future<void> prepareMedia();
-  Future<void> changeCallSettings(MediaConfig setting);
+  Future<void> updateMediaConfig(MediaConfig setting);
   Future<void> switchCamera();
   Future<void> toggleVideo();
   Future<void> toggleAudio();
   Future<void> toggleSpeakerPhone();
-  Future<void> toggleAudioInputDevice({required String deviceId});
-  Future<void> toggleVideoInputDevice({required String deviceId});
+  Future<void> changeAudioInputDevice({required String deviceId});
+  Future<void> changeVideoInputDevice({required String deviceId});
   void setSubscribeSubtitle(bool isEnabled);
   Future<void> startScreenSharing({DesktopCapturerSource? source});
   Future<void> stopScreenSharing();

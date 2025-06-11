@@ -372,7 +372,7 @@ class WebRTCManagerIpml extends WebRTCManager {
   }
 
   @override
-  Future<void> applyMediaSettings(MediaConfig setting) async {
+  Future<void> updateMediaConfig(MediaConfig setting) async {
     if (_currentCallSetting.videoConfig.videoQuality ==
         setting.videoConfig.videoQuality) {
       if (_currentCallSetting.e2eeEnabled != setting.e2eeEnabled) {
@@ -494,64 +494,47 @@ class WebRTCManagerIpml extends WebRTCManager {
   }
 
   @override
-  Future<void> toggleAudioInputDevice({required String deviceId}) async {
+  Future<void> changeAudioInputDevice({required String deviceId}) async {
     if (_mParticipant == null) return;
-
-    final List<MediaStreamTrack> oldAudioTracks =
-        List.from(_localCameraStream?.getAudioTracks() ?? []);
-
-    for (final track in oldAudioTracks) {
-      await _localCameraStream?.removeTrack(track);
-      await track.stop();
-    }
 
     _currentCallSetting = _currentCallSetting.copyWith(
       audioConfig: _currentCallSetting.audioConfig.copyWith(deviceId: deviceId),
     );
 
-    final Map<String, dynamic> userMedia = _currentCallSetting.mediaConstraints;
+    final MediaStream? newStream = await _getUserMedia(onlyStream: true);
 
-    final MediaStream newAudioStream =
-        await navigator.mediaDevices.getUserMedia(userMedia);
+    if (newStream == null) return;
 
-    if (_localCameraStream != null) {
-      final MediaStreamTrack audioTrack = newAudioStream.getAudioTracks().first;
-      await _localCameraStream!.addTrack(audioTrack);
-      await _replaceAudioTrack(audioTrack);
+    final MediaStreamTrack? audioTrack = newStream.getAudioTracks().firstOrNull;
 
-      _mParticipant?.setSrcObject(_localCameraStream!);
-    }
+    if (audioTrack == null) return;
 
-    _notify(CallbackEvents.shouldBeUpdateState);
+    _localCameraStream = newStream;
+    await _replaceAudioTrack(audioTrack);
+
+    _mParticipant?.setSrcObject(newStream);
   }
 
   @override
-  Future<void> toggleVideoInputDevice({required String deviceId}) async {
+  Future<void> changeVideoInputDevice({required String deviceId}) async {
     if (_mParticipant == null) return;
-
-    final List<MediaStreamTrack> oldVideoTracks =
-        List.from(_localCameraStream?.getVideoTracks() ?? []);
-
-    for (final track in oldVideoTracks) {
-      await _localCameraStream?.removeTrack(track);
-      await track.stop();
-    }
-    final Map<String, dynamic> userMedia = _currentCallSetting.mediaConstraints;
 
     _currentCallSetting = _currentCallSetting.copyWith(
       videoConfig: _currentCallSetting.videoConfig.copyWith(deviceId: deviceId),
     );
 
-    final MediaStream newVideoStream =
-        await navigator.mediaDevices.getUserMedia(userMedia);
+    final MediaStream? newStream = await _getUserMedia(onlyStream: true);
 
-    if (_localCameraStream != null) {
-      final MediaStreamTrack videoTrack = newVideoStream.getVideoTracks().first;
-      await _localCameraStream!.addTrack(videoTrack);
-      await _replaceVideoTrack(videoTrack);
+    if (newStream == null) return;
 
-      _mParticipant?.setSrcObject(_localCameraStream!);
-    }
+    final MediaStreamTrack? videoTrack = newStream.getVideoTracks().firstOrNull;
+
+    if (videoTrack == null) return;
+
+    _localCameraStream = newStream;
+    await _replaceVideoTrack(videoTrack);
+
+    _mParticipant?.setSrcObject(newStream);
   }
 
   @override
@@ -1366,7 +1349,7 @@ class WebRTCManagerIpml extends WebRTCManager {
 
     final sender = senders.first;
 
-    sender.replaceTrack(track);
+    await sender.replaceTrack(track);
 
     await _applyEncryption(_currentCallSetting.e2eeEnabled, senders: [sender]);
   }

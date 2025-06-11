@@ -25,11 +25,10 @@ extension AudioConfigX on AudioConfig {
     final Map<String, dynamic> constraints = {};
     if (deviceId != null && deviceId!.isNotEmpty) {
       if (kIsWeb) {
-        // if (isChrome129OrLater()) {
-        constraints['deviceId'] = {'exact': deviceId};
-        // } else {
-        //   constraints['deviceId'] = {'ideal': deviceId};
-        // }
+        constraints['deviceId'] = {
+          'exact': deviceId,
+          'ideal': deviceId,
+        };
       } else {
         constraints['optional'] = [
           {'sourceId': deviceId},

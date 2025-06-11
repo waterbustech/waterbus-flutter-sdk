@@ -1,10 +1,9 @@
 import 'dart:async';
-
 import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 import 'package:injectable/injectable.dart';
-
 import 'package:waterbus_sdk/types/index.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extension.dart';
+import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 @singleton
 class WebRTCAudioStats {
@@ -47,15 +46,18 @@ class WebRTCAudioStats {
     );
 
     if (index < 0) return;
-
     _receivers.removeAt(index);
   }
 
   void initialize() {
     _timer ??= Timer.periodic(1.seconds, (timer) {
-      if (_sender != null) _monitorAudio(params: _sender!);
+      if (_sender != null) {
+        _monitorAudio(params: _sender!);
+      }
 
-      for (final params in _receivers) {
+      // Create a copy to avoid concurrent modification
+      final receiversCopy = List<AudioStatsParams>.from(_receivers);
+      for (final params in receiversCopy) {
         _monitorAudio(params: params, type: 'inbound-rtp');
       }
     });
@@ -73,35 +75,57 @@ class WebRTCAudioStats {
     required AudioStatsParams params,
     String type = 'media-source',
   }) async {
-    final List<StatsReport> stats = [];
+    try {
+      final List<StatsReport> stats = [];
 
-    if (type == 'media-source') {
-      if (params.pc == null) return;
-      final List<RTCRtpSender> senders = (await params.pc!.getSenders())
-          .where((sender) => sender.track?.kind == 'audio')
-          .toList();
+      if (type == 'media-source') {
+        if (params.pc == null) return;
 
-      for (final rtpSender in senders) {
-        final senderStats = await rtpSender.getStats();
-        stats.addAll(senderStats);
+        if (params.pc!.connectionState ==
+                RTCPeerConnectionState.RTCPeerConnectionStateClosed ||
+            params.pc!.connectionState ==
+                RTCPeerConnectionState.RTCPeerConnectionStateFailed) {
+          return;
+        }
+
+        final List<RTCRtpSender> senders = (await params.pc!.getSenders())
+            .where((sender) => sender.track?.kind == 'audio')
+            .toList();
+
+        for (final rtpSender in senders) {
+          try {
+            final senderStats = await rtpSender.getStats();
+            stats.addAll(senderStats);
+          } catch (e) {
+            continue;
+          }
+        }
+      } else {
+        final List<RTCRtpReceiver> rtpReceivers = params.receivers;
+        for (final rtpReceiver in rtpReceivers) {
+          try {
+            final receiverStats = await rtpReceiver.getStats();
+            stats.addAll(receiverStats);
+          } catch (e) {
+            continue;
+          }
+        }
       }
-    } else {
-      final List<RTCRtpReceiver> rtpReceivers = params.receivers;
 
-      for (final rtpReceiver in rtpReceivers) {
-        final receiverStats = await rtpReceiver.getStats();
-        stats.addAll(receiverStats);
+      for (final v in stats) {
+        if (v.type == type && v.values['kind'] == 'audio') {
+          final num? audioLevel = getNumValFromReport(v.values, 'audioLevel');
+          if (audioLevel == null) continue;
+
+          try {
+            params.callBack(audioLevel.level);
+          } catch (e) {
+            continue;
+          }
+        }
       }
-    }
-
-    for (final v in stats) {
-      if (v.type == type && v.values['kind'] == 'audio') {
-        final num? audioLevel = getNumValFromReport(v.values, 'audioLevel');
-
-        if (audioLevel == null) return;
-
-        params.callBack(audioLevel.level);
-      }
+    } catch (error) {
+      WaterbusLogger.instance.bug('Error in _monitorAudio: $error');
     }
   }
 }

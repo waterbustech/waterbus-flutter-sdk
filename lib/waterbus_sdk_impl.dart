@@ -140,8 +140,8 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<void> changeCallSettings(MediaConfig setting) async {
-    await _rtcManager.applyMediaSettings(setting);
+  Future<void> updateMediaConfig(MediaConfig setting) async {
+    await _rtcManager.updateMediaConfig(setting);
   }
 
   @override
@@ -160,13 +160,13 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<void> toggleAudioInputDevice({required String deviceId}) async {
-    await _rtcManager.toggleAudioInputDevice(deviceId: deviceId);
+  Future<void> changeAudioInputDevice({required String deviceId}) async {
+    await _rtcManager.changeAudioInputDevice(deviceId: deviceId);
   }
 
   @override
-  Future<void> toggleVideoInputDevice({required String deviceId}) async {
-    await _rtcManager.toggleVideoInputDevice(deviceId: deviceId);
+  Future<void> changeVideoInputDevice({required String deviceId}) async {
+    await _rtcManager.changeVideoInputDevice(deviceId: deviceId);
   }
 
   @override
