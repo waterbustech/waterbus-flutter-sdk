@@ -82,14 +82,17 @@ class WebRTCVideoStats {
   }
 
   Future<void> _monitorSenderStats() async {
-    for (final senders in _senders.entries) {
+    final sendersEntries = _senders.entries.toList();
+
+    for (final senders in sendersEntries) {
+      if (!_senders.containsKey(senders.key)) continue;
+
       for (final sender in senders.value.senders) {
         try {
           final List<StatsReport> statsReport = await sender.getStats();
           final List<VideoSenderStats> stats =
               await _getSenderStats(statsReport);
 
-          // Check if stats is empty before proceeding
           if (stats.isEmpty) continue;
 
           final Map<String, VideoSenderStats> statsMap = {};

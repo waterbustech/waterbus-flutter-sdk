@@ -7,6 +7,7 @@ part of 'video_config.dart';
 // **************************************************************************
 
 _VideoConfig _$VideoConfigFromJson(Map<String, dynamic> json) => _VideoConfig(
+      deviceId: json['deviceId'] as String?,
       isVideoMuted: json['isVideoMuted'] as bool? ?? false,
       preferedCodec:
           $enumDecodeNullable(_$RTCVideoCodecEnumMap, json['preferedCodec']) ??
@@ -18,6 +19,7 @@ _VideoConfig _$VideoConfigFromJson(Map<String, dynamic> json) => _VideoConfig(
 
 Map<String, dynamic> _$VideoConfigToJson(_VideoConfig instance) =>
     <String, dynamic>{
+      'deviceId': instance.deviceId,
       'isVideoMuted': instance.isVideoMuted,
       'preferedCodec': _$RTCVideoCodecEnumMap[instance.preferedCodec]!,
       'videoQuality': _$VideoQualityEnumEnumMap[instance.videoQuality]!,

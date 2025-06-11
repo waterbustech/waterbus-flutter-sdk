@@ -7,6 +7,7 @@ part of 'audio_config.dart';
 // **************************************************************************
 
 _AudioConfig _$AudioConfigFromJson(Map<String, dynamic> json) => _AudioConfig(
+      deviceId: json['deviceId'] as String?,
       isLowBandwidthMode: json['isLowBandwidthMode'] as bool? ?? false,
       isAudioMuted: json['isAudioMuted'] as bool? ?? false,
       echoCancellationEnabled: json['echoCancellationEnabled'] as bool? ?? true,
@@ -16,6 +17,7 @@ _AudioConfig _$AudioConfigFromJson(Map<String, dynamic> json) => _AudioConfig(
 
 Map<String, dynamic> _$AudioConfigToJson(_AudioConfig instance) =>
     <String, dynamic>{
+      'deviceId': instance.deviceId,
       'isLowBandwidthMode': instance.isLowBandwidthMode,
       'isAudioMuted': instance.isAudioMuted,
       'echoCancellationEnabled': instance.echoCancellationEnabled,
