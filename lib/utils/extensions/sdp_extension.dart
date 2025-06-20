@@ -22,7 +22,7 @@ extension SdpX on String {
   String updateH264Profile() {
     final profileLevelId = ProfileLevelId(
       profile: H264Utils.ProfileConstrainedBaseline,
-      level: H264Utils.Level4,
+      level: H264Utils.Level3_1,
     );
     final session = parse(this);
     session['media'][0]['profile-level-id'] = H264Utils.profileLevelIdToString(
