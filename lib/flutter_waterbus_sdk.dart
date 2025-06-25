@@ -177,7 +177,14 @@ class WaterbusSdk {
     await _sdk.toggleAudio();
   }
 
-  /// Toggle raise hand gesture
+  Future<void> changeAudioInputDevice({required String deviceId}) async {
+    await _sdk.changeAudioInputDevice(deviceId: deviceId);
+  }
+
+  Future<void> changeVideoInputDevice({required String deviceId}) async {
+    await _sdk.changeVideoInputDevice(deviceId: deviceId);
+  }
+
   void toggleRaiseHand() {
     _sdk.toggleRaiseHand();
   }

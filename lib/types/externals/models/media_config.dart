@@ -26,12 +26,14 @@ extension MediaConfigX on MediaConfig {
   Map<String, dynamic> get mediaConstraints {
     return {
       'audio': {
+        if (audioConfig.deviceId != null) ...audioConfig.configDeviceId,
         'sampleRate': '48000',
         'sampleSize': '16',
         'channelCount': '1',
         ...(kIsWeb ? audioMandatory : {'mandatory': audioMandatory}),
       },
       'video': {
+        if (videoConfig.deviceId != null) ...videoConfig.configDeviceId,
         'mandatory': videoConfig.videoQuality.quality.toJson(),
         'facingMode': 'user',
       },

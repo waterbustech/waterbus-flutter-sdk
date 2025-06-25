@@ -14,7 +14,8 @@ part of 'audio_config.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$AudioConfig {
+mixin _$AudioConfig implements DiagnosticableTreeMixin {
+  String? get deviceId;
   bool get isLowBandwidthMode;
   bool get isAudioMuted;
   bool get echoCancellationEnabled;
@@ -32,10 +33,26 @@ mixin _$AudioConfig {
   Map<String, dynamic> toJson();
 
   @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    properties
+      ..add(DiagnosticsProperty('type', 'AudioConfig'))
+      ..add(DiagnosticsProperty('deviceId', deviceId))
+      ..add(DiagnosticsProperty('isLowBandwidthMode', isLowBandwidthMode))
+      ..add(DiagnosticsProperty('isAudioMuted', isAudioMuted))
+      ..add(DiagnosticsProperty(
+          'echoCancellationEnabled', echoCancellationEnabled))
+      ..add(DiagnosticsProperty(
+          'noiseSuppressionEnabled', noiseSuppressionEnabled))
+      ..add(DiagnosticsProperty('agcEnabled', agcEnabled));
+  }
+
+  @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is AudioConfig &&
+            (identical(other.deviceId, deviceId) ||
+                other.deviceId == deviceId) &&
             (identical(other.isLowBandwidthMode, isLowBandwidthMode) ||
                 other.isLowBandwidthMode == isLowBandwidthMode) &&
             (identical(other.isAudioMuted, isAudioMuted) ||
@@ -52,12 +69,18 @@ mixin _$AudioConfig {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, isLowBandwidthMode, isAudioMuted,
-      echoCancellationEnabled, noiseSuppressionEnabled, agcEnabled);
+  int get hashCode => Object.hash(
+      runtimeType,
+      deviceId,
+      isLowBandwidthMode,
+      isAudioMuted,
+      echoCancellationEnabled,
+      noiseSuppressionEnabled,
+      agcEnabled);
 
   @override
-  String toString() {
-    return 'AudioConfig(isLowBandwidthMode: $isLowBandwidthMode, isAudioMuted: $isAudioMuted, echoCancellationEnabled: $echoCancellationEnabled, noiseSuppressionEnabled: $noiseSuppressionEnabled, agcEnabled: $agcEnabled)';
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'AudioConfig(deviceId: $deviceId, isLowBandwidthMode: $isLowBandwidthMode, isAudioMuted: $isAudioMuted, echoCancellationEnabled: $echoCancellationEnabled, noiseSuppressionEnabled: $noiseSuppressionEnabled, agcEnabled: $agcEnabled)';
   }
 }
 
@@ -68,7 +91,8 @@ abstract mixin class $AudioConfigCopyWith<$Res> {
       _$AudioConfigCopyWithImpl;
   @useResult
   $Res call(
-      {bool isLowBandwidthMode,
+      {String? deviceId,
+      bool isLowBandwidthMode,
       bool isAudioMuted,
       bool echoCancellationEnabled,
       bool noiseSuppressionEnabled,
@@ -87,6 +111,7 @@ class _$AudioConfigCopyWithImpl<$Res> implements $AudioConfigCopyWith<$Res> {
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? deviceId = freezed,
     Object? isLowBandwidthMode = null,
     Object? isAudioMuted = null,
     Object? echoCancellationEnabled = null,
@@ -94,6 +119,10 @@ class _$AudioConfigCopyWithImpl<$Res> implements $AudioConfigCopyWith<$Res> {
     Object? agcEnabled = null,
   }) {
     return _then(_self.copyWith(
+      deviceId: freezed == deviceId
+          ? _self.deviceId
+          : deviceId // ignore: cast_nullable_to_non_nullable
+              as String?,
       isLowBandwidthMode: null == isLowBandwidthMode
           ? _self.isLowBandwidthMode
           : isLowBandwidthMode // ignore: cast_nullable_to_non_nullable
@@ -120,9 +149,10 @@ class _$AudioConfigCopyWithImpl<$Res> implements $AudioConfigCopyWith<$Res> {
 
 /// @nodoc
 @JsonSerializable()
-class _AudioConfig implements AudioConfig {
+class _AudioConfig with DiagnosticableTreeMixin implements AudioConfig {
   const _AudioConfig(
-      {this.isLowBandwidthMode = false,
+      {this.deviceId,
+      this.isLowBandwidthMode = false,
       this.isAudioMuted = false,
       this.echoCancellationEnabled = true,
       this.noiseSuppressionEnabled = true,
@@ -130,6 +160,8 @@ class _AudioConfig implements AudioConfig {
   factory _AudioConfig.fromJson(Map<String, dynamic> json) =>
       _$AudioConfigFromJson(json);
 
+  @override
+  final String? deviceId;
   @override
   @JsonKey()
   final bool isLowBandwidthMode;
@@ -162,10 +194,26 @@ class _AudioConfig implements AudioConfig {
   }
 
   @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    properties
+      ..add(DiagnosticsProperty('type', 'AudioConfig'))
+      ..add(DiagnosticsProperty('deviceId', deviceId))
+      ..add(DiagnosticsProperty('isLowBandwidthMode', isLowBandwidthMode))
+      ..add(DiagnosticsProperty('isAudioMuted', isAudioMuted))
+      ..add(DiagnosticsProperty(
+          'echoCancellationEnabled', echoCancellationEnabled))
+      ..add(DiagnosticsProperty(
+          'noiseSuppressionEnabled', noiseSuppressionEnabled))
+      ..add(DiagnosticsProperty('agcEnabled', agcEnabled));
+  }
+
+  @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _AudioConfig &&
+            (identical(other.deviceId, deviceId) ||
+                other.deviceId == deviceId) &&
             (identical(other.isLowBandwidthMode, isLowBandwidthMode) ||
                 other.isLowBandwidthMode == isLowBandwidthMode) &&
             (identical(other.isAudioMuted, isAudioMuted) ||
@@ -182,12 +230,18 @@ class _AudioConfig implements AudioConfig {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, isLowBandwidthMode, isAudioMuted,
-      echoCancellationEnabled, noiseSuppressionEnabled, agcEnabled);
+  int get hashCode => Object.hash(
+      runtimeType,
+      deviceId,
+      isLowBandwidthMode,
+      isAudioMuted,
+      echoCancellationEnabled,
+      noiseSuppressionEnabled,
+      agcEnabled);
 
   @override
-  String toString() {
-    return 'AudioConfig(isLowBandwidthMode: $isLowBandwidthMode, isAudioMuted: $isAudioMuted, echoCancellationEnabled: $echoCancellationEnabled, noiseSuppressionEnabled: $noiseSuppressionEnabled, agcEnabled: $agcEnabled)';
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'AudioConfig(deviceId: $deviceId, isLowBandwidthMode: $isLowBandwidthMode, isAudioMuted: $isAudioMuted, echoCancellationEnabled: $echoCancellationEnabled, noiseSuppressionEnabled: $noiseSuppressionEnabled, agcEnabled: $agcEnabled)';
   }
 }
 
@@ -200,7 +254,8 @@ abstract mixin class _$AudioConfigCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {bool isLowBandwidthMode,
+      {String? deviceId,
+      bool isLowBandwidthMode,
       bool isAudioMuted,
       bool echoCancellationEnabled,
       bool noiseSuppressionEnabled,
@@ -219,6 +274,7 @@ class __$AudioConfigCopyWithImpl<$Res> implements _$AudioConfigCopyWith<$Res> {
   @override
   @pragma('vm:prefer-inline')
   $Res call({
+    Object? deviceId = freezed,
     Object? isLowBandwidthMode = null,
     Object? isAudioMuted = null,
     Object? echoCancellationEnabled = null,
@@ -226,6 +282,10 @@ class __$AudioConfigCopyWithImpl<$Res> implements _$AudioConfigCopyWith<$Res> {
     Object? agcEnabled = null,
   }) {
     return _then(_AudioConfig(
+      deviceId: freezed == deviceId
+          ? _self.deviceId
+          : deviceId // ignore: cast_nullable_to_non_nullable
+              as String?,
       isLowBandwidthMode: null == isLowBandwidthMode
           ? _self.isLowBandwidthMode
           : isLowBandwidthMode // ignore: cast_nullable_to_non_nullable

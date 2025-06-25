@@ -160,6 +160,16 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
+  Future<void> changeAudioInputDevice({required String deviceId}) async {
+    await _rtcManager.changeAudioInputDevice(deviceId: deviceId);
+  }
+
+  @override
+  Future<void> changeVideoInputDevice({required String deviceId}) async {
+    await _rtcManager.changeVideoInputDevice(deviceId: deviceId);
+  }
+
+  @override
   void toggleRaiseHand() {
     _rtcManager.toggleHandRaise();
   }

@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/types/internals/enums/connection_type.dart';
+import 'package:waterbus_sdk/types/internals/models/track_subscribed_message.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 part 'participant_media_state.freezed.dart';
@@ -118,7 +120,13 @@ extension ParticipantSFUX on ParticipantMediaState {
 
     trackQualityChannel!.onMessage = (message) {
       final data = message.binary;
-      WaterbusLogger.instance.log("[track_quality] Received: $data");
+      final String jsonStr = utf8.decode(data);
+      final TrackSubscribedMessage msg = TrackSubscribedMessage.fromJson(
+        jsonDecode(jsonStr),
+      );
+
+      WaterbusLogger.instance
+          .log("[track_quality] Received: ${msg.toString()}");
     };
 
     trackQualityChannel!.onDataChannelState = (state) {

@@ -76,6 +76,8 @@ abstract class WaterbusSdkInterface {
   Future<void> toggleVideo();
   Future<void> toggleAudio();
   Future<void> toggleSpeakerPhone();
+  Future<void> changeAudioInputDevice({required String deviceId});
+  Future<void> changeVideoInputDevice({required String deviceId});
   void setSubscribeSubtitle(bool isEnabled);
   Future<void> startScreenSharing({DesktopCapturerSource? source});
   Future<void> stopScreenSharing();
