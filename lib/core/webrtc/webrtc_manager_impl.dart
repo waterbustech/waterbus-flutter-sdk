@@ -365,6 +365,8 @@ class WebRTCManagerIpml extends WebRTCManager {
       connectionType: _connectionType,
     );
 
+    _mParticipant = await _mParticipant?.createTrackQualityChannel();
+
     _localCameraStream = await _getUserMedia();
     if (_localCameraStream != null) {
       _mParticipant?.setSrcObject(_localCameraStream!);
@@ -372,7 +374,7 @@ class WebRTCManagerIpml extends WebRTCManager {
   }
 
   @override
-  Future<void> applyMediaSettings(MediaConfig setting) async {
+  Future<void> updateMediaConfig(MediaConfig setting) async {
     if (_currentCallSetting.videoConfig.videoQuality ==
         setting.videoConfig.videoQuality) {
       if (_currentCallSetting.e2eeEnabled != setting.e2eeEnabled) {

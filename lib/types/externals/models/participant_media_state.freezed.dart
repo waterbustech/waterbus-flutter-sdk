@@ -33,8 +33,9 @@ mixin _$ParticipantMediaState {
   StreamController<RtcParticipantStats>? get webcamStatsController;
   StreamController<RtcParticipantStats>? get screenStatsController;
   String? get screenTrackId;
-  ConnectionType
-      get connectionType; // ==== Backup variables for migrate case ====
+  ConnectionType get connectionType;
+  RTCDataChannel?
+      get trackQualityChannel; // ==== Backup variables for migrate case ====
   RTCPeerConnection? get backupPc;
 
   /// Create a copy of ParticipantMediaState
@@ -87,6 +88,8 @@ mixin _$ParticipantMediaState {
                 other.screenTrackId == screenTrackId) &&
             (identical(other.connectionType, connectionType) ||
                 other.connectionType == connectionType) &&
+            (identical(other.trackQualityChannel, trackQualityChannel) ||
+                other.trackQualityChannel == trackQualityChannel) &&
             (identical(other.backupPc, backupPc) ||
                 other.backupPc == backupPc));
   }
@@ -113,12 +116,13 @@ mixin _$ParticipantMediaState {
         screenStatsController,
         screenTrackId,
         connectionType,
+        trackQualityChannel,
         backupPc
       ]);
 
   @override
   String toString() {
-    return 'ParticipantMediaState(ownerId: $ownerId, isVideoEnabled: $isVideoEnabled, isAudioEnabled: $isAudioEnabled, isSharingScreen: $isSharingScreen, isE2eeEnabled: $isE2eeEnabled, isSpeakerPhoneEnabled: $isSpeakerPhoneEnabled, isHandRaising: $isHandRaising, cameraType: $cameraType, peerConnection: $peerConnection, onFirstFrameRendered: $onFirstFrameRendered, videoCodec: $videoCodec, audioLevel: $audioLevel, cameraSource: $cameraSource, screenSource: $screenSource, audioLevelController: $audioLevelController, webcamStatsController: $webcamStatsController, screenStatsController: $screenStatsController, screenTrackId: $screenTrackId, connectionType: $connectionType, backupPc: $backupPc)';
+    return 'ParticipantMediaState(ownerId: $ownerId, isVideoEnabled: $isVideoEnabled, isAudioEnabled: $isAudioEnabled, isSharingScreen: $isSharingScreen, isE2eeEnabled: $isE2eeEnabled, isSpeakerPhoneEnabled: $isSpeakerPhoneEnabled, isHandRaising: $isHandRaising, cameraType: $cameraType, peerConnection: $peerConnection, onFirstFrameRendered: $onFirstFrameRendered, videoCodec: $videoCodec, audioLevel: $audioLevel, cameraSource: $cameraSource, screenSource: $screenSource, audioLevelController: $audioLevelController, webcamStatsController: $webcamStatsController, screenStatsController: $screenStatsController, screenTrackId: $screenTrackId, connectionType: $connectionType, trackQualityChannel: $trackQualityChannel, backupPc: $backupPc)';
   }
 }
 
@@ -148,6 +152,7 @@ abstract mixin class $ParticipantMediaStateCopyWith<$Res> {
       StreamController<RtcParticipantStats>? screenStatsController,
       String? screenTrackId,
       ConnectionType connectionType,
+      RTCDataChannel? trackQualityChannel,
       RTCPeerConnection? backupPc});
 }
 
@@ -183,6 +188,7 @@ class _$ParticipantMediaStateCopyWithImpl<$Res>
     Object? screenStatsController = freezed,
     Object? screenTrackId = freezed,
     Object? connectionType = null,
+    Object? trackQualityChannel = freezed,
     Object? backupPc = freezed,
   }) {
     return _then(_self.copyWith(
@@ -262,6 +268,10 @@ class _$ParticipantMediaStateCopyWithImpl<$Res>
           ? _self.connectionType
           : connectionType // ignore: cast_nullable_to_non_nullable
               as ConnectionType,
+      trackQualityChannel: freezed == trackQualityChannel
+          ? _self.trackQualityChannel
+          : trackQualityChannel // ignore: cast_nullable_to_non_nullable
+              as RTCDataChannel?,
       backupPc: freezed == backupPc
           ? _self.backupPc
           : backupPc // ignore: cast_nullable_to_non_nullable
@@ -293,6 +303,7 @@ class _ParticipantMediaState implements ParticipantMediaState {
       this.screenStatsController,
       this.screenTrackId,
       required this.connectionType,
+      this.trackQualityChannel,
       this.backupPc});
 
   @override
@@ -341,6 +352,8 @@ class _ParticipantMediaState implements ParticipantMediaState {
   final String? screenTrackId;
   @override
   final ConnectionType connectionType;
+  @override
+  final RTCDataChannel? trackQualityChannel;
 // ==== Backup variables for migrate case ====
   @override
   final RTCPeerConnection? backupPc;
@@ -396,6 +409,8 @@ class _ParticipantMediaState implements ParticipantMediaState {
                 other.screenTrackId == screenTrackId) &&
             (identical(other.connectionType, connectionType) ||
                 other.connectionType == connectionType) &&
+            (identical(other.trackQualityChannel, trackQualityChannel) ||
+                other.trackQualityChannel == trackQualityChannel) &&
             (identical(other.backupPc, backupPc) ||
                 other.backupPc == backupPc));
   }
@@ -422,12 +437,13 @@ class _ParticipantMediaState implements ParticipantMediaState {
         screenStatsController,
         screenTrackId,
         connectionType,
+        trackQualityChannel,
         backupPc
       ]);
 
   @override
   String toString() {
-    return 'ParticipantMediaState(ownerId: $ownerId, isVideoEnabled: $isVideoEnabled, isAudioEnabled: $isAudioEnabled, isSharingScreen: $isSharingScreen, isE2eeEnabled: $isE2eeEnabled, isSpeakerPhoneEnabled: $isSpeakerPhoneEnabled, isHandRaising: $isHandRaising, cameraType: $cameraType, peerConnection: $peerConnection, onFirstFrameRendered: $onFirstFrameRendered, videoCodec: $videoCodec, audioLevel: $audioLevel, cameraSource: $cameraSource, screenSource: $screenSource, audioLevelController: $audioLevelController, webcamStatsController: $webcamStatsController, screenStatsController: $screenStatsController, screenTrackId: $screenTrackId, connectionType: $connectionType, backupPc: $backupPc)';
+    return 'ParticipantMediaState(ownerId: $ownerId, isVideoEnabled: $isVideoEnabled, isAudioEnabled: $isAudioEnabled, isSharingScreen: $isSharingScreen, isE2eeEnabled: $isE2eeEnabled, isSpeakerPhoneEnabled: $isSpeakerPhoneEnabled, isHandRaising: $isHandRaising, cameraType: $cameraType, peerConnection: $peerConnection, onFirstFrameRendered: $onFirstFrameRendered, videoCodec: $videoCodec, audioLevel: $audioLevel, cameraSource: $cameraSource, screenSource: $screenSource, audioLevelController: $audioLevelController, webcamStatsController: $webcamStatsController, screenStatsController: $screenStatsController, screenTrackId: $screenTrackId, connectionType: $connectionType, trackQualityChannel: $trackQualityChannel, backupPc: $backupPc)';
   }
 }
 
@@ -459,6 +475,7 @@ abstract mixin class _$ParticipantMediaStateCopyWith<$Res>
       StreamController<RtcParticipantStats>? screenStatsController,
       String? screenTrackId,
       ConnectionType connectionType,
+      RTCDataChannel? trackQualityChannel,
       RTCPeerConnection? backupPc});
 }
 
@@ -494,6 +511,7 @@ class __$ParticipantMediaStateCopyWithImpl<$Res>
     Object? screenStatsController = freezed,
     Object? screenTrackId = freezed,
     Object? connectionType = null,
+    Object? trackQualityChannel = freezed,
     Object? backupPc = freezed,
   }) {
     return _then(_ParticipantMediaState(
@@ -573,6 +591,10 @@ class __$ParticipantMediaStateCopyWithImpl<$Res>
           ? _self.connectionType
           : connectionType // ignore: cast_nullable_to_non_nullable
               as ConnectionType,
+      trackQualityChannel: freezed == trackQualityChannel
+          ? _self.trackQualityChannel
+          : trackQualityChannel // ignore: cast_nullable_to_non_nullable
+              as RTCDataChannel?,
       backupPc: freezed == backupPc
           ? _self.backupPc
           : backupPc // ignore: cast_nullable_to_non_nullable

@@ -68,7 +68,7 @@ class WsHandlerImpl extends WsHandler {
       },
     ).build();
 
-    _socket = io(WaterbusSdk.baseUrl.url, options);
+    _socket = io(WaterbusSdk.serverConfig.url, options);
 
     _socket?.connect();
 

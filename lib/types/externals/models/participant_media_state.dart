@@ -30,6 +30,7 @@ abstract class ParticipantMediaState with _$ParticipantMediaState {
     StreamController<RtcParticipantStats>? screenStatsController,
     String? screenTrackId,
     required ConnectionType connectionType,
+    RTCDataChannel? trackQualityChannel,
 
     // ==== Backup variables for migrate case ====
     RTCPeerConnection? backupPc,
@@ -90,6 +91,41 @@ abstract class ParticipantMediaState with _$ParticipantMediaState {
 }
 
 extension ParticipantSFUX on ParticipantMediaState {
+  bool get isMe => ownerId == kIsMine;
+
+  Future<ParticipantMediaState> createTrackQualityChannel() async {
+    final channelInit = RTCDataChannelInit()
+      ..ordered = true
+      ..binaryType = 'binary'
+      ..maxRetransmits = 30;
+
+    final channel = await peerConnection.createDataChannel(
+      "track_quality",
+      channelInit,
+    );
+
+    final updatedState = copyWith(trackQualityChannel: channel);
+
+    if (isMe) {
+      updatedState.listenTrackQualityChannel();
+    }
+
+    return updatedState;
+  }
+
+  void listenTrackQualityChannel() {
+    if (trackQualityChannel == null) return;
+
+    trackQualityChannel!.onMessage = (message) {
+      final data = message.binary;
+      WaterbusLogger.instance.log("[track_quality] Received: $data");
+    };
+
+    trackQualityChannel!.onDataChannelState = (state) {
+      WaterbusLogger.instance.log("[track_quality] State changed: $state");
+    };
+  }
+
   ParticipantMediaState sinkAudioLevel(AudioLevel level) {
     if (level == audioLevel) return this;
 
@@ -194,6 +230,7 @@ extension ParticipantSFUX on ParticipantMediaState {
     audioLevelController?.close();
     webcamStatsController?.close();
     screenStatsController?.close();
+    trackQualityChannel?.close();
   }
 }
 

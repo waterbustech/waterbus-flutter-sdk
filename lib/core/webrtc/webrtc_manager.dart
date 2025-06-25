@@ -36,7 +36,7 @@ abstract class WebRTCManager {
 
   // ====== Media & Device Control ======
   Future<void> initializeMediaDevices();
-  Future<void> applyMediaSettings(MediaConfig setting);
+  Future<void> updateMediaConfig(MediaConfig setting);
 
   Future<void> toggleAudioInput({bool? forceValue});
   Future<void> toggleVideoInput();

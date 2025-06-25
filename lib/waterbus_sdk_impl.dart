@@ -140,8 +140,8 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<void> changeCallSettings(MediaConfig setting) async {
-    await _rtcManager.applyMediaSettings(setting);
+  Future<void> updateMediaConfig(MediaConfig setting) async {
+    await _rtcManager.updateMediaConfig(setting);
   }
 
   @override
