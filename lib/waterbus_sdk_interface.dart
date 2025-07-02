@@ -88,5 +88,11 @@ abstract class WaterbusSdkInterface {
   Future<void> disableVirtualBg();
   Future<void> setPiPEnabled({required String textureId, bool enabled = true});
 
+  // Ws
+  void connectWs({bool forceConnection = false});
+  void disconnectWs();
+  void reconnectWs({required Function callbackConnected});
+  bool get isWsConnected;
+
   CallState get callState;
 }

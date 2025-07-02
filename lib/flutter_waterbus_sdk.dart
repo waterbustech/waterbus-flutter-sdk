@@ -306,6 +306,21 @@ class WaterbusSdk {
 
   CallState get callState => _sdk.callState;
 
+  // Ws Socket
+  bool get isWsConnected => _sdk.isWsConnected;
+
+  void reconnectWs({required Function callbackConnected}) {
+    _sdk.reconnectWs(callbackConnected: callbackConnected);
+  }
+
+  void connectWs({bool forceConnection = false}) {
+    _sdk.connectWs(forceConnection: forceConnection);
+  }
+
+  void disconnectWs() {
+    _sdk.disconnectWs();
+  }
+
   // Private
   WaterbusSdkInterface get _sdk => getIt<WaterbusSdkInterface>();
   CallKitListener get _callKitListener => getIt<CallKitListener>();

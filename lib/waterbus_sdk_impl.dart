@@ -434,4 +434,23 @@ class SdkCore extends WaterbusSdkInterface {
 
   @override
   CallState get callState => _rtcManager.getCallState();
+
+  // Ws
+  @override
+  bool get isWsConnected => _wsHandler.isConnected;
+
+  @override
+  void reconnectWs({required Function callbackConnected}) {
+    _wsHandler.reconnect(callbackConnected: callbackConnected);
+  }
+
+  @override
+  void disconnectWs() {
+    _wsHandler.disconnection();
+  }
+
+  @override
+  void connectWs({bool forceConnection = false}) {
+    _wsHandler.establishConnection(forceConnection: forceConnection);
+  }
 }
