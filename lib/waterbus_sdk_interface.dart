@@ -6,7 +6,10 @@ abstract class WaterbusSdkInterface {
   Future<void> initializeApp();
 
   // Auth
-  Future<Result<User>> createToken({required AuthPayload payload});
+  Future<Result<User>> createToken({
+    required AuthPayload payload,
+    Function()? callbackConnected,
+  });
   Future<Result<bool>> deleteToken();
   Future<Result<bool>> renewToken();
 

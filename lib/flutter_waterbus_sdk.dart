@@ -292,8 +292,14 @@ class WaterbusSdk {
   }
 
   // Auth
-  Future<Result<User>> createToken(AuthPayload payload) async {
-    return await _sdk.createToken(payload: payload);
+  Future<Result<User>> createToken(
+    AuthPayload payload, {
+    Function()? callbackConnected,
+  }) async {
+    return await _sdk.createToken(
+      payload: payload,
+      callbackConnected: callbackConnected,
+    );
   }
 
   Future<Result<bool>> deleteToken() async {
