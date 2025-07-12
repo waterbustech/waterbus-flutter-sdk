@@ -1,13 +1,13 @@
 class ServerConfig {
   final String url;
-  final String apiPath;
+  final String suffixUrl;
   String apiKey;
 
   ServerConfig({
     required this.url,
-    required this.apiPath,
+    required this.suffixUrl,
     this.apiKey = 'open@waterbus',
   });
 
-  String get baseUrlApi => url + apiPath;
+  String get baseUrlApi => url + suffixUrl;
 }

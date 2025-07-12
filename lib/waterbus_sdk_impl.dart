@@ -15,6 +15,7 @@ import 'package:waterbus_sdk/core/websocket/interfaces/ws_handler.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/native/picture-in-picture/index.dart';
 import 'package:waterbus_sdk/native/replaykit.dart';
+import 'package:waterbus_sdk/types/externals/models/join_room_params.dart';
 import 'package:waterbus_sdk/types/internals/enums/connection_type.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 import 'package:waterbus_sdk/utils/replaykit/replaykit_helper.dart';
@@ -66,7 +67,7 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  Future<Result<Room>> joinRoom({required RoomParams params}) async {
+  Future<Result<Room>> joinRoom({required JoinRoomParams params}) async {
     final Result<Room> roomCurrent = await _roomRepository.joinRoom(params);
 
     if (roomCurrent.isSuccess) {

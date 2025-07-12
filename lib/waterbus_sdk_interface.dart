@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/types/externals/models/join_room_params.dart';
 
 abstract class WaterbusSdkInterface {
   Future<void> initializeApp();
@@ -66,7 +67,7 @@ abstract class WaterbusSdkInterface {
   // Room
   Future<Result<Room>> createRoom({required RoomParams params});
   Future<Result<bool>> updateRoom({required RoomParams params});
-  Future<Result<Room>> joinRoom({required RoomParams params});
+  Future<Result<Room>> joinRoom({required JoinRoomParams params});
   Future<Result<Room>> getRoomInfo(String code);
   Future<void> leaveRoom();
   void toggleRaiseHand();

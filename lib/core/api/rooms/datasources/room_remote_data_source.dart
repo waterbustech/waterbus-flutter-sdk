@@ -6,12 +6,13 @@ import 'package:waterbus_sdk/constants/status_code.dart';
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/types/error/app_exception.dart';
 import 'package:waterbus_sdk/types/externals/models/index.dart';
+import 'package:waterbus_sdk/types/externals/models/join_room_params.dart';
 import 'package:waterbus_sdk/types/result.dart';
 
 abstract class RoomRemoteDataSource {
   Future<Result<Room>> createRoom({required RoomParams params});
   Future<Result<bool>> updateRoom({required RoomParams params});
-  Future<Result<Room>> joinRoom({required RoomParams params});
+  Future<Result<Room>> joinRoom({required JoinRoomParams params});
 
   Future<Result<Room>> getInfoRoom(String code);
 }
@@ -54,9 +55,9 @@ class RoomRemoteDataSourceImpl extends RoomRemoteDataSource {
   }
 
   @override
-  Future<Result<Room>> joinRoom({required RoomParams params}) async {
+  Future<Result<Room>> joinRoom({required JoinRoomParams params}) async {
     final Response response = await _remoteData.post(
-      '${Endpoints.rooms}/${params.room.id}/${Endpoints.join}',
+      '${Endpoints.rooms}/${params.roomId}/${Endpoints.join}',
       body: params.password.isEmpty ? {} : {'password': params.password},
     );
 

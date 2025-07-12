@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 
 import 'package:waterbus_sdk/e2ee/key_provider.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/types/internals/enums/index.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 @singleton

@@ -18,3 +18,5 @@ export 'video_quality.dart';
 export 'presigned_url.dart';
 export 'base_url.dart';
 export 'room_params.dart';
+export 'subtitle.dart';
+export 'rtc_participant_stats.dart';

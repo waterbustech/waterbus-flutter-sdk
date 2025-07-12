@@ -11,11 +11,3 @@ enum RoomStatus {
 
   final int status;
 }
-
-// extension RoomStatusX on int {
-//   RoomStatus get getRoomStatusEnum {
-//     return RoomStatus.values
-//             .firstWhereOrNull((status) => status.status == this) ??
-//         RoomStatus.active;
-//   }
-// }

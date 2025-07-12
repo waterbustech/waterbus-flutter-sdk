@@ -6,6 +6,7 @@ import 'package:rhttp/rhttp.dart';
 import 'package:waterbus_sdk/core/api/base/base_local_storage.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_manager.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
+import 'package:waterbus_sdk/types/externals/models/join_room_params.dart';
 import 'package:waterbus_sdk/types/index.dart';
 import 'package:waterbus_sdk/utils/callkit/callkit_listener.dart';
 import 'package:waterbus_sdk/waterbus_event_listener.dart';
@@ -45,7 +46,7 @@ class WaterbusSdk {
   factory WaterbusSdk() => instance;
 
   // Static configuration
-  static ServerConfig _serverConfig = ServerConfig(url: "", apiPath: "");
+  static ServerConfig _serverConfig = ServerConfig(url: "", suffixUrl: "");
   static String _messageEncryptionKey = '';
   static String _webrtcE2eeKey = 'waterbus';
   static HttpVersionPref _httpVersionPref = HttpVersionPref.all;
@@ -120,7 +121,7 @@ class WaterbusSdk {
   }
 
   /// Join an existing room
-  Future<Result<Room>> joinRoom({required RoomParams params}) async {
+  Future<Result<Room>> joinRoom({required JoinRoomParams params}) async {
     return await _sdk.joinRoom(params: params);
   }
 

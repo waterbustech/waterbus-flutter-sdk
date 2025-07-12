@@ -7,6 +7,7 @@ import 'package:waterbus_sdk/core/websocket/interfaces/ws_handler.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
 import 'package:waterbus_sdk/types/internals/enums/connection_type.dart';
+import 'package:waterbus_sdk/types/internals/models/index.dart';
 
 @Injectable(as: WsEmitter)
 class WsEmitterImpl extends WsEmitter {

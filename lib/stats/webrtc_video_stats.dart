@@ -5,7 +5,7 @@ import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 import 'package:injectable/injectable.dart';
 
 import 'package:waterbus_sdk/constants/constants.dart';
-import 'package:waterbus_sdk/types/internals/models/rtc_participant_stats.dart';
+import 'package:waterbus_sdk/types/externals/models/rtc_participant_stats.dart';
 import 'package:waterbus_sdk/types/internals/models/stats.dart';
 import 'package:waterbus_sdk/types/internals/models/video_stats_params.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extension.dart';

@@ -2,12 +2,13 @@ import 'package:injectable/injectable.dart';
 
 import 'package:waterbus_sdk/core/api/rooms/datasources/room_remote_data_source.dart';
 import 'package:waterbus_sdk/types/externals/models/index.dart';
+import 'package:waterbus_sdk/types/externals/models/join_room_params.dart';
 import 'package:waterbus_sdk/types/result.dart';
 
 abstract class RoomRepository {
   Future<Result<Room>> createRoom(RoomParams params);
   Future<Result<bool>> updateRoom(RoomParams params);
-  Future<Result<Room>> joinRoom(RoomParams params);
+  Future<Result<Room>> joinRoom(JoinRoomParams params);
   Future<Result<Room>> getInfoRoom(String code);
 }
 
@@ -38,7 +39,7 @@ class RoomRepositoryImpl extends RoomRepository {
   }
 
   @override
-  Future<Result<Room>> joinRoom(RoomParams params) async {
+  Future<Result<Room>> joinRoom(JoinRoomParams params) async {
     Result<Room> result = await _remoteDataSource.joinRoom(params: params);
 
     if (result.isFailure) return result;

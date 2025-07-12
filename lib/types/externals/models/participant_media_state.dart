@@ -5,6 +5,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/types/internals/enums/connection_type.dart';
+import 'package:waterbus_sdk/types/internals/enums/index.dart';
 import 'package:waterbus_sdk/types/internals/models/track_quality.dart';
 import 'package:waterbus_sdk/types/internals/models/track_subscribed_message.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';

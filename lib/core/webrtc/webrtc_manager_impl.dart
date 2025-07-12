@@ -16,6 +16,8 @@ import 'package:waterbus_sdk/native/virtual_background/index.dart';
 import 'package:waterbus_sdk/stats/webrtc_audio_stats.dart';
 import 'package:waterbus_sdk/stats/webrtc_video_stats.dart';
 import 'package:waterbus_sdk/types/internals/enums/connection_type.dart';
+import 'package:waterbus_sdk/types/internals/enums/index.dart';
+import 'package:waterbus_sdk/types/internals/models/index.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extension.dart';
 import 'package:waterbus_sdk/utils/extensions/pc_extension.dart';
 import 'package:waterbus_sdk/utils/extensions/sdp_extension.dart';

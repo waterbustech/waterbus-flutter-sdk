@@ -10,6 +10,7 @@ import 'package:waterbus_sdk/core/websocket/interfaces/ws_handler.dart';
 import 'package:waterbus_sdk/core/websocket/unload_handler/index.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/types/internals/enums/connection_type.dart';
+import 'package:waterbus_sdk/types/internals/models/index.dart';
 import 'package:waterbus_sdk/utils/dio/dio_configuration.dart';
 import 'package:waterbus_sdk/utils/encrypt/encrypt.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extension.dart';
