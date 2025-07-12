@@ -383,11 +383,17 @@ class SdkCore extends WaterbusSdkInterface {
 
   // Auth
   @override
-  Future<Result<User>> createToken({required AuthPayload payload}) async {
+  Future<Result<User>> createToken({
+    required AuthPayload payload,
+    Function()? callbackConnected,
+  }) async {
     final Result<User> user = await _authRepository.createToken(payload);
 
     if (user.isSuccess) {
-      _wsHandler.establishConnection(forceConnection: true);
+      _wsHandler.establishConnection(
+        forceConnection: true,
+        callbackConnected: callbackConnected,
+      );
     }
 
     return user;
