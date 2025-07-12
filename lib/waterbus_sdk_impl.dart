@@ -67,8 +67,6 @@ class SdkCore extends WaterbusSdkInterface {
 
   @override
   Future<Result<Room>> joinRoom({required RoomParams params}) async {
-    if (!_wsHandler.isConnected) return Result.failure(ServerFailure());
-
     final Result<Room> roomCurrent = await _roomRepository.joinRoom(params);
 
     if (roomCurrent.isSuccess) {
@@ -88,6 +86,8 @@ class SdkCore extends WaterbusSdkInterface {
           .where((participant) => !participant.isMe)
           .map((participant) => participant.id.toString())
           .toList();
+
+      if (!_wsHandler.isConnected) return Result.failure(ServerFailure());
 
       await _joinRoom(
         roomId: room.id.toString(),

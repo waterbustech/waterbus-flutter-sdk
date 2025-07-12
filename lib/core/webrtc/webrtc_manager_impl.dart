@@ -91,6 +91,10 @@ class WebRTCManagerIpml extends WebRTCManager {
       await Future.wait(futures);
     }
 
+    if (connectionType == ConnectionType.sfu) {
+      _mParticipant = await _mParticipant?.createTrackQualityChannel();
+    }
+
     _currentRoomId = roomId;
     _currentParticipantId = participantId.toString();
 
@@ -996,6 +1000,10 @@ class WebRTCManagerIpml extends WebRTCManager {
       constraints: RTCConfigurations.offerPublisherSdpConstraints,
     );
 
+    if (_connectionType == ConnectionType.sfu) {
+      _mParticipant = await _mParticipant?.createTrackQualityChannel(pc: pc);
+    }
+
     _mParticipant = _mParticipant?.copyWith(backupPc: pc);
 
     pc.onIceCandidate = (candidate) {
@@ -1195,6 +1203,11 @@ class WebRTCManagerIpml extends WebRTCManager {
           );
         }
       };
+    }
+
+    if (_connectionType == ConnectionType.sfu) {
+      _remoteSubscribers[targetId] =
+          await _remoteSubscribers[targetId]!.createTrackQualityChannel();
     }
 
     rtcPeerConnection.onTrack = (track) {

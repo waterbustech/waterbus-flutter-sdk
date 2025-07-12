@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/types/internals/enums/connection_type.dart';
+import 'package:waterbus_sdk/types/internals/models/track_quality.dart';
+import 'package:waterbus_sdk/types/internals/models/track_subscribed_message.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 part 'participant_media_state.freezed.dart';
@@ -30,6 +33,7 @@ abstract class ParticipantMediaState with _$ParticipantMediaState {
     StreamController<RtcParticipantStats>? screenStatsController,
     String? screenTrackId,
     required ConnectionType connectionType,
+    RTCDataChannel? trackQualityChannel,
 
     // ==== Backup variables for migrate case ====
     RTCPeerConnection? backupPc,
@@ -90,6 +94,72 @@ abstract class ParticipantMediaState with _$ParticipantMediaState {
 }
 
 extension ParticipantSFUX on ParticipantMediaState {
+  bool get isMe => ownerId == kIsMine;
+
+  Future<ParticipantMediaState> createTrackQualityChannel({
+    RTCPeerConnection? pc,
+  }) async {
+    final peerConnection = pc ?? this.peerConnection;
+
+    final channelInit = RTCDataChannelInit()
+      ..ordered = true
+      ..binaryType = 'binary'
+      ..maxRetransmits = 30;
+
+    peerConnection.onDataChannel = (dc) {
+      if (dc.label == "track_quality") {
+        final updated = copyWith(trackQualityChannel: dc);
+        if (isMe) {
+          updated.listenTrackQualityChannel();
+        }
+      }
+    };
+
+    final channel = await peerConnection.createDataChannel(
+      "track_quality",
+      channelInit,
+    );
+
+    if (!isMe) {
+      cameraSource?.trackQualityChannel = channel;
+      screenSource?.trackQualityChannel = channel;
+    }
+
+    final updatedState = copyWith(trackQualityChannel: channel);
+
+    return updatedState;
+  }
+
+  void listenTrackQualityChannel() {
+    if (trackQualityChannel == null) return;
+
+    trackQualityChannel!.onMessage = (message) {
+      WaterbusLogger.instance.log(
+        "[track_quality] 🔥 Received message (binary: ${message.isBinary})",
+      );
+
+      final data = message.binary;
+      final String jsonStr = utf8.decode(data);
+      final TrackSubscribedMessage msg = TrackSubscribedMessage.fromJson(
+        jsonDecode(jsonStr),
+      );
+
+      WaterbusLogger.instance.log(
+        "[track_quality] 📦 Decoded: ${msg.toString()}",
+      );
+
+      if (msg.trackId == cameraSource?.getVideoTrackId) {
+        cameraSource?.setRidActive(msg.quality.rid, msg.subscribedCount > 0);
+      } else if (msg.trackId == screenSource?.getVideoTrackId) {
+        screenSource?.setRidActive(msg.quality.rid, msg.subscribedCount > 0);
+      }
+    };
+
+    trackQualityChannel!.onDataChannelState = (state) {
+      WaterbusLogger.instance.log("[track_quality] State changed: $state");
+    };
+  }
+
   ParticipantMediaState sinkAudioLevel(AudioLevel level) {
     if (level == audioLevel) return this;
 
@@ -194,6 +264,7 @@ extension ParticipantSFUX on ParticipantMediaState {
     audioLevelController?.close();
     webcamStatsController?.close();
     screenStatsController?.close();
+    trackQualityChannel?.close();
   }
 }
 

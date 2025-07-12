@@ -14,7 +14,7 @@ part of 'video_config.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$VideoConfig {
+mixin _$VideoConfig implements DiagnosticableTreeMixin {
   String? get deviceId;
   bool get isVideoMuted;
   RTCVideoCodec get preferedCodec;
@@ -29,6 +29,16 @@ mixin _$VideoConfig {
 
   /// Serializes this VideoConfig to a JSON map.
   Map<String, dynamic> toJson();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    properties
+      ..add(DiagnosticsProperty('type', 'VideoConfig'))
+      ..add(DiagnosticsProperty('deviceId', deviceId))
+      ..add(DiagnosticsProperty('isVideoMuted', isVideoMuted))
+      ..add(DiagnosticsProperty('preferedCodec', preferedCodec))
+      ..add(DiagnosticsProperty('videoQuality', videoQuality));
+  }
 
   @override
   bool operator ==(Object other) {
@@ -51,7 +61,7 @@ mixin _$VideoConfig {
       runtimeType, deviceId, isVideoMuted, preferedCodec, videoQuality);
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'VideoConfig(deviceId: $deviceId, isVideoMuted: $isVideoMuted, preferedCodec: $preferedCodec, videoQuality: $videoQuality)';
   }
 }
@@ -109,7 +119,7 @@ class _$VideoConfigCopyWithImpl<$Res> implements $VideoConfigCopyWith<$Res> {
 
 /// @nodoc
 @JsonSerializable()
-class _VideoConfig implements VideoConfig {
+class _VideoConfig with DiagnosticableTreeMixin implements VideoConfig {
   const _VideoConfig(
       {this.deviceId,
       this.isVideoMuted = false,
@@ -146,6 +156,16 @@ class _VideoConfig implements VideoConfig {
   }
 
   @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    properties
+      ..add(DiagnosticsProperty('type', 'VideoConfig'))
+      ..add(DiagnosticsProperty('deviceId', deviceId))
+      ..add(DiagnosticsProperty('isVideoMuted', isVideoMuted))
+      ..add(DiagnosticsProperty('preferedCodec', preferedCodec))
+      ..add(DiagnosticsProperty('videoQuality', videoQuality));
+  }
+
+  @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
@@ -166,7 +186,7 @@ class _VideoConfig implements VideoConfig {
       runtimeType, deviceId, isVideoMuted, preferedCodec, videoQuality);
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'VideoConfig(deviceId: $deviceId, isVideoMuted: $isVideoMuted, preferedCodec: $preferedCodec, videoQuality: $videoQuality)';
   }
 }

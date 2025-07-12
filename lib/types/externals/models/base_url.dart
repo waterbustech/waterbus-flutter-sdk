@@ -1,9 +1,13 @@
-class BaseUrl {
+class ServerConfig {
   final String url;
-  final String suffixUrl;
-  String? apiKey;
+  final String apiPath;
+  String apiKey;
 
-  BaseUrl({required this.url, required this.suffixUrl, this.apiKey});
+  ServerConfig({
+    required this.url,
+    required this.apiPath,
+    this.apiKey = 'open@waterbus',
+  });
 
-  String get baseUrlApi => url + suffixUrl;
+  String get baseUrlApi => url + apiPath;
 }

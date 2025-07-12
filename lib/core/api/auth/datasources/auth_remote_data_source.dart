@@ -31,7 +31,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
       body: body,
     );
 
-    if (response.statusCode == StatusCode.created) {
+  if (response.statusCode == StatusCode.created) {
       final String accessToken = response.data['token'];
       final String refreshToken = response.data['refreshToken'];
 

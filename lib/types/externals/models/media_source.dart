@@ -1,8 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/types/internals/models/track_quality.dart';
+import 'package:waterbus_sdk/types/internals/models/track_quality_request.dart';
+import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 class MediaSource {
   MediaStream? stream;
@@ -10,12 +14,14 @@ class MediaSource {
   RTCRtpSender? sender;
   bool hasFirstFrameRendered;
   final Function()? onFirstFrameRendered;
+  RTCDataChannel? trackQualityChannel;
 
   MediaSource({
     this.stream,
     this.renderer,
     this.hasFirstFrameRendered = false,
     this.onFirstFrameRendered,
+    this.trackQualityChannel,
   }) {
     _initRendererIfNeeded();
   }
@@ -30,22 +36,14 @@ class MediaSource {
 
   String? get streamId => stream?.id;
 
-  void setSender(RTCRtpSender sender) {
-    this.sender ??= sender;
+  String? get getVideoTrackId {
+    final videoTracks = stream?.getVideoTracks() ?? [];
+
+    return videoTracks.firstOrNull?.id;
   }
 
-  Future<void> setRidActive(String rid, bool active) async {
-    if (sender == null) return;
-
-    final parameters = sender!.parameters;
-
-    for (final RTCRtpEncoding encoding in parameters.encodings ?? []) {
-      if (encoding.rid == rid) {
-        encoding.active = active;
-      }
-    }
-
-    await sender?.setParameters(parameters);
+  void setSender(RTCRtpSender sender) {
+    this.sender ??= sender;
   }
 
   void setSrcObject(MediaStream stream) {
@@ -118,5 +116,52 @@ class MediaSource {
         renderer.hashCode ^
         hasFirstFrameRendered.hashCode ^
         onFirstFrameRendered.hashCode;
+  }
+}
+
+extension MediaSourceQuality on MediaSource {
+  /// For Publisher
+  Future<void> setRidActive(String rid, bool active) async {
+    if (sender == null) return;
+
+    final parameters = sender!.parameters;
+
+    for (final RTCRtpEncoding encoding in parameters.encodings ?? []) {
+      if (encoding.rid == rid) {
+        encoding.active = active;
+      }
+    }
+
+    await sender?.setParameters(parameters);
+  }
+
+  /// For Subscriber
+  Future<void> setPreferredQuality(TrackQuality quality) async {
+    final videoTrackId = getVideoTrackId;
+
+    if (videoTrackId == null) return;
+
+    final payload = TrackQualityRequest(
+      trackId: videoTrackId,
+      quality: quality,
+    );
+
+    final channel = trackQualityChannel;
+
+    if (channel == null ||
+        channel.state != RTCDataChannelState.RTCDataChannelOpen) {
+      WaterbusLogger.instance.log(
+        '[Waterbus] DataChannel not open. Cannot send quality',
+      );
+      return;
+    }
+
+    try {
+      final jsonString = jsonEncode(payload.toJson());
+      final bytes = utf8.encode(jsonString);
+      channel.send(RTCDataChannelMessage.fromBinary(Uint8List.fromList(bytes)));
+    } catch (e, st) {
+      WaterbusLogger.instance.bug('Failed to send preferred quality: $e\n$st');
+    }
   }
 }

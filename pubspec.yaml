@@ -39,12 +39,13 @@ dependencies:
   cryptography: ^2.7.0
   convert: ^3.1.1
   msgpack_dart: ^1.0.1
+  visibility_detector: ^0.4.0+2
   
   # WebRTC
   sdp_transform: ^0.3.2
   h264_profile_level_id: ^0.2.1
   dart_webrtc_plus: ^1.5.4+1
-  flutter_webrtc_plus: ^0.14.1+4
+  flutter_webrtc_plus: ^0.14.1+5
     
   # Dependency Injection
   get_it: ^8.0.3
