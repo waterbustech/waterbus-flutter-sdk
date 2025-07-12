@@ -1,5 +1,7 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
+
 import 'package:waterbus_sdk/types/externals/models/media_source.dart';
 import 'package:waterbus_sdk/types/internals/models/track_quality.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';

@@ -9,6 +9,7 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
@@ -18,8 +19,6 @@ import '../core/api/auth/repositories/auth_repository.dart' as _i824;
 import '../core/api/base/base_remote_data.dart' as _i182;
 import '../core/api/chat/datasources/chat_remote_data_source.dart' as _i692;
 import '../core/api/chat/repositories/chat_repository.dart' as _i613;
-import '../core/api/messages/datasources/message_remote_data_source.dart'
-    as _i647;
 import '../core/api/messages/repositories/message_repository.dart' as _i575;
 import '../core/api/rooms/datasources/room_remote_data_source.dart' as _i652;
 import '../core/api/rooms/repositories/room_repository.dart' as _i933;
@@ -41,6 +40,9 @@ import '../utils/dio/dio_configuration.dart' as _i514;
 import '../utils/logger/logger.dart' as _i944;
 import '../waterbus_sdk_impl.dart' as _i1039;
 import '../waterbus_sdk_interface.dart' as _i513;
+
+import '../core/api/messages/datasources/message_remote_data_source.dart'
+    as _i647;
 
 // initializes the registration of main-scope dependencies inside of GetIt
 _i174.GetIt $initGetIt(

@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+
 import 'package:waterbus_sdk/types/internals/models/track_quality.dart';
 
 part 'track_quality_request.freezed.dart';
