@@ -2,12 +2,12 @@
 
 * [BREAKING] Upgrade Waterbus SFU to v3 [Written in Rust](https://github.com/waterbustech/waterbus-rs)
   * [Feat] Support HTTP3
-  * [Feat] Support Simulcast
-* [Feat] Integrate connectivity_plus to manage user connection
+  * [Feat] Support Simulcast, SVC
 * [Feat] Add custom WebRTC e2ee key
 * [Fix] Frame Encryption
 * [Chore] Improvement stats
 * [Enhance] Reduce connection time
+* [Deprecated] Temporarily removed: `Subtitle` and `Recording`
 
 ## 1.6.0
 
