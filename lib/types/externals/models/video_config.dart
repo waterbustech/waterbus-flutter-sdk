@@ -14,7 +14,7 @@ abstract class VideoConfig with _$VideoConfig {
     String? deviceId,
     @Default(false) bool isVideoMuted,
     @Default(RTCVideoCodec.h264) RTCVideoCodec preferedCodec,
-    @Default(VideoQualityEnum.p1080) VideoQualityEnum videoQuality,
+    @Default(VideoQualityEnum.k720p) VideoQualityEnum videoQuality,
   }) = _VideoConfig;
 
   factory VideoConfig.fromJson(Map<String, Object?> json) =>

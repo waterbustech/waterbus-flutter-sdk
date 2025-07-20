@@ -124,7 +124,7 @@ class _VideoConfig with DiagnosticableTreeMixin implements VideoConfig {
       {this.deviceId,
       this.isVideoMuted = false,
       this.preferedCodec = RTCVideoCodec.h264,
-      this.videoQuality = VideoQualityEnum.p1080});
+      this.videoQuality = VideoQualityEnum.k720p});
   factory _VideoConfig.fromJson(Map<String, dynamic> json) =>
       _$VideoConfigFromJson(json);
 

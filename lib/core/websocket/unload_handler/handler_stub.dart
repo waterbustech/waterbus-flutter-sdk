@@ -1,1 +1,0 @@
-void unloadHandler(Function callback) {}

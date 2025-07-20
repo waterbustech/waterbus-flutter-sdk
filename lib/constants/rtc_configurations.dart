@@ -5,11 +5,7 @@ import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 class RTCConfigurations {
   static Map<String, dynamic> configuration(bool e2eeEnabled) {
     return {
-      'iceServers': [
-        {
-          "urls": "stun:stun.cloudflare.com:3478",
-        },
-      ],
+      'iceServers': kIceServers,
       'sdpSemantics': 'unified-plan',
       'iceCandidatePoolSize': 20,
       "audioJitterBufferMaxPackets": 50,

@@ -14,7 +14,7 @@ _VideoConfig _$VideoConfigFromJson(Map<String, dynamic> json) => _VideoConfig(
               RTCVideoCodec.h264,
       videoQuality: $enumDecodeNullable(
               _$VideoQualityEnumEnumMap, json['videoQuality']) ??
-          VideoQualityEnum.p1080,
+          VideoQualityEnum.k720p,
     );
 
 Map<String, dynamic> _$VideoConfigToJson(_VideoConfig instance) =>
@@ -33,7 +33,7 @@ const _$RTCVideoCodecEnumMap = {
 };
 
 const _$VideoQualityEnumEnumMap = {
-  VideoQualityEnum.p1080: 'p1080',
-  VideoQualityEnum.p720: 'p720',
-  VideoQualityEnum.p360: 'p360',
+  VideoQualityEnum.k1080p: '1080p',
+  VideoQualityEnum.k720p: '720p',
+  VideoQualityEnum.k360p: '360p',
 };

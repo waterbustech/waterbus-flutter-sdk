@@ -4,25 +4,25 @@ import 'package:waterbus_sdk/types/externals/models/video_quality.dart';
 
 @JsonEnum()
 enum VideoQualityEnum {
-  @JsonValue("p1080")
-  p1080,
-  @JsonValue("p720")
-  p720,
-  @JsonValue("p360")
-  p360;
+  @JsonValue("1080p")
+  k1080p,
+  @JsonValue("720p")
+  k720p,
+  @JsonValue("360p")
+  k360p;
 
   VideoQuality get quality => switch (this) {
-        VideoQualityEnum.p1080 => VideoQuality(
+        VideoQualityEnum.k1080p => VideoQuality(
             minHeight: 1080,
             minWidth: 1920,
             minFrameRate: 30,
           ),
-        VideoQualityEnum.p720 => VideoQuality(
+        VideoQualityEnum.k720p => VideoQuality(
             minHeight: 720,
             minWidth: 1280,
             minFrameRate: 24,
           ),
-        VideoQualityEnum.p360 => VideoQuality(
+        VideoQualityEnum.k360p => VideoQuality(
             minHeight: 360,
             minWidth: 640,
             minFrameRate: 15,

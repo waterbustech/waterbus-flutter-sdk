@@ -1,3 +1,8 @@
+## 2.0.1
+
+* [Chore] Updated `VideoQualityEnum` value
+* [Fix] Removed `unloadHandler`
+
 ## 2.0.0
 
 * [BREAKING] Upgrade Waterbus SFU to v3 [Written in Rust](https://github.com/waterbustech/waterbus-rs)
