@@ -58,9 +58,9 @@ _i174.GetIt $initGetIt(
   gh.factory<_i235.NativeService>(() => _i235.NativeService());
   gh.factory<_i944.WaterbusLogger>(() => _i944.WaterbusLogger());
   gh.singleton<_i124.ReplayKitChannel>(() => _i124.ReplayKitChannel());
-  gh.singleton<_i232.WebRTCVideoStats>(() => _i232.WebRTCVideoStats());
-  gh.singleton<_i245.WebRTCAudioStats>(() => _i245.WebRTCAudioStats());
   gh.singleton<_i460.E2EEManager>(() => _i460.E2EEManager());
+  gh.singleton<_i245.WebRTCAudioStats>(() => _i245.WebRTCAudioStats());
+  gh.singleton<_i232.WebRTCVideoStats>(() => _i232.WebRTCVideoStats());
   gh.factory<_i988.WsEmitter>(() => _i17.WsEmitterImpl());
   gh.lazySingleton<_i801.AuthLocalDataSource>(
       () => _i801.AuthLocalDataSourceImpl());

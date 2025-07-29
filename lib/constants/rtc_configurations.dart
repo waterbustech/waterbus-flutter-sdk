@@ -9,7 +9,7 @@ class RTCConfigurations {
     IceServersResponse iceServers = kIceServers,
   }) {
     return {
-      ...iceServers.toJson(),
+      'iceServers': iceServers.toMap(),
       'sdpSemantics': 'unified-plan',
       'iceCandidatePoolSize': 20,
       "audioJitterBufferMaxPackets": 50,

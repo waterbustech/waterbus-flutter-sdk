@@ -14,8 +14,6 @@ class WsEmitterImpl extends WsEmitter {
   // ====== Room Events ======
   @override
   void publishRoom({required PublishWsEmitterPayLoad payload}) {
-    print('connectionType: ${payload.connectionType}');
-    print('roomId: ${payload.roomId}');
     _socket?.emit(WsEvent.roomPublish, payload.toJson());
   }
 

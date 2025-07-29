@@ -48,7 +48,7 @@ class WebRTCManagerIpml extends WebRTCManager {
     });
   }
 
-  ConnectionType _connectionType = ConnectionType.sfu;
+  ConnectionType _connectionType = ConnectionType.p2p;
   String? _currentRoomId;
   String? _currentParticipantId;
   MediaStream? _localCameraStream;
@@ -74,7 +74,7 @@ class WebRTCManagerIpml extends WebRTCManager {
     required int participantId,
     required ConnectionType connectionType,
   }) async {
-    // _connectionType = connectionType;
+    _connectionType = connectionType;
 
     await Future.wait([
       _e2eeManager.initialize(
@@ -912,10 +912,6 @@ class WebRTCManagerIpml extends WebRTCManager {
 
   Future<void> _establishPublisher() async {
     final RTCPeerConnection peerConnection = _mParticipant!.peerConnection;
-
-    peerConnection.onConnectionState = (state) {
-      print('Publisher connection state: $state');
-    };
 
     peerConnection.onIceCandidate = (candidate) {
       if (_canPublisherAddIceCandidate) {

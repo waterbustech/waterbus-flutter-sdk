@@ -14,3 +14,22 @@ abstract class IceServersResponse with _$IceServersResponse {
   factory IceServersResponse.fromJson(Map<String, dynamic> json) =>
       _$IceServersResponseFromJson(json);
 }
+
+extension IceServersResponseToMap on IceServersResponse {
+  List<Map<String, dynamic>> toMap() {
+    return iceServers.map((server) {
+      final map = <String, dynamic>{
+        'urls': server.urls,
+      };
+
+      if (server.username != null) {
+        map['username'] = server.username;
+      }
+      if (server.credential != null) {
+        map['credential'] = server.credential;
+      }
+
+      return map;
+    }).toList();
+  }
+}
