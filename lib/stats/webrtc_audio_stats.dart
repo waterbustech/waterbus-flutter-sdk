@@ -78,6 +78,7 @@ class WebRTCAudioStats {
     required AudioStatsParams params,
     String type = 'media-source',
   }) async {
+    return;
     try {
       final List<StatsReport> stats = [];
 

@@ -4,18 +4,19 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 
-import 'dart:async' as _i6;
+import 'dart:async' as _i7;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i4;
+import 'package:mockito/src/dummies.dart' as _i5;
 
-import 'package:waterbus_sdk/types/externals/models/index.dart' as _i7;
+import 'package:waterbus_sdk/types/externals/models/index.dart' as _i8;
+import 'package:waterbus_sdk/types/internals/models/index.dart' as _i3;
 import 'package:waterbus_sdk/types/result.dart' as _i2;
 
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_data_source.dart'
-    as _i3;
+    as _i4;
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_remote_data_source.dart'
-    as _i5;
+    as _i6;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -41,19 +42,30 @@ class _FakeResult_0<T> extends _i1.SmartFake implements _i2.Result<T> {
         );
 }
 
+class _FakeIceServersResponse_1 extends _i1.SmartFake
+    implements _i3.IceServersResponse {
+  _FakeIceServersResponse_1(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [AuthLocalDataSource].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockAuthLocalDataSource extends _i1.Mock
-    implements _i3.AuthLocalDataSource {
+    implements _i4.AuthLocalDataSource {
   @override
   String get accessToken => (super.noSuchMethod(
         Invocation.getter(#accessToken),
-        returnValue: _i4.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.getter(#accessToken),
         ),
-        returnValueForMissingStub: _i4.dummyValue<String>(
+        returnValueForMissingStub: _i5.dummyValue<String>(
           this,
           Invocation.getter(#accessToken),
         ),
@@ -62,11 +74,11 @@ class MockAuthLocalDataSource extends _i1.Mock
   @override
   String get refreshToken => (super.noSuchMethod(
         Invocation.getter(#refreshToken),
-        returnValue: _i4.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.getter(#refreshToken),
         ),
-        returnValueForMissingStub: _i4.dummyValue<String>(
+        returnValueForMissingStub: _i5.dummyValue<String>(
           this,
           Invocation.getter(#refreshToken),
         ),
@@ -103,27 +115,27 @@ class MockAuthLocalDataSource extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockAuthRemoteDataSource extends _i1.Mock
-    implements _i5.AuthRemoteDataSource {
+    implements _i6.AuthRemoteDataSource {
   @override
-  _i6.Future<(String?, String?)> renewToken() => (super.noSuchMethod(
+  _i7.Future<(String?, String?)> renewToken() => (super.noSuchMethod(
         Invocation.method(
           #renewToken,
           [],
         ),
-        returnValue: _i6.Future<(String?, String?)>.value((null, null)),
+        returnValue: _i7.Future<(String?, String?)>.value((null, null)),
         returnValueForMissingStub:
-            _i6.Future<(String?, String?)>.value((null, null)),
-      ) as _i6.Future<(String?, String?)>);
+            _i7.Future<(String?, String?)>.value((null, null)),
+      ) as _i7.Future<(String?, String?)>);
 
   @override
-  _i6.Future<_i2.Result<_i7.User>> createToken(_i7.AuthPayload? authPayload) =>
+  _i7.Future<_i2.Result<_i8.User>> createToken(_i8.AuthPayload? authPayload) =>
       (super.noSuchMethod(
         Invocation.method(
           #createToken,
           [authPayload],
         ),
         returnValue:
-            _i6.Future<_i2.Result<_i7.User>>.value(_FakeResult_0<_i7.User>(
+            _i7.Future<_i2.Result<_i8.User>>.value(_FakeResult_0<_i8.User>(
           this,
           Invocation.method(
             #createToken,
@@ -131,22 +143,22 @@ class MockAuthRemoteDataSource extends _i1.Mock
           ),
         )),
         returnValueForMissingStub:
-            _i6.Future<_i2.Result<_i7.User>>.value(_FakeResult_0<_i7.User>(
+            _i7.Future<_i2.Result<_i8.User>>.value(_FakeResult_0<_i8.User>(
           this,
           Invocation.method(
             #createToken,
             [authPayload],
           ),
         )),
-      ) as _i6.Future<_i2.Result<_i7.User>>);
+      ) as _i7.Future<_i2.Result<_i8.User>>);
 
   @override
-  _i6.Future<_i2.Result<bool>> deleteToken() => (super.noSuchMethod(
+  _i7.Future<_i2.Result<bool>> deleteToken() => (super.noSuchMethod(
         Invocation.method(
           #deleteToken,
           [],
         ),
-        returnValue: _i6.Future<_i2.Result<bool>>.value(_FakeResult_0<bool>(
+        returnValue: _i7.Future<_i2.Result<bool>>.value(_FakeResult_0<bool>(
           this,
           Invocation.method(
             #deleteToken,
@@ -154,12 +166,36 @@ class MockAuthRemoteDataSource extends _i1.Mock
           ),
         )),
         returnValueForMissingStub:
-            _i6.Future<_i2.Result<bool>>.value(_FakeResult_0<bool>(
+            _i7.Future<_i2.Result<bool>>.value(_FakeResult_0<bool>(
           this,
           Invocation.method(
             #deleteToken,
             [],
           ),
         )),
-      ) as _i6.Future<_i2.Result<bool>>);
+      ) as _i7.Future<_i2.Result<bool>>);
+
+  @override
+  _i7.Future<_i3.IceServersResponse> getIceServers() => (super.noSuchMethod(
+        Invocation.method(
+          #getIceServers,
+          [],
+        ),
+        returnValue:
+            _i7.Future<_i3.IceServersResponse>.value(_FakeIceServersResponse_1(
+          this,
+          Invocation.method(
+            #getIceServers,
+            [],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i7.Future<_i3.IceServersResponse>.value(_FakeIceServersResponse_1(
+          this,
+          Invocation.method(
+            #getIceServers,
+            [],
+          ),
+        )),
+      ) as _i7.Future<_i3.IceServersResponse>);
 }

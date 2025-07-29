@@ -18,6 +18,9 @@ _PublishWsEmitterPayLoad _$PublishWsEmitterPayLoadFromJson(
       totalTracks: (json['totalTracks'] as num).toInt(),
       connectionType:
           $enumDecode(_$ConnectionTypeEnumMap, json['connectionType']),
+      streamingProtocol:
+          $enumDecode(_$StreamingProtocolEnumMap, json['streamingProtocol']),
+      isIpv6Supported: json['isIpv6Supported'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$PublishWsEmitterPayLoadToJson(
@@ -31,9 +34,17 @@ Map<String, dynamic> _$PublishWsEmitterPayLoadToJson(
       'isE2eeEnabled': instance.isE2eeEnabled,
       'totalTracks': instance.totalTracks,
       'connectionType': _$ConnectionTypeEnumMap[instance.connectionType]!,
+      'streamingProtocol':
+          _$StreamingProtocolEnumMap[instance.streamingProtocol]!,
+      'isIpv6Supported': instance.isIpv6Supported,
     };
 
 const _$ConnectionTypeEnumMap = {
   ConnectionType.p2p: 0,
   ConnectionType.sfu: 1,
+};
+
+const _$StreamingProtocolEnumMap = {
+  StreamingProtocol.sfu: 0,
+  StreamingProtocol.hls: 1,
 };

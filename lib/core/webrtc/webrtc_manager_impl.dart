@@ -6,6 +6,7 @@ import 'package:injectable/injectable.dart';
 import 'package:sdp_transform/sdp_transform.dart';
 
 import 'package:waterbus_sdk/constants/rtc_configurations.dart';
+import 'package:waterbus_sdk/core/api/auth/repositories/auth_repository.dart';
 import 'package:waterbus_sdk/core/webrtc/webrtc_manager.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/ws_emitter.dart';
 import 'package:waterbus_sdk/e2ee/e2ee_manager.dart';
@@ -21,6 +22,7 @@ import 'package:waterbus_sdk/types/internals/models/index.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extension.dart';
 import 'package:waterbus_sdk/utils/extensions/pc_extension.dart';
 import 'package:waterbus_sdk/utils/extensions/sdp_extension.dart';
+import 'package:waterbus_sdk/utils/ipv6/index.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 @LazySingleton(as: WebRTCManager)
@@ -31,6 +33,7 @@ class WebRTCManagerIpml extends WebRTCManager {
   final NativeService _nativeService;
   final WebRTCVideoStats _videoStats;
   final WebRTCAudioStats _audioStats;
+  final AuthRepository _authRepository;
   WebRTCManagerIpml(
     this._e2eeManager,
     this._wsEmitter,
@@ -38,9 +41,14 @@ class WebRTCManagerIpml extends WebRTCManager {
     this._nativeService,
     this._videoStats,
     this._audioStats,
-  );
+    this._authRepository,
+  ) {
+    scheduleMicrotask(() async {
+      _isIpv6Supported = await isIpv6Supported();
+    });
+  }
 
-  ConnectionType _connectionType = ConnectionType.p2p;
+  ConnectionType _connectionType = ConnectionType.sfu;
   String? _currentRoomId;
   String? _currentParticipantId;
   MediaStream? _localCameraStream;
@@ -48,6 +56,7 @@ class WebRTCManagerIpml extends WebRTCManager {
   ParticipantMediaState? _mParticipant;
   bool _canPublisherAddIceCandidate = false;
   bool _isSessionBeingRecorded = false;
+  bool _isIpv6Supported = false;
   MediaConfig _currentCallSetting = MediaConfig();
   final Map<String, ParticipantMediaState> _remoteSubscribers = {};
   final Map<String, List<RTCIceCandidate>> _iceCandidateQueueForSubscribers =
@@ -65,7 +74,7 @@ class WebRTCManagerIpml extends WebRTCManager {
     required int participantId,
     required ConnectionType connectionType,
   }) async {
-    _connectionType = connectionType;
+    // _connectionType = connectionType;
 
     await Future.wait([
       _e2eeManager.initialize(
@@ -578,6 +587,8 @@ class WebRTCManagerIpml extends WebRTCManager {
 
       final screenTrack = _screenSharingStream!.getVideoTracks().first;
 
+      _wsEmitter.toggleScreenSharing(true, screenTrackId: screenTrack.id);
+
       final sender = await _mParticipant!.peerConnection.addSimulcastTrack(
         screenTrack,
         vCodec: _currentCallSetting.videoConfig.preferedCodec,
@@ -597,7 +608,6 @@ class WebRTCManagerIpml extends WebRTCManager {
       );
 
       _mParticipant?.setSrcObject(_screenSharingStream!, isDisplayStream: true);
-      _wsEmitter.toggleScreenSharing(true, screenTrackId: screenTrack.id);
 
       screenTrack.onEnded = () => scheduleMicrotask(stopScreenShare);
       _mParticipant = await _mParticipant?.setScreenSharing(true);
@@ -883,9 +893,16 @@ class WebRTCManagerIpml extends WebRTCManager {
     Map<String, dynamic> constraints = const {},
     bool? isE2eeEnabled,
   }) async {
+    IceServersResponse iceServers = kIceServers;
+
+    if (_connectionType == ConnectionType.p2p) {
+      iceServers = await _authRepository.getIceServers();
+    }
+
     final RTCPeerConnection pc = await createPeerConnection(
       RTCConfigurations.configuration(
         isE2eeEnabled ?? _currentCallSetting.e2eeEnabled,
+        iceServers: iceServers,
       ),
       constraints,
     );
@@ -895,6 +912,10 @@ class WebRTCManagerIpml extends WebRTCManager {
 
   Future<void> _establishPublisher() async {
     final RTCPeerConnection peerConnection = _mParticipant!.peerConnection;
+
+    peerConnection.onConnectionState = (state) {
+      print('Publisher connection state: $state');
+    };
 
     peerConnection.onIceCandidate = (candidate) {
       if (_canPublisherAddIceCandidate) {
@@ -971,6 +992,8 @@ class WebRTCManagerIpml extends WebRTCManager {
       isAudioEnabled: _mParticipant?.isAudioEnabled ?? false,
       isE2eeEnabled: _mParticipant?.isE2eeEnabled ?? false,
       connectionType: _connectionType,
+      streamingProtocol: StreamingProtocol.sfu,
+      isIpv6Supported: _isIpv6Supported,
     );
 
     _wsEmitter.publishRoom(payload: payload);
@@ -988,6 +1011,7 @@ class WebRTCManagerIpml extends WebRTCManager {
       roomId: _currentRoomId ?? "",
       participantId: _currentParticipantId ?? "",
       targetId: targetId,
+      isIpv6Supported: _isIpv6Supported,
     );
 
     _wsEmitter.subscribeRoom(payload: payload);

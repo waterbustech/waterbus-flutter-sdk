@@ -9,6 +9,7 @@ abstract class SubscribePayload with _$SubscribePayload {
     required String roomId,
     required String participantId,
     required String targetId,
+    @Default(false) bool isIpv6Supported,
   }) = _SubscribePayload;
 
   factory SubscribePayload.fromJson(Map<String, Object?> json) =>

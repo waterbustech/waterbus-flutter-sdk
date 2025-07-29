@@ -1,6 +1,5 @@
-// dart format width=80
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -23,6 +22,8 @@ mixin _$PublishWsEmitterPayLoad {
   bool get isE2eeEnabled;
   int get totalTracks;
   ConnectionType get connectionType;
+  StreamingProtocol get streamingProtocol;
+  bool get isIpv6Supported;
 
   /// Create a copy of PublishWsEmitterPayLoad
   /// with the given fields replaced by the non-null parameter values.
@@ -53,7 +54,11 @@ mixin _$PublishWsEmitterPayLoad {
             (identical(other.totalTracks, totalTracks) ||
                 other.totalTracks == totalTracks) &&
             (identical(other.connectionType, connectionType) ||
-                other.connectionType == connectionType));
+                other.connectionType == connectionType) &&
+            (identical(other.streamingProtocol, streamingProtocol) ||
+                other.streamingProtocol == streamingProtocol) &&
+            (identical(other.isIpv6Supported, isIpv6Supported) ||
+                other.isIpv6Supported == isIpv6Supported));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -67,11 +72,13 @@ mixin _$PublishWsEmitterPayLoad {
       isAudioEnabled,
       isE2eeEnabled,
       totalTracks,
-      connectionType);
+      connectionType,
+      streamingProtocol,
+      isIpv6Supported);
 
   @override
   String toString() {
-    return 'PublishWsEmitterPayLoad(sdp: $sdp, roomId: $roomId, participantId: $participantId, isVideoEnabled: $isVideoEnabled, isAudioEnabled: $isAudioEnabled, isE2eeEnabled: $isE2eeEnabled, totalTracks: $totalTracks, connectionType: $connectionType)';
+    return 'PublishWsEmitterPayLoad(sdp: $sdp, roomId: $roomId, participantId: $participantId, isVideoEnabled: $isVideoEnabled, isAudioEnabled: $isAudioEnabled, isE2eeEnabled: $isE2eeEnabled, totalTracks: $totalTracks, connectionType: $connectionType, streamingProtocol: $streamingProtocol, isIpv6Supported: $isIpv6Supported)';
   }
 }
 
@@ -89,7 +96,9 @@ abstract mixin class $PublishWsEmitterPayLoadCopyWith<$Res> {
       bool isAudioEnabled,
       bool isE2eeEnabled,
       int totalTracks,
-      ConnectionType connectionType});
+      ConnectionType connectionType,
+      StreamingProtocol streamingProtocol,
+      bool isIpv6Supported});
 }
 
 /// @nodoc
@@ -113,6 +122,8 @@ class _$PublishWsEmitterPayLoadCopyWithImpl<$Res>
     Object? isE2eeEnabled = null,
     Object? totalTracks = null,
     Object? connectionType = null,
+    Object? streamingProtocol = null,
+    Object? isIpv6Supported = null,
   }) {
     return _then(_self.copyWith(
       sdp: null == sdp
@@ -147,7 +158,235 @@ class _$PublishWsEmitterPayLoadCopyWithImpl<$Res>
           ? _self.connectionType
           : connectionType // ignore: cast_nullable_to_non_nullable
               as ConnectionType,
+      streamingProtocol: null == streamingProtocol
+          ? _self.streamingProtocol
+          : streamingProtocol // ignore: cast_nullable_to_non_nullable
+              as StreamingProtocol,
+      isIpv6Supported: null == isIpv6Supported
+          ? _self.isIpv6Supported
+          : isIpv6Supported // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
+  }
+}
+
+/// Adds pattern-matching-related methods to [PublishWsEmitterPayLoad].
+extension PublishWsEmitterPayLoadPatterns on PublishWsEmitterPayLoad {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_PublishWsEmitterPayLoad value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PublishWsEmitterPayLoad() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_PublishWsEmitterPayLoad value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PublishWsEmitterPayLoad():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_PublishWsEmitterPayLoad value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PublishWsEmitterPayLoad() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            String sdp,
+            String roomId,
+            String participantId,
+            bool isVideoEnabled,
+            bool isAudioEnabled,
+            bool isE2eeEnabled,
+            int totalTracks,
+            ConnectionType connectionType,
+            StreamingProtocol streamingProtocol,
+            bool isIpv6Supported)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PublishWsEmitterPayLoad() when $default != null:
+        return $default(
+            _that.sdp,
+            _that.roomId,
+            _that.participantId,
+            _that.isVideoEnabled,
+            _that.isAudioEnabled,
+            _that.isE2eeEnabled,
+            _that.totalTracks,
+            _that.connectionType,
+            _that.streamingProtocol,
+            _that.isIpv6Supported);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            String sdp,
+            String roomId,
+            String participantId,
+            bool isVideoEnabled,
+            bool isAudioEnabled,
+            bool isE2eeEnabled,
+            int totalTracks,
+            ConnectionType connectionType,
+            StreamingProtocol streamingProtocol,
+            bool isIpv6Supported)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PublishWsEmitterPayLoad():
+        return $default(
+            _that.sdp,
+            _that.roomId,
+            _that.participantId,
+            _that.isVideoEnabled,
+            _that.isAudioEnabled,
+            _that.isE2eeEnabled,
+            _that.totalTracks,
+            _that.connectionType,
+            _that.streamingProtocol,
+            _that.isIpv6Supported);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            String sdp,
+            String roomId,
+            String participantId,
+            bool isVideoEnabled,
+            bool isAudioEnabled,
+            bool isE2eeEnabled,
+            int totalTracks,
+            ConnectionType connectionType,
+            StreamingProtocol streamingProtocol,
+            bool isIpv6Supported)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PublishWsEmitterPayLoad() when $default != null:
+        return $default(
+            _that.sdp,
+            _that.roomId,
+            _that.participantId,
+            _that.isVideoEnabled,
+            _that.isAudioEnabled,
+            _that.isE2eeEnabled,
+            _that.totalTracks,
+            _that.connectionType,
+            _that.streamingProtocol,
+            _that.isIpv6Supported);
+      case _:
+        return null;
+    }
   }
 }
 
@@ -162,7 +401,9 @@ class _PublishWsEmitterPayLoad implements PublishWsEmitterPayLoad {
       required this.isAudioEnabled,
       required this.isE2eeEnabled,
       required this.totalTracks,
-      required this.connectionType});
+      required this.connectionType,
+      required this.streamingProtocol,
+      this.isIpv6Supported = false});
   factory _PublishWsEmitterPayLoad.fromJson(Map<String, dynamic> json) =>
       _$PublishWsEmitterPayLoadFromJson(json);
 
@@ -182,6 +423,11 @@ class _PublishWsEmitterPayLoad implements PublishWsEmitterPayLoad {
   final int totalTracks;
   @override
   final ConnectionType connectionType;
+  @override
+  final StreamingProtocol streamingProtocol;
+  @override
+  @JsonKey()
+  final bool isIpv6Supported;
 
   /// Create a copy of PublishWsEmitterPayLoad
   /// with the given fields replaced by the non-null parameter values.
@@ -217,7 +463,11 @@ class _PublishWsEmitterPayLoad implements PublishWsEmitterPayLoad {
             (identical(other.totalTracks, totalTracks) ||
                 other.totalTracks == totalTracks) &&
             (identical(other.connectionType, connectionType) ||
-                other.connectionType == connectionType));
+                other.connectionType == connectionType) &&
+            (identical(other.streamingProtocol, streamingProtocol) ||
+                other.streamingProtocol == streamingProtocol) &&
+            (identical(other.isIpv6Supported, isIpv6Supported) ||
+                other.isIpv6Supported == isIpv6Supported));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -231,11 +481,13 @@ class _PublishWsEmitterPayLoad implements PublishWsEmitterPayLoad {
       isAudioEnabled,
       isE2eeEnabled,
       totalTracks,
-      connectionType);
+      connectionType,
+      streamingProtocol,
+      isIpv6Supported);
 
   @override
   String toString() {
-    return 'PublishWsEmitterPayLoad(sdp: $sdp, roomId: $roomId, participantId: $participantId, isVideoEnabled: $isVideoEnabled, isAudioEnabled: $isAudioEnabled, isE2eeEnabled: $isE2eeEnabled, totalTracks: $totalTracks, connectionType: $connectionType)';
+    return 'PublishWsEmitterPayLoad(sdp: $sdp, roomId: $roomId, participantId: $participantId, isVideoEnabled: $isVideoEnabled, isAudioEnabled: $isAudioEnabled, isE2eeEnabled: $isE2eeEnabled, totalTracks: $totalTracks, connectionType: $connectionType, streamingProtocol: $streamingProtocol, isIpv6Supported: $isIpv6Supported)';
   }
 }
 
@@ -255,7 +507,9 @@ abstract mixin class _$PublishWsEmitterPayLoadCopyWith<$Res>
       bool isAudioEnabled,
       bool isE2eeEnabled,
       int totalTracks,
-      ConnectionType connectionType});
+      ConnectionType connectionType,
+      StreamingProtocol streamingProtocol,
+      bool isIpv6Supported});
 }
 
 /// @nodoc
@@ -279,6 +533,8 @@ class __$PublishWsEmitterPayLoadCopyWithImpl<$Res>
     Object? isE2eeEnabled = null,
     Object? totalTracks = null,
     Object? connectionType = null,
+    Object? streamingProtocol = null,
+    Object? isIpv6Supported = null,
   }) {
     return _then(_PublishWsEmitterPayLoad(
       sdp: null == sdp
@@ -313,6 +569,14 @@ class __$PublishWsEmitterPayLoadCopyWithImpl<$Res>
           ? _self.connectionType
           : connectionType // ignore: cast_nullable_to_non_nullable
               as ConnectionType,
+      streamingProtocol: null == streamingProtocol
+          ? _self.streamingProtocol
+          : streamingProtocol // ignore: cast_nullable_to_non_nullable
+              as StreamingProtocol,
+      isIpv6Supported: null == isIpv6Supported
+          ? _self.isIpv6Supported
+          : isIpv6Supported // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }

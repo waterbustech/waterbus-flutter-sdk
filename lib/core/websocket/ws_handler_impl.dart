@@ -97,6 +97,7 @@ class WsHandlerImpl extends WsHandler {
 
   void _listenToRoomEvents() {
     _socket?.on(WsEvent.roomPublish, (data) {
+      print('roomPublish: $data');
       if (data == null) return;
       _rtcManager.setLocalSdpAsPublisher(data['sdp'], data['isRecording']);
     });
@@ -115,6 +116,7 @@ class WsHandlerImpl extends WsHandler {
     });
 
     _socket?.on(WsEvent.roomAnswerSubscriber, (data) async {
+      print('roomAnswerSubscriber: $data');
       if (data == null || data['offer'] == null) return;
 
       final RTCVideoCodec codec =

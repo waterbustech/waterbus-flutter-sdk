@@ -30,6 +30,12 @@ _Room _$RoomFromJson(Map<String, dynamic> json) => _Room(
           ? null
           : Message.fromJson(json['latestMessage'] as Map<String, dynamic>),
       avatar: json['avatar'] as String?,
+      streamingProtocol: $enumDecodeNullable(
+              _$StreamingProtocolEnumMap, json['streamingProtocol']) ??
+          StreamingProtocol.sfu,
+      roomType: $enumDecodeNullable(_$RoomTypeEnumMap, json['roomType']) ??
+          RoomType.videoConferencing,
+      capacity: (json['capacity'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$RoomToJson(_Room instance) => <String, dynamic>{
@@ -43,9 +49,23 @@ Map<String, dynamic> _$RoomToJson(_Room instance) => <String, dynamic>{
       'status': _$RoomStatusEnumMap[instance.status]!,
       'latestMessage': instance.latestMessage?.toJson(),
       'avatar': instance.avatar,
+      'streamingProtocol':
+          _$StreamingProtocolEnumMap[instance.streamingProtocol]!,
+      'roomType': _$RoomTypeEnumMap[instance.roomType]!,
+      'capacity': instance.capacity,
     };
 
 const _$RoomStatusEnumMap = {
   RoomStatus.archived: 1,
   RoomStatus.active: 0,
+};
+
+const _$StreamingProtocolEnumMap = {
+  StreamingProtocol.sfu: 0,
+  StreamingProtocol.hls: 1,
+};
+
+const _$RoomTypeEnumMap = {
+  RoomType.videoConferencing: 0,
+  RoomType.liveStreaming: 1,
 };

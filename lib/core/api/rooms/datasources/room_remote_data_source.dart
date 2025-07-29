@@ -13,7 +13,6 @@ abstract class RoomRemoteDataSource {
   Future<Result<Room>> createRoom({required RoomParams params});
   Future<Result<bool>> updateRoom({required RoomParams params});
   Future<Result<Room>> joinRoom({required JoinRoomParams params});
-
   Future<Result<Room>> getInfoRoom(String code);
 }
 

@@ -29,6 +29,7 @@ class WebRTCVideoStats {
   get currentSenderBitrate => _currentSenderBitrate;
 
   void initialize() {
+    return;
     // Start collecting stats periodically
     _statsTimer = Timer.periodic(2.seconds, (timer) {
       _monitorSenderStats();

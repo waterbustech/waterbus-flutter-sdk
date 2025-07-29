@@ -2,6 +2,7 @@ class Endpoints {
   // Auth
   static const String auth = 'auth';
   static const String presignedUrlS3 = 'auth/presigned-url';
+  static const String iceServers = 'auth/ice-servers';
 
   // Users
   static const String users = 'users';

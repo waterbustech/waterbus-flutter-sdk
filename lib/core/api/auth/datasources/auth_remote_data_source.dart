@@ -7,12 +7,14 @@ import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_data_source.da
 import 'package:waterbus_sdk/core/api/base/base_remote_data.dart';
 import 'package:waterbus_sdk/types/error/failures.dart';
 import 'package:waterbus_sdk/types/externals/models/index.dart';
+import 'package:waterbus_sdk/types/internals/models/index.dart';
 import 'package:waterbus_sdk/types/result.dart';
 
 abstract class AuthRemoteDataSource {
   Future<(String?, String?)> renewToken();
   Future<Result<User>> createToken(AuthPayload authPayload);
   Future<Result<bool>> deleteToken();
+  Future<IceServersResponse> getIceServers();
 }
 
 @LazySingleton(as: AuthRemoteDataSource)
@@ -72,5 +74,19 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
     }
 
     return Result.failure(ServerFailure());
+  }
+
+  @override
+  Future<IceServersResponse> getIceServers() async {
+    final Response response = await _baseRemoteData.get(
+      Endpoints.iceServers,
+    );
+
+    if (response.statusCode == StatusCode.ok) {
+      final rawData = response.data;
+      return IceServersResponse.fromJson(rawData);
+    }
+
+    throw ServerFailure();
   }
 }

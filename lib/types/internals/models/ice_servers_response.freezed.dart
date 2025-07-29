@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'presigned_url.dart';
+part of 'ice_servers_response.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -13,81 +13,75 @@ part of 'presigned_url.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$PresignedUrl {
-  String get presignedUrl;
-  String get sourceUrl;
+mixin _$IceServersResponse {
+  List<IceServer> get iceServers;
 
-  /// Create a copy of PresignedUrl
+  /// Create a copy of IceServersResponse
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $PresignedUrlCopyWith<PresignedUrl> get copyWith =>
-      _$PresignedUrlCopyWithImpl<PresignedUrl>(
-          this as PresignedUrl, _$identity);
+  $IceServersResponseCopyWith<IceServersResponse> get copyWith =>
+      _$IceServersResponseCopyWithImpl<IceServersResponse>(
+          this as IceServersResponse, _$identity);
 
-  /// Serializes this PresignedUrl to a JSON map.
+  /// Serializes this IceServersResponse to a JSON map.
   Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is PresignedUrl &&
-            (identical(other.presignedUrl, presignedUrl) ||
-                other.presignedUrl == presignedUrl) &&
-            (identical(other.sourceUrl, sourceUrl) ||
-                other.sourceUrl == sourceUrl));
+            other is IceServersResponse &&
+            const DeepCollectionEquality()
+                .equals(other.iceServers, iceServers));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, presignedUrl, sourceUrl);
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(iceServers));
 
   @override
   String toString() {
-    return 'PresignedUrl(presignedUrl: $presignedUrl, sourceUrl: $sourceUrl)';
+    return 'IceServersResponse(iceServers: $iceServers)';
   }
 }
 
 /// @nodoc
-abstract mixin class $PresignedUrlCopyWith<$Res> {
-  factory $PresignedUrlCopyWith(
-          PresignedUrl value, $Res Function(PresignedUrl) _then) =
-      _$PresignedUrlCopyWithImpl;
+abstract mixin class $IceServersResponseCopyWith<$Res> {
+  factory $IceServersResponseCopyWith(
+          IceServersResponse value, $Res Function(IceServersResponse) _then) =
+      _$IceServersResponseCopyWithImpl;
   @useResult
-  $Res call({String presignedUrl, String sourceUrl});
+  $Res call({List<IceServer> iceServers});
 }
 
 /// @nodoc
-class _$PresignedUrlCopyWithImpl<$Res> implements $PresignedUrlCopyWith<$Res> {
-  _$PresignedUrlCopyWithImpl(this._self, this._then);
+class _$IceServersResponseCopyWithImpl<$Res>
+    implements $IceServersResponseCopyWith<$Res> {
+  _$IceServersResponseCopyWithImpl(this._self, this._then);
 
-  final PresignedUrl _self;
-  final $Res Function(PresignedUrl) _then;
+  final IceServersResponse _self;
+  final $Res Function(IceServersResponse) _then;
 
-  /// Create a copy of PresignedUrl
+  /// Create a copy of IceServersResponse
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? presignedUrl = null,
-    Object? sourceUrl = null,
+    Object? iceServers = null,
   }) {
     return _then(_self.copyWith(
-      presignedUrl: null == presignedUrl
-          ? _self.presignedUrl
-          : presignedUrl // ignore: cast_nullable_to_non_nullable
-              as String,
-      sourceUrl: null == sourceUrl
-          ? _self.sourceUrl
-          : sourceUrl // ignore: cast_nullable_to_non_nullable
-              as String,
+      iceServers: null == iceServers
+          ? _self.iceServers
+          : iceServers // ignore: cast_nullable_to_non_nullable
+              as List<IceServer>,
     ));
   }
 }
 
-/// Adds pattern-matching-related methods to [PresignedUrl].
-extension PresignedUrlPatterns on PresignedUrl {
+/// Adds pattern-matching-related methods to [IceServersResponse].
+extension IceServersResponsePatterns on IceServersResponse {
   /// A variant of `map` that fallback to returning `orElse`.
   ///
   /// It is equivalent to doing:
@@ -102,12 +96,12 @@ extension PresignedUrlPatterns on PresignedUrl {
 
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>(
-    TResult Function(_PresignedUrl value)? $default, {
+    TResult Function(_IceServersResponse value)? $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
-      case _PresignedUrl() when $default != null:
+      case _IceServersResponse() when $default != null:
         return $default(_that);
       case _:
         return orElse();
@@ -129,11 +123,11 @@ extension PresignedUrlPatterns on PresignedUrl {
 
   @optionalTypeArgs
   TResult map<TResult extends Object?>(
-    TResult Function(_PresignedUrl value) $default,
+    TResult Function(_IceServersResponse value) $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _PresignedUrl():
+      case _IceServersResponse():
         return $default(_that);
       case _:
         throw StateError('Unexpected subclass');
@@ -154,11 +148,11 @@ extension PresignedUrlPatterns on PresignedUrl {
 
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_PresignedUrl value)? $default,
+    TResult? Function(_IceServersResponse value)? $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _PresignedUrl() when $default != null:
+      case _IceServersResponse() when $default != null:
         return $default(_that);
       case _:
         return null;
@@ -179,13 +173,13 @@ extension PresignedUrlPatterns on PresignedUrl {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(String presignedUrl, String sourceUrl)? $default, {
+    TResult Function(List<IceServer> iceServers)? $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
-      case _PresignedUrl() when $default != null:
-        return $default(_that.presignedUrl, _that.sourceUrl);
+      case _IceServersResponse() when $default != null:
+        return $default(_that.iceServers);
       case _:
         return orElse();
     }
@@ -206,12 +200,12 @@ extension PresignedUrlPatterns on PresignedUrl {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(String presignedUrl, String sourceUrl) $default,
+    TResult Function(List<IceServer> iceServers) $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _PresignedUrl():
-        return $default(_that.presignedUrl, _that.sourceUrl);
+      case _IceServersResponse():
+        return $default(_that.iceServers);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -231,12 +225,12 @@ extension PresignedUrlPatterns on PresignedUrl {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(String presignedUrl, String sourceUrl)? $default,
+    TResult? Function(List<IceServer> iceServers)? $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _PresignedUrl() when $default != null:
-        return $default(_that.presignedUrl, _that.sourceUrl);
+      case _IceServersResponse() when $default != null:
+        return $default(_that.iceServers);
       case _:
         return null;
     }
@@ -245,27 +239,31 @@ extension PresignedUrlPatterns on PresignedUrl {
 
 /// @nodoc
 @JsonSerializable()
-class _PresignedUrl implements PresignedUrl {
-  const _PresignedUrl({required this.presignedUrl, required this.sourceUrl});
-  factory _PresignedUrl.fromJson(Map<String, dynamic> json) =>
-      _$PresignedUrlFromJson(json);
+class _IceServersResponse implements IceServersResponse {
+  const _IceServersResponse({required final List<IceServer> iceServers})
+      : _iceServers = iceServers;
+  factory _IceServersResponse.fromJson(Map<String, dynamic> json) =>
+      _$IceServersResponseFromJson(json);
 
+  final List<IceServer> _iceServers;
   @override
-  final String presignedUrl;
-  @override
-  final String sourceUrl;
+  List<IceServer> get iceServers {
+    if (_iceServers is EqualUnmodifiableListView) return _iceServers;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_iceServers);
+  }
 
-  /// Create a copy of PresignedUrl
+  /// Create a copy of IceServersResponse
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  _$PresignedUrlCopyWith<_PresignedUrl> get copyWith =>
-      __$PresignedUrlCopyWithImpl<_PresignedUrl>(this, _$identity);
+  _$IceServersResponseCopyWith<_IceServersResponse> get copyWith =>
+      __$IceServersResponseCopyWithImpl<_IceServersResponse>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$PresignedUrlToJson(
+    return _$IceServersResponseToJson(
       this,
     );
   }
@@ -274,59 +272,53 @@ class _PresignedUrl implements PresignedUrl {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _PresignedUrl &&
-            (identical(other.presignedUrl, presignedUrl) ||
-                other.presignedUrl == presignedUrl) &&
-            (identical(other.sourceUrl, sourceUrl) ||
-                other.sourceUrl == sourceUrl));
+            other is _IceServersResponse &&
+            const DeepCollectionEquality()
+                .equals(other._iceServers, _iceServers));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, presignedUrl, sourceUrl);
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(_iceServers));
 
   @override
   String toString() {
-    return 'PresignedUrl(presignedUrl: $presignedUrl, sourceUrl: $sourceUrl)';
+    return 'IceServersResponse(iceServers: $iceServers)';
   }
 }
 
 /// @nodoc
-abstract mixin class _$PresignedUrlCopyWith<$Res>
-    implements $PresignedUrlCopyWith<$Res> {
-  factory _$PresignedUrlCopyWith(
-          _PresignedUrl value, $Res Function(_PresignedUrl) _then) =
-      __$PresignedUrlCopyWithImpl;
+abstract mixin class _$IceServersResponseCopyWith<$Res>
+    implements $IceServersResponseCopyWith<$Res> {
+  factory _$IceServersResponseCopyWith(
+          _IceServersResponse value, $Res Function(_IceServersResponse) _then) =
+      __$IceServersResponseCopyWithImpl;
   @override
   @useResult
-  $Res call({String presignedUrl, String sourceUrl});
+  $Res call({List<IceServer> iceServers});
 }
 
 /// @nodoc
-class __$PresignedUrlCopyWithImpl<$Res>
-    implements _$PresignedUrlCopyWith<$Res> {
-  __$PresignedUrlCopyWithImpl(this._self, this._then);
+class __$IceServersResponseCopyWithImpl<$Res>
+    implements _$IceServersResponseCopyWith<$Res> {
+  __$IceServersResponseCopyWithImpl(this._self, this._then);
 
-  final _PresignedUrl _self;
-  final $Res Function(_PresignedUrl) _then;
+  final _IceServersResponse _self;
+  final $Res Function(_IceServersResponse) _then;
 
-  /// Create a copy of PresignedUrl
+  /// Create a copy of IceServersResponse
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? presignedUrl = null,
-    Object? sourceUrl = null,
+    Object? iceServers = null,
   }) {
-    return _then(_PresignedUrl(
-      presignedUrl: null == presignedUrl
-          ? _self.presignedUrl
-          : presignedUrl // ignore: cast_nullable_to_non_nullable
-              as String,
-      sourceUrl: null == sourceUrl
-          ? _self.sourceUrl
-          : sourceUrl // ignore: cast_nullable_to_non_nullable
-              as String,
+    return _then(_IceServersResponse(
+      iceServers: null == iceServers
+          ? _self._iceServers
+          : iceServers // ignore: cast_nullable_to_non_nullable
+              as List<IceServer>,
     ));
   }
 }

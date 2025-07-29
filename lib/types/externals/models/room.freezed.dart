@@ -1,6 +1,5 @@
-// dart format width=80
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -25,6 +24,9 @@ mixin _$Room {
   RoomStatus get status;
   Message? get latestMessage;
   String? get avatar;
+  StreamingProtocol get streamingProtocol;
+  RoomType get roomType; // Null is unlimited
+  int? get capacity;
 
   /// Create a copy of Room
   /// with the given fields replaced by the non-null parameter values.
@@ -54,7 +56,13 @@ mixin _$Room {
             (identical(other.status, status) || other.status == status) &&
             (identical(other.latestMessage, latestMessage) ||
                 other.latestMessage == latestMessage) &&
-            (identical(other.avatar, avatar) || other.avatar == avatar));
+            (identical(other.avatar, avatar) || other.avatar == avatar) &&
+            (identical(other.streamingProtocol, streamingProtocol) ||
+                other.streamingProtocol == streamingProtocol) &&
+            (identical(other.roomType, roomType) ||
+                other.roomType == roomType) &&
+            (identical(other.capacity, capacity) ||
+                other.capacity == capacity));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -70,11 +78,14 @@ mixin _$Room {
       latestJoinedAt,
       status,
       latestMessage,
-      avatar);
+      avatar,
+      streamingProtocol,
+      roomType,
+      capacity);
 
   @override
   String toString() {
-    return 'Room(id: $id, title: $title, participants: $participants, members: $members, code: $code, createdAt: $createdAt, latestJoinedAt: $latestJoinedAt, status: $status, latestMessage: $latestMessage, avatar: $avatar)';
+    return 'Room(id: $id, title: $title, participants: $participants, members: $members, code: $code, createdAt: $createdAt, latestJoinedAt: $latestJoinedAt, status: $status, latestMessage: $latestMessage, avatar: $avatar, streamingProtocol: $streamingProtocol, roomType: $roomType, capacity: $capacity)';
   }
 }
 
@@ -93,7 +104,10 @@ abstract mixin class $RoomCopyWith<$Res> {
       DateTime? latestJoinedAt,
       RoomStatus status,
       Message? latestMessage,
-      String? avatar});
+      String? avatar,
+      StreamingProtocol streamingProtocol,
+      RoomType roomType,
+      int? capacity});
 
   $MessageCopyWith<$Res>? get latestMessage;
 }
@@ -120,6 +134,9 @@ class _$RoomCopyWithImpl<$Res> implements $RoomCopyWith<$Res> {
     Object? status = null,
     Object? latestMessage = freezed,
     Object? avatar = freezed,
+    Object? streamingProtocol = null,
+    Object? roomType = null,
+    Object? capacity = freezed,
   }) {
     return _then(_self.copyWith(
       id: null == id
@@ -162,6 +179,18 @@ class _$RoomCopyWithImpl<$Res> implements $RoomCopyWith<$Res> {
           ? _self.avatar
           : avatar // ignore: cast_nullable_to_non_nullable
               as String?,
+      streamingProtocol: null == streamingProtocol
+          ? _self.streamingProtocol
+          : streamingProtocol // ignore: cast_nullable_to_non_nullable
+              as StreamingProtocol,
+      roomType: null == roomType
+          ? _self.roomType
+          : roomType // ignore: cast_nullable_to_non_nullable
+              as RoomType,
+      capacity: freezed == capacity
+          ? _self.capacity
+          : capacity // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 
@@ -180,6 +209,244 @@ class _$RoomCopyWithImpl<$Res> implements $RoomCopyWith<$Res> {
   }
 }
 
+/// Adds pattern-matching-related methods to [Room].
+extension RoomPatterns on Room {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_Room value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Room() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_Room value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Room():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_Room value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Room() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            int id,
+            String title,
+            List<Participant> participants,
+            List<Member> members,
+            String? code,
+            DateTime? createdAt,
+            DateTime? latestJoinedAt,
+            RoomStatus status,
+            Message? latestMessage,
+            String? avatar,
+            StreamingProtocol streamingProtocol,
+            RoomType roomType,
+            int? capacity)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Room() when $default != null:
+        return $default(
+            _that.id,
+            _that.title,
+            _that.participants,
+            _that.members,
+            _that.code,
+            _that.createdAt,
+            _that.latestJoinedAt,
+            _that.status,
+            _that.latestMessage,
+            _that.avatar,
+            _that.streamingProtocol,
+            _that.roomType,
+            _that.capacity);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            int id,
+            String title,
+            List<Participant> participants,
+            List<Member> members,
+            String? code,
+            DateTime? createdAt,
+            DateTime? latestJoinedAt,
+            RoomStatus status,
+            Message? latestMessage,
+            String? avatar,
+            StreamingProtocol streamingProtocol,
+            RoomType roomType,
+            int? capacity)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Room():
+        return $default(
+            _that.id,
+            _that.title,
+            _that.participants,
+            _that.members,
+            _that.code,
+            _that.createdAt,
+            _that.latestJoinedAt,
+            _that.status,
+            _that.latestMessage,
+            _that.avatar,
+            _that.streamingProtocol,
+            _that.roomType,
+            _that.capacity);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            int id,
+            String title,
+            List<Participant> participants,
+            List<Member> members,
+            String? code,
+            DateTime? createdAt,
+            DateTime? latestJoinedAt,
+            RoomStatus status,
+            Message? latestMessage,
+            String? avatar,
+            StreamingProtocol streamingProtocol,
+            RoomType roomType,
+            int? capacity)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Room() when $default != null:
+        return $default(
+            _that.id,
+            _that.title,
+            _that.participants,
+            _that.members,
+            _that.code,
+            _that.createdAt,
+            _that.latestJoinedAt,
+            _that.status,
+            _that.latestMessage,
+            _that.avatar,
+            _that.streamingProtocol,
+            _that.roomType,
+            _that.capacity);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 @JsonSerializable()
 class _Room implements Room {
@@ -193,7 +460,10 @@ class _Room implements Room {
       this.latestJoinedAt,
       this.status = RoomStatus.active,
       this.latestMessage,
-      this.avatar})
+      this.avatar,
+      this.streamingProtocol = StreamingProtocol.sfu,
+      this.roomType = RoomType.videoConferencing,
+      this.capacity})
       : _participants = participants,
         _members = members;
   factory _Room.fromJson(Map<String, dynamic> json) => _$RoomFromJson(json);
@@ -234,6 +504,15 @@ class _Room implements Room {
   final Message? latestMessage;
   @override
   final String? avatar;
+  @override
+  @JsonKey()
+  final StreamingProtocol streamingProtocol;
+  @override
+  @JsonKey()
+  final RoomType roomType;
+// Null is unlimited
+  @override
+  final int? capacity;
 
   /// Create a copy of Room
   /// with the given fields replaced by the non-null parameter values.
@@ -268,7 +547,13 @@ class _Room implements Room {
             (identical(other.status, status) || other.status == status) &&
             (identical(other.latestMessage, latestMessage) ||
                 other.latestMessage == latestMessage) &&
-            (identical(other.avatar, avatar) || other.avatar == avatar));
+            (identical(other.avatar, avatar) || other.avatar == avatar) &&
+            (identical(other.streamingProtocol, streamingProtocol) ||
+                other.streamingProtocol == streamingProtocol) &&
+            (identical(other.roomType, roomType) ||
+                other.roomType == roomType) &&
+            (identical(other.capacity, capacity) ||
+                other.capacity == capacity));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -284,11 +569,14 @@ class _Room implements Room {
       latestJoinedAt,
       status,
       latestMessage,
-      avatar);
+      avatar,
+      streamingProtocol,
+      roomType,
+      capacity);
 
   @override
   String toString() {
-    return 'Room(id: $id, title: $title, participants: $participants, members: $members, code: $code, createdAt: $createdAt, latestJoinedAt: $latestJoinedAt, status: $status, latestMessage: $latestMessage, avatar: $avatar)';
+    return 'Room(id: $id, title: $title, participants: $participants, members: $members, code: $code, createdAt: $createdAt, latestJoinedAt: $latestJoinedAt, status: $status, latestMessage: $latestMessage, avatar: $avatar, streamingProtocol: $streamingProtocol, roomType: $roomType, capacity: $capacity)';
   }
 }
 
@@ -308,7 +596,10 @@ abstract mixin class _$RoomCopyWith<$Res> implements $RoomCopyWith<$Res> {
       DateTime? latestJoinedAt,
       RoomStatus status,
       Message? latestMessage,
-      String? avatar});
+      String? avatar,
+      StreamingProtocol streamingProtocol,
+      RoomType roomType,
+      int? capacity});
 
   @override
   $MessageCopyWith<$Res>? get latestMessage;
@@ -336,6 +627,9 @@ class __$RoomCopyWithImpl<$Res> implements _$RoomCopyWith<$Res> {
     Object? status = null,
     Object? latestMessage = freezed,
     Object? avatar = freezed,
+    Object? streamingProtocol = null,
+    Object? roomType = null,
+    Object? capacity = freezed,
   }) {
     return _then(_Room(
       id: null == id
@@ -378,6 +672,18 @@ class __$RoomCopyWithImpl<$Res> implements _$RoomCopyWith<$Res> {
           ? _self.avatar
           : avatar // ignore: cast_nullable_to_non_nullable
               as String?,
+      streamingProtocol: null == streamingProtocol
+          ? _self.streamingProtocol
+          : streamingProtocol // ignore: cast_nullable_to_non_nullable
+              as StreamingProtocol,
+      roomType: null == roomType
+          ? _self.roomType
+          : roomType // ignore: cast_nullable_to_non_nullable
+              as RoomType,
+      capacity: freezed == capacity
+          ? _self.capacity
+          : capacity // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 

@@ -122,6 +122,7 @@ class MediaSource {
 extension MediaSourceQuality on MediaSource {
   /// For Publisher
   Future<void> setRidActive(String rid, bool active) async {
+    return;
     if (sender == null) return;
 
     final parameters = sender!.parameters;
@@ -137,6 +138,7 @@ extension MediaSourceQuality on MediaSource {
 
   /// For Subscriber
   Future<void> setPreferredQuality(TrackQuality quality) async {
+    return;
     final videoTrackId = getVideoTrackId;
 
     if (videoTrackId == null) return;

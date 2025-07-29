@@ -19,6 +19,10 @@ abstract class Room with _$Room {
     @Default(RoomStatus.active) RoomStatus status,
     Message? latestMessage,
     String? avatar,
+    @Default(StreamingProtocol.sfu) StreamingProtocol streamingProtocol,
+    @Default(RoomType.videoConferencing) RoomType roomType,
+    // Null is unlimited
+    int? capacity,
   }) = _Room;
 
   factory Room.fromJson(Map<String, Object?> json) => _$RoomFromJson(json);
@@ -30,6 +34,8 @@ extension RoomExtention on Room {
       'title': title,
       'code': code,
       'avatar': avatar,
+      'streamingProtocol': streamingProtocol.index,
+      'roomType': roomType.index,
     };
 
     if (password != null) {

@@ -58,20 +58,12 @@ _i174.GetIt $initGetIt(
   gh.factory<_i235.NativeService>(() => _i235.NativeService());
   gh.factory<_i944.WaterbusLogger>(() => _i944.WaterbusLogger());
   gh.singleton<_i124.ReplayKitChannel>(() => _i124.ReplayKitChannel());
-  gh.singleton<_i460.E2EEManager>(() => _i460.E2EEManager());
-  gh.singleton<_i245.WebRTCAudioStats>(() => _i245.WebRTCAudioStats());
   gh.singleton<_i232.WebRTCVideoStats>(() => _i232.WebRTCVideoStats());
+  gh.singleton<_i245.WebRTCAudioStats>(() => _i245.WebRTCAudioStats());
+  gh.singleton<_i460.E2EEManager>(() => _i460.E2EEManager());
   gh.factory<_i988.WsEmitter>(() => _i17.WsEmitterImpl());
   gh.lazySingleton<_i801.AuthLocalDataSource>(
       () => _i801.AuthLocalDataSourceImpl());
-  gh.lazySingleton<_i272.WebRTCManager>(() => _i993.WebRTCManagerIpml(
-        gh<_i460.E2EEManager>(),
-        gh<_i988.WsEmitter>(),
-        gh<_i124.ReplayKitChannel>(),
-        gh<_i235.NativeService>(),
-        gh<_i232.WebRTCVideoStats>(),
-        gh<_i245.WebRTCAudioStats>(),
-      ));
   gh.singleton<_i182.BaseRemoteData>(
       () => _i182.BaseRemoteData(gh<_i801.AuthLocalDataSource>()));
   gh.lazySingleton<_i418.AuthRemoteDataSource>(
@@ -89,14 +81,19 @@ _i174.GetIt $initGetIt(
       () => _i652.RoomRemoteDataSourceImpl(gh<_i182.BaseRemoteData>()));
   gh.factory<_i692.ChatRemoteDataSource>(
       () => _i692.ChatRemoteDataSourceImpl(gh<_i182.BaseRemoteData>()));
-  gh.singleton<_i324.CallKitListener>(() => _i324.CallKitListener(
-        gh<_i944.WaterbusLogger>(),
-        gh<_i272.WebRTCManager>(),
-      ));
   gh.factory<_i647.MessageRemoteDataSource>(
       () => _i647.MessageRemoteDataSourceImpl(gh<_i182.BaseRemoteData>()));
   gh.factory<_i575.MessageRepository>(
       () => _i575.MessageRepositoryImpl(gh<_i647.MessageRemoteDataSource>()));
+  gh.lazySingleton<_i272.WebRTCManager>(() => _i993.WebRTCManagerIpml(
+        gh<_i460.E2EEManager>(),
+        gh<_i988.WsEmitter>(),
+        gh<_i124.ReplayKitChannel>(),
+        gh<_i235.NativeService>(),
+        gh<_i232.WebRTCVideoStats>(),
+        gh<_i245.WebRTCAudioStats>(),
+        gh<_i824.AuthRepository>(),
+      ));
   gh.singleton<_i514.DioConfiguration>(() => _i514.DioConfiguration(
         gh<_i182.BaseRemoteData>(),
         gh<_i801.AuthLocalDataSource>(),
@@ -113,6 +110,10 @@ _i174.GetIt $initGetIt(
       () => _i933.RoomRepositoryImpl(gh<_i652.RoomRemoteDataSource>()));
   gh.factory<_i613.ChatRepository>(
       () => _i613.ChatRepositoryImpl(gh<_i692.ChatRemoteDataSource>()));
+  gh.singleton<_i324.CallKitListener>(() => _i324.CallKitListener(
+        gh<_i944.WaterbusLogger>(),
+        gh<_i272.WebRTCManager>(),
+      ));
   gh.singleton<_i513.WaterbusSdkInterface>(() => _i1039.SdkCore(
         gh<_i743.WsHandler>(),
         gh<_i988.WsEmitter>(),

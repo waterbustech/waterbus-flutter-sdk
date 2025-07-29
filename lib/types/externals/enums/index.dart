@@ -9,3 +9,5 @@ export 'sending_status_enum.dart';
 export 'status_message.dart';
 export 'status_seen_message_enum.dart';
 export 'video_quality_enum.dart';
+export 'room_type.dart';
+export 'streaming_protocol.dart';

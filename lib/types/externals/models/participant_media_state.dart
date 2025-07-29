@@ -136,17 +136,13 @@ extension ParticipantSFUX on ParticipantMediaState {
 
     trackQualityChannel!.onMessage = (message) {
       WaterbusLogger.instance.log(
-        "[track_quality] 🔥 Received message (binary: ${message.isBinary})",
+        "[track_quality] received message (binary: ${message.isBinary})",
       );
 
       final data = message.binary;
       final String jsonStr = utf8.decode(data);
       final TrackSubscribedMessage msg = TrackSubscribedMessage.fromJson(
         jsonDecode(jsonStr),
-      );
-
-      WaterbusLogger.instance.log(
-        "[track_quality] 📦 Decoded: ${msg.toString()}",
       );
 
       if (msg.trackId == cameraSource?.getVideoTrackId) {

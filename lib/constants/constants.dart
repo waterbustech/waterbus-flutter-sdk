@@ -1,4 +1,8 @@
 // Method Channel
+
+import 'package:waterbus_sdk/types/internals/models/ice_server.dart';
+import 'package:waterbus_sdk/types/internals/models/ice_servers_response.dart';
+
 const String kNativeChannel = 'waterbus-sdk/native-plugin';
 const String kReplayKitChannel = 'waterbus-sdk/replaykit-channel';
 
@@ -7,13 +11,10 @@ const int kMinAV1AndroidSupported = 14;
 const int kMinAV1iOSSupported = 14;
 const String kIsMine = 'isMine';
 
-const kIceServers = [
-  {
-    'urls': ['stun:turn.waterbus.tech:3478'],
-  },
-  {
-    'urls': ['turn:turn.waterbus.tech:3478?transport=udp'],
-    'username': 'waterbus',
-    'credential': 'turnturn',
-  }
-];
+const IceServersResponse kIceServers = IceServersResponse(
+  iceServers: [
+    IceServer(
+      urls: ["stun:stun.cloudflare.com:3478"],
+    ),
+  ],
+);
