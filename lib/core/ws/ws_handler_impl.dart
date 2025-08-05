@@ -6,7 +6,7 @@ import 'package:socket_io_client/socket_io_client.dart';
 import 'package:waterbus_sdk/constants/ws_event.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_data_source.dart';
 import 'package:waterbus_sdk/core/rtc/rtc_manager.dart';
-import 'package:waterbus_sdk/core/websocket/interfaces/ws_handler.dart';
+import 'package:waterbus_sdk/core/ws/interfaces/ws_handler.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/types/internals/enums/connection_type.dart';
 import 'package:waterbus_sdk/types/internals/models/index.dart';

@@ -64,7 +64,7 @@ class WaterbusSdk {
   CallKitListener get _callKitListener => getIt<CallKitListener>();
 
   // Public getters
-  CallState get callState => _sdk.callState;
+  RoomState get roomState => _sdk.roomState;
 
   /// Event listener setters
   set onMessageSocketChanged(Function(MessageSocketEvent) onMessageChanged) {

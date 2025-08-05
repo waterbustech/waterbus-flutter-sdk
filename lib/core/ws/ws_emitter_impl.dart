@@ -2,8 +2,8 @@ import 'package:injectable/injectable.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 import 'package:waterbus_sdk/constants/ws_event.dart';
-import 'package:waterbus_sdk/core/websocket/interfaces/ws_emitter.dart';
-import 'package:waterbus_sdk/core/websocket/interfaces/ws_handler.dart';
+import 'package:waterbus_sdk/core/ws/interfaces/ws_emitter.dart';
+import 'package:waterbus_sdk/core/ws/interfaces/ws_handler.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
 import 'package:waterbus_sdk/types/internals/enums/connection_type.dart';

@@ -10,8 +10,8 @@ import 'package:waterbus_sdk/core/api/messages/repositories/message_repository.d
 import 'package:waterbus_sdk/core/api/rooms/repositories/room_repository.dart';
 import 'package:waterbus_sdk/core/api/user/repositories/user_repository.dart';
 import 'package:waterbus_sdk/core/rtc/rtc_manager.dart';
-import 'package:waterbus_sdk/core/websocket/interfaces/ws_emitter.dart';
-import 'package:waterbus_sdk/core/websocket/interfaces/ws_handler.dart';
+import 'package:waterbus_sdk/core/ws/interfaces/ws_emitter.dart';
+import 'package:waterbus_sdk/core/ws/interfaces/ws_handler.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/native/picture-in-picture/index.dart';
 import 'package:waterbus_sdk/native/replaykit.dart';
@@ -440,5 +440,5 @@ class SdkCore extends WaterbusSdkInterface {
   }
 
   @override
-  CallState get callState => _rtcManager.getCallState();
+  RoomState get roomState => _rtcManager.roomState;
 }

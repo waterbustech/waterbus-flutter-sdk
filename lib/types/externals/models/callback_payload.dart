@@ -9,7 +9,7 @@ part 'callback_payload.freezed.dart';
 abstract class CallbackPayload with _$CallbackPayload {
   const factory CallbackPayload({
     required CallbackEvents event,
-    required CallState callState,
+    required RoomState callState,
     String? participantId,
     ParticipantInfo? newParticipant,
   }) = _CallbackPayload;

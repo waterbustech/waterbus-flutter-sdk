@@ -92,5 +92,5 @@ abstract class WaterbusSdkInterface {
   Future<void> disableVirtualBg();
   Future<void> setPiPEnabled({required String textureId, bool enabled = true});
 
-  CallState get callState;
+  RoomState get roomState;
 }

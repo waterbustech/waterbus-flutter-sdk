@@ -82,7 +82,7 @@ abstract class RtcManager {
   void setParticipantE2ee({required ParticipantE2eeConfig config});
 
   // ====== State Exposure ======
-  CallState getCallState();
+  RoomState get roomState;
   Stream<CallbackPayload> get onCallChanged;
   String? get currentRoomId;
   bool get isRecordingActive;

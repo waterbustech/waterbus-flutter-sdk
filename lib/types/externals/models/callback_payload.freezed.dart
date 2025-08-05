@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CallbackPayload {
   CallbackEvents get event;
-  CallState get callState;
+  RoomState get callState;
   String? get participantId;
   ParticipantInfo? get newParticipant;
 
@@ -60,11 +60,11 @@ abstract mixin class $CallbackPayloadCopyWith<$Res> {
   @useResult
   $Res call(
       {CallbackEvents event,
-      CallState callState,
+      RoomState callState,
       String? participantId,
       ParticipantInfo? newParticipant});
 
-  $CallStateCopyWith<$Res> get callState;
+  $RoomStateCopyWith<$Res> get callState;
   $ParticipantInfoCopyWith<$Res>? get newParticipant;
 }
 
@@ -94,7 +94,7 @@ class _$CallbackPayloadCopyWithImpl<$Res>
       callState: null == callState
           ? _self.callState
           : callState // ignore: cast_nullable_to_non_nullable
-              as CallState,
+              as RoomState,
       participantId: freezed == participantId
           ? _self.participantId
           : participantId // ignore: cast_nullable_to_non_nullable
@@ -110,8 +110,8 @@ class _$CallbackPayloadCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $CallStateCopyWith<$Res> get callState {
-    return $CallStateCopyWith<$Res>(_self.callState, (value) {
+  $RoomStateCopyWith<$Res> get callState {
+    return $RoomStateCopyWith<$Res>(_self.callState, (value) {
       return _then(_self.copyWith(callState: value));
     });
   }
@@ -143,7 +143,7 @@ class _CallbackPayload implements CallbackPayload {
   @override
   final CallbackEvents event;
   @override
-  final CallState callState;
+  final RoomState callState;
   @override
   final String? participantId;
   @override
@@ -191,12 +191,12 @@ abstract mixin class _$CallbackPayloadCopyWith<$Res>
   @useResult
   $Res call(
       {CallbackEvents event,
-      CallState callState,
+      RoomState callState,
       String? participantId,
       ParticipantInfo? newParticipant});
 
   @override
-  $CallStateCopyWith<$Res> get callState;
+  $RoomStateCopyWith<$Res> get callState;
   @override
   $ParticipantInfoCopyWith<$Res>? get newParticipant;
 }
@@ -227,7 +227,7 @@ class __$CallbackPayloadCopyWithImpl<$Res>
       callState: null == callState
           ? _self.callState
           : callState // ignore: cast_nullable_to_non_nullable
-              as CallState,
+              as RoomState,
       participantId: freezed == participantId
           ? _self.participantId
           : participantId // ignore: cast_nullable_to_non_nullable
@@ -243,8 +243,8 @@ class __$CallbackPayloadCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $CallStateCopyWith<$Res> get callState {
-    return $CallStateCopyWith<$Res>(_self.callState, (value) {
+  $RoomStateCopyWith<$Res> get callState {
+    return $RoomStateCopyWith<$Res>(_self.callState, (value) {
       return _then(_self.copyWith(callState: value));
     });
   }
