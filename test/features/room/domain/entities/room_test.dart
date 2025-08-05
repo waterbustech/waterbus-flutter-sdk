@@ -25,11 +25,11 @@ void main() {
         fullName: 'Kai',
         externalId: '',
       );
-      final participant1 = Participant(
+      final participant1 = ParticipantInfo(
         id: 1,
         user: userModel,
       );
-      final participant2 = Participant(
+      final participant2 = ParticipantInfo(
         id: 2,
         user: userModel,
       );
@@ -167,9 +167,9 @@ void main() {
     final user2 = User(id: 2, fullName: '1', userName: '1', externalId: '');
     final user3 = User(id: 3, fullName: '1', userName: '1', externalId: '');
 
-    final participant1 = Participant(user: user1, id: 1);
-    final participant2 = Participant(user: user2, id: 2);
-    final participant3 = Participant(user: user3, id: 3);
+    final participant1 = ParticipantInfo(user: user1, id: 1);
+    final participant2 = ParticipantInfo(user: user2, id: 2);
+    final participant3 = ParticipantInfo(user: user3, id: 3);
 
     final fakeParticipants = [participant1, participant2, participant3];
     final fakeMembers = fakeParticipants
@@ -212,7 +212,7 @@ void main() {
       final room1Participant = Room(
         title: '1',
         participants: [
-          Participant(
+          ParticipantInfo(
             id: 1,
             user: User(
               id: 1,
@@ -232,7 +232,7 @@ void main() {
       final room2Participants = Room(
         title: '1',
         participants: [
-          Participant(
+          ParticipantInfo(
             id: 1,
             user: User(
               id: 1,
@@ -241,7 +241,7 @@ void main() {
               externalId: '',
             ),
           ),
-          Participant(
+          ParticipantInfo(
             id: 2,
             user: User(
               id: 1,
@@ -261,7 +261,7 @@ void main() {
       final room3Participants = Room(
         title: '1',
         participants: [
-          Participant(
+          ParticipantInfo(
             id: 1,
             user: User(
               id: 1,
@@ -270,7 +270,7 @@ void main() {
               externalId: '',
             ),
           ),
-          Participant(
+          ParticipantInfo(
             id: 2,
             user: User(
               id: 1,
@@ -279,7 +279,7 @@ void main() {
               externalId: '',
             ),
           ),
-          Participant(
+          ParticipantInfo(
             id: 3,
             user: User(
               id: 1,
@@ -288,7 +288,7 @@ void main() {
               externalId: '',
             ),
           ),
-          Participant(
+          ParticipantInfo(
             id: 4,
             user: User(
               id: 1,
@@ -309,7 +309,7 @@ void main() {
       final testroom = Room(
         title: '1',
         participants: [
-          Participant(
+          ParticipantInfo(
             id: 1,
             user: User(
               id: 1,

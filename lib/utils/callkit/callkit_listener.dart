@@ -2,14 +2,14 @@ import 'package:injectable/injectable.dart';
 import 'package:waterbus_callkit_incoming/entities/call_event.dart';
 import 'package:waterbus_callkit_incoming/waterbus_callkit_incoming.dart';
 
-import 'package:waterbus_sdk/core/webrtc/webrtc_manager.dart';
+import 'package:waterbus_sdk/core/rtc/rtc_manager.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 @singleton
 class CallKitListener {
   final WaterbusLogger _logger;
-  final WebRTCManager _rtcManager;
+  final RtcManager _rtcManager;
   CallKitListener(
     this._logger,
     this._rtcManager,

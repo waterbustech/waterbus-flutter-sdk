@@ -18,7 +18,7 @@ mixin _$CallbackPayload {
   CallbackEvents get event;
   CallState get callState;
   String? get participantId;
-  Participant? get newParticipant;
+  ParticipantInfo? get newParticipant;
 
   /// Create a copy of CallbackPayload
   /// with the given fields replaced by the non-null parameter values.
@@ -62,10 +62,10 @@ abstract mixin class $CallbackPayloadCopyWith<$Res> {
       {CallbackEvents event,
       CallState callState,
       String? participantId,
-      Participant? newParticipant});
+      ParticipantInfo? newParticipant});
 
   $CallStateCopyWith<$Res> get callState;
-  $ParticipantCopyWith<$Res>? get newParticipant;
+  $ParticipantInfoCopyWith<$Res>? get newParticipant;
 }
 
 /// @nodoc
@@ -102,7 +102,7 @@ class _$CallbackPayloadCopyWithImpl<$Res>
       newParticipant: freezed == newParticipant
           ? _self.newParticipant
           : newParticipant // ignore: cast_nullable_to_non_nullable
-              as Participant?,
+              as ParticipantInfo?,
     ));
   }
 
@@ -120,12 +120,12 @@ class _$CallbackPayloadCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $ParticipantCopyWith<$Res>? get newParticipant {
+  $ParticipantInfoCopyWith<$Res>? get newParticipant {
     if (_self.newParticipant == null) {
       return null;
     }
 
-    return $ParticipantCopyWith<$Res>(_self.newParticipant!, (value) {
+    return $ParticipantInfoCopyWith<$Res>(_self.newParticipant!, (value) {
       return _then(_self.copyWith(newParticipant: value));
     });
   }
@@ -147,7 +147,7 @@ class _CallbackPayload implements CallbackPayload {
   @override
   final String? participantId;
   @override
-  final Participant? newParticipant;
+  final ParticipantInfo? newParticipant;
 
   /// Create a copy of CallbackPayload
   /// with the given fields replaced by the non-null parameter values.
@@ -193,12 +193,12 @@ abstract mixin class _$CallbackPayloadCopyWith<$Res>
       {CallbackEvents event,
       CallState callState,
       String? participantId,
-      Participant? newParticipant});
+      ParticipantInfo? newParticipant});
 
   @override
   $CallStateCopyWith<$Res> get callState;
   @override
-  $ParticipantCopyWith<$Res>? get newParticipant;
+  $ParticipantInfoCopyWith<$Res>? get newParticipant;
 }
 
 /// @nodoc
@@ -235,7 +235,7 @@ class __$CallbackPayloadCopyWithImpl<$Res>
       newParticipant: freezed == newParticipant
           ? _self.newParticipant
           : newParticipant // ignore: cast_nullable_to_non_nullable
-              as Participant?,
+              as ParticipantInfo?,
     ));
   }
 
@@ -253,12 +253,12 @@ class __$CallbackPayloadCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $ParticipantCopyWith<$Res>? get newParticipant {
+  $ParticipantInfoCopyWith<$Res>? get newParticipant {
     if (_self.newParticipant == null) {
       return null;
     }
 
-    return $ParticipantCopyWith<$Res>(_self.newParticipant!, (value) {
+    return $ParticipantInfoCopyWith<$Res>(_self.newParticipant!, (value) {
       return _then(_self.copyWith(newParticipant: value));
     });
   }

@@ -1,12 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'participant.dart';
+part of 'participant_info.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_Participant _$ParticipantFromJson(Map<String, dynamic> json) => _Participant(
+_ParticipantInfo _$ParticipantInfoFromJson(Map<String, dynamic> json) =>
+    _ParticipantInfo(
       id: (json['id'] as num).toInt(),
       user: json['user'] == null
           ? null
@@ -14,7 +15,7 @@ _Participant _$ParticipantFromJson(Map<String, dynamic> json) => _Participant(
       isMe: json['isMe'] as bool? ?? false,
     );
 
-Map<String, dynamic> _$ParticipantToJson(_Participant instance) =>
+Map<String, dynamic> _$ParticipantInfoToJson(_ParticipantInfo instance) =>
     <String, dynamic>{
       'id': instance.id,
       'user': instance.user?.toJson(),

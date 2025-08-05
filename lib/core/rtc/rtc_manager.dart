@@ -4,7 +4,7 @@ import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/types/internals/enums/connection_type.dart';
 import 'package:waterbus_sdk/types/internals/models/index.dart';
 
-abstract class WebRTCManager {
+abstract class RtcManager {
   // ====== Room Management ======
   Future<void> joinRoom({
     required String roomId,
@@ -28,9 +28,9 @@ abstract class WebRTCManager {
     RTCIceCandidate candidate,
   );
 
-  // ====== Participant Handling ======
+  // ====== ParticipantInfo Handling ======
   Future<void> handleParticipantJoined({
-    required Participant participant,
+    required ParticipantInfo participant,
     required bool isMigrate,
   });
   Future<void> handleParticipantLeft(String targetId);

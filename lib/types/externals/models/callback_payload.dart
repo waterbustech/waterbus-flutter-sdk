@@ -11,6 +11,6 @@ abstract class CallbackPayload with _$CallbackPayload {
     required CallbackEvents event,
     required CallState callState,
     String? participantId,
-    Participant? newParticipant,
+    ParticipantInfo? newParticipant,
   }) = _CallbackPayload;
 }

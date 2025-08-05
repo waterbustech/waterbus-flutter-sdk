@@ -4,7 +4,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'participant.dart';
+part of 'participant_info.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,26 +14,27 @@ part of 'participant.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$Participant {
+mixin _$ParticipantInfo {
   int get id;
   User? get user;
   bool get isMe;
 
-  /// Create a copy of Participant
+  /// Create a copy of ParticipantInfo
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $ParticipantCopyWith<Participant> get copyWith =>
-      _$ParticipantCopyWithImpl<Participant>(this as Participant, _$identity);
+  $ParticipantInfoCopyWith<ParticipantInfo> get copyWith =>
+      _$ParticipantInfoCopyWithImpl<ParticipantInfo>(
+          this as ParticipantInfo, _$identity);
 
-  /// Serializes this Participant to a JSON map.
+  /// Serializes this ParticipantInfo to a JSON map.
   Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is Participant &&
+            other is ParticipantInfo &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.user, user) || other.user == user) &&
             (identical(other.isMe, isMe) || other.isMe == isMe));
@@ -45,15 +46,15 @@ mixin _$Participant {
 
   @override
   String toString() {
-    return 'Participant(id: $id, user: $user, isMe: $isMe)';
+    return 'ParticipantInfo(id: $id, user: $user, isMe: $isMe)';
   }
 }
 
 /// @nodoc
-abstract mixin class $ParticipantCopyWith<$Res> {
-  factory $ParticipantCopyWith(
-          Participant value, $Res Function(Participant) _then) =
-      _$ParticipantCopyWithImpl;
+abstract mixin class $ParticipantInfoCopyWith<$Res> {
+  factory $ParticipantInfoCopyWith(
+          ParticipantInfo value, $Res Function(ParticipantInfo) _then) =
+      _$ParticipantInfoCopyWithImpl;
   @useResult
   $Res call({int id, User? user, bool isMe});
 
@@ -61,13 +62,14 @@ abstract mixin class $ParticipantCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$ParticipantCopyWithImpl<$Res> implements $ParticipantCopyWith<$Res> {
-  _$ParticipantCopyWithImpl(this._self, this._then);
+class _$ParticipantInfoCopyWithImpl<$Res>
+    implements $ParticipantInfoCopyWith<$Res> {
+  _$ParticipantInfoCopyWithImpl(this._self, this._then);
 
-  final Participant _self;
-  final $Res Function(Participant) _then;
+  final ParticipantInfo _self;
+  final $Res Function(ParticipantInfo) _then;
 
-  /// Create a copy of Participant
+  /// Create a copy of ParticipantInfo
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -92,7 +94,7 @@ class _$ParticipantCopyWithImpl<$Res> implements $ParticipantCopyWith<$Res> {
     ));
   }
 
-  /// Create a copy of Participant
+  /// Create a copy of ParticipantInfo
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -109,10 +111,10 @@ class _$ParticipantCopyWithImpl<$Res> implements $ParticipantCopyWith<$Res> {
 
 /// @nodoc
 @JsonSerializable()
-class _Participant implements Participant {
-  const _Participant({required this.id, this.user, this.isMe = false});
-  factory _Participant.fromJson(Map<String, dynamic> json) =>
-      _$ParticipantFromJson(json);
+class _ParticipantInfo implements ParticipantInfo {
+  const _ParticipantInfo({required this.id, this.user, this.isMe = false});
+  factory _ParticipantInfo.fromJson(Map<String, dynamic> json) =>
+      _$ParticipantInfoFromJson(json);
 
   @override
   final int id;
@@ -122,17 +124,17 @@ class _Participant implements Participant {
   @JsonKey()
   final bool isMe;
 
-  /// Create a copy of Participant
+  /// Create a copy of ParticipantInfo
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  _$ParticipantCopyWith<_Participant> get copyWith =>
-      __$ParticipantCopyWithImpl<_Participant>(this, _$identity);
+  _$ParticipantInfoCopyWith<_ParticipantInfo> get copyWith =>
+      __$ParticipantInfoCopyWithImpl<_ParticipantInfo>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$ParticipantToJson(
+    return _$ParticipantInfoToJson(
       this,
     );
   }
@@ -141,7 +143,7 @@ class _Participant implements Participant {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _Participant &&
+            other is _ParticipantInfo &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.user, user) || other.user == user) &&
             (identical(other.isMe, isMe) || other.isMe == isMe));
@@ -153,16 +155,16 @@ class _Participant implements Participant {
 
   @override
   String toString() {
-    return 'Participant(id: $id, user: $user, isMe: $isMe)';
+    return 'ParticipantInfo(id: $id, user: $user, isMe: $isMe)';
   }
 }
 
 /// @nodoc
-abstract mixin class _$ParticipantCopyWith<$Res>
-    implements $ParticipantCopyWith<$Res> {
-  factory _$ParticipantCopyWith(
-          _Participant value, $Res Function(_Participant) _then) =
-      __$ParticipantCopyWithImpl;
+abstract mixin class _$ParticipantInfoCopyWith<$Res>
+    implements $ParticipantInfoCopyWith<$Res> {
+  factory _$ParticipantInfoCopyWith(
+          _ParticipantInfo value, $Res Function(_ParticipantInfo) _then) =
+      __$ParticipantInfoCopyWithImpl;
   @override
   @useResult
   $Res call({int id, User? user, bool isMe});
@@ -172,13 +174,14 @@ abstract mixin class _$ParticipantCopyWith<$Res>
 }
 
 /// @nodoc
-class __$ParticipantCopyWithImpl<$Res> implements _$ParticipantCopyWith<$Res> {
-  __$ParticipantCopyWithImpl(this._self, this._then);
+class __$ParticipantInfoCopyWithImpl<$Res>
+    implements _$ParticipantInfoCopyWith<$Res> {
+  __$ParticipantInfoCopyWithImpl(this._self, this._then);
 
-  final _Participant _self;
-  final $Res Function(_Participant) _then;
+  final _ParticipantInfo _self;
+  final $Res Function(_ParticipantInfo) _then;
 
-  /// Create a copy of Participant
+  /// Create a copy of ParticipantInfo
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -187,7 +190,7 @@ class __$ParticipantCopyWithImpl<$Res> implements _$ParticipantCopyWith<$Res> {
     Object? user = freezed,
     Object? isMe = null,
   }) {
-    return _then(_Participant(
+    return _then(_ParticipantInfo(
       id: null == id
           ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -203,7 +206,7 @@ class __$ParticipantCopyWithImpl<$Res> implements _$ParticipantCopyWith<$Res> {
     ));
   }
 
-  /// Create a copy of Participant
+  /// Create a copy of ParticipantInfo
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')

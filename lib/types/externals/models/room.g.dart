@@ -10,7 +10,7 @@ _Room _$RoomFromJson(Map<String, dynamic> json) => _Room(
       id: (json['id'] as num?)?.toInt() ?? -1,
       title: json['title'] as String,
       participants: (json['participants'] as List<dynamic>?)
-              ?.map((e) => Participant.fromJson(e as Map<String, dynamic>))
+              ?.map((e) => ParticipantInfo.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
       members: (json['members'] as List<dynamic>?)

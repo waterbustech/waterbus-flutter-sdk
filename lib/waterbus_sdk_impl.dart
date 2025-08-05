@@ -9,7 +9,7 @@ import 'package:waterbus_sdk/core/api/chat/repositories/chat_repository.dart';
 import 'package:waterbus_sdk/core/api/messages/repositories/message_repository.dart';
 import 'package:waterbus_sdk/core/api/rooms/repositories/room_repository.dart';
 import 'package:waterbus_sdk/core/api/user/repositories/user_repository.dart';
-import 'package:waterbus_sdk/core/webrtc/webrtc_manager.dart';
+import 'package:waterbus_sdk/core/rtc/rtc_manager.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/ws_emitter.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/ws_handler.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
@@ -25,7 +25,7 @@ import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
 class SdkCore extends WaterbusSdkInterface {
   final WsHandler _wsHandler;
   final WsEmitter _wsEmitter;
-  final WebRTCManager _rtcManager;
+  final RtcManager _rtcManager;
   final ReplayKitChannel _replayKitChannel;
   final BaseRemoteData _baseRepository;
   final AuthRepository _authRepository;

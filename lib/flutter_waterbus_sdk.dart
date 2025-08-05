@@ -4,7 +4,7 @@ import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 import 'package:rhttp/rhttp.dart';
 
 import 'package:waterbus_sdk/core/api/base/base_local_storage.dart';
-import 'package:waterbus_sdk/core/webrtc/webrtc_manager.dart';
+import 'package:waterbus_sdk/core/rtc/rtc_manager.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
 import 'package:waterbus_sdk/types/externals/models/join_room_params.dart';
 import 'package:waterbus_sdk/types/index.dart';
@@ -98,7 +98,7 @@ class WaterbusSdk {
     _httpVersionPref = config.httpVersionPref;
 
     // Initialize dependencies if not already registered
-    if (!getIt.isRegistered<WebRTCManager>()) {
+    if (!getIt.isRegistered<RtcManager>()) {
       await BaseLocalData.initialize();
       configureDependencies();
 

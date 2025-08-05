@@ -11,7 +11,7 @@ abstract class Room with _$Room {
   const factory Room({
     @Default(-1) int id,
     required String title,
-    @Default([]) List<Participant> participants,
+    @Default([]) List<ParticipantInfo> participants,
     @Default([]) List<Member> members,
     String? code,
     DateTime? createdAt,

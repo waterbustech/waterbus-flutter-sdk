@@ -65,7 +65,7 @@ class RoomRepositoryImpl extends RoomRepository {
     int? userId,
     int? participantId,
   }) {
-    final List<Participant> participants =
+    final List<ParticipantInfo> participants =
         room.participants.map((e) => e).toList();
 
     final int indexOfMyParticipant = participants.lastIndexWhere(

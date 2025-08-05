@@ -7,7 +7,7 @@ import '../../../../constants/sample_file_path.dart';
 import '../../../../fixtures/fixture_reader.dart';
 
 void main() {
-  group('Participant', () {
+  group('ParticipantInfo', () {
     final String participantJson = fixture(participantSample);
     final User userModel = User(
       id: 1,
@@ -24,18 +24,18 @@ void main() {
       externalId: '',
     );
 
-    test('Should create a Participant instance', () {
-      final participant = Participant(
+    test('Should create a ParticipantInfo instance', () {
+      final participant = ParticipantInfo(
         id: 1,
         user: userModel,
       );
 
-      expect(participant, isA<Participant>());
+      expect(participant, isA<ParticipantInfo>());
       expect(participant.id, 1);
       expect(participant.user, userModel);
     });
 
-    test('Should create a new Participant instance with updated values', () {
+    test('Should create a new ParticipantInfo instance with updated values', () {
       final User userModel = User(
         id: 1,
         userName: 'lambiengcode',
@@ -50,7 +50,7 @@ void main() {
         externalId: '',
       );
 
-      final participant = Participant(
+      final participant = ParticipantInfo(
         id: 1,
         user: userModel,
       );
@@ -62,13 +62,13 @@ void main() {
       final updatedParticipant2 = participant.copyWith();
 
       expect(participant == updatedParticipant2, true);
-      expect(updatedParticipant1, isA<Participant>());
+      expect(updatedParticipant1, isA<ParticipantInfo>());
       expect(updatedParticipant1.id, 2);
       expect(updatedParticipant1.user, updatedUserModel);
     });
 
-    test('Should convert Participant to Json', () {
-      final participant = Participant(
+    test('Should convert ParticipantInfo to Json', () {
+      final participant = ParticipantInfo(
         id: 1,
         user: userModel,
       );
@@ -79,27 +79,27 @@ void main() {
       expect(participantMap['user'], isA<Map<String, dynamic>>());
     });
 
-    test('Should create Participant from Json', () {
+    test('Should create ParticipantInfo from Json', () {
       final participantMap = json.decode(participantJson);
-      final participant = Participant.fromJson(participantMap);
+      final participant = ParticipantInfo.fromJson(participantMap);
 
-      expect(participant, isA<Participant>());
+      expect(participant, isA<ParticipantInfo>());
       expect(participant.id, 1);
       expect(participant.user, userModel);
     });
 
-    test('Should check equality of Participant instances', () {
-      final participant1 = Participant(
+    test('Should check equality of ParticipantInfo instances', () {
+      final participant1 = ParticipantInfo(
         id: 1,
         user: userModel,
       );
 
-      final participant2 = Participant(
+      final participant2 = ParticipantInfo(
         id: 1,
         user: userModel,
       );
 
-      final participant3 = Participant(
+      final participant3 = ParticipantInfo(
         id: 2,
         user: hostModel,
       );
@@ -111,27 +111,27 @@ void main() {
       expect(participant1.hashCode, isNot(equals(participant3.hashCode)));
     });
 
-    test('toString - should return a string representation of the Participant',
+    test('toString - should return a string representation of the ParticipantInfo',
         () {
-      final participant = Participant(
+      final participant = ParticipantInfo(
         id: 1,
         user: userModel,
       );
 
       final participantString = participant.toString();
 
-      expect(participantString, contains('Participant'));
+      expect(participantString, contains('ParticipantInfo'));
       expect(participantString, contains(participant.id.toString()));
     });
 
     test('should have correct props', () {
       // Arrange
-      final participant1 = Participant(
+      final participant1 = ParticipantInfo(
         id: 1,
         user: userModel,
       );
 
-      final participant2 = Participant(
+      final participant2 = ParticipantInfo(
         id: 2,
         user: userModel,
       );

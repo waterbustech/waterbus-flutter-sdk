@@ -7,7 +7,7 @@ import 'package:sdp_transform/sdp_transform.dart';
 
 import 'package:waterbus_sdk/constants/rtc_configurations.dart';
 import 'package:waterbus_sdk/core/api/auth/repositories/auth_repository.dart';
-import 'package:waterbus_sdk/core/webrtc/webrtc_manager.dart';
+import 'package:waterbus_sdk/core/rtc/rtc_manager.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/ws_emitter.dart';
 import 'package:waterbus_sdk/e2ee/e2ee_manager.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
@@ -25,8 +25,8 @@ import 'package:waterbus_sdk/utils/extensions/sdp_extension.dart';
 import 'package:waterbus_sdk/utils/ipv6/index.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
-@LazySingleton(as: WebRTCManager)
-class WebRTCManagerIpml extends WebRTCManager {
+@LazySingleton(as: RtcManager)
+class RtcManagerIpml extends RtcManager {
   final E2EEManager _e2eeManager;
   final WsEmitter _wsEmitter;
   final ReplayKitChannel _replayKitChannel;
@@ -34,7 +34,7 @@ class WebRTCManagerIpml extends WebRTCManager {
   final WebRTCVideoStats _videoStats;
   final WebRTCAudioStats _audioStats;
   final AuthRepository _authRepository;
-  WebRTCManagerIpml(
+  RtcManagerIpml(
     this._e2eeManager,
     this._wsEmitter,
     this._replayKitChannel,
@@ -326,10 +326,10 @@ class WebRTCManagerIpml extends WebRTCManager {
     }
   }
 
-  // ====== Participant Handling ======
+  // ====== ParticipantInfo Handling ======
   @override
   Future<void> handleParticipantJoined({
-    required Participant participant,
+    required ParticipantInfo participant,
     required bool isMigrate,
   }) async {
     final participantId = participant.id.toString();
@@ -1440,7 +1440,7 @@ class WebRTCManagerIpml extends WebRTCManager {
   void _notify(
     CallbackEvents event, {
     String? participantId,
-    Participant? participant,
+    ParticipantInfo? participant,
   }) {
     _eventStreamController.sink.add(
       CallbackPayload(

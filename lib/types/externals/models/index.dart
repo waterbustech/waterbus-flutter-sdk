@@ -5,7 +5,7 @@ export 'room.dart';
 export 'message.dart';
 export 'member.dart';
 export 'user.dart';
-export 'participant.dart';
+export 'participant_info.dart';
 export 'call_state.dart';
 export 'callback_payload.dart';
 export 'media_source.dart';

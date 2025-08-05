@@ -17,7 +17,7 @@ T _$identity<T>(T value) => value;
 mixin _$Room {
   int get id;
   String get title;
-  List<Participant> get participants;
+  List<ParticipantInfo> get participants;
   List<Member> get members;
   String? get code;
   DateTime? get createdAt;
@@ -98,7 +98,7 @@ abstract mixin class $RoomCopyWith<$Res> {
   $Res call(
       {int id,
       String title,
-      List<Participant> participants,
+      List<ParticipantInfo> participants,
       List<Member> members,
       String? code,
       DateTime? createdAt,
@@ -151,7 +151,7 @@ class _$RoomCopyWithImpl<$Res> implements $RoomCopyWith<$Res> {
       participants: null == participants
           ? _self.participants
           : participants // ignore: cast_nullable_to_non_nullable
-              as List<Participant>,
+              as List<ParticipantInfo>,
       members: null == members
           ? _self.members
           : members // ignore: cast_nullable_to_non_nullable
@@ -216,7 +216,7 @@ class _Room implements Room {
   const _Room(
       {this.id = -1,
       required this.title,
-      final List<Participant> participants = const [],
+      final List<ParticipantInfo> participants = const [],
       final List<Member> members = const [],
       this.code,
       this.createdAt,
@@ -236,10 +236,10 @@ class _Room implements Room {
   final int id;
   @override
   final String title;
-  final List<Participant> _participants;
+  final List<ParticipantInfo> _participants;
   @override
   @JsonKey()
-  List<Participant> get participants {
+  List<ParticipantInfo> get participants {
     if (_participants is EqualUnmodifiableListView) return _participants;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_participants);
@@ -352,7 +352,7 @@ abstract mixin class _$RoomCopyWith<$Res> implements $RoomCopyWith<$Res> {
   $Res call(
       {int id,
       String title,
-      List<Participant> participants,
+      List<ParticipantInfo> participants,
       List<Member> members,
       String? code,
       DateTime? createdAt,
@@ -406,7 +406,7 @@ class __$RoomCopyWithImpl<$Res> implements _$RoomCopyWith<$Res> {
       participants: null == participants
           ? _self._participants
           : participants // ignore: cast_nullable_to_non_nullable
-              as List<Participant>,
+              as List<ParticipantInfo>,
       members: null == members
           ? _self._members
           : members // ignore: cast_nullable_to_non_nullable

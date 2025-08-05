@@ -5,7 +5,7 @@ import 'package:socket_io_client/socket_io_client.dart';
 
 import 'package:waterbus_sdk/constants/ws_event.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_data_source.dart';
-import 'package:waterbus_sdk/core/webrtc/webrtc_manager.dart';
+import 'package:waterbus_sdk/core/rtc/rtc_manager.dart';
 import 'package:waterbus_sdk/core/websocket/interfaces/ws_handler.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/types/internals/enums/connection_type.dart';
@@ -18,7 +18,7 @@ import 'package:waterbus_sdk/utils/msg_pack_parser.dart';
 
 @Singleton(as: WsHandler)
 class WsHandlerImpl extends WsHandler {
-  final WebRTCManager _rtcManager;
+  final RtcManager _rtcManager;
   final WaterbusLogger _logger;
   final AuthLocalDataSource _authLocal;
   final DioConfiguration _dioConfig;
@@ -105,7 +105,7 @@ class WsHandlerImpl extends WsHandler {
       if (data == null) return;
 
       final participant =
-          Participant.fromJson(Map<String, dynamic>.from(data['participant']));
+          ParticipantInfo.fromJson(Map<String, dynamic>.from(data['participant']));
       final isMigrate = data['isMigrate'];
 
       _rtcManager.handleParticipantJoined(
