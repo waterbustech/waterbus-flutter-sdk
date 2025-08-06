@@ -35,6 +35,7 @@ _Room _$RoomFromJson(Map<String, dynamic> json) => _Room(
           StreamingProtocol.sfu,
       roomType: $enumDecodeNullable(_$RoomTypeEnumMap, json['roomType']) ??
           RoomType.videoConferencing,
+      isProtected: json['isProtected'] as bool? ?? false,
       capacity: (json['capacity'] as num?)?.toInt(),
     );
 
@@ -52,6 +53,7 @@ Map<String, dynamic> _$RoomToJson(_Room instance) => <String, dynamic>{
       'streamingProtocol':
           _$StreamingProtocolEnumMap[instance.streamingProtocol]!,
       'roomType': _$RoomTypeEnumMap[instance.roomType]!,
+      'isProtected': instance.isProtected,
       'capacity': instance.capacity,
     };
 

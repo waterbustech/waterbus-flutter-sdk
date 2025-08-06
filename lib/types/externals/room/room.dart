@@ -20,6 +20,7 @@ abstract class Room with _$Room {
     String? avatar,
     @Default(StreamingProtocol.sfu) StreamingProtocol streamingProtocol,
     @Default(RoomType.videoConferencing) RoomType roomType,
+    @Default(true) bool isProtected,
     // Null is unlimited
     int? capacity,
   }) = _Room;

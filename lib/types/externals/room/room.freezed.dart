@@ -26,7 +26,8 @@ mixin _$Room {
   Message? get latestMessage;
   String? get avatar;
   StreamingProtocol get streamingProtocol;
-  RoomType get roomType; // Null is unlimited
+  RoomType get roomType;
+  bool get isProtected; // Null is unlimited
   int? get capacity;
 
   /// Create a copy of Room
@@ -62,6 +63,8 @@ mixin _$Room {
                 other.streamingProtocol == streamingProtocol) &&
             (identical(other.roomType, roomType) ||
                 other.roomType == roomType) &&
+            (identical(other.isProtected, isProtected) ||
+                other.isProtected == isProtected) &&
             (identical(other.capacity, capacity) ||
                 other.capacity == capacity));
   }
@@ -82,11 +85,12 @@ mixin _$Room {
       avatar,
       streamingProtocol,
       roomType,
+      isProtected,
       capacity);
 
   @override
   String toString() {
-    return 'Room(id: $id, title: $title, participants: $participants, members: $members, code: $code, createdAt: $createdAt, latestJoinedAt: $latestJoinedAt, status: $status, latestMessage: $latestMessage, avatar: $avatar, streamingProtocol: $streamingProtocol, roomType: $roomType, capacity: $capacity)';
+    return 'Room(id: $id, title: $title, participants: $participants, members: $members, code: $code, createdAt: $createdAt, latestJoinedAt: $latestJoinedAt, status: $status, latestMessage: $latestMessage, avatar: $avatar, streamingProtocol: $streamingProtocol, roomType: $roomType, isProtected: $isProtected, capacity: $capacity)';
   }
 }
 
@@ -108,6 +112,7 @@ abstract mixin class $RoomCopyWith<$Res> {
       String? avatar,
       StreamingProtocol streamingProtocol,
       RoomType roomType,
+      bool isProtected,
       int? capacity});
 
   $MessageCopyWith<$Res>? get latestMessage;
@@ -137,6 +142,7 @@ class _$RoomCopyWithImpl<$Res> implements $RoomCopyWith<$Res> {
     Object? avatar = freezed,
     Object? streamingProtocol = null,
     Object? roomType = null,
+    Object? isProtected = null,
     Object? capacity = freezed,
   }) {
     return _then(_self.copyWith(
@@ -188,6 +194,10 @@ class _$RoomCopyWithImpl<$Res> implements $RoomCopyWith<$Res> {
           ? _self.roomType
           : roomType // ignore: cast_nullable_to_non_nullable
               as RoomType,
+      isProtected: null == isProtected
+          ? _self.isProtected
+          : isProtected // ignore: cast_nullable_to_non_nullable
+              as bool,
       capacity: freezed == capacity
           ? _self.capacity
           : capacity // ignore: cast_nullable_to_non_nullable
@@ -226,6 +236,7 @@ class _Room implements Room {
       this.avatar,
       this.streamingProtocol = StreamingProtocol.sfu,
       this.roomType = RoomType.videoConferencing,
+      this.isProtected = false,
       this.capacity})
       : _participants = participants,
         _members = members;
@@ -273,6 +284,9 @@ class _Room implements Room {
   @override
   @JsonKey()
   final RoomType roomType;
+  @override
+  @JsonKey()
+  final bool isProtected;
 // Null is unlimited
   @override
   final int? capacity;
@@ -315,6 +329,8 @@ class _Room implements Room {
                 other.streamingProtocol == streamingProtocol) &&
             (identical(other.roomType, roomType) ||
                 other.roomType == roomType) &&
+            (identical(other.isProtected, isProtected) ||
+                other.isProtected == isProtected) &&
             (identical(other.capacity, capacity) ||
                 other.capacity == capacity));
   }
@@ -335,11 +351,12 @@ class _Room implements Room {
       avatar,
       streamingProtocol,
       roomType,
+      isProtected,
       capacity);
 
   @override
   String toString() {
-    return 'Room(id: $id, title: $title, participants: $participants, members: $members, code: $code, createdAt: $createdAt, latestJoinedAt: $latestJoinedAt, status: $status, latestMessage: $latestMessage, avatar: $avatar, streamingProtocol: $streamingProtocol, roomType: $roomType, capacity: $capacity)';
+    return 'Room(id: $id, title: $title, participants: $participants, members: $members, code: $code, createdAt: $createdAt, latestJoinedAt: $latestJoinedAt, status: $status, latestMessage: $latestMessage, avatar: $avatar, streamingProtocol: $streamingProtocol, roomType: $roomType, isProtected: $isProtected, capacity: $capacity)';
   }
 }
 
@@ -362,6 +379,7 @@ abstract mixin class _$RoomCopyWith<$Res> implements $RoomCopyWith<$Res> {
       String? avatar,
       StreamingProtocol streamingProtocol,
       RoomType roomType,
+      bool isProtected,
       int? capacity});
 
   @override
@@ -392,6 +410,7 @@ class __$RoomCopyWithImpl<$Res> implements _$RoomCopyWith<$Res> {
     Object? avatar = freezed,
     Object? streamingProtocol = null,
     Object? roomType = null,
+    Object? isProtected = null,
     Object? capacity = freezed,
   }) {
     return _then(_Room(
@@ -443,6 +462,10 @@ class __$RoomCopyWithImpl<$Res> implements _$RoomCopyWith<$Res> {
           ? _self.roomType
           : roomType // ignore: cast_nullable_to_non_nullable
               as RoomType,
+      isProtected: null == isProtected
+          ? _self.isProtected
+          : isProtected // ignore: cast_nullable_to_non_nullable
+              as bool,
       capacity: freezed == capacity
           ? _self.capacity
           : capacity // ignore: cast_nullable_to_non_nullable
