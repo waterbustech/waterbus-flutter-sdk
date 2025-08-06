@@ -7,7 +7,7 @@ import 'package:mockito/mockito.dart';
 import 'package:waterbus_sdk/core/api/user/datasources/user_remote_data_source.dart';
 import 'package:waterbus_sdk/core/api/user/repositories/user_repository.dart';
 import 'package:waterbus_sdk/types/error/failures.dart';
-import 'package:waterbus_sdk/types/externals/models/index.dart';
+import 'package:waterbus_sdk/types/externals/index.dart';
 import 'package:waterbus_sdk/types/result.dart';
 import 'user_repository_impl_test.mocks.dart';
 

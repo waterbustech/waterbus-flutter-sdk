@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/types/internals/models/ice_servers_response.dart';
 
 class RTCConfigurations {
   static Map<String, dynamic> configuration(

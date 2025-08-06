@@ -2,8 +2,6 @@ import 'dart:typed_data';
 
 import 'package:waterbus_sdk/core/events/waterbus_event_system.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/types/internals/enums/connection_type.dart';
-import 'package:waterbus_sdk/types/internals/models/index.dart';
 
 abstract class RtcManager {
   // ====== Room Management ======

@@ -4,7 +4,6 @@ import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 import 'package:injectable/injectable.dart';
 
 import 'package:waterbus_sdk/types/index.dart';
-import 'package:waterbus_sdk/types/internals/models/index.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extension.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 

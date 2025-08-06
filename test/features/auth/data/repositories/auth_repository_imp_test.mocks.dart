@@ -9,14 +9,15 @@ import 'dart:async' as _i7;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i5;
 
-import 'package:waterbus_sdk/types/externals/models/index.dart' as _i8;
-import 'package:waterbus_sdk/types/internals/models/index.dart' as _i3;
+import 'package:waterbus_sdk/types/externals/index.dart' as _i8;
 import 'package:waterbus_sdk/types/result.dart' as _i2;
 
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_data_source.dart'
     as _i4;
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_remote_data_source.dart'
     as _i6;
+import 'package:waterbus_sdk/types/internals/ice/ice_servers_response.dart'
+    as _i3;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values

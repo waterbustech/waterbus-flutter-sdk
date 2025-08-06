@@ -1,7 +1,7 @@
 // Method Channel
 
-import 'package:waterbus_sdk/types/internals/models/ice_server.dart';
-import 'package:waterbus_sdk/types/internals/models/ice_servers_response.dart';
+import 'package:waterbus_sdk/types/internals/ice/ice_server.dart';
+import 'package:waterbus_sdk/types/internals/ice/ice_servers_response.dart';
 
 const String kNativeChannel = 'waterbus-sdk/native-plugin';
 const String kReplayKitChannel = 'waterbus-sdk/replaykit-channel';

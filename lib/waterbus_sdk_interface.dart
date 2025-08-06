@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/types/externals/models/join_room_params.dart';
 
 abstract class WaterbusSdkInterface {
   Future<void> initializeApp();

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/types/internals/models/track_quality.dart';
 import 'package:waterbus_sdk/ui/waterbus_render_manager.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 

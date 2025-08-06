@@ -1,5 +1,4 @@
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/types/internals/enums/index.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 import 'package:waterbus_sdk/constants/rtc_configurations.dart'

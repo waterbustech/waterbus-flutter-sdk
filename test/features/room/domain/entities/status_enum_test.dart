@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:waterbus_sdk/types/externals/enums/index.dart';
+import 'package:waterbus_sdk/types/externals/participant/member_status_enum.dart';
 
 void main() {
   group('StatusEnum tests', () {

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:waterbus_sdk/types/externals/enums/index.dart';
+import 'package:waterbus_sdk/types/externals/room/room_role.dart';
 
 void main() {
   group('RoomRole', () {

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:waterbus_sdk/types/externals/models/index.dart';
+import 'package:waterbus_sdk/types/externals/media/beauty_filters.dart';
 
 void main() {
   group('BeautyFilters', () {

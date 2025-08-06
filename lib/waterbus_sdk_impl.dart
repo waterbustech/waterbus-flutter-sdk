@@ -15,8 +15,6 @@ import 'package:waterbus_sdk/core/ws/interfaces/ws_handler.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/native/picture-in-picture/index.dart';
 import 'package:waterbus_sdk/native/replaykit.dart';
-import 'package:waterbus_sdk/types/externals/models/join_room_params.dart';
-import 'package:waterbus_sdk/types/internals/enums/connection_type.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 import 'package:waterbus_sdk/utils/replaykit/replaykit_helper.dart';
 import 'package:waterbus_sdk/waterbus_sdk_interface.dart';

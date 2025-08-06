@@ -6,7 +6,6 @@ import 'package:rhttp/rhttp.dart';
 import 'package:waterbus_sdk/core/api/base/base_local_storage.dart';
 import 'package:waterbus_sdk/core/rtc/rtc_manager.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
-import 'package:waterbus_sdk/types/externals/models/join_room_params.dart';
 import 'package:waterbus_sdk/types/index.dart';
 import 'package:waterbus_sdk/utils/callkit/callkit_listener.dart';
 import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
