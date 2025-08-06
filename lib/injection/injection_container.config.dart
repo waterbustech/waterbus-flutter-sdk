@@ -59,7 +59,7 @@ _i174.GetIt $initGetIt(
   gh.factory<_i235.NativeService>(() => _i235.NativeService());
   gh.factory<_i944.WaterbusLogger>(() => _i944.WaterbusLogger());
   gh.singleton<_i124.ReplayKitChannel>(() => _i124.ReplayKitChannel());
-  gh.singleton<_i750.E2EEManager>(() => _i750.E2EEManager());
+  gh.singleton<_i750.EncryptionManager>(() => _i750.EncryptionManager());
   gh.singleton<_i980.RtcVideoStats>(() => _i980.RtcVideoStats());
   gh.singleton<_i2.RtcAudioStats>(() => _i2.RtcAudioStats());
   gh.factory<_i379.WsEmitter>(() => _i407.WsEmitterImpl());
@@ -93,7 +93,7 @@ _i174.GetIt $initGetIt(
   gh.lazySingleton<_i895.UserRepository>(
       () => _i895.UserRepositoryImpl(gh<_i76.UserRemoteDataSource>()));
   gh.lazySingleton<_i937.RtcManager>(() => _i1004.RtcManagerIpml(
-        gh<_i750.E2EEManager>(),
+        gh<_i750.EncryptionManager>(),
         gh<_i379.WsEmitter>(),
         gh<_i124.ReplayKitChannel>(),
         gh<_i235.NativeService>(),

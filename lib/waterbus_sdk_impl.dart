@@ -77,21 +77,20 @@ class SdkCore extends WaterbusSdkInterface {
 
       if (mParticipantIndex < 0) return Result.failure(ServerFailure());
 
-      final List<String> targetIds = room.participants
-          .where((participant) => !participant.isMe)
-          .map((participant) => participant.id.toString())
-          .toList();
+      final List<ParticipantInfo> remoteParticipants =
+          room.participants.where((participant) => !participant.isMe).toList();
 
       if (!_wsHandler.isConnected) return Result.failure(ServerFailure());
 
       await _joinRoom(
         roomId: room.id.toString(),
-        participantId: room.participants[mParticipantIndex].id,
-        connectionType:
-            targetIds.length <= 1 ? ConnectionType.p2p : ConnectionType.sfu,
+        participant: room.participants[mParticipantIndex],
+        connectionType: remoteParticipants.length <= 1
+            ? ConnectionType.p2p
+            : ConnectionType.sfu,
       );
 
-      _subscribe(targetIds);
+      _subscribe(remoteParticipants);
 
       return Result.success(room);
     } else {
@@ -409,7 +408,7 @@ class SdkCore extends WaterbusSdkInterface {
   // MARK: Private
   Future<void> _joinRoom({
     required String roomId,
-    required int participantId,
+    required ParticipantInfo participant,
     required ConnectionType connectionType,
   }) async {
     try {
@@ -417,7 +416,7 @@ class SdkCore extends WaterbusSdkInterface {
 
       await _rtcManager.joinRoom(
         roomId: roomId,
-        participantId: participantId,
+        participant: participant,
         connectionType: connectionType,
       );
     } catch (error) {
@@ -425,9 +424,9 @@ class SdkCore extends WaterbusSdkInterface {
     }
   }
 
-  Future<void> _subscribe(List<String> targetIds) async {
+  Future<void> _subscribe(List<ParticipantInfo> participants) async {
     try {
-      _rtcManager.subscribeToParticipants(targetIds);
+      _rtcManager.subscribeToParticipants(participants);
     } catch (error) {
       _logger.bug(error.toString());
     }

@@ -7,11 +7,11 @@ abstract class RtcManager {
   // ====== Room Management ======
   Future<void> joinRoom({
     required String roomId,
-    required int participantId,
+    required ParticipantInfo participant,
     required ConnectionType connectionType,
   });
   Future<void> reconnectRoom();
-  void subscribeToParticipants(List<String> targetIds);
+  void subscribeToParticipants(List<ParticipantInfo> participants);
   Future<void> leaveRoom();
 
   // ====== Signaling / SDP / ICE ======

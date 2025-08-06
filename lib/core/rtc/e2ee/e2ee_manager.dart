@@ -7,7 +7,7 @@ import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 @singleton
-class E2EEManager {
+class EncryptionManager {
   final WaterbusLogger _logger = WaterbusLogger.instance;
   final FrameCryptorFactory _fcFactory = frameCryptorFactory;
   final Map<Map<String, String>, FrameCryptor> _frameCryptors = {};

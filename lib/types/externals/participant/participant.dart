@@ -24,6 +24,7 @@ abstract class Participant {
   ConnectionType get connectionType;
   RTCDataChannel? get trackQualityChannel;
   RTCPeerConnection? get backupPc;
+  ParticipantInfo get info;
 
   // Setters for mutable properties
   set peerConnection(RTCPeerConnection value);
@@ -41,6 +42,7 @@ abstract class Participant {
   set trackQualityChannel(RTCDataChannel? value);
   set connectionType(ConnectionType value);
   set backupPc(RTCPeerConnection? value);
+  set info(ParticipantInfo value);
 
   // Abstract methods
   bool get isMe;

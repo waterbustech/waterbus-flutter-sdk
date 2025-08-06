@@ -84,6 +84,9 @@ class RemoteParticipant implements Participant {
   @override
   RTCPeerConnection? backupPc;
 
+  @override
+  ParticipantInfo info;
+
   RemoteParticipant({
     required this.ownerId,
     this.isVideoEnabled = true,
@@ -106,6 +109,7 @@ class RemoteParticipant implements Participant {
     required ConnectionType connectionType,
     this.trackQualityChannel,
     this.backupPc,
+    required this.info,
   })  : _peerConnection = peerConnection,
         _connectionType = connectionType {
     // Initialize controllers if not provided
@@ -138,6 +142,7 @@ class RemoteParticipant implements Participant {
     StreamController<RtcParticipantStats>? webcamStatsController,
     StreamController<RtcParticipantStats>? screenStatsController,
     required ConnectionType connectionType,
+    required ParticipantInfo info,
   }) {
     final hasCustomSources = cameraSource != null || screenSource != null;
 
@@ -165,6 +170,7 @@ class RemoteParticipant implements Participant {
       webcamStatsController: webcamStatsController,
       screenStatsController: screenStatsController,
       connectionType: connectionType,
+      info: info,
     );
   }
 
