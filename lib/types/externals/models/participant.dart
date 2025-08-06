@@ -54,8 +54,11 @@ abstract class Participant {
   Future<void> addCandidate(RTCIceCandidate candidate);
   Future<void> setRemoteDescription(RTCSessionDescription description);
   Participant get switchCamera;
-  TrackType? setSrcObject(MediaStream stream,
-      {String? trackId, bool isDisplayStream = false});
+  TrackType? setSrcObject(
+    MediaStream stream, {
+    String? trackId,
+    bool isDisplayStream = false,
+  });
   Future<Participant> setScreenSharing(bool isSharing, {String? screenTrackId});
   Participant setHandRaising(bool isRaising);
   Future<void> dispose();

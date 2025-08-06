@@ -5,6 +5,7 @@ import 'package:socket_io_client/socket_io_client.dart';
 
 import 'package:waterbus_sdk/constants/ws_event.dart';
 import 'package:waterbus_sdk/core/api/auth/datasources/auth_local_data_source.dart';
+import 'package:waterbus_sdk/core/events/waterbus_event_system.dart';
 import 'package:waterbus_sdk/core/rtc/rtc_manager.dart';
 import 'package:waterbus_sdk/core/ws/interfaces/ws_handler.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
@@ -22,11 +23,13 @@ class WsHandlerImpl extends WsHandler {
   final WaterbusLogger _logger;
   final AuthLocalDataSource _authLocal;
   final DioConfiguration _dioConfig;
+  final WaterbusEventSystem _eventSystem;
   WsHandlerImpl(
     this._rtcManager,
     this._logger,
     this._authLocal,
     this._dioConfig,
+    this._eventSystem,
   );
 
   Socket? _socket;
@@ -104,8 +107,9 @@ class WsHandlerImpl extends WsHandler {
     _socket?.on(WsEvent.roomNewParticipant, (data) {
       if (data == null) return;
 
-      final participant =
-          ParticipantInfo.fromJson(Map<String, dynamic>.from(data['participant']));
+      final participant = ParticipantInfo.fromJson(
+        Map<String, dynamic>.from(data['participant']),
+      );
       final isMigrate = data['isMigrate'];
 
       _rtcManager.handleParticipantJoined(
@@ -236,11 +240,15 @@ class WsHandlerImpl extends WsHandler {
     _socket?.on(WsEvent.chatSend, (data) async {
       if (data == null) return;
       final msg = Message.fromJson(data);
-      final decrypted = await EncryptAES().decryptAES256(cipherText: msg.data);
-      WaterbusSdk.listener.onMesssageChanged?.call(
-        MessageSocketEvent(
-          event: MessageEventEnum.create,
-          message: msg.copyWith(data: decrypted),
+      final decryptedMessage = await EncryptAES().decryptAES256(
+        cipherText: msg.data,
+      );
+
+      _eventSystem.emitMessageEvent(
+        MessageReceived(
+          timestamp: DateTime.now(),
+          roomId: msg.roomId.toString(),
+          message: msg.copyWith(data: decryptedMessage),
         ),
       );
     });
@@ -248,20 +256,29 @@ class WsHandlerImpl extends WsHandler {
     _socket?.on(WsEvent.chatUpdate, (data) async {
       if (data == null) return;
       final msg = Message.fromJson(data);
-      final decrypted = await EncryptAES().decryptAES256(cipherText: msg.data);
-      WaterbusSdk.listener.onMesssageChanged?.call(
-        MessageSocketEvent(
-          event: MessageEventEnum.update,
-          message: msg.copyWith(data: decrypted),
+      final decryptedMessage = await EncryptAES().decryptAES256(
+        cipherText: msg.data,
+      );
+
+      _eventSystem.emitMessageEvent(
+        MessageUpdated(
+          timestamp: DateTime.now(),
+          roomId: msg.roomId.toString(),
+          message: msg.copyWith(data: decryptedMessage),
         ),
       );
     });
 
     _socket?.on(WsEvent.chatDelete, (data) {
       if (data == null) return;
-      final msg = Message.fromJson(data);
-      WaterbusSdk.listener.onMesssageChanged?.call(
-        MessageSocketEvent(event: MessageEventEnum.delete, message: msg),
+      final message = Message.fromJson(data);
+
+      _eventSystem.emitMessageEvent(
+        MessageDeleted(
+          timestamp: DateTime.now(),
+          roomId: message.roomId.toString(),
+          message: message,
+        ),
       );
     });
   }

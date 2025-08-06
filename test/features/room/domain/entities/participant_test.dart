@@ -35,7 +35,8 @@ void main() {
       expect(participant.user, userModel);
     });
 
-    test('Should create a new ParticipantInfo instance with updated values', () {
+    test('Should create a new ParticipantInfo instance with updated values',
+        () {
       final User userModel = User(
         id: 1,
         userName: 'lambiengcode',
@@ -111,7 +112,8 @@ void main() {
       expect(participant1.hashCode, isNot(equals(participant3.hashCode)));
     });
 
-    test('toString - should return a string representation of the ParticipantInfo',
+    test(
+        'toString - should return a string representation of the ParticipantInfo',
         () {
       final participant = ParticipantInfo(
         id: 1,

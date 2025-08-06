@@ -54,10 +54,6 @@ class SdkCore extends WaterbusSdkInterface {
     await _baseRepository.initialize();
 
     _wsHandler.establishConnection(forceConnection: true);
-
-    _rtcManager.onCallChanged.listen((event) {
-      WaterbusSdk.listener.onEventChanged?.call(event);
-    });
   }
 
   // Room
@@ -441,4 +437,9 @@ class SdkCore extends WaterbusSdkInterface {
 
   @override
   RoomState get roomState => _rtcManager.roomState;
+
+  @override
+  Stream<T> on<T>() {
+    return _rtcManager.on<T>();
+  }
 }

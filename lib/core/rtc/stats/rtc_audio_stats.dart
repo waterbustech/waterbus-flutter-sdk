@@ -9,7 +9,7 @@ import 'package:waterbus_sdk/utils/extensions/duration_extension.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 @singleton
-class WebRTCAudioStats {
+class RtcAudioStats {
   final List<AudioStatsParams> _receivers = [];
   AudioStatsParams? _sender;
   Timer? _timer;

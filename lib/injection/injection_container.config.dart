@@ -9,6 +9,7 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
@@ -18,29 +19,31 @@ import '../core/api/auth/repositories/auth_repository.dart' as _i824;
 import '../core/api/base/base_remote_data.dart' as _i182;
 import '../core/api/chat/datasources/chat_remote_data_source.dart' as _i692;
 import '../core/api/chat/repositories/chat_repository.dart' as _i613;
-import '../core/api/messages/datasources/message_remote_data_source.dart'
-    as _i647;
 import '../core/api/messages/repositories/message_repository.dart' as _i575;
 import '../core/api/rooms/datasources/room_remote_data_source.dart' as _i652;
 import '../core/api/rooms/repositories/room_repository.dart' as _i933;
 import '../core/api/user/datasources/user_remote_data_source.dart' as _i76;
 import '../core/api/user/repositories/user_repository.dart' as _i895;
+import '../core/events/waterbus_event_system.dart' as _i405;
+import '../core/rtc/e2ee/e2ee_manager.dart' as _i750;
 import '../core/rtc/rtc_manager.dart' as _i937;
 import '../core/rtc/rtc_manager_impl.dart' as _i1004;
-import '../core/websocket/interfaces/ws_emitter.dart' as _i988;
-import '../core/websocket/interfaces/ws_handler.dart' as _i743;
-import '../core/websocket/ws_emitter_impl.dart' as _i17;
-import '../core/websocket/ws_handler_impl.dart' as _i380;
-import '../e2ee/e2ee_manager.dart' as _i460;
+import '../core/rtc/stats/rtc_audio_stats.dart' as _i2;
+import '../core/rtc/stats/rtc_video_stats.dart' as _i980;
+import '../core/ws/interfaces/ws_emitter.dart' as _i379;
+import '../core/ws/interfaces/ws_handler.dart' as _i392;
+import '../core/ws/ws_emitter_impl.dart' as _i407;
+import '../core/ws/ws_handler_impl.dart' as _i694;
 import '../native/native_channel.dart' as _i235;
 import '../native/replaykit.dart' as _i124;
-import '../stats/webrtc_audio_stats.dart' as _i245;
-import '../stats/webrtc_video_stats.dart' as _i232;
 import '../utils/callkit/callkit_listener.dart' as _i324;
 import '../utils/dio/dio_configuration.dart' as _i514;
 import '../utils/logger/logger.dart' as _i944;
 import '../waterbus_sdk_impl.dart' as _i1039;
 import '../waterbus_sdk_interface.dart' as _i513;
+
+import '../core/api/messages/datasources/message_remote_data_source.dart'
+    as _i647;
 
 // initializes the registration of main-scope dependencies inside of GetIt
 _i174.GetIt $initGetIt(
@@ -56,10 +59,10 @@ _i174.GetIt $initGetIt(
   gh.factory<_i235.NativeService>(() => _i235.NativeService());
   gh.factory<_i944.WaterbusLogger>(() => _i944.WaterbusLogger());
   gh.singleton<_i124.ReplayKitChannel>(() => _i124.ReplayKitChannel());
-  gh.singleton<_i460.E2EEManager>(() => _i460.E2EEManager());
-  gh.singleton<_i245.WebRTCAudioStats>(() => _i245.WebRTCAudioStats());
-  gh.singleton<_i232.WebRTCVideoStats>(() => _i232.WebRTCVideoStats());
-  gh.factory<_i988.WsEmitter>(() => _i17.WsEmitterImpl());
+  gh.singleton<_i750.E2EEManager>(() => _i750.E2EEManager());
+  gh.singleton<_i980.RtcVideoStats>(() => _i980.RtcVideoStats());
+  gh.singleton<_i2.RtcAudioStats>(() => _i2.RtcAudioStats());
+  gh.factory<_i379.WsEmitter>(() => _i407.WsEmitterImpl());
   gh.lazySingleton<_i801.AuthLocalDataSource>(
       () => _i801.AuthLocalDataSourceImpl());
   gh.singleton<_i182.BaseRemoteData>(
@@ -90,12 +93,12 @@ _i174.GetIt $initGetIt(
   gh.lazySingleton<_i895.UserRepository>(
       () => _i895.UserRepositoryImpl(gh<_i76.UserRemoteDataSource>()));
   gh.lazySingleton<_i937.RtcManager>(() => _i1004.RtcManagerIpml(
-        gh<_i460.E2EEManager>(),
-        gh<_i988.WsEmitter>(),
+        gh<_i750.E2EEManager>(),
+        gh<_i379.WsEmitter>(),
         gh<_i124.ReplayKitChannel>(),
         gh<_i235.NativeService>(),
-        gh<_i232.WebRTCVideoStats>(),
-        gh<_i245.WebRTCAudioStats>(),
+        gh<_i980.RtcVideoStats>(),
+        gh<_i2.RtcAudioStats>(),
         gh<_i824.AuthRepository>(),
       ));
   gh.lazySingleton<_i933.RoomRepository>(
@@ -104,17 +107,18 @@ _i174.GetIt $initGetIt(
         gh<_i944.WaterbusLogger>(),
         gh<_i937.RtcManager>(),
       ));
-  gh.factory<_i613.ChatRepository>(
-      () => _i613.ChatRepositoryImpl(gh<_i692.ChatRemoteDataSource>()));
-  gh.singleton<_i743.WsHandler>(() => _i380.WsHandlerImpl(
+  gh.singleton<_i392.WsHandler>(() => _i694.WsHandlerImpl(
         gh<_i937.RtcManager>(),
         gh<_i944.WaterbusLogger>(),
         gh<_i801.AuthLocalDataSource>(),
         gh<_i514.DioConfiguration>(),
+        gh<_i405.WaterbusEventSystem>(),
       ));
+  gh.factory<_i613.ChatRepository>(
+      () => _i613.ChatRepositoryImpl(gh<_i692.ChatRemoteDataSource>()));
   gh.singleton<_i513.WaterbusSdkInterface>(() => _i1039.SdkCore(
-        gh<_i743.WsHandler>(),
-        gh<_i988.WsEmitter>(),
+        gh<_i392.WsHandler>(),
+        gh<_i379.WsEmitter>(),
         gh<_i937.RtcManager>(),
         gh<_i124.ReplayKitChannel>(),
         gh<_i182.BaseRemoteData>(),

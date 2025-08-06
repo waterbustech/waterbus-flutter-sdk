@@ -9,7 +9,6 @@ import 'package:waterbus_sdk/injection/injection_container.dart';
 import 'package:waterbus_sdk/types/externals/models/join_room_params.dart';
 import 'package:waterbus_sdk/types/index.dart';
 import 'package:waterbus_sdk/utils/callkit/callkit_listener.dart';
-import 'package:waterbus_sdk/waterbus_event_listener.dart';
 import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
 
 // Re-exports
@@ -50,14 +49,12 @@ class WaterbusSdk {
   static String _messageEncryptionKey = '';
   static String _webrtcE2eeKey = 'waterbus';
   static HttpVersionPref _httpVersionPref = HttpVersionPref.all;
-  static WaterbusEventListener _listener = WaterbusEventListener();
 
   // Getters for configuration
   static ServerConfig get serverConfig => _serverConfig;
   static String get messageEncryptionKey => _messageEncryptionKey;
   static String get webrtcE2eeKey => _webrtcE2eeKey;
   static HttpVersionPref get httpVersionPref => _httpVersionPref;
-  static WaterbusEventListener get listener => _listener;
 
   // Private getters for dependencies
   WaterbusSdkInterface get _sdk => getIt<WaterbusSdkInterface>();
@@ -66,17 +63,15 @@ class WaterbusSdk {
   // Public getters
   RoomState get roomState => _sdk.roomState;
 
-  /// Event listener setters
-  set onMessageSocketChanged(Function(MessageSocketEvent) onMessageChanged) {
-    _listener = _listener.copyWith(onMesssageChanged: onMessageChanged);
-  }
+  // =============================================================================
+  // EVENT SUBSCRIPTION
+  // =============================================================================
 
-  set onEventChangedRegister(Function(CallbackPayload) onEventChanged) {
-    _listener = _listener.copyWith(onEventChanged: onEventChanged);
-  }
-
-  set setOnSubtitle(Function(Subtitle)? onSubtitle) {
-    _listener = _listener.copyWith(onSubtitle: onSubtitle);
+  /// Subscribe to specific event types
+  // ignore: unintended_html_in_doc_comment
+  /// Usage: WaterbusSdk.instance.on<RoomEvent>((event) {});
+  Stream<T> on<T>() {
+    return _sdk.on<T>();
   }
 
   // =============================================================================

@@ -7,7 +7,6 @@ export 'member.dart';
 export 'user.dart';
 export 'participant_info.dart';
 export 'room_state.dart';
-export 'callback_payload.dart';
 export 'media_source.dart';
 export 'message_socket_event.dart';
 export 'conversation_socket_event.dart';

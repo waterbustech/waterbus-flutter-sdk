@@ -12,7 +12,7 @@ import 'package:waterbus_sdk/utils/extensions/duration_extension.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 @singleton
-class WebRTCVideoStats {
+class RtcVideoStats {
   // MARK: State of sender
   final Map<String, VideoStatsParam> _senders = {};
   final Map<String, num> _bitrateFoLayers = {};

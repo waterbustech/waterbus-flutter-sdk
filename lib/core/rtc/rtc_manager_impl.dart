@@ -7,15 +7,16 @@ import 'package:sdp_transform/sdp_transform.dart';
 
 import 'package:waterbus_sdk/constants/rtc_configurations.dart';
 import 'package:waterbus_sdk/core/api/auth/repositories/auth_repository.dart';
-import 'package:waterbus_sdk/core/rtc/rtc_manager.dart';
-import 'package:waterbus_sdk/core/ws/interfaces/ws_emitter.dart';
+import 'package:waterbus_sdk/core/events/waterbus_event_system.dart';
 import 'package:waterbus_sdk/core/rtc/e2ee/e2ee_manager.dart';
+import 'package:waterbus_sdk/core/rtc/rtc_manager.dart';
+import 'package:waterbus_sdk/core/rtc/stats/rtc_audio_stats.dart';
+import 'package:waterbus_sdk/core/rtc/stats/rtc_video_stats.dart';
+import 'package:waterbus_sdk/core/ws/interfaces/ws_emitter.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/native/native_channel.dart';
 import 'package:waterbus_sdk/native/replaykit.dart';
 import 'package:waterbus_sdk/native/virtual_background/index.dart';
-import 'package:waterbus_sdk/core/rtc/stats/webrtc_audio_stats.dart';
-import 'package:waterbus_sdk/core/rtc/stats/webrtc_video_stats.dart';
 import 'package:waterbus_sdk/types/internals/enums/connection_type.dart';
 import 'package:waterbus_sdk/types/internals/enums/index.dart';
 import 'package:waterbus_sdk/types/internals/models/index.dart';
@@ -31,8 +32,8 @@ class RtcManagerIpml extends RtcManager {
   final WsEmitter _wsEmitter;
   final ReplayKitChannel _replayKitChannel;
   final NativeService _nativeService;
-  final WebRTCVideoStats _videoStats;
-  final WebRTCAudioStats _audioStats;
+  final RtcVideoStats _videoStats;
+  final RtcAudioStats _audioStats;
   final AuthRepository _authRepository;
   RtcManagerIpml(
     this._e2eeManager,
@@ -63,9 +64,7 @@ class RtcManagerIpml extends RtcManager {
       {};
   final List<RTCIceCandidate> _iceCandidateQueueForPublisher = [];
   final List<RTCIceCandidate> _remoteIceCandidatesForPublisher = [];
-  // ignore: close_sinks
-  final StreamController<CallbackPayload> _eventStreamController =
-      StreamController<CallbackPayload>.broadcast(sync: true);
+  final WaterbusEventSystem _eventSystem = WaterbusEventSystem();
 
   // ====== Room Management ======
   @override
@@ -183,10 +182,18 @@ class RtcManagerIpml extends RtcManager {
       _audioStats.dispose();
       _e2eeManager.dispose();
 
-      _notify(CallbackEvents.roomEnded);
+      _notifyRoomEvent(
+        RoomEnded(
+          timestamp: DateTime.now(),
+          roomId: _currentRoomId ?? '',
+        ),
+      );
 
       // Clear for next time
       disableVirtualBg(reset: true);
+
+      // Dispose event system
+      _eventSystem.dispose();
     } catch (error) {
       WaterbusLogger().bug(error.toString());
     }
@@ -343,12 +350,25 @@ class RtcManagerIpml extends RtcManager {
 
     scheduleMicrotask(() => _establishSubscriber(participantId));
 
-    _notify(CallbackEvents.newParticipant, participant: participant);
+    _notifyParticipantEvent(
+      ParticipantJoined(
+        timestamp: DateTime.now(),
+        roomId: _currentRoomId ?? '',
+        participantId: participant.id.toString(),
+        participantData: {'participant': participant},
+      ),
+    );
   }
 
   @override
   Future<void> handleParticipantLeft(String targetId) async {
-    _notify(CallbackEvents.participantHasLeft, participantId: targetId);
+    _notifyParticipantEvent(
+      ParticipantLeft(
+        timestamp: DateTime.now(),
+        roomId: _currentRoomId ?? '',
+        participantId: targetId,
+      ),
+    );
 
     final subscriber = _remoteSubscribers.remove(targetId);
     if (subscriber != null) {
@@ -376,7 +396,12 @@ class RtcManagerIpml extends RtcManager {
     _localParticipant = LocalParticipant.init(
       ownerId: kIsMine,
       peerConnection: peerConnection,
-      onFirstFrameRendered: () => _notify(CallbackEvents.shouldBeUpdateState),
+      onFirstFrameRendered: () => _notifyRoomEvent(
+        RoomStateChanged(
+          timestamp: DateTime.now(),
+          roomId: _currentRoomId ?? '',
+        ),
+      ),
       videoCodec: _currentCallSetting.videoConfig.preferedCodec,
       isE2eeEnabled: _currentCallSetting.e2eeEnabled,
       connectionType: _connectionType,
@@ -432,7 +457,12 @@ class RtcManagerIpml extends RtcManager {
     if (_localParticipant != null) {
       _localParticipant!.isAudioEnabled = newValue;
     }
-    _notify(CallbackEvents.shouldBeUpdateState);
+    _notifyRoomEvent(
+      RoomStateChanged(
+        timestamp: DateTime.now(),
+        roomId: _currentRoomId ?? '',
+      ),
+    );
 
     if (_currentRoomId != null) {
       _wsEmitter.toggleAudio(newValue);
@@ -464,7 +494,12 @@ class RtcManagerIpml extends RtcManager {
     if (_localParticipant != null) {
       _localParticipant!.isVideoEnabled = newValue;
     }
-    _notify(CallbackEvents.shouldBeUpdateState);
+    _notifyRoomEvent(
+      RoomStateChanged(
+        timestamp: DateTime.now(),
+        roomId: _currentRoomId ?? '',
+      ),
+    );
 
     if (_currentRoomId != null) {
       _wsEmitter.toggleVideo(newValue);
@@ -513,7 +548,12 @@ class RtcManagerIpml extends RtcManager {
       }
     }
 
-    _notify(CallbackEvents.shouldBeUpdateState);
+    _notifyRoomEvent(
+      RoomStateChanged(
+        timestamp: DateTime.now(),
+        roomId: _currentRoomId ?? '',
+      ),
+    );
   }
 
   @override
@@ -572,15 +612,21 @@ class RtcManagerIpml extends RtcManager {
     await Helper.switchCamera(videoTracks.first);
     _localParticipant = _localParticipant?.switchCamera;
     _wsEmitter.switchCamera(_localParticipant?.cameraType ?? CameraType.front);
-    _notify(CallbackEvents.shouldBeUpdateState);
+    _notifyRoomEvent(
+      RoomStateChanged(
+        timestamp: DateTime.now(),
+        roomId: _currentRoomId ?? '',
+      ),
+    );
   }
 
   // ====== Screen Sharing ======
   @override
   Future<void> startScreenShare({DesktopCapturerSource? source}) async {
     try {
-      if (_localParticipant == null || _localParticipant!.isSharingScreen)
+      if (_localParticipant == null || _localParticipant!.isSharingScreen) {
         return;
+      }
 
       if (WebRTC.platformIsAndroid) {
         await _nativeService.startForegroundService();
@@ -616,12 +662,19 @@ class RtcManagerIpml extends RtcManager {
         callback: (stats) => _localParticipant?.sinkScreenStats(stats),
       );
 
-      _localParticipant?.setSrcObject(_screenSharingStream!,
-          isDisplayStream: true);
+      _localParticipant?.setSrcObject(
+        _screenSharingStream!,
+        isDisplayStream: true,
+      );
 
       screenTrack.onEnded = () => scheduleMicrotask(stopScreenShare);
       _localParticipant = await _localParticipant?.setScreenSharing(true);
-      _notify(CallbackEvents.shouldBeUpdateState);
+      _notifyRoomEvent(
+        RoomStateChanged(
+          timestamp: DateTime.now(),
+          roomId: _currentRoomId ?? '',
+        ),
+      );
     } catch (e) {
       stopScreenShare();
     }
@@ -672,7 +725,12 @@ class RtcManagerIpml extends RtcManager {
     _screenSharingStream = null;
 
     if (stayInRoom) {
-      _notify(CallbackEvents.shouldBeUpdateState);
+      _notifyRoomEvent(
+        RoomStateChanged(
+          timestamp: DateTime.now(),
+          roomId: _currentRoomId ?? '',
+        ),
+      );
       _wsEmitter.toggleScreenSharing(false);
     } else {
       _replayKitChannel.closeReplayKit();
@@ -707,7 +765,12 @@ class RtcManagerIpml extends RtcManager {
 
     _localParticipant!.isHandRaising = !_localParticipant!.isHandRaising;
 
-    _notify(CallbackEvents.shouldBeUpdateState);
+    _notifyRoomEvent(
+      RoomStateChanged(
+        timestamp: DateTime.now(),
+        roomId: _currentRoomId ?? '',
+      ),
+    );
 
     _wsEmitter.toggleHandRaise(_localParticipant!.isHandRaising);
   }
@@ -721,13 +784,26 @@ class RtcManagerIpml extends RtcManager {
 
     _remoteSubscribers[targetId]!.isHandRaising = isRaising;
 
-    _notify(CallbackEvents.raiseHand);
+    _notifyParticipantEvent(
+      ParticipantHandRaiseChanged(
+        timestamp: DateTime.now(),
+        roomId: _currentRoomId ?? '',
+        participantId: targetId,
+        isRaising: isRaising,
+      ),
+    );
   }
 
   @override
   void setRecordingStatus({required bool isRecording}) {
     _isSessionBeingRecorded = isRecording;
-    _notify(CallbackEvents.shouldBeUpdateState);
+    _notifyRoomEvent(
+      RoomRecordingStatusChanged(
+        timestamp: DateTime.now(),
+        roomId: _currentRoomId ?? '',
+        isRecording: isRecording,
+      ),
+    );
   }
 
   @override
@@ -738,7 +814,14 @@ class RtcManagerIpml extends RtcManager {
     if (_remoteSubscribers[targetId]?.cameraType == type) return;
 
     _remoteSubscribers[targetId]!.cameraType = type;
-    _notify(CallbackEvents.shouldBeUpdateState);
+    _notifyParticipantEvent(
+      ParticipantCameraTypeChanged(
+        timestamp: DateTime.now(),
+        roomId: _currentRoomId ?? '',
+        participantId: targetId,
+        cameraType: type.toString(),
+      ),
+    );
   }
 
   @override
@@ -749,7 +832,14 @@ class RtcManagerIpml extends RtcManager {
     if (_remoteSubscribers[targetId]?.isVideoEnabled == isEnabled) return;
 
     _remoteSubscribers[targetId]!.isVideoEnabled = isEnabled;
-    _notify(CallbackEvents.shouldBeUpdateState);
+    _notifyParticipantEvent(
+      ParticipantVideoEnabledChanged(
+        timestamp: DateTime.now(),
+        roomId: _currentRoomId ?? '',
+        participantId: targetId,
+        isEnabled: isEnabled,
+      ),
+    );
   }
 
   @override
@@ -761,7 +851,14 @@ class RtcManagerIpml extends RtcManager {
 
     _remoteSubscribers[targetId]!.isAudioEnabled = isEnabled;
 
-    _notify(CallbackEvents.shouldBeUpdateState);
+    _notifyParticipantEvent(
+      ParticipantAudioEnabledChanged(
+        timestamp: DateTime.now(),
+        roomId: _currentRoomId ?? '',
+        participantId: targetId,
+        isEnabled: isEnabled,
+      ),
+    );
   }
 
   @override
@@ -776,7 +873,15 @@ class RtcManagerIpml extends RtcManager {
 
     if (state != null) {
       _remoteSubscribers[config.participantId] = state;
-      _notify(CallbackEvents.shouldBeUpdateState);
+      _notifyParticipantEvent(
+        ParticipantScreenSharingChanged(
+          timestamp: DateTime.now(),
+          roomId: _currentRoomId ?? '',
+          participantId: config.participantId,
+          isSharing: config.isSharing,
+          screenTrackId: config.screenTrackId,
+        ),
+      );
     }
   }
 
@@ -796,7 +901,37 @@ class RtcManagerIpml extends RtcManager {
     );
   }
 
-  // ====== State Exposure ======
+  // ====== Event streams ======
+  @override
+  Stream<RoomEvent> get roomEvents {
+    return _eventSystem.roomEvents;
+  }
+
+  @override
+  Stream<ParticipantEvent> get participantEvents {
+    return _eventSystem.participantEvents;
+  }
+
+  @override
+  Stream<TrackEvent> get trackEvents {
+    return _eventSystem.trackEvents;
+  }
+
+  @override
+  Stream<ConnectionEvent> get connectionEvents {
+    return _eventSystem.connectionEvents;
+  }
+
+  @override
+  Stream<MessageEvent> get messageEvents {
+    return _eventSystem.messageEvents;
+  }
+
+  @override
+  Stream<T> on<T>() {
+    return _eventSystem.on<T>();
+  }
+
   @override
   RoomState get roomState {
     return RoomState(
@@ -804,9 +939,6 @@ class RtcManagerIpml extends RtcManager {
       remoteParticipants: _remoteSubscribers,
     );
   }
-
-  @override
-  Stream<CallbackPayload> get onCallChanged => _eventStreamController.stream;
 
   @override
   String? get currentRoomId => _currentRoomId;
@@ -1198,7 +1330,12 @@ class RtcManagerIpml extends RtcManager {
     _remoteSubscribers[targetId] ??= RemoteParticipant.init(
       ownerId: targetId,
       peerConnection: rtcPeerConnection,
-      onFirstFrameRendered: () => _notify(CallbackEvents.shouldBeUpdateState),
+      onFirstFrameRendered: () => _notifyRoomEvent(
+        RoomStateChanged(
+          timestamp: DateTime.now(),
+          roomId: _currentRoomId ?? '',
+        ),
+      ),
       isAudioEnabled: payload.audioEnabled,
       isVideoEnabled: payload.videoEnabled,
       isSharingScreen: payload.isScreenSharing,
@@ -1277,7 +1414,12 @@ class RtcManagerIpml extends RtcManager {
           );
         }
 
-        _notify(CallbackEvents.shouldBeUpdateState);
+        _notifyRoomEvent(
+          RoomStateChanged(
+            timestamp: DateTime.now(),
+            roomId: _currentRoomId ?? '',
+          ),
+        );
       });
     };
 
@@ -1436,19 +1578,16 @@ class RtcManagerIpml extends RtcManager {
     );
   }
 
-  // ======== Room / Signaling Helper Methods ========
-  void _notify(
-    CallbackEvents event, {
-    String? participantId,
-    ParticipantInfo? participant,
-  }) {
-    _eventStreamController.sink.add(
-      CallbackPayload(
-        event: event,
-        callState: roomState,
-        newParticipant: participant,
-        participantId: participantId,
-      ),
-    );
+  // ======== New Event Notification Methods ========
+  void _notifyRoomEvent(
+    RoomEvent event,
+  ) {
+    _eventSystem.emitRoomEvent(event);
+  }
+
+  void _notifyParticipantEvent(
+    ParticipantEvent event,
+  ) {
+    _eventSystem.emitParticipantEvent(event);
   }
 }

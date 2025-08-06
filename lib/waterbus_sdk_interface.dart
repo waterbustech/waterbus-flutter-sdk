@@ -93,4 +93,7 @@ abstract class WaterbusSdkInterface {
   Future<void> setPiPEnabled({required String textureId, bool enabled = true});
 
   RoomState get roomState;
+
+  /// Generic event subscription
+  Stream<T> on<T>();
 }

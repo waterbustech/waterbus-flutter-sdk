@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:waterbus_sdk/core/events/waterbus_event_system.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/types/internals/enums/connection_type.dart';
 import 'package:waterbus_sdk/types/internals/models/index.dart';
@@ -81,9 +82,18 @@ abstract class RtcManager {
   });
   void setParticipantE2ee({required ParticipantE2eeConfig config});
 
+  // ====== Event streams ======
+  Stream<RoomEvent> get roomEvents;
+  Stream<ParticipantEvent> get participantEvents;
+  Stream<TrackEvent> get trackEvents;
+  Stream<ConnectionEvent> get connectionEvents;
+  Stream<MessageEvent> get messageEvents;
+
+  /// Generic event subscription
+  Stream<T> on<T>();
+
   // ====== State Exposure ======
   RoomState get roomState;
-  Stream<CallbackPayload> get onCallChanged;
   String? get currentRoomId;
   bool get isRecordingActive;
 }
