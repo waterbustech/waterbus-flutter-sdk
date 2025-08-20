@@ -36,6 +36,7 @@ extension RoomExtention on Room {
       'avatar': avatar,
       'streamingProtocol': streamingProtocol.index,
       'roomType': roomType.index,
+      'capacity': capacity,
     };
 
     if (password?.isNotEmpty ?? false) {
