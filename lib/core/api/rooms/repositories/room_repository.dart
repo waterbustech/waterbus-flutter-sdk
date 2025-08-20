@@ -8,7 +8,7 @@ abstract class RoomRepository {
   Future<Result<Room>> createRoom(RoomParams params);
   Future<Result<bool>> updateRoom(RoomParams params);
   Future<Result<Room>> joinRoom(JoinRoomParams params);
-  Future<Result<Room>> getInfoRoom(String code);
+  Future<Result<Room>> getRoomInfo(String code);
 }
 
 @LazySingleton(as: RoomRepository)
@@ -31,8 +31,8 @@ class RoomRepositoryImpl extends RoomRepository {
   }
 
   @override
-  Future<Result<Room>> getInfoRoom(String code) async {
-    final Result<Room> room = await _remoteDataSource.getInfoRoom(code);
+  Future<Result<Room>> getRoomInfo(String code) async {
+    final Result<Room> room = await _remoteDataSource.getRoomInfo(code);
 
     return room;
   }

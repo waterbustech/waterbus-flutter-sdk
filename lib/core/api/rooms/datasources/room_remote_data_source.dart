@@ -12,7 +12,7 @@ abstract class RoomRemoteDataSource {
   Future<Result<Room>> createRoom({required RoomParams params});
   Future<Result<bool>> updateRoom({required RoomParams params});
   Future<Result<Room>> joinRoom({required JoinRoomParams params});
-  Future<Result<Room>> getInfoRoom(String code);
+  Future<Result<Room>> getRoomInfo(String code);
 }
 
 @LazySingleton(as: RoomRemoteDataSource)
@@ -31,6 +31,7 @@ class RoomRemoteDataSourceImpl extends RoomRemoteDataSource {
 
     if (response.statusCode == StatusCode.created) {
       final Map<String, dynamic> rawData = response.data;
+
       return Result.success(Room.fromJson(rawData));
     }
 
@@ -38,14 +39,14 @@ class RoomRemoteDataSourceImpl extends RoomRemoteDataSource {
   }
 
   @override
-  Future<Result<Room>> getInfoRoom(String code) async {
+  Future<Result<Room>> getRoomInfo(String code) async {
     final Response response = await _remoteData.get(
       '${Endpoints.rooms}/$code',
     );
 
-    if (response.statusCode == StatusCode.ok &&
-        response.data.toString().isNotEmpty) {
+    if (response.statusCode == StatusCode.ok) {
       final Map<String, dynamic> rawData = response.data;
+
       return Result.success(Room.fromJson(rawData));
     }
 

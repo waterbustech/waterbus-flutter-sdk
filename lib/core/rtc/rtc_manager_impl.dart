@@ -194,9 +194,6 @@ class RtcManagerIpml extends RtcManager {
 
       // Clear for next time
       disableVirtualBg(reset: true);
-
-      // Dispose event system
-      _eventSystem.dispose();
     } catch (error) {
       WaterbusLogger().bug(error.toString());
     }
@@ -360,7 +357,7 @@ class RtcManagerIpml extends RtcManager {
         timestamp: DateTime.now(),
         roomId: _currentRoomId ?? '',
         participantId: participant.id.toString(),
-        participantData: {'participant': participant},
+        participant: participant,
       ),
     );
   }

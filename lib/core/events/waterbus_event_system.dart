@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:injectable/injectable.dart';
+
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 
 /// Room event types using sealed classes
@@ -76,13 +78,13 @@ sealed class ParticipantEvent {
 }
 
 class ParticipantJoined extends ParticipantEvent {
-  final Map<String, dynamic> participantData;
+  final ParticipantInfo participant;
 
   const ParticipantJoined({
     required super.timestamp,
     required super.roomId,
     required super.participantId,
-    this.participantData = const {},
+    required this.participant,
   });
 }
 
@@ -413,6 +415,7 @@ class MessageDeleted extends MessageEvent {
 }
 
 /// Main event system with generic subscription
+@lazySingleton
 class WaterbusEventSystem {
   // Separate streams for different event types
   final StreamController<RoomEvent> _roomEventsController =

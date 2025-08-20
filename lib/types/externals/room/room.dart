@@ -38,7 +38,7 @@ extension RoomExtention on Room {
       'roomType': roomType.index,
     };
 
-    if (password != null) {
+    if (password?.isNotEmpty ?? false) {
       body['password'] = password;
     }
 

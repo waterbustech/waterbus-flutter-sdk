@@ -357,4 +357,57 @@ class RemoteParticipant implements Participant {
   @override
   Stream<RtcParticipantStats>? get screenStatsStream =>
       screenStatsController?.stream;
+
+  RemoteParticipant copyWith({
+    String? ownerId,
+    bool? isVideoEnabled,
+    bool? isAudioEnabled,
+    bool? isSharingScreen,
+    bool? isE2eeEnabled,
+    bool? isSpeakerPhoneEnabled,
+    bool? isHandRaising,
+    CameraType? cameraType,
+    RTCPeerConnection? peerConnection,
+    Function()? onFirstFrameRendered,
+    RTCVideoCodec? videoCodec,
+    AudioLevel? audioLevel,
+    MediaSource? cameraSource,
+    MediaSource? screenSource,
+    StreamController<AudioLevel>? audioLevelController,
+    StreamController<RtcParticipantStats>? webcamStatsController,
+    StreamController<RtcParticipantStats>? screenStatsController,
+    String? screenTrackId,
+    ConnectionType? connectionType,
+    RTCDataChannel? trackQualityChannel,
+    RTCPeerConnection? backupPc,
+    ParticipantInfo? info,
+  }) {
+    return RemoteParticipant(
+      ownerId: ownerId ?? this.ownerId,
+      isVideoEnabled: isVideoEnabled ?? this.isVideoEnabled,
+      isAudioEnabled: isAudioEnabled ?? this.isAudioEnabled,
+      isSharingScreen: isSharingScreen ?? this.isSharingScreen,
+      isE2eeEnabled: isE2eeEnabled ?? this.isE2eeEnabled,
+      isSpeakerPhoneEnabled:
+          isSpeakerPhoneEnabled ?? this.isSpeakerPhoneEnabled,
+      isHandRaising: isHandRaising ?? this.isHandRaising,
+      cameraType: cameraType ?? this.cameraType,
+      peerConnection: peerConnection ?? this.peerConnection,
+      onFirstFrameRendered: onFirstFrameRendered ?? this.onFirstFrameRendered,
+      videoCodec: videoCodec ?? this.videoCodec,
+      audioLevel: audioLevel ?? this.audioLevel,
+      cameraSource: cameraSource ?? this.cameraSource,
+      screenSource: screenSource ?? this.screenSource,
+      audioLevelController: audioLevelController ?? this.audioLevelController,
+      webcamStatsController:
+          webcamStatsController ?? this.webcamStatsController,
+      screenStatsController:
+          screenStatsController ?? this.screenStatsController,
+      screenTrackId: screenTrackId ?? this.screenTrackId,
+      connectionType: connectionType ?? this.connectionType,
+      trackQualityChannel: trackQualityChannel ?? this.trackQualityChannel,
+      backupPc: backupPc ?? this.backupPc,
+      info: info ?? this.info,
+    );
+  }
 }
