@@ -236,7 +236,7 @@ class _Room implements Room {
       this.avatar,
       this.streamingProtocol = StreamingProtocol.sfu,
       this.roomType = RoomType.videoConferencing,
-      this.isProtected = false,
+      this.isProtected = true,
       this.capacity})
       : _participants = participants,
         _members = members;

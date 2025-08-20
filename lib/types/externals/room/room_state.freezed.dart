@@ -94,11 +94,12 @@ class _$RoomStateCopyWithImpl<$Res> implements $RoomStateCopyWith<$Res> {
 
 /// @nodoc
 
-class _RoomState with DiagnosticableTreeMixin implements RoomState {
+class _RoomState extends RoomState with DiagnosticableTreeMixin {
   const _RoomState(
       {this.localParticipant,
       required final Map<String, RemoteParticipant> remoteParticipants})
-      : _remoteParticipants = remoteParticipants;
+      : _remoteParticipants = remoteParticipants,
+        super._();
 
   @override
   final LocalParticipant? localParticipant;
