@@ -65,7 +65,7 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
         uri,
         body: image,
         headers: const {
-          "Content-Type": 'image/png',
+          "Content-Type": 'image/webp',
           'x-amz-acl': 'public-read',
         },
       );
