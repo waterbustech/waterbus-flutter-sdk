@@ -12,6 +12,7 @@ abstract class Participant {
   bool get isHandRaising;
   CameraType get cameraType;
   RTCPeerConnection get peerConnection;
+  RTCDataChannel? get dataChannel;
   Function()? get onFirstFrameRendered;
   RTCVideoCodec get videoCodec;
   AudioLevel get audioLevel;
@@ -20,9 +21,8 @@ abstract class Participant {
   StreamController<AudioLevel>? get audioLevelController;
   StreamController<RtcParticipantStats>? get webcamStatsController;
   StreamController<RtcParticipantStats>? get screenStatsController;
-  String? get screenTrackId;
+  String? get screenMid;
   ConnectionType get connectionType;
-  RTCDataChannel? get trackQualityChannel;
   RTCPeerConnection? get backupPc;
   ParticipantInfo get info;
 
@@ -38,16 +38,15 @@ abstract class Participant {
   set audioLevel(AudioLevel value);
   set cameraSource(MediaSource? value);
   set screenSource(MediaSource? value);
-  set screenTrackId(String? value);
-  set trackQualityChannel(RTCDataChannel? value);
+  set screenMid(String? value);
   set connectionType(ConnectionType value);
   set backupPc(RTCPeerConnection? value);
   set info(ParticipantInfo value);
 
   // Abstract methods
   bool get isMe;
-  Future<Participant> createTrackQualityChannel({RTCPeerConnection? pc});
-  void listenTrackQualityChannel();
+  Future<void> createDataChannel();
+  void listenDataChannel();
   Participant sinkAudioLevel(AudioLevel level);
   void sinkWebcamStats(RtcParticipantStats stats);
   void sinkScreenStats(RtcParticipantStats stats);
@@ -59,7 +58,7 @@ abstract class Participant {
     String? trackId,
     bool isDisplayStream = false,
   });
-  Future<Participant> setScreenSharing(bool isSharing, {String? screenTrackId});
+  Future<Participant> setScreenSharing(bool isSharing, {String? screenMid});
   Participant setHandRaising(bool isRaising);
   Future<void> dispose();
 

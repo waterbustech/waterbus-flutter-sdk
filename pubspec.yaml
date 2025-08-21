@@ -55,6 +55,7 @@ dependencies:
   json_annotation: ^4.9.0
 
   socket_io_common: any
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

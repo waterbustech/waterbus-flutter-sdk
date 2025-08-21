@@ -118,8 +118,8 @@ extension ParticipantSFUX on ParticipantMediaState {
     );
 
     if (!isMe) {
-      cameraSource?.trackQualityChannel = channel;
-      screenSource?.trackQualityChannel = channel;
+      cameraSource?.dataChannel = channel;
+      screenSource?.dataChannel = channel;
     }
 
     final updatedState = copyWith(trackQualityChannel: channel);

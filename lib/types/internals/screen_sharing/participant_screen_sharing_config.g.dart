@@ -11,7 +11,7 @@ _ParticipantScreenSharingConfig _$ParticipantScreenSharingConfigFromJson(
     _ParticipantScreenSharingConfig(
       participantId: json['participantId'] as String,
       isSharing: json['isSharing'] as bool,
-      screenTrackId: json['screenTrackId'] as String?,
+      screenMid: json['screenMid'] as String?,
     );
 
 Map<String, dynamic> _$ParticipantScreenSharingConfigToJson(
@@ -19,5 +19,5 @@ Map<String, dynamic> _$ParticipantScreenSharingConfigToJson(
     <String, dynamic>{
       'participantId': instance.participantId,
       'isSharing': instance.isSharing,
-      'screenTrackId': instance.screenTrackId,
+      'screenMid': instance.screenMid,
     };

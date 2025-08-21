@@ -9,7 +9,7 @@ abstract class ParticipantScreenSharingConfig
   const factory ParticipantScreenSharingConfig({
     required String participantId,
     required bool isSharing,
-    String? screenTrackId,
+    String? screenMid,
   }) = _ParticipantScreenSharingConfig;
 
   factory ParticipantScreenSharingConfig.fromJson(Map<String, Object?> json) =>

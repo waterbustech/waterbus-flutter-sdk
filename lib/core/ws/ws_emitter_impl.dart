@@ -12,6 +12,8 @@ class WsEmitterImpl extends WsEmitter {
   // ====== Room Events ======
   @override
   void publishRoom({required PublishWsEmitterPayLoad payload}) {
+    print("offer sdp: ${payload.sdp}");
+
     _socket?.emit(WsEvent.roomPublish, payload.toJson());
   }
 
@@ -122,13 +124,13 @@ class WsEmitterImpl extends WsEmitter {
   }
 
   @override
-  void toggleScreenSharing(bool isSharing, {String? screenTrackId}) {
+  void toggleScreenSharing(bool isSharing, {String? screenMid}) {
     final payload = <String, dynamic>{
       'isSharing': isSharing,
     };
 
-    if (screenTrackId != null) {
-      payload['screenTrackId'] = screenTrackId;
+    if (screenMid != null) {
+      payload['screenMid'] = screenMid;
     }
 
     _socket?.emit(WsEvent.roomScreenSharing, payload);

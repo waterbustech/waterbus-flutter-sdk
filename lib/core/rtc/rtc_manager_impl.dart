@@ -48,7 +48,7 @@ class RtcManagerIpml extends RtcManager {
     });
   }
 
-  ConnectionType _connectionType = ConnectionType.p2p;
+  ConnectionType _connectionType = ConnectionType.sfu;
   String? _currentRoomId;
   String? _currentParticipantId;
   MediaStream? _localCameraStream;
@@ -73,7 +73,7 @@ class RtcManagerIpml extends RtcManager {
     required ParticipantInfo participant,
     required ConnectionType connectionType,
   }) async {
-    _connectionType = connectionType;
+    // _connectionType = connectionType;
 
     await Future.wait([
       _encryptionManager.initialize(
@@ -101,10 +101,6 @@ class RtcManagerIpml extends RtcManager {
       }
       futures.add(toggleSpeakerOutput(forceValue: true));
       await Future.wait(futures);
-    }
-
-    if (connectionType == ConnectionType.sfu) {
-      _localParticipant = await _localParticipant?.createTrackQualityChannel();
     }
 
     _currentRoomId = roomId;
@@ -645,14 +641,15 @@ class RtcManagerIpml extends RtcManager {
 
       final screenTrack = _screenSharingStream!.getVideoTracks().first;
 
-      _wsEmitter.toggleScreenSharing(true, screenTrackId: screenTrack.id);
-
-      final sender = await _localParticipant!.peerConnection.addSimulcastTrack(
+      final (sender, mid) =
+          await _localParticipant!.peerConnection.addSimulcastTrack(
         screenTrack,
         vCodec: _currentCallSetting.videoConfig.preferedCodec,
         stream: _screenSharingStream!,
         isSingleTrack: _connectionType == ConnectionType.p2p,
       );
+
+      _wsEmitter.toggleScreenSharing(true, screenMid: mid);
 
       await Future.wait([
         _encryptionManager.addRtpSender(sender: sender),
@@ -868,21 +865,21 @@ class RtcManagerIpml extends RtcManager {
   Future<void> setParticipantScreenSharing({
     required ParticipantScreenSharingConfig config,
   }) async {
-    final state =
+    final remoteParticipant =
         await _remoteSubscribers[config.participantId]?.setScreenSharing(
       config.isSharing,
-      screenTrackId: config.screenTrackId,
+      screenMid: config.screenMid,
     );
 
-    if (state != null) {
-      _remoteSubscribers[config.participantId] = state;
+    if (remoteParticipant != null) {
+      _remoteSubscribers[config.participantId] = remoteParticipant;
       _notifyParticipantEvent(
         ParticipantScreenSharingChanged(
           timestamp: DateTime.now(),
           roomId: _currentRoomId ?? '',
           participantId: config.participantId,
           isSharing: config.isSharing,
-          screenTrackId: config.screenTrackId,
+          screenMid: config.screenMid,
         ),
       );
     }

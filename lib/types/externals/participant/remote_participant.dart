@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/utils/extensions/pc_extension.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 class RemoteParticipant implements Participant {
@@ -29,11 +30,15 @@ class RemoteParticipant implements Participant {
   @override
   CameraType cameraType;
 
-  // @override
   RTCPeerConnection _peerConnection;
 
   @override
   RTCPeerConnection get peerConnection => _peerConnection;
+
+  RTCDataChannel? _dataChannel;
+
+  @override
+  RTCDataChannel? get dataChannel => _dataChannel;
 
   @override
   set peerConnection(RTCPeerConnection value) {
@@ -65,7 +70,7 @@ class RemoteParticipant implements Participant {
   StreamController<RtcParticipantStats>? screenStatsController;
 
   @override
-  String? screenTrackId;
+  String? screenMid;
 
   // @override
   ConnectionType _connectionType;
@@ -77,9 +82,6 @@ class RemoteParticipant implements Participant {
   set connectionType(ConnectionType value) {
     _connectionType = value;
   }
-
-  @override
-  RTCDataChannel? trackQualityChannel;
 
   @override
   RTCPeerConnection? backupPc;
@@ -97,6 +99,7 @@ class RemoteParticipant implements Participant {
     this.isHandRaising = false,
     this.cameraType = CameraType.front,
     required RTCPeerConnection peerConnection,
+    required RTCDataChannel? dataChannel,
     this.onFirstFrameRendered,
     required this.videoCodec,
     this.audioLevel = AudioLevel.kSilence,
@@ -105,12 +108,12 @@ class RemoteParticipant implements Participant {
     this.audioLevelController,
     this.webcamStatsController,
     this.screenStatsController,
-    this.screenTrackId,
+    this.screenMid,
     required ConnectionType connectionType,
-    this.trackQualityChannel,
     this.backupPc,
     required this.info,
   })  : _peerConnection = peerConnection,
+        _dataChannel = dataChannel,
         _connectionType = connectionType {
     // Initialize controllers if not provided
     audioLevelController ??= StreamController<AudioLevel>.broadcast();
@@ -154,7 +157,7 @@ class RemoteParticipant implements Participant {
       isE2eeEnabled: isE2eeEnabled,
       isSpeakerPhoneEnabled: isSpeakerPhoneEnabled,
       isHandRaising: isHandRaising,
-      screenTrackId: screenTrackId,
+      screenMid: screenTrackId,
       cameraType: cameraType,
       cameraSource: hasCustomSources
           ? cameraSource
@@ -163,6 +166,7 @@ class RemoteParticipant implements Participant {
           ? screenSource
           : MediaSource(onFirstFrameRendered: onFirstFrameRendered),
       peerConnection: peerConnection,
+      dataChannel: null,
       videoCodec: videoCodec,
       onFirstFrameRendered: onFirstFrameRendered,
       audioLevel: audioLevel,
@@ -178,45 +182,17 @@ class RemoteParticipant implements Participant {
   bool get isMe => ownerId == kIsMine;
 
   @override
-  Future<RemoteParticipant> createTrackQualityChannel({
-    RTCPeerConnection? pc,
-  }) async {
-    final peerConnection = pc ?? this.peerConnection;
+  Future<void> createDataChannel() async {
+    final channel = await peerConnection.createDefaultChannel();
 
-    final channelInit = RTCDataChannelInit()
-      ..ordered = true
-      ..binaryType = 'binary'
-      ..maxRetransmits = 30;
+    _dataChannel = channel;
 
-    peerConnection.onDataChannel = (dc) {
-      if (dc.label == "track_quality") {
-        trackQualityChannel = dc;
-        if (isMe) {
-          listenTrackQualityChannel();
-        }
-      }
-    };
-
-    final channel = await peerConnection.createDataChannel(
-      "track_quality",
-      channelInit,
-    );
-
-    if (!isMe) {
-      cameraSource?.trackQualityChannel = channel;
-      screenSource?.trackQualityChannel = channel;
-    }
-
-    trackQualityChannel = channel;
-
-    return this;
+    listenDataChannel();
   }
 
   @override
-  void listenTrackQualityChannel() {
-    if (trackQualityChannel == null) return;
-
-    trackQualityChannel!.onMessage = (message) {
+  void listenDataChannel() {
+    _dataChannel?.onMessage = (message) {
       WaterbusLogger.instance.log(
         "[track_quality] received message (binary: ${message.isBinary})",
       );
@@ -234,7 +210,7 @@ class RemoteParticipant implements Participant {
       }
     };
 
-    trackQualityChannel!.onDataChannelState = (state) {
+    _dataChannel?.onDataChannelState = (state) {
       WaterbusLogger.instance.log("[track_quality] State changed: $state");
     };
   }
@@ -301,7 +277,7 @@ class RemoteParticipant implements Participant {
     String? trackId,
     bool isDisplayStream = false,
   }) {
-    if (screenTrackId != null && trackId == screenTrackId) {
+    if (screenMid != null && trackId == screenMid) {
       // Set src screen
       screenSource?.setSrcObject(stream);
       return TrackType.screen;
@@ -315,10 +291,10 @@ class RemoteParticipant implements Participant {
   @override
   Future<RemoteParticipant> setScreenSharing(
     bool isSharing, {
-    String? screenTrackId,
+    String? screenMid,
   }) async {
     isSharingScreen = isSharing;
-    this.screenTrackId = screenTrackId;
+    this.screenMid = screenMid;
 
     if (!isSharing) {
       await screenSource?.dispose();
@@ -339,12 +315,12 @@ class RemoteParticipant implements Participant {
     await setScreenSharing(false);
     await cameraSource?.dispose();
     await screenSource?.dispose();
+    dataChannel?.close();
     peerConnection.close();
     backupPc?.close();
     audioLevelController?.close();
     webcamStatsController?.close();
     screenStatsController?.close();
-    trackQualityChannel?.close();
   }
 
   @override
@@ -368,6 +344,7 @@ class RemoteParticipant implements Participant {
     bool? isHandRaising,
     CameraType? cameraType,
     RTCPeerConnection? peerConnection,
+    RTCDataChannel? dataChannel,
     Function()? onFirstFrameRendered,
     RTCVideoCodec? videoCodec,
     AudioLevel? audioLevel,
@@ -376,9 +353,8 @@ class RemoteParticipant implements Participant {
     StreamController<AudioLevel>? audioLevelController,
     StreamController<RtcParticipantStats>? webcamStatsController,
     StreamController<RtcParticipantStats>? screenStatsController,
-    String? screenTrackId,
+    String? screenMid,
     ConnectionType? connectionType,
-    RTCDataChannel? trackQualityChannel,
     RTCPeerConnection? backupPc,
     ParticipantInfo? info,
   }) {
@@ -393,6 +369,7 @@ class RemoteParticipant implements Participant {
       isHandRaising: isHandRaising ?? this.isHandRaising,
       cameraType: cameraType ?? this.cameraType,
       peerConnection: peerConnection ?? this.peerConnection,
+      dataChannel: dataChannel ?? this.dataChannel,
       onFirstFrameRendered: onFirstFrameRendered ?? this.onFirstFrameRendered,
       videoCodec: videoCodec ?? this.videoCodec,
       audioLevel: audioLevel ?? this.audioLevel,
@@ -403,9 +380,8 @@ class RemoteParticipant implements Participant {
           webcamStatsController ?? this.webcamStatsController,
       screenStatsController:
           screenStatsController ?? this.screenStatsController,
-      screenTrackId: screenTrackId ?? this.screenTrackId,
+      screenMid: screenMid ?? this.screenMid,
       connectionType: connectionType ?? this.connectionType,
-      trackQualityChannel: trackQualityChannel ?? this.trackQualityChannel,
       backupPc: backupPc ?? this.backupPc,
       info: info ?? this.info,
     );

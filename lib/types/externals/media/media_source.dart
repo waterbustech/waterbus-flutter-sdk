@@ -12,14 +12,14 @@ class MediaSource {
   RTCRtpSender? sender;
   bool hasFirstFrameRendered;
   final Function()? onFirstFrameRendered;
-  RTCDataChannel? trackQualityChannel;
+  RTCDataChannel? dataChannel;
 
   MediaSource({
     this.stream,
     this.renderer,
     this.hasFirstFrameRendered = false,
     this.onFirstFrameRendered,
-    this.trackQualityChannel,
+    this.dataChannel,
   }) {
     _initRendererIfNeeded();
   }
@@ -144,7 +144,7 @@ extension MediaSourceQuality on MediaSource {
       quality: quality,
     );
 
-    final channel = trackQualityChannel;
+    final channel = dataChannel;
 
     if (channel == null ||
         channel.state != RTCDataChannelState.RTCDataChannelOpen) {

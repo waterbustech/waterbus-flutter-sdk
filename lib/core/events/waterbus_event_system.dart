@@ -131,14 +131,14 @@ class ParticipantCameraTypeChanged extends ParticipantEvent {
 
 class ParticipantScreenSharingChanged extends ParticipantEvent {
   final bool isSharing;
-  final String? screenTrackId;
+  final String? screenMid;
 
   const ParticipantScreenSharingChanged({
     required super.timestamp,
     required super.roomId,
     required super.participantId,
     required this.isSharing,
-    this.screenTrackId,
+    this.screenMid,
   });
 }
 

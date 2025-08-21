@@ -51,7 +51,7 @@ abstract class WsEmitter {
 
   void toggleAudio(bool isEnabled);
 
-  void toggleScreenSharing(bool isSharing, {String? screenTrackId});
+  void toggleScreenSharing(bool isSharing, {String? screenMid});
 
   void toggleSubtitle(bool isEnabled);
 

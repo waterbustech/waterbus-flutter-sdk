@@ -100,6 +100,10 @@ extension RtcManagerPrivate on RtcManagerIpml {
   Future<void> _establishPublisher() async {
     final RTCPeerConnection peerConnection = _localParticipant!.peerConnection;
 
+    if (_connectionType == ConnectionType.sfu) {
+      await _localParticipant?.createDataChannel();
+    }
+
     peerConnection.onIceCandidate = (candidate) {
       if (_canPublisherAddIceCandidate) {
         _wsEmitter.sendPublisherIceCandidate(
@@ -116,7 +120,7 @@ extension RtcManagerPrivate on RtcManagerIpml {
     final List<RTCRtpSender> senders = [];
 
     for (final track in tracks) {
-      final sender = await peerConnection.addSimulcastTrack(
+      final (sender, mid) = await peerConnection.addSimulcastTrack(
         track,
         vCodec: _currentCallSetting.videoConfig.preferedCodec,
         stream: _localCameraStream!,
@@ -209,11 +213,6 @@ extension RtcManagerPrivate on RtcManagerIpml {
       constraints: RTCConfigurations.offerPublisherSdpConstraints,
     );
 
-    if (_connectionType == ConnectionType.sfu) {
-      _localParticipant =
-          await _localParticipant?.createTrackQualityChannel(pc: pc);
-    }
-
     _localParticipant!.backupPc = pc;
 
     pc.onIceCandidate = (candidate) {
@@ -251,7 +250,7 @@ extension RtcManagerPrivate on RtcManagerIpml {
     tracks.addAll(streamTracks);
 
     for (final track in tracks) {
-      final sender = await pc.addSimulcastTrack(
+      final (sender, mid) = await pc.addSimulcastTrack(
         track,
         vCodec: _currentCallSetting.videoConfig.preferedCodec,
         stream: _localCameraStream!,
@@ -402,6 +401,10 @@ extension RtcManagerPrivate on RtcManagerIpml {
       info: _participants[targetId] ?? ParticipantInfo(id: 0),
     );
 
+    if (_connectionType == ConnectionType.sfu) {
+      await _remoteSubscribers[targetId]?.createDataChannel();
+    }
+
     if (isMigrate) {
       if (_remoteSubscribers[targetId] != null) {
         _remoteSubscribers[targetId]!.backupPc = rtcPeerConnection;
@@ -417,11 +420,6 @@ extension RtcManagerPrivate on RtcManagerIpml {
           }
         }
       };
-    }
-
-    if (_connectionType == ConnectionType.sfu) {
-      _remoteSubscribers[targetId] =
-          await _remoteSubscribers[targetId]!.createTrackQualityChannel();
     }
 
     rtcPeerConnection.onTrack = (track) {
