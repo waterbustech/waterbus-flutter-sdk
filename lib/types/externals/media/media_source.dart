@@ -135,6 +135,7 @@ extension MediaSourceQuality on MediaSource {
 
   /// For Subscriber
   Future<void> setPreferredQuality(TrackQuality quality) async {
+    return;
     final videoTrackId = getVideoTrackId;
 
     if (videoTrackId == null) return;

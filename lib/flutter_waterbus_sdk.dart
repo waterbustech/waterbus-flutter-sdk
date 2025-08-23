@@ -559,34 +559,6 @@ class WaterbusSdk {
   }
 
   // =============================================================================
-  // CODEC SUPPORT
-  // =============================================================================
-
-  /// Get list of supported video codecs on current platform
-  ///
-  /// Returns a list of video codecs that are supported by the current
-  /// platform and can be used for video encoding/decoding.
-  ///
-  /// Returns a [Future<List<RTCVideoCodec>>] containing supported codecs
-  ///
-  /// Example:
-  /// ```dart
-  /// final supportedCodecs = await WaterbusSdk.instance.getSupportedVideoCodecs();
-  /// print('Supported codecs: ${supportedCodecs.map((c) => c.name).join(', ')}');
-  /// ```
-  Future<List<RTCVideoCodec>> getSupportedVideoCodecs() async {
-    final List<RTCVideoCodec> supportedCodecs = [];
-
-    for (final codec in RTCVideoCodec.values) {
-      if (await codec.isPlatformSupported()) {
-        supportedCodecs.add(codec);
-      }
-    }
-
-    return supportedCodecs;
-  }
-
-  // =============================================================================
   // USER MANAGEMENT
   // =============================================================================
 

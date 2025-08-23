@@ -36,6 +36,29 @@ abstract class ChannelEvent {
 
   String get eventType;
   Map<String, dynamic> toJson();
+
+  Uint8List toBinary() {
+    final jsonString = jsonEncode(toJson());
+    return Uint8List.fromList(utf8.encode(jsonString));
+  }
+}
+
+class Renegotitate extends ChannelEvent {
+  final String sdp;
+
+  const Renegotitate({required this.sdp});
+
+  @override
+  String get eventType => 'Renegotitate';
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'Renegotitate': {
+        'sdp': sdp,
+      },
+    };
+  }
 }
 
 class ScreenSharingTrackStarted extends ChannelEvent {

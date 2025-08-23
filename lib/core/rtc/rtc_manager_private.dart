@@ -62,7 +62,7 @@ extension RtcManagerPrivate on RtcManagerIpml {
           'mandatory': {
             'minWidth': 1280,
             'minHeight': 720,
-            'minFrameRate': 10,
+            'minFrameRate': 15,
           },
         },
       };
@@ -80,21 +80,19 @@ extension RtcManagerPrivate on RtcManagerIpml {
     Map<String, dynamic> constraints = const {},
     bool? isE2eeEnabled,
   }) async {
-    IceServersResponse iceServers = kIceServers;
-
     if (_connectionType == ConnectionType.p2p) {
-      iceServers = await _authRepository.getIceServers();
+      final iceServers = await _authRepository.getIceServers();
+
+      return await createPeerConnection(
+        RTCConfigurations.configuration(
+          isE2eeEnabled ?? _currentCallSetting.e2eeEnabled,
+          iceServers: iceServers,
+        ),
+        constraints,
+      );
     }
 
-    final RTCPeerConnection pc = await createPeerConnection(
-      RTCConfigurations.configuration(
-        isE2eeEnabled ?? _currentCallSetting.e2eeEnabled,
-        iceServers: iceServers,
-      ),
-      constraints,
-    );
-
-    return pc;
+    return await createPeerConnection({});
   }
 
   Future<void> _establishPublisher() async {
@@ -120,7 +118,7 @@ extension RtcManagerPrivate on RtcManagerIpml {
     final List<RTCRtpSender> senders = [];
 
     for (final track in tracks) {
-      final (sender, mid) = await peerConnection.addSimulcastTrack(
+      final sender = await peerConnection.addSimulcastTrack(
         track,
         vCodec: _currentCallSetting.videoConfig.preferedCodec,
         stream: _localCameraStream!,
@@ -250,7 +248,7 @@ extension RtcManagerPrivate on RtcManagerIpml {
     tracks.addAll(streamTracks);
 
     for (final track in tracks) {
-      final (sender, mid) = await pc.addSimulcastTrack(
+      final sender = await pc.addSimulcastTrack(
         track,
         vCodec: _currentCallSetting.videoConfig.preferedCodec,
         stream: _localCameraStream!,
@@ -439,7 +437,7 @@ extension RtcManagerPrivate on RtcManagerIpml {
 
         final TrackType? type = _remoteSubscribers[targetId]?.setSrcObject(
           track.streams.first,
-          trackId: track.track.id,
+          mid: track.track.id,
         );
 
         if (type == null) return;

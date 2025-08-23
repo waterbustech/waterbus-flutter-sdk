@@ -12,8 +12,6 @@ class WsEmitterImpl extends WsEmitter {
   // ====== Room Events ======
   @override
   void publishRoom({required PublishWsEmitterPayLoad payload}) {
-    print("offer sdp: ${payload.sdp}");
-
     _socket?.emit(WsEvent.roomPublish, payload.toJson());
   }
 

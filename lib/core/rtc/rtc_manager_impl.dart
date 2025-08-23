@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
+import 'package:collection/collection.dart';
 import 'package:injectable/injectable.dart';
 import 'package:sdp_transform/sdp_transform.dart';
 
@@ -18,7 +19,7 @@ import 'package:waterbus_sdk/native/native_channel.dart';
 import 'package:waterbus_sdk/native/replaykit.dart';
 import 'package:waterbus_sdk/native/virtual_background/index.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extension.dart';
-import 'package:waterbus_sdk/utils/extensions/pc_extension.dart';
+import 'package:waterbus_sdk/utils/extensions/peer_extension.dart';
 import 'package:waterbus_sdk/utils/extensions/sdp_extension.dart';
 import 'package:waterbus_sdk/utils/ipv6/index.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
@@ -161,6 +162,14 @@ class RtcManagerIpml extends RtcManager {
           track.stop();
         }
         disposeOperations.add(_localCameraStream!.dispose());
+      }
+
+      if (_screenSharingStream != null) {
+        final tracks = _screenSharingStream!.getTracks();
+        for (final track in tracks) {
+          track.stop();
+        }
+        disposeOperations.add(_screenSharingStream!.dispose());
       }
 
       if (_localParticipant != null) {
@@ -641,15 +650,19 @@ class RtcManagerIpml extends RtcManager {
 
       final screenTrack = _screenSharingStream!.getVideoTracks().first;
 
-      final (sender, mid) =
-          await _localParticipant!.peerConnection.addSimulcastTrack(
+      final sender = await _localParticipant!.peerConnection.addSimulcastTrack(
         screenTrack,
         vCodec: _currentCallSetting.videoConfig.preferedCodec,
         stream: _screenSharingStream!,
-        isSingleTrack: _connectionType == ConnectionType.p2p,
+        isSingleTrack: true,
       );
 
-      _wsEmitter.toggleScreenSharing(true, screenMid: mid);
+      final tracksLength = _localCameraStream?.getTracks().length ?? 0;
+
+      _wsEmitter.toggleScreenSharing(
+        true,
+        screenMid: '${tracksLength * (kIsWeb ? 1 : 2) + 1}',
+      );
 
       await Future.wait([
         _encryptionManager.addRtpSender(sender: sender),

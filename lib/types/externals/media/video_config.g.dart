@@ -29,7 +29,6 @@ const _$RTCVideoCodecEnumMap = {
   RTCVideoCodec.vp8: 'vp8',
   RTCVideoCodec.vp9: 'vp9',
   RTCVideoCodec.h264: 'h264',
-  RTCVideoCodec.av1: 'av1',
 };
 
 const _$VideoQualityEnumEnumMap = {

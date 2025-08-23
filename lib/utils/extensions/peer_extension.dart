@@ -4,14 +4,20 @@ import 'package:waterbus_sdk/utils/logger/logger.dart';
 import 'package:waterbus_sdk/constants/rtc_configurations.dart'
     show RTCConfigurations;
 
-extension PeerX on RTCPeerConnection {
-  Future<(RTCRtpSender, String?)> addSimulcastTrack(
+extension PeerExtension on RTCPeerConnection {
+  Future<RTCRtpSender> addSimulcastTrack(
     MediaStreamTrack track, {
     required RTCVideoCodec vCodec,
     required MediaStream stream,
     RtcTrackKind kind = RtcTrackKind.video,
     required bool isSingleTrack,
   }) async {
+    final List<RTCRtpEncoding> encodings = [];
+
+    if (kind == RtcTrackKind.video && !isSingleTrack) {
+      encodings.addAll(RTCConfigurations.simulcastEncodings);
+    }
+
     final transceiver = await addTransceiver(
       track: track,
       kind: kind == RtcTrackKind.video
@@ -20,13 +26,13 @@ extension PeerX on RTCPeerConnection {
       init: RTCRtpTransceiverInit(
         direction: TransceiverDirection.SendOnly,
         streams: [stream],
-        sendEncodings: RTCConfigurations.simulcastEncodings,
+        sendEncodings: encodings.isEmpty ? null : encodings,
       ),
     );
 
     final sender = transceiver.sender;
 
-    if (kind != RtcTrackKind.video) return (sender, transceiver.mid);
+    if (kind != RtcTrackKind.video) return sender;
 
     await _setPreferredCodec(
       transceiver: transceiver,
@@ -34,7 +40,7 @@ extension PeerX on RTCPeerConnection {
       kind: kind,
     );
 
-    return (sender, transceiver.mid);
+    return sender;
   }
 
   Future<void> _setPreferredCodec({

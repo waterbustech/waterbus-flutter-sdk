@@ -112,11 +112,6 @@ class WaterbusRenderManager {
 
       // Send signaling message to server
       source.setPreferredQuality(quality);
-
-      // Log for debugging
-      WaterbusLogger.instance.log(
-        'Quality request for ${source.hashCode}: ${quality.name}',
-      );
     } catch (e, stackTrace) {
       WaterbusLogger.instance.bug(
         'Error requesting quality change: $e\n$stackTrace',

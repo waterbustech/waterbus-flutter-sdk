@@ -1,8 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/utils/extensions/pc_extension.dart';
+import 'package:waterbus_sdk/utils/extensions/peer_extension.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 class LocalParticipant implements Participant {
@@ -194,24 +193,12 @@ class LocalParticipant implements Participant {
   void listenDataChannel() {
     _dataChannel?.onMessage = (message) {
       WaterbusLogger.instance.log(
-        "[track_quality] received message (binary: ${message.isBinary})",
+        "[publisher-channel] received message (binary: ${message.isBinary})",
       );
-
-      final data = message.binary;
-      final String jsonStr = utf8.decode(data);
-      final TrackSubscribedMessage msg = TrackSubscribedMessage.fromJson(
-        jsonDecode(jsonStr),
-      );
-
-      if (msg.trackId == cameraSource?.getVideoTrackId) {
-        cameraSource?.setRidActive(msg.quality.rid, msg.subscribedCount > 0);
-      } else if (msg.trackId == screenSource?.getVideoTrackId) {
-        screenSource?.setRidActive(msg.quality.rid, msg.subscribedCount > 0);
-      }
     };
 
     _dataChannel?.onDataChannelState = (state) {
-      WaterbusLogger.instance.log("[track_quality] State changed: $state");
+      WaterbusLogger.instance.log("[publisher-channel] State changed: $state");
     };
   }
 
@@ -244,7 +231,7 @@ class LocalParticipant implements Participant {
         await peerConnection.addCandidate(candidate);
       }
     } catch (error) {
-      WaterbusLogger.instance.bug("====> E: ${error.toString()}");
+      WaterbusLogger.instance.bug(error.toString());
     }
   }
 
@@ -274,7 +261,7 @@ class LocalParticipant implements Participant {
   @override
   TrackType? setSrcObject(
     MediaStream stream, {
-    String? trackId,
+    String? mid,
     bool isDisplayStream = false,
   }) {
     if (isDisplayStream) {

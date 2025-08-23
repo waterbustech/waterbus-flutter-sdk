@@ -1,9 +1,10 @@
 import 'package:h264_profile_level_id/h264_profile_level_id.dart';
 import 'package:sdp_transform/sdp_transform.dart';
+
 import 'package:waterbus_sdk/types/externals/media/rtc_video_codec.dart';
 import 'package:waterbus_sdk/utils/codec_selector.dart';
 
-extension SdpX on String {
+extension SdpExtension on String {
   String optimizeSdp({
     RTCVideoCodec codec = RTCVideoCodec.h264,
     bool isP2P = false,
@@ -48,25 +49,17 @@ extension SdpX on String {
     bool isP2P = false,
   }) {
     final capSel = CodecCapabilitySelector(this);
-    final vcaps = capSel.getCapabilities('video');
 
+    final vcaps = capSel.getCapabilities('video');
     if (vcaps != null) {
-      final List preferred = vcaps.codecs
+      final List codecsFiltered = vcaps.codecs
           .where((e) => (e['codec'] as String).toLowerCase() == codec.codec)
           .toList();
 
-      if (preferred.isEmpty) {
-        return this;
-      }
+      if (codecsFiltered.isEmpty) return this;
 
-      final List reordered = [
-        ...preferred,
-        ...vcaps.codecs.where(
-          (e) => (e['codec'] as String).toLowerCase() != codec.codec,
-        ),
-      ];
-
-      vcaps.setCodecPreferences('video', reordered);
+      vcaps.codecs = codecsFiltered;
+      vcaps.setCodecPreferences('video', vcaps.codecs);
       capSel.setCapabilities(vcaps);
     }
 

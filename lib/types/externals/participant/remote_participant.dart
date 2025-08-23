@@ -1,8 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/utils/extensions/pc_extension.dart';
+import 'package:waterbus_sdk/types/externals/rtc/channel_event.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 class RemoteParticipant implements Participant {
@@ -183,35 +182,47 @@ class RemoteParticipant implements Participant {
 
   @override
   Future<void> createDataChannel() async {
-    final channel = await peerConnection.createDefaultChannel();
-
-    _dataChannel = channel;
-
-    listenDataChannel();
+    peerConnection.onDataChannel = (channel) {
+      _dataChannel = channel;
+      listenDataChannel();
+    };
   }
 
   @override
   void listenDataChannel() {
-    _dataChannel?.onMessage = (message) {
+    _dataChannel?.onMessage = (message) async {
       WaterbusLogger.instance.log(
-        "[track_quality] received message (binary: ${message.isBinary})",
+        "[subscriber-channel] received message (binary: ${message.isBinary})",
       );
 
-      final data = message.binary;
-      final String jsonStr = utf8.decode(data);
-      final TrackSubscribedMessage msg = TrackSubscribedMessage.fromJson(
-        jsonDecode(jsonStr),
-      );
+      final ChannelEvent event = ChannelEvent.fromBinary(message.binary);
 
-      if (msg.trackId == cameraSource?.getVideoTrackId) {
-        cameraSource?.setRidActive(msg.quality.rid, msg.subscribedCount > 0);
-      } else if (msg.trackId == screenSource?.getVideoTrackId) {
-        screenSource?.setRidActive(msg.quality.rid, msg.subscribedCount > 0);
+      if (event is ScreenSharingTrackStarted) {
+        screenMid = event.mid;
+
+        await setRemoteDescription(
+          RTCSessionDescription(
+            event.sdp,
+            DescriptionType.offer.type,
+          ),
+        );
+
+        final offer = await (backupPc ?? peerConnection).createAnswer();
+
+        await (backupPc ?? peerConnection).setLocalDescription(offer);
+
+        if (offer.sdp == null) return;
+
+        final renegotitate = Renegotitate(sdp: offer.sdp!);
+
+        _dataChannel?.send(
+          RTCDataChannelMessage.fromBinary(renegotitate.toBinary()),
+        );
       }
     };
 
     _dataChannel?.onDataChannelState = (state) {
-      WaterbusLogger.instance.log("[track_quality] State changed: $state");
+      WaterbusLogger.instance.log("[subscriber-channel] State changed: $state");
     };
   }
 
@@ -244,7 +255,7 @@ class RemoteParticipant implements Participant {
         await peerConnection.addCandidate(candidate);
       }
     } catch (error) {
-      WaterbusLogger.instance.bug("====> E: ${error.toString()}");
+      WaterbusLogger.instance.bug(error.toString());
     }
   }
 
@@ -274,10 +285,10 @@ class RemoteParticipant implements Participant {
   @override
   TrackType? setSrcObject(
     MediaStream stream, {
-    String? trackId,
+    String? mid,
     bool isDisplayStream = false,
   }) {
-    if (screenMid != null && trackId == screenMid) {
+    if (screenMid != null && mid == screenMid) {
       // Set src screen
       screenSource?.setSrcObject(stream);
       return TrackType.screen;

@@ -130,7 +130,7 @@ class WsHandlerImpl extends WsHandler {
         isScreenSharing: data['isScreenSharing'] ?? false,
         isE2eeEnabled: data['isE2eeEnabled'] ?? false,
         isHandRaising: data['isHandRaising'] ?? false,
-        screenTrackId: data['screenTrackId'],
+        screenTrackId: data['screenMid'],
         type: CameraType.values[data['cameraType'] ?? CameraType.front.type],
         connectionType: (data['connectionType'] as int?).toConnectionType(),
         codec: codec,

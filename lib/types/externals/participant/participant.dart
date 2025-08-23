@@ -55,7 +55,7 @@ abstract class Participant {
   Participant get switchCamera;
   TrackType? setSrcObject(
     MediaStream stream, {
-    String? trackId,
+    String? mid,
     bool isDisplayStream = false,
   });
   Future<Participant> setScreenSharing(bool isSharing, {String? screenMid});
