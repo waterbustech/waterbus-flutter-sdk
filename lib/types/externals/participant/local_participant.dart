@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/types/externals/rtc/channel_event.dart';
 import 'package:waterbus_sdk/utils/extensions/peer_extension.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
@@ -180,7 +181,6 @@ class LocalParticipant implements Participant {
   @override
   bool get isMe => ownerId == kIsMine;
 
-  @override
   Future<void> createDataChannel() async {
     final channel = await peerConnection.createDefaultChannel();
 
@@ -191,10 +191,17 @@ class LocalParticipant implements Participant {
 
   @override
   void listenDataChannel() {
-    _dataChannel?.onMessage = (message) {
-      WaterbusLogger.instance.log(
-        "[publisher-channel] received message (binary: ${message.isBinary})",
-      );
+    _dataChannel?.onMessage = (message) async {
+      final ChannelEvent event = ChannelEvent.fromBinary(message.binary);
+
+      if (event is Renegotitate) {
+        await setRemoteDescription(
+          RTCSessionDescription(
+            event.sdp,
+            DescriptionType.answer.type,
+          ),
+        );
+      }
     };
 
     _dataChannel?.onDataChannelState = (state) {
@@ -306,6 +313,15 @@ class LocalParticipant implements Participant {
     audioLevelController?.close();
     webcamStatsController?.close();
     screenStatsController?.close();
+  }
+
+  Future<void> sendSdpRenegotiate({
+    required String sdp,
+    String? mid,
+  }) async {
+    final renegotiate = Renegotitate(sdp: sdp, mid: mid);
+
+    dataChannel?.send(RTCDataChannelMessage.fromBinary(renegotiate.toBinary()));
   }
 
   @override

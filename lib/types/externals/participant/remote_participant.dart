@@ -148,7 +148,7 @@ class RemoteParticipant implements Participant {
   }) {
     final hasCustomSources = cameraSource != null || screenSource != null;
 
-    return RemoteParticipant(
+    final participant = RemoteParticipant(
       ownerId: ownerId,
       isVideoEnabled: isVideoEnabled,
       isAudioEnabled: isAudioEnabled,
@@ -175,13 +175,16 @@ class RemoteParticipant implements Participant {
       connectionType: connectionType,
       info: info,
     );
+
+    participant._createDataChannel();
+
+    return participant;
   }
 
   @override
   bool get isMe => ownerId == kIsMine;
 
-  @override
-  Future<void> createDataChannel() async {
+  void _createDataChannel() {
     peerConnection.onDataChannel = (channel) {
       _dataChannel = channel;
       listenDataChannel();
@@ -191,14 +194,12 @@ class RemoteParticipant implements Participant {
   @override
   void listenDataChannel() {
     _dataChannel?.onMessage = (message) async {
-      WaterbusLogger.instance.log(
-        "[subscriber-channel] received message (binary: ${message.isBinary})",
-      );
-
       final ChannelEvent event = ChannelEvent.fromBinary(message.binary);
 
-      if (event is ScreenSharingTrackStarted) {
-        screenMid = event.mid;
+      if (event is Renegotitate) {
+        if (event.mid != null) {
+          screenMid = event.mid;
+        }
 
         await setRemoteDescription(
           RTCSessionDescription(
@@ -286,9 +287,10 @@ class RemoteParticipant implements Participant {
   TrackType? setSrcObject(
     MediaStream stream, {
     String? mid,
+    String? trackId,
     bool isDisplayStream = false,
   }) {
-    if (screenMid != null && mid == screenMid) {
+    if (screenMid != null && (mid == screenMid || trackId == screenMid)) {
       // Set src screen
       screenSource?.setSrcObject(stream);
       return TrackType.screen;

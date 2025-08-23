@@ -208,20 +208,6 @@ class WsHandlerImpl extends WsHandler {
   }
 
   void _listenToRenegotiationEvents() {
-    _socket?.on(WsEvent.roomPublisherRenegotiation, (data) {
-      if (data == null) return;
-      _rtcManager.setLocalSdpAsPublisher(data['sdp']);
-    });
-
-    _socket?.on(WsEvent.roomSubscriberRenegotiation, (data) {
-      if (data == null) return;
-
-      _rtcManager.renegotiateWithParticipant(
-        targetId: data['targetId'],
-        sdp: data['sdp'],
-      );
-    });
-
     _socket?.on(WsEvent.roomMigrate, (data) {
       if (data == null) return;
       _rtcManager.setLocalSdpAsPublisher(data['sdp']);

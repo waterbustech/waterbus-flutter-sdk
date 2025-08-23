@@ -98,9 +98,7 @@ extension RtcManagerPrivate on RtcManagerIpml {
   Future<void> _establishPublisher() async {
     final RTCPeerConnection peerConnection = _localParticipant!.peerConnection;
 
-    if (_connectionType == ConnectionType.sfu) {
-      await _localParticipant?.createDataChannel();
-    }
+    await _localParticipant?.createDataChannel();
 
     peerConnection.onIceCandidate = (candidate) {
       if (_canPublisherAddIceCandidate) {
@@ -399,10 +397,6 @@ extension RtcManagerPrivate on RtcManagerIpml {
       info: _participants[targetId] ?? ParticipantInfo(id: 0),
     );
 
-    if (_connectionType == ConnectionType.sfu) {
-      await _remoteSubscribers[targetId]?.createDataChannel();
-    }
-
     if (isMigrate) {
       if (_remoteSubscribers[targetId] != null) {
         _remoteSubscribers[targetId]!.backupPc = rtcPeerConnection;
@@ -437,7 +431,8 @@ extension RtcManagerPrivate on RtcManagerIpml {
 
         final TrackType? type = _remoteSubscribers[targetId]?.setSrcObject(
           track.streams.first,
-          mid: track.track.id,
+          mid: track.transceiver?.mid,
+          trackId: track.track.id,
         );
 
         if (type == null) return;
@@ -601,7 +596,7 @@ extension RtcManagerPrivate on RtcManagerIpml {
   }
 
   // ======== Renegotiation Flow ========
-  Future<void> _performRenegotiation() async {
+  Future<void> _performRenegotiation({String? mid}) async {
     final pc = _localParticipant?.peerConnection;
 
     if (pc == null) return;
@@ -622,11 +617,7 @@ extension RtcManagerPrivate on RtcManagerIpml {
 
     await pc.setLocalDescription(description);
 
-    _wsEmitter.renegotiateSdp(
-      sdp: sdp,
-      roomId: _currentRoomId!,
-      connectionType: _connectionType,
-    );
+    _localParticipant?.sendSdpRenegotiate(sdp: sdp, mid: mid);
   }
 
   // ======== New Event Notification Methods ========

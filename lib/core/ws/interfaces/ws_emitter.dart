@@ -13,12 +13,6 @@ abstract class WsEmitter {
     required ConnectionType connectionType,
   });
 
-  void renegotiateSdp({
-    required String roomId,
-    required String sdp,
-    required ConnectionType connectionType,
-  });
-
   void leaveRoom(String roomId);
 
   void reconnect();

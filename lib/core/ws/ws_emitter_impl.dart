@@ -36,19 +36,6 @@ class WsEmitterImpl extends WsEmitter {
   }
 
   @override
-  void renegotiateSdp({
-    required String roomId,
-    required String sdp,
-    required ConnectionType connectionType,
-  }) {
-    _socket?.emit(WsEvent.roomPublisherRenegotiation, {
-      'sdp': sdp,
-      'roomId': roomId,
-      'connectionType': connectionType.index,
-    });
-  }
-
-  @override
   void leaveRoom(String roomId) {
     _socket?.emit(WsEvent.roomLeave, {"roomId": roomId});
   }

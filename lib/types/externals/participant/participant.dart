@@ -45,7 +45,6 @@ abstract class Participant {
 
   // Abstract methods
   bool get isMe;
-  Future<void> createDataChannel();
   void listenDataChannel();
   Participant sinkAudioLevel(AudioLevel level);
   void sinkWebcamStats(RtcParticipantStats stats);

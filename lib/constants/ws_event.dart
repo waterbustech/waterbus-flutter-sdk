@@ -7,12 +7,6 @@ class WsEvent {
   static const String roomReconnect = 'room.reconnect';
   static const String roomMigrate = 'room.migrate';
 
-  // ====== Room Renegotiation Events ======
-  static const String roomPublisherRenegotiation =
-      'room.publisher_renegotiation';
-  static const String roomSubscriberRenegotiation =
-      'room.subscriber_renegotiation';
-
   // ====== ICE Candidate Events ======
   static const String roomPublisherCandidate = 'room.publisher_candidate';
   static const String roomSubscriberCandidate = 'room.subscriber_candidate';
