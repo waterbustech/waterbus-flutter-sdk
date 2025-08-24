@@ -1,15 +1,16 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/types/externals/rtc/channel_event.dart';
 import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 class MediaSource {
   MediaStream? stream;
   VideoRenderer? renderer;
   RTCRtpSender? sender;
+  String? mid;
   bool hasFirstFrameRendered;
   final Function()? onFirstFrameRendered;
   RTCDataChannel? dataChannel;
@@ -17,6 +18,7 @@ class MediaSource {
   MediaSource({
     this.stream,
     this.renderer,
+    this.mid,
     this.hasFirstFrameRendered = false,
     this.onFirstFrameRendered,
     this.dataChannel,
@@ -33,12 +35,6 @@ class MediaSource {
   int? get textureId => renderer?.textureId;
 
   String? get streamId => stream?.id;
-
-  String? get getVideoTrackId {
-    final videoTracks = stream?.getVideoTracks() ?? [];
-
-    return videoTracks.firstOrNull?.id;
-  }
 
   void setSender(RTCRtpSender sender) {
     this.sender ??= sender;
@@ -135,30 +131,22 @@ extension MediaSourceQuality on MediaSource {
 
   /// For Subscriber
   Future<void> setPreferredQuality(TrackQuality quality) async {
-    return;
-    final videoTrackId = getVideoTrackId;
-
-    if (videoTrackId == null) return;
-
-    final payload = TrackQualityRequest(
-      trackId: videoTrackId,
-      quality: quality,
-    );
+    if (mid == null) return;
 
     final channel = dataChannel;
 
     if (channel == null ||
         channel.state != RTCDataChannelState.RTCDataChannelOpen) {
-      WaterbusLogger.instance.log(
-        '[Waterbus] DataChannel not open. Cannot send quality',
-      );
       return;
     }
 
     try {
-      final jsonString = jsonEncode(payload.toJson());
-      final bytes = utf8.encode(jsonString);
-      channel.send(RTCDataChannelMessage.fromBinary(Uint8List.fromList(bytes)));
+      final event = SubscriberTrackQuality(
+        mid: mid!,
+        quality: quality,
+      );
+
+      await channel.send(RTCDataChannelMessage.fromBinary(event.toBinary()));
     } catch (e, st) {
       WaterbusLogger.instance.bug('Failed to send preferred quality: $e\n$st');
     }

@@ -44,7 +44,6 @@ abstract class Participant {
   set info(ParticipantInfo value);
 
   // Abstract methods
-  bool get isMe;
   void listenDataChannel();
   Participant sinkAudioLevel(AudioLevel level);
   void sinkWebcamStats(RtcParticipantStats stats);

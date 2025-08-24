@@ -178,9 +178,6 @@ class LocalParticipant implements Participant {
     );
   }
 
-  @override
-  bool get isMe => ownerId == kIsMine;
-
   Future<void> createDataChannel() async {
     final channel = await peerConnection.createDefaultChannel();
 
@@ -201,6 +198,12 @@ class LocalParticipant implements Participant {
             DescriptionType.answer.type,
           ),
         );
+      } else if (event is RidSubscription) {
+        if (cameraSource?.mid == event.mid) {
+          cameraSource?.setRidActive(event.rid, event.enabled);
+        } else if (screenSource?.mid == event.mid) {
+          screenSource?.setRidActive(event.rid, event.enabled);
+        }
       }
     };
 
@@ -300,6 +303,27 @@ class LocalParticipant implements Participant {
   LocalParticipant setHandRaising(bool isRaising) {
     isHandRaising = isRaising;
     return this;
+  }
+
+  void setCameraSender(RTCRtpSender sender) {
+    cameraSource?.setSender(sender);
+  }
+
+  void setScreenSender(RTCRtpSender sender) {
+    screenSource?.setSender(sender);
+  }
+
+  Future<void> mapMidToSender() async {
+    final transceivers = await peerConnection.getTransceivers();
+
+    for (final transceiver in transceivers) {
+      if (transceiver.sender.senderId == cameraSource?.sender?.senderId) {
+        cameraSource?.mid = transceiver.mid;
+      } else if (transceiver.sender.senderId ==
+          screenSource?.sender?.senderId) {
+        screenSource?.mid = transceiver.mid;
+      }
+    }
   }
 
   @override

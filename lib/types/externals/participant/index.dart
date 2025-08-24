@@ -2,7 +2,6 @@ export 'participant.dart';
 export 'local_participant.dart';
 export 'remote_participant.dart';
 export 'participant_info.dart';
-export 'participant_media_state.dart';
 export 'member.dart';
 export 'member_status_enum.dart';
 export 'camera_type.dart';

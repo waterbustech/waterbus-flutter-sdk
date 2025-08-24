@@ -49,7 +49,7 @@ class RtcManagerIpml extends RtcManager {
     });
   }
 
-  ConnectionType _connectionType = ConnectionType.p2p;
+  ConnectionType _connectionType = ConnectionType.sfu;
   String? _currentRoomId;
   String? _currentParticipantId;
   MediaStream? _localCameraStream;
@@ -74,7 +74,7 @@ class RtcManagerIpml extends RtcManager {
     required ParticipantInfo participant,
     required ConnectionType connectionType,
   }) async {
-    _connectionType = connectionType;
+    // _connectionType = connectionType;
 
     await Future.wait([
       _encryptionManager.initialize(
@@ -656,6 +656,8 @@ class RtcManagerIpml extends RtcManager {
         stream: _screenSharingStream!,
         isSingleTrack: true,
       );
+
+      _localParticipant?.setScreenSender(sender);
 
       final tracksLength = _localCameraStream?.getTracks().length ?? 0;
 

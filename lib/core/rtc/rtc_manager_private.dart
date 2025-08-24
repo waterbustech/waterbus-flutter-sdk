@@ -128,6 +128,10 @@ extension RtcManagerPrivate on RtcManagerIpml {
 
       senders.add(sender);
 
+      if (track.kind == RtcTrackKind.video.kind) {
+        _localParticipant?.setCameraSender(sender);
+      }
+
       if (track.kind == RtcTrackKind.audio.kind) {
         _audioStats.setSender = AudioStatsParams(
           receivers: [],
@@ -165,6 +169,8 @@ extension RtcManagerPrivate on RtcManagerIpml {
     );
 
     await peerConnection.setLocalDescription(description);
+
+    await _localParticipant?.mapMidToSender();
 
     final PublishWsEmitterPayLoad payload = PublishWsEmitterPayLoad(
       sdp: sdp,
@@ -295,6 +301,8 @@ extension RtcManagerPrivate on RtcManagerIpml {
     );
 
     await pc.setLocalDescription(description);
+
+    await _localParticipant?.mapMidToSender();
 
     _wsEmitter.migrateConnection(
       roomId: _currentRoomId!,
@@ -444,9 +452,9 @@ extension RtcManagerPrivate on RtcManagerIpml {
             receivers: [track.receiver!],
             callback: (stats) {
               if (type == TrackType.screen) {
-                _remoteSubscribers[targetId]?.sinkWebcamStats(stats);
-              } else {
                 _remoteSubscribers[targetId]?.sinkScreenStats(stats);
+              } else {
+                _remoteSubscribers[targetId]?.sinkWebcamStats(stats);
               }
             },
           );
@@ -616,6 +624,8 @@ extension RtcManagerPrivate on RtcManagerIpml {
     );
 
     await pc.setLocalDescription(description);
+
+    await _localParticipant?.mapMidToSender();
 
     _localParticipant?.sendSdpRenegotiate(sdp: sdp, mid: mid);
   }

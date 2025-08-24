@@ -181,9 +181,6 @@ class RemoteParticipant implements Participant {
     return participant;
   }
 
-  @override
-  bool get isMe => ownerId == kIsMine;
-
   void _createDataChannel() {
     peerConnection.onDataChannel = (channel) {
       _dataChannel = channel;
@@ -286,17 +283,22 @@ class RemoteParticipant implements Participant {
   @override
   TrackType? setSrcObject(
     MediaStream stream, {
+    /// P2P: mid is the mid of the track
     String? mid,
+
+    /// SFU: trackId is the mid of the track
     String? trackId,
     bool isDisplayStream = false,
   }) {
     if (screenMid != null && (mid == screenMid || trackId == screenMid)) {
       // Set src screen
       screenSource?.setSrcObject(stream);
+      screenSource?.mid = trackId;
       return TrackType.screen;
     } else {
       // Set src camera
       cameraSource?.setSrcObject(stream);
+      cameraSource?.mid = mid;
       return TrackType.webcam;
     }
   }
