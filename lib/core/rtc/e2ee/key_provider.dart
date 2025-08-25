@@ -16,8 +16,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart' as rtc;
-
-import 'package:waterbus_sdk/utils/logger/logger.dart';
+import 'package:logging/logging.dart';
 
 const defaultRatchetSalt = 'LKFrameEncryptionKey';
 const defaultMagicBytes = 'LK-ROCKS';
@@ -52,6 +51,7 @@ abstract class KeyProvider {
 class BaseKeyProvider implements KeyProvider {
   final Map<String, int> _latestSetIndex = {};
   final Map<String, Map<int, Uint8List>> _keys = {};
+  final _logger = Logger('BaseKeyProvider');
 
   int getLatestIndex(String participantId) {
     return _latestSetIndex[participantId] ?? 0;
@@ -163,7 +163,7 @@ class BaseKeyProvider implements KeyProvider {
     if (!_keys.containsKey(keyInfo.participantId)) {
       _keys[keyInfo.participantId] = {};
     }
-    WaterbusLogger.instance.log(
+    _logger.info(
       '_setKey for ${keyInfo.participantId}, idx: ${keyInfo.keyIndex}, key: ${base64Encode(keyInfo.key)}',
     );
     _keys[keyInfo.participantId]![keyInfo.keyIndex] = keyInfo.key;

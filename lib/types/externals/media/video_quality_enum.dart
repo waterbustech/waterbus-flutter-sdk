@@ -28,4 +28,10 @@ enum VideoQualityEnum {
             minFrameRate: 15,
           ),
       };
+
+  String get label => switch (this) {
+        VideoQualityEnum.k1080p => '1080p',
+        VideoQualityEnum.k720p => '720p',
+        VideoQualityEnum.k360p => '360p',
+      };
 }

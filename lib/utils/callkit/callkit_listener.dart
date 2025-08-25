@@ -1,17 +1,18 @@
+import 'package:flutter_callkit_incoming/entities/call_event.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:injectable/injectable.dart';
-import 'package:waterbus_callkit_incoming/entities/call_event.dart';
-import 'package:waterbus_callkit_incoming/waterbus_callkit_incoming.dart';
+import 'package:logging/logging.dart';
 
 import 'package:waterbus_sdk/core/rtc/rtc_manager.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 @singleton
 class CallKitListener {
-  final WaterbusLogger _logger;
   final RtcManager _rtcManager;
+
+  final _logger = Logger('CallKitListener');
+
   CallKitListener(
-    this._logger,
     this._rtcManager,
   );
 
@@ -54,10 +55,12 @@ class CallKitListener {
             break;
           case Event.actionCallCustom:
             break;
+          case Event.actionCallConnected:
+            break;
         }
       });
     } catch (error) {
-      _logger.bug(error.toString());
+      _logger.severe(error.toString());
     }
   }
 }

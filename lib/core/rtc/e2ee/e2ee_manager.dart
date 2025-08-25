@@ -1,16 +1,16 @@
 import 'package:flutter/foundation.dart';
 
 import 'package:injectable/injectable.dart';
+import 'package:logging/logging.dart';
 
 import 'package:waterbus_sdk/core/rtc/e2ee/key_provider.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 @singleton
 class EncryptionManager {
-  final WaterbusLogger _logger = WaterbusLogger.instance;
   final FrameCryptorFactory _fcFactory = frameCryptorFactory;
   final Map<Map<String, String>, FrameCryptor> _frameCryptors = {};
+  final Logger _logger = Logger('EncryptionManager');
 
   final Algorithm _algorithm = Algorithm.kAesGcm;
   final RTCAudioCodec _audioCodec = RTCAudioCodec.opus;
@@ -57,7 +57,7 @@ class EncryptionManager {
       );
 
       frameCryptor.onFrameCryptorStateChanged = (participantId, state) {
-        _logger.log('Encryption: $participantId $state');
+        _logger.info('Encryption: $participantId $state');
       };
 
       _frameCryptors[{_identity!: id}] = frameCryptor;
@@ -72,7 +72,7 @@ class EncryptionManager {
         );
       }
     } catch (e) {
-      _logger.bug(e.toString());
+      _logger.severe(e.toString());
     }
   }
 
@@ -97,7 +97,7 @@ class EncryptionManager {
       );
 
       frameCryptor.onFrameCryptorStateChanged = (participantId, state) {
-        _logger.log('Decryption: $participantId $state');
+        _logger.info('Decryption: $participantId $state');
       };
 
       _frameCryptors[{_identity!: id}] = frameCryptor;
@@ -112,7 +112,7 @@ class EncryptionManager {
         );
       }
     } catch (e) {
-      _logger.bug(e.toString());
+      _logger.severe(e.toString());
     }
   }
 

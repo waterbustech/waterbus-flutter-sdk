@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:collection/collection.dart';
 import 'package:injectable/injectable.dart';
+import 'package:logging/logging.dart';
 import 'package:sdp_transform/sdp_transform.dart';
 
 import 'package:waterbus_sdk/constants/rtc_configurations.dart';
@@ -22,7 +23,6 @@ import 'package:waterbus_sdk/utils/extensions/duration_extension.dart';
 import 'package:waterbus_sdk/utils/extensions/peer_extension.dart';
 import 'package:waterbus_sdk/utils/extensions/sdp_extension.dart';
 import 'package:waterbus_sdk/utils/ipv6/index.dart';
-import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 part 'rtc_manager_private.dart';
 
@@ -35,6 +35,9 @@ class RtcManagerIpml extends RtcManager {
   final RtcVideoStats _videoStats;
   final RtcAudioStats _audioStats;
   final AuthRepository _authRepository;
+
+  final _logger = Logger('RtcManagerIpml');
+
   RtcManagerIpml(
     this._encryptionManager,
     this._wsEmitter,
@@ -200,7 +203,7 @@ class RtcManagerIpml extends RtcManager {
       // Clear for next time
       disableVirtualBg(reset: true);
     } catch (error) {
-      WaterbusLogger().bug(error.toString());
+      _logger.severe(error.toString());
     }
   }
 

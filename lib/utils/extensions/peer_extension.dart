@@ -1,8 +1,11 @@
+import 'package:logging/logging.dart';
+
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 import 'package:waterbus_sdk/constants/rtc_configurations.dart'
     show RTCConfigurations;
+
+final _logger = Logger('PeerExtension');
 
 extension PeerExtension on RTCPeerConnection {
   Future<RTCRtpSender> addSimulcastTrack(
@@ -15,7 +18,11 @@ extension PeerExtension on RTCPeerConnection {
     final List<RTCRtpEncoding> encodings = [];
 
     if (kind == RtcTrackKind.video && !isSingleTrack) {
-      encodings.addAll(RTCConfigurations.simulcastEncodings);
+      if (vCodec == RTCVideoCodec.vp9) {
+        encodings.addAll(RTCConfigurations.svcEncodings);
+      } else {
+        encodings.addAll(RTCConfigurations.simulcastEncodings);
+      }
     }
 
     final transceiver = await addTransceiver(
@@ -34,22 +41,22 @@ extension PeerExtension on RTCPeerConnection {
 
     if (kind != RtcTrackKind.video) return sender;
 
-    await _setPreferredCodec(
-      transceiver: transceiver,
-      vCodec: vCodec.codec,
-      kind: kind,
-    );
+    await _setPreferredCodec(transceiver, kind, vCodec.codec);
 
     return sender;
   }
 
-  Future<void> _setPreferredCodec({
-    required RTCRtpTransceiver transceiver,
-    required RtcTrackKind kind,
-    required String vCodec,
-  }) async {
+  Future<void> _setPreferredCodec(
+    RTCRtpTransceiver transceiver,
+    RtcTrackKind kind,
+    String videoCodec,
+  ) async {
+    // when setting codec preferences, the capabilites need to be read from
+    // the RTCRtpReceiver
     final caps = await getRtpReceiverCapabilities(kind.kind);
     if (caps.codecs == null) return;
+
+    _logger.fine('get capabilities ${caps.codecs}');
 
     final List<RTCRtpCodecCapability> matched = [];
     final List<RTCRtpCodecCapability> partialMatched = [];
@@ -61,8 +68,7 @@ extension PeerExtension on RTCPeerConnection {
         continue;
       }
 
-      final matchesVideoCodec =
-          codec.toLowerCase() == 'video/$vCodec'.toLowerCase();
+      final matchesVideoCodec = codec == 'video/$videoCodec';
       if (!matchesVideoCodec) {
         if (WebRTC.platformIsAndroid && codec == 'video/vp9') {
           if (c.sdpFmtpLine != null &&
@@ -75,10 +81,9 @@ extension PeerExtension on RTCPeerConnection {
         }
         continue;
       }
-
       // for h264 codecs that have sdpFmtpLine available, use only if the
       // profile-level-id is 42e01f for cross-browser compatibility
-      if (vCodec.toLowerCase() == 'h264') {
+      if (videoCodec.toLowerCase() == 'h264') {
         if (c.sdpFmtpLine != null &&
             c.sdpFmtpLine!.contains('profile-level-id=42e01f')) {
           matched.add(c);
@@ -97,11 +102,12 @@ extension PeerExtension on RTCPeerConnection {
         matched.add(c);
       }
     }
+
     matched.addAll([...partialMatched, ...unmatched]);
     try {
       await transceiver.setCodecPreferences(matched);
     } catch (e) {
-      WaterbusLogger.instance.bug('setCodecPreferences failed: $e');
+      _logger.warning('setCodecPreferences failed: $e');
     }
   }
 

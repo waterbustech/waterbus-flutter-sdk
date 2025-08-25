@@ -2,16 +2,18 @@ import 'dart:async';
 
 import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 import 'package:injectable/injectable.dart';
+import 'package:logging/logging.dart';
 
 import 'package:waterbus_sdk/types/index.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extension.dart';
-import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 @singleton
 class RtcAudioStats {
   final List<AudioStatsParams> _receivers = [];
   AudioStatsParams? _sender;
   Timer? _timer;
+
+  final _logger = Logger('RtcAudioStats');
 
   set setSender(AudioStatsParams? param) {
     _sender = param;
@@ -127,7 +129,7 @@ class RtcAudioStats {
         }
       }
     } catch (error) {
-      WaterbusLogger.instance.bug('Error in _monitorAudio: $error');
+      _logger.severe('Error in _monitorAudio: $error');
     }
   }
 }

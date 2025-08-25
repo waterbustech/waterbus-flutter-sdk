@@ -38,7 +38,6 @@ import '../native/native_channel.dart' as _i235;
 import '../native/replaykit.dart' as _i124;
 import '../utils/callkit/callkit_listener.dart' as _i324;
 import '../utils/dio/dio_configuration.dart' as _i514;
-import '../utils/logger/logger.dart' as _i944;
 import '../waterbus_sdk_impl.dart' as _i1039;
 import '../waterbus_sdk_interface.dart' as _i513;
 
@@ -57,7 +56,6 @@ _i174.GetIt $initGetIt(
     environmentFilter,
   );
   gh.factory<_i235.NativeService>(() => _i235.NativeService());
-  gh.factory<_i944.WaterbusLogger>(() => _i944.WaterbusLogger.new());
   gh.singleton<_i750.EncryptionManager>(() => _i750.EncryptionManager());
   gh.singleton<_i980.RtcVideoStats>(() => _i980.RtcVideoStats());
   gh.singleton<_i2.RtcAudioStats>(() => _i2.RtcAudioStats());
@@ -105,19 +103,16 @@ _i174.GetIt $initGetIt(
       ));
   gh.lazySingleton<_i933.RoomRepository>(
       () => _i933.RoomRepositoryImpl(gh<_i652.RoomRemoteDataSource>()));
-  gh.singleton<_i324.CallKitListener>(() => _i324.CallKitListener(
-        gh<_i944.WaterbusLogger>(),
-        gh<_i937.RtcManager>(),
-      ));
+  gh.factory<_i613.ChatRepository>(
+      () => _i613.ChatRepositoryImpl(gh<_i692.ChatRemoteDataSource>()));
+  gh.singleton<_i324.CallKitListener>(
+      () => _i324.CallKitListener(gh<_i937.RtcManager>()));
   gh.singleton<_i392.WsHandler>(() => _i694.WsHandlerImpl(
         gh<_i937.RtcManager>(),
-        gh<_i944.WaterbusLogger>(),
         gh<_i801.AuthLocalDataSource>(),
         gh<_i514.DioConfiguration>(),
         gh<_i405.WaterbusEventSystem>(),
       ));
-  gh.factory<_i613.ChatRepository>(
-      () => _i613.ChatRepositoryImpl(gh<_i692.ChatRemoteDataSource>()));
   gh.singleton<_i513.WaterbusSdkInterface>(() => _i1039.SdkCore(
         gh<_i392.WsHandler>(),
         gh<_i379.WsEmitter>(),
@@ -129,7 +124,6 @@ _i174.GetIt $initGetIt(
         gh<_i895.UserRepository>(),
         gh<_i613.ChatRepository>(),
         gh<_i575.MessageRepository>(),
-        gh<_i944.WaterbusLogger>(),
       ));
   return getIt;
 }

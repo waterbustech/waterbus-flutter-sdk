@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'package:logging/logging.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/ui/waterbus_render_manager.dart';
-import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 /// A Flutter widget that renders WebRTC video streams with adaptive quality based on
 /// view visibility and size.
@@ -99,6 +99,8 @@ class _WaterbusMediaViewState extends State<WaterbusMediaView> {
   double _visibilityFraction = 1.0; // Current visibility fraction (0.0 to 1.0)
   bool _isInitialized = false;
 
+  final _logger = Logger('WaterbusMediaView');
+
   // Quality thresholds based on widget size
   static const double _highQualityThreshold = 1500;
   static const double _mediumQualityThreshold = 800;
@@ -127,7 +129,7 @@ class _WaterbusMediaViewState extends State<WaterbusMediaView> {
       _isInitialized = true;
       _updateQualityByState();
     } catch (e, stackTrace) {
-      WaterbusLogger.instance.bug(
+      _logger.severe(
         'Error in _registerInitialQuality: $e\n$stackTrace',
       );
     }
@@ -145,7 +147,7 @@ class _WaterbusMediaViewState extends State<WaterbusMediaView> {
         _debouncedUpdateQuality();
       }
     } catch (e, stackTrace) {
-      WaterbusLogger.instance.bug(
+      _logger.severe(
         'Error in _handleVisibilityChanged: $e\n$stackTrace',
       );
     }
@@ -167,7 +169,7 @@ class _WaterbusMediaViewState extends State<WaterbusMediaView> {
         }
       }
     } catch (e, stackTrace) {
-      WaterbusLogger.instance.bug(
+      _logger.severe(
         'Error in _handleSizeChanged: $e\n$stackTrace',
       );
     }
@@ -203,7 +205,7 @@ class _WaterbusMediaViewState extends State<WaterbusMediaView> {
       WaterbusRenderManager()
           .register(widget.mediaSource, context, effectiveQuality);
     } catch (e, stackTrace) {
-      WaterbusLogger.instance.bug(
+      _logger.severe(
         'Error in _updateQualityByState: $e\n$stackTrace',
       );
     }
@@ -310,7 +312,7 @@ class _WaterbusMediaViewState extends State<WaterbusMediaView> {
         mirror: widget.mirror,
       );
     } catch (e, stackTrace) {
-      WaterbusLogger.instance.bug(
+      _logger.severe(
         'Error building video view: $e\n$stackTrace',
       );
       return const SizedBox();

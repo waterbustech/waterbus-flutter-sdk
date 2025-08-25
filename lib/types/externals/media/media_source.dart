@@ -2,9 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
+import 'package:logging/logging.dart';
+
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/types/externals/rtc/channel_event.dart';
-import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 class MediaSource {
   MediaStream? stream;
@@ -14,6 +15,8 @@ class MediaSource {
   bool hasFirstFrameRendered;
   final Function()? onFirstFrameRendered;
   RTCDataChannel? dataChannel;
+
+  final _logger = Logger('MediaSource');
 
   MediaSource({
     this.stream,
@@ -148,7 +151,7 @@ extension MediaSourceQuality on MediaSource {
 
       await channel.send(RTCDataChannelMessage.fromBinary(event.toBinary()));
     } catch (e, st) {
-      WaterbusLogger.instance.bug('Failed to send preferred quality: $e\n$st');
+      _logger.severe('Failed to send preferred quality: $e\n$st');
     }
   }
 }

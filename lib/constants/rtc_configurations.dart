@@ -54,7 +54,9 @@ class RTCConfigurations {
 
   static final svcEncodings = [
     RTCRtpEncoding(
-      scalabilityMode: 'L3T1_KEY',
+      maxBitrate: 4000000,
+      numTemporalLayers: 3,
+      scalabilityMode: 'L3T3_KEY',
     ),
   ];
 }

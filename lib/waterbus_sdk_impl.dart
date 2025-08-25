@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import 'package:injectable/injectable.dart';
+import 'package:logging/logging.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import 'package:waterbus_sdk/core/api/auth/repositories/auth_repository.dart';
@@ -15,7 +16,6 @@ import 'package:waterbus_sdk/core/ws/interfaces/ws_handler.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/native/picture-in-picture/index.dart';
 import 'package:waterbus_sdk/native/replaykit.dart';
-import 'package:waterbus_sdk/utils/logger/logger.dart';
 import 'package:waterbus_sdk/utils/replaykit/replaykit_helper.dart';
 import 'package:waterbus_sdk/waterbus_sdk_interface.dart';
 
@@ -31,7 +31,7 @@ class SdkCore extends WaterbusSdkInterface {
   final UserRepository _userRepository;
   final ChatRepository _chatRepository;
   final MessageRepository _messageRepository;
-  final WaterbusLogger _logger;
+  final _logger = Logger('SdkCore');
 
   SdkCore(
     this._wsHandler,
@@ -44,7 +44,6 @@ class SdkCore extends WaterbusSdkInterface {
     this._userRepository,
     this._chatRepository,
     this._messageRepository,
-    this._logger,
   );
 
   @override
@@ -114,7 +113,7 @@ class SdkCore extends WaterbusSdkInterface {
       await _rtcManager.leaveRoom();
       WakelockPlus.disable();
     } catch (error) {
-      _logger.bug(error.toString());
+      _logger.severe(error.toString());
     }
   }
 
@@ -198,7 +197,7 @@ class SdkCore extends WaterbusSdkInterface {
         await _rtcManager.stopScreenShare();
       }
     } catch (error) {
-      _logger.bug(error.toString());
+      _logger.severe(error.toString());
     }
   }
 
@@ -420,7 +419,7 @@ class SdkCore extends WaterbusSdkInterface {
         connectionType: connectionType,
       );
     } catch (error) {
-      _logger.bug(error.toString());
+      _logger.severe(error.toString());
     }
   }
 
@@ -428,7 +427,7 @@ class SdkCore extends WaterbusSdkInterface {
     try {
       _rtcManager.subscribeToParticipants(participants);
     } catch (error) {
-      _logger.bug(error.toString());
+      _logger.severe(error.toString());
     }
   }
 

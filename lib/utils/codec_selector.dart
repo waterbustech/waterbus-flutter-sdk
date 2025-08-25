@@ -1,4 +1,31 @@
 import 'package:sdp_transform/sdp_transform.dart' as sdp_transform;
+import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+
+void setPreferredCodec(
+  RTCSessionDescription description, {
+  String audio = 'opus',
+  String video = 'vp8',
+}) {
+  final capSel = CodecCapabilitySelector(description.sdp!);
+  final acaps = capSel.getCapabilities('audio');
+  if (acaps != null) {
+    acaps.codecs = acaps.codecs
+        .where((e) => (e['codec'] as String).toLowerCase() == audio)
+        .toList();
+    acaps.setCodecPreferences('audio', acaps.codecs);
+    capSel.setCapabilities(acaps);
+  }
+
+  final vcaps = capSel.getCapabilities('video');
+  if (vcaps != null) {
+    vcaps.codecs = vcaps.codecs
+        .where((e) => (e['codec'] as String).toLowerCase() == video)
+        .toList();
+    vcaps.setCodecPreferences('video', vcaps.codecs);
+    capSel.setCapabilities(vcaps);
+  }
+  description.sdp = capSel.sdp();
+}
 
 class CodecCapability {
   CodecCapability(
@@ -109,5 +136,3 @@ class CodecCapabilitySelector {
     );
   }
 }
-
-void unAwaited(Future<void>? future) {}

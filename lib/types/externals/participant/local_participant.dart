@@ -1,9 +1,10 @@
 import 'dart:async';
 
+import 'package:logging/logging.dart';
+
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/types/externals/rtc/channel_event.dart';
 import 'package:waterbus_sdk/utils/extensions/peer_extension.dart';
-import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 class LocalParticipant implements Participant {
   @override
@@ -88,6 +89,8 @@ class LocalParticipant implements Participant {
 
   @override
   ParticipantInfo info;
+
+  final _logger = Logger('LocalParticipant');
 
   LocalParticipant({
     required this.ownerId,
@@ -208,7 +211,7 @@ class LocalParticipant implements Participant {
     };
 
     _dataChannel?.onDataChannelState = (state) {
-      WaterbusLogger.instance.log("[publisher-channel] State changed: $state");
+      _logger.info("[publisher-channel] State changed: $state");
     };
   }
 
@@ -241,7 +244,7 @@ class LocalParticipant implements Participant {
         await peerConnection.addCandidate(candidate);
       }
     } catch (error) {
-      WaterbusLogger.instance.bug(error.toString());
+      _logger.severe(error.toString());
     }
   }
 
@@ -254,7 +257,7 @@ class LocalParticipant implements Participant {
         await peerConnection.setRemoteDescription(description);
       }
     } catch (error) {
-      WaterbusLogger.instance.bug(error.toString());
+      _logger.severe(error.toString());
     }
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import 'package:injectable/injectable.dart';
+import 'package:logging/logging.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 import 'package:waterbus_sdk/constants/ws_event.dart';
@@ -12,19 +13,19 @@ import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/utils/dio/dio_configuration.dart';
 import 'package:waterbus_sdk/utils/encrypt/encrypt.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extension.dart';
-import 'package:waterbus_sdk/utils/logger/logger.dart';
 import 'package:waterbus_sdk/utils/msg_pack_parser.dart';
 
 @Singleton(as: WsHandler)
 class WsHandlerImpl extends WsHandler {
   final RtcManager _rtcManager;
-  final WaterbusLogger _logger;
   final AuthLocalDataSource _authLocal;
   final DioConfiguration _dioConfig;
   final WaterbusEventSystem _eventSystem;
+
+  final _logger = Logger('WsHandlerImpl');
+
   WsHandlerImpl(
     this._rtcManager,
-    this._logger,
     this._authLocal,
     this._dioConfig,
     this._eventSystem,
@@ -86,7 +87,7 @@ class WsHandlerImpl extends WsHandler {
 
     _socket?.onConnect((_) async {
       callbackConnected?.call();
-      _logger.log('established connection - sid: ${_socket?.id}');
+      _logger.info('established connection - sid: ${_socket?.id}');
 
       _listenToRoomEvents();
       _listenToMediaEvents();

@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
 import 'package:injectable/injectable.dart';
+import 'package:logging/logging.dart';
 
 import 'package:waterbus_sdk/constants/constants.dart';
 import 'package:waterbus_sdk/types/externals/rtc/rtc_participant_stats.dart';
 import 'package:waterbus_sdk/types/internals/rtc/stats.dart';
 import 'package:waterbus_sdk/types/internals/rtc/video_stats_params.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extension.dart';
-import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 @singleton
 class RtcVideoStats {
@@ -23,6 +23,8 @@ class RtcVideoStats {
   final Map<String, VideoStatsParam> _receivers = {};
   final Map<String, VideoReceiverStats> _prevStats = {};
   final Map<String, num> _currentReceiverBitrate = {};
+
+  final logger = Logger('RtcVideoStats');
 
   Timer? _statsTimer;
 
@@ -132,7 +134,7 @@ class RtcVideoStats {
             _prevSenderStats[stats.key] = stats.value;
           }
         } catch (error) {
-          WaterbusLogger.instance.bug(error.toString());
+          logger.severe(error.toString());
         }
       }
     }
@@ -175,7 +177,7 @@ class RtcVideoStats {
             _prevStats[receivers.key] = stats;
           }
         } catch (error) {
-          WaterbusLogger.instance.bug(error.toString());
+          logger.severe(error.toString());
         }
       }
     }
@@ -228,6 +230,8 @@ class RtcVideoStats {
           vs.channels = getNumValFromReport(c.values, 'channels');
           vs.clockRate = getNumValFromReport(c.values, 'clockRate');
         }
+
+        logger.info('Sender stats: $vs');
         items.add(vs);
       }
     }
@@ -276,6 +280,8 @@ class RtcVideoStats {
           receiverStats.channels = getNumValFromReport(c.values, 'channels');
           receiverStats.clockRate = getNumValFromReport(c.values, 'clockRate');
         }
+
+        logger.info('Receiver stats: $receiverStats');
         break;
       }
     }

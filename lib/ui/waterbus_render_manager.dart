@@ -2,9 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'package:logging/logging.dart';
+
 import 'package:waterbus_sdk/types/externals/media/media_source.dart';
 import 'package:waterbus_sdk/types/internals/rtc/track_quality.dart';
-import 'package:waterbus_sdk/utils/logger/logger.dart';
 
 class WaterbusRenderManager {
   static final WaterbusRenderManager _instance = WaterbusRenderManager._();
@@ -15,6 +16,8 @@ class WaterbusRenderManager {
   final Map<MediaSource, Timer?> _updateTimers = {};
   final Map<MediaSource, TrackQuality> _lastQualityRequests = {};
   final Map<MediaSource, DateTime> _lastRequestTimes = {};
+
+  final _logger = Logger('WaterbusRenderManager');
 
   static const Duration _updateDelay = Duration(milliseconds: 200);
   static const Duration _minRequestInterval = Duration(milliseconds: 100);
@@ -35,7 +38,7 @@ class WaterbusRenderManager {
 
       _debouncedUpdateSourceQuality(source);
     } catch (e, stackTrace) {
-      WaterbusLogger.instance.bug(
+      _logger.severe(
         'Error registering render entry: $e\n$stackTrace',
       );
     }
@@ -59,7 +62,7 @@ class WaterbusRenderManager {
         }
       }
     } catch (e, stackTrace) {
-      WaterbusLogger.instance.bug(
+      _logger.severe(
         'Error unregistering render entry: $e\n$stackTrace',
       );
     }
@@ -99,7 +102,7 @@ class WaterbusRenderManager {
         _requestQualityChange(source, highest);
       }
     } catch (e, stackTrace) {
-      WaterbusLogger.instance.bug(
+      _logger.severe(
         'Error updating source quality: $e\n$stackTrace',
       );
     }
@@ -113,7 +116,7 @@ class WaterbusRenderManager {
       // Send signaling message to server
       source.setPreferredQuality(quality);
     } catch (e, stackTrace) {
-      WaterbusLogger.instance.bug(
+      _logger.severe(
         'Error requesting quality change: $e\n$stackTrace',
       );
     }
