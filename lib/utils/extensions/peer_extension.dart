@@ -2,8 +2,7 @@ import 'package:logging/logging.dart';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 
-import 'package:waterbus_sdk/constants/rtc_configurations.dart'
-    show RTCConfigurations;
+import 'package:waterbus_sdk/constants/rtc_config.dart' show RtcConfig;
 
 final _logger = Logger('PeerExtension');
 
@@ -19,9 +18,9 @@ extension PeerExtension on RTCPeerConnection {
 
     if (kind == RtcTrackKind.video && !isSingleTrack) {
       if (vCodec == RTCVideoCodec.vp9) {
-        encodings.addAll(RTCConfigurations.svcEncodings);
+        encodings.addAll(RtcConfig.svcEncodings);
       } else {
-        encodings.addAll(RTCConfigurations.simulcastEncodings);
+        encodings.addAll(RtcConfig.simulcastEncodings);
       }
     }
 

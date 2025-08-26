@@ -7,7 +7,7 @@ import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 import 'package:sdp_transform/sdp_transform.dart';
 
-import 'package:waterbus_sdk/constants/rtc_configurations.dart';
+import 'package:waterbus_sdk/constants/rtc_config.dart';
 import 'package:waterbus_sdk/core/api/auth/repositories/auth_repository.dart';
 import 'package:waterbus_sdk/core/events/waterbus_event_system.dart';
 import 'package:waterbus_sdk/core/rtc/e2ee/e2ee_manager.dart';
@@ -52,7 +52,7 @@ class RtcManagerIpml extends RtcManager {
     });
   }
 
-  ConnectionType _connectionType = ConnectionType.sfu;
+  ConnectionType _connectionType = ConnectionType.p2p;
   String? _currentRoomId;
   String? _currentParticipantId;
   MediaStream? _localCameraStream;
@@ -77,7 +77,7 @@ class RtcManagerIpml extends RtcManager {
     required ParticipantInfo participant,
     required ConnectionType connectionType,
   }) async {
-    // _connectionType = connectionType;
+    _connectionType = connectionType;
 
     await Future.wait([
       _encryptionManager.initialize(
@@ -124,7 +124,7 @@ class RtcManagerIpml extends RtcManager {
     await _localParticipant?.peerConnection.close();
 
     final RTCPeerConnection peerConnection = await _createPeerConnection(
-      constraints: RTCConfigurations.offerPublisherSdpConstraints,
+      constraints: RtcConfig.offerPublisherSdpConstraints,
     );
 
     if (_localParticipant != null) {
@@ -400,7 +400,7 @@ class RtcManagerIpml extends RtcManager {
     if (_localParticipant?.peerConnection != null) return;
 
     final RTCPeerConnection peerConnection = await _createPeerConnection(
-      constraints: RTCConfigurations.offerPublisherSdpConstraints,
+      constraints: RtcConfig.offerPublisherSdpConstraints,
     );
 
     _localParticipant = LocalParticipant.init(
@@ -657,7 +657,7 @@ class RtcManagerIpml extends RtcManager {
         screenTrack,
         vCodec: _currentCallSetting.videoConfig.preferedCodec,
         stream: _screenSharingStream!,
-        isSingleTrack: true,
+        isSingleTrack: _connectionType == ConnectionType.p2p,
       );
 
       _localParticipant?.setScreenSender(sender);

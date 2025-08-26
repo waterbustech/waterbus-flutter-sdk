@@ -84,7 +84,7 @@ extension RtcManagerPrivate on RtcManagerIpml {
       final iceServers = await _authRepository.getIceServers();
 
       return await createPeerConnection(
-        RTCConfigurations.configuration(
+        RtcConfig.configuration(
           isE2eeEnabled ?? _currentCallSetting.e2eeEnabled,
           iceServers: iceServers,
         ),
@@ -212,7 +212,7 @@ extension RtcManagerPrivate on RtcManagerIpml {
     _remoteIceCandidatesForPublisher.clear();
     _canPublisherAddIceCandidate = false;
     final pc = await _createPeerConnection(
-      constraints: RTCConfigurations.offerPublisherSdpConstraints,
+      constraints: RtcConfig.offerPublisherSdpConstraints,
     );
 
     _localParticipant!.backupPc = pc;
@@ -363,7 +363,7 @@ extension RtcManagerPrivate on RtcManagerIpml {
     required SubscribeResponsePayload payload,
   }) async {
     final RTCPeerConnection rtcPeerConnection = await _createPeerConnection(
-      constraints: RTCConfigurations.offerSubscriberSdpConstraints,
+      constraints: RtcConfig.offerSubscriberSdpConstraints,
       isE2eeEnabled: payload.isE2eeEnabled,
     );
 

@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 
-class RTCConfigurations {
+class RtcConfig {
   static Map<String, dynamic> configuration(
     bool e2eeEnabled, {
     IceServersResponse iceServers = kIceServers,
@@ -39,24 +39,27 @@ class RTCConfigurations {
     RTCRtpEncoding(
       rid: 'f',
       maxFramerate: 30,
+      maxBitrate: 2000000,
     ),
     RTCRtpEncoding(
       rid: 'h',
       maxFramerate: 24,
       scaleResolutionDownBy: 2.0,
+      maxBitrate: 1000000,
     ),
     RTCRtpEncoding(
       rid: 'q',
       maxFramerate: 15,
       scaleResolutionDownBy: 4.0,
+      maxBitrate: 500000,
     ),
   ];
 
   static final svcEncodings = [
     RTCRtpEncoding(
-      maxBitrate: 4000000,
+      maxBitrate: 3000000,
       numTemporalLayers: 3,
-      scalabilityMode: 'L3T3_KEY',
+      scalabilityMode: 'L1T2',
     ),
   ];
 }
