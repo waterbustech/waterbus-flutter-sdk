@@ -49,7 +49,11 @@ dependencies:
   dart_webrtc_plus: ^1.5.4+1
   flutter_webrtc_plus:
     path: /Users/lambiengcode/Documents/waterbus/flutter-webrtc-plus
-    
+
+  # HLS
+  video_view:
+    path: /Users/lambiengcode/Documents/waterbus/flutter_video_view
+  
   # Dependency Injection
   get_it: ^8.0.3
   injectable: ^2.5.0
@@ -91,6 +95,6 @@ import_sorter:
 topics:
   - webrtc
   - sfu
-  - video
+  - hls
   - conferencing
-  - waterbus
+  - livestreaming

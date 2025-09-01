@@ -32,7 +32,7 @@ _Room _$RoomFromJson(Map<String, dynamic> json) => _Room(
       avatar: json['avatar'] as String?,
       streamingProtocol: $enumDecodeNullable(
               _$StreamingProtocolEnumMap, json['streamingProtocol']) ??
-          StreamingProtocol.sfu,
+          StreamingProtocol.rtc,
       roomType: $enumDecodeNullable(_$RoomTypeEnumMap, json['roomType']) ??
           RoomType.videoConferencing,
       isProtected: json['isProtected'] as bool? ?? true,
@@ -63,7 +63,7 @@ const _$RoomStatusEnumMap = {
 };
 
 const _$StreamingProtocolEnumMap = {
-  StreamingProtocol.sfu: 0,
+  StreamingProtocol.rtc: 0,
   StreamingProtocol.hls: 1,
 };
 

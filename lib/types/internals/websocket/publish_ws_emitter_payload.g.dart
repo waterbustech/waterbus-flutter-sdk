@@ -45,6 +45,6 @@ const _$ConnectionTypeEnumMap = {
 };
 
 const _$StreamingProtocolEnumMap = {
-  StreamingProtocol.sfu: 0,
+  StreamingProtocol.rtc: 0,
   StreamingProtocol.hls: 1,
 };

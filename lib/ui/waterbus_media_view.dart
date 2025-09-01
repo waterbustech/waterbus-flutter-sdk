@@ -6,6 +6,7 @@ import 'package:logging/logging.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/ui/hls_view.dart';
 import 'package:waterbus_sdk/ui/waterbus_render_manager.dart';
 
 /// A Flutter widget that renders WebRTC video streams with adaptive quality based on
@@ -92,6 +93,7 @@ class WaterbusMediaView extends StatefulWidget {
 }
 
 class _WaterbusMediaViewState extends State<WaterbusMediaView> {
+  late MediaSource _mediaSource;
   TrackQuality _quality = TrackQuality.low;
   bool _isVisible = true;
   Size _lastSize = Size.zero;
@@ -109,6 +111,29 @@ class _WaterbusMediaViewState extends State<WaterbusMediaView> {
   @override
   void initState() {
     super.initState();
+
+    _mediaSource = widget.mediaSource;
+
+    if (_mediaSource.isHls) {
+      return;
+    }
+
+    // Register initial quality after widget is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _registerInitialQuality();
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant WaterbusMediaView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    _mediaSource = widget.mediaSource;
+
+    if (_mediaSource.isHls) {
+      return;
+    }
+
     // Register initial quality after widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _registerInitialQuality();
@@ -118,7 +143,10 @@ class _WaterbusMediaViewState extends State<WaterbusMediaView> {
   @override
   void dispose() {
     _debounceTimer?.cancel();
-    WaterbusRenderManager().unregister(widget.mediaSource, context);
+    if (!_mediaSource.isHls) {
+      WaterbusRenderManager().unregister(_mediaSource, context);
+    }
+
     super.dispose();
   }
 
@@ -202,8 +230,7 @@ class _WaterbusMediaViewState extends State<WaterbusMediaView> {
   void _updateQualityByState() {
     try {
       final effectiveQuality = _calculateEffectiveQuality();
-      WaterbusRenderManager()
-          .register(widget.mediaSource, context, effectiveQuality);
+      WaterbusRenderManager().register(_mediaSource, context, effectiveQuality);
     } catch (e, stackTrace) {
       _logger.severe(
         'Error in _updateQualityByState: $e\n$stackTrace',
@@ -269,8 +296,15 @@ class _WaterbusMediaViewState extends State<WaterbusMediaView> {
 
   @override
   Widget build(BuildContext context) {
+    if (_mediaSource.isHls) {
+      return HlsView(
+        url: _mediaSource.hlsUrl!,
+        mirror: widget.mirror,
+      );
+    }
+
     return VisibilityDetector(
-      key: ValueKey('media-view-${widget.mediaSource.hashCode}'),
+      key: ValueKey('media-view-${_mediaSource.hashCode}'),
       onVisibilityChanged: _handleVisibilityChanged,
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -289,25 +323,25 @@ class _WaterbusMediaViewState extends State<WaterbusMediaView> {
           objectFit: widget.objectFit,
           mirror: widget.mirror,
           onViewReady: (controller) {
-            widget.mediaSource.renderer = controller;
-            widget.mediaSource.renderer?.srcObject = widget.mediaSource.stream;
+            _mediaSource.renderer = controller;
+            _mediaSource.renderer?.srcObject = _mediaSource.stream;
           },
         );
       }
 
       // Check if renderer is properly initialized
-      if (widget.mediaSource.renderer == null ||
-          (widget.mediaSource.renderer is RTCVideoRenderer &&
-              widget.mediaSource.renderer!.textureId == null)) {
+      if (_mediaSource.renderer == null ||
+          (_mediaSource.renderer is RTCVideoRenderer &&
+              _mediaSource.renderer!.textureId == null)) {
         return const SizedBox();
       }
 
       // Use texture-based rendering for other platforms
       return RTCVideoView(
-        widget.mediaSource.renderer as RTCVideoRenderer,
-        key: widget.mediaSource.textureId == null
+        _mediaSource.renderer as RTCVideoRenderer,
+        key: _mediaSource.textureId == null
             ? null
-            : Key(widget.mediaSource.textureId!.toString()),
+            : Key(_mediaSource.textureId!.toString()),
         objectFit: widget.objectFit,
         mirror: widget.mirror,
       );

@@ -1,10 +1,13 @@
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
+import 'package:waterbus_sdk/types/externals/rtc/subscribe_hls_payload.dart';
 
 abstract class WsEmitter {
   // ====== Room Events ======
   void publishRoom({required PublishWsEmitterPayLoad payload});
 
   void subscribeRoom({required SubscribePayload payload});
+
+  void subscribeHlsLiveStream({required SubscribeHlsPayload payload});
 
   void answerSubscription({
     required String roomId,

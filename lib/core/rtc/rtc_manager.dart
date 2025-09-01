@@ -9,14 +9,18 @@ abstract class RtcManager {
     required String roomId,
     required ParticipantInfo participant,
     required ConnectionType connectionType,
+    required StreamingProtocol streamingProtocol,
+    required bool isPublisher,
   });
   Future<void> reconnectRoom();
   void subscribeToParticipants(List<ParticipantInfo> participants);
+  void subscribeToHls(ParticipantInfo participants);
   Future<void> leaveRoom();
 
   // ====== Signaling / SDP / ICE ======
   Future<void> setLocalSdpAsPublisher(String sdp, [bool? isRecording]);
   Future<void> setRemoteSdpAsSubscriber(SubscribeResponsePayload payload);
+  void setRemoteHlsUrlsAsSubscriber(String? hlsUrl);
   Future<void> renegotiateWithParticipant({
     required String targetId,
     required String sdp,

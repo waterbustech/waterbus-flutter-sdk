@@ -2,6 +2,9 @@ class WsEvent {
   // ====== Room Events ======
   static const String roomPublish = 'room.publish';
   static const String roomSubscribe = 'room.subscribe';
+  static const String roomSubscribeHlsLiveStream =
+      'room.subscribe_hls_live_stream';
+  static const String roomHlsLiveStreamUpdated = 'room.hls_live_stream_updated';
   static const String roomAnswerSubscriber = 'room.answer_subscriber';
   static const String roomLeave = 'room.leave';
   static const String roomReconnect = 'room.reconnect';

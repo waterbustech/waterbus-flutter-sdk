@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import 'package:collection/collection.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -74,6 +75,8 @@ class SdkCore extends WaterbusSdkInterface {
         (participant) => participant.isMe,
       );
 
+      final mParticipant = room.participants[mParticipantIndex];
+
       if (mParticipantIndex < 0) return Result.failure(ServerFailure());
 
       final List<ParticipantInfo> remoteParticipants =
@@ -81,15 +84,49 @@ class SdkCore extends WaterbusSdkInterface {
 
       if (!_wsHandler.isConnected) return Result.failure(ServerFailure());
 
+      final isOwner = room.members.any(
+        (member) =>
+            mParticipant.user?.id == member.user.id &&
+            member.role == RoomRole.onwer,
+      );
+
+      final isPublisher =
+          (room.streamingProtocol == StreamingProtocol.hls && isOwner) ||
+              room.streamingProtocol == StreamingProtocol.rtc;
+
       await _joinRoom(
         roomId: room.id.toString(),
         participant: room.participants[mParticipantIndex],
         connectionType: remoteParticipants.length <= 1
             ? ConnectionType.p2p
             : ConnectionType.sfu,
+        streamingProtocol: room.streamingProtocol,
+        isPublisher: isPublisher,
       );
 
-      _subscribe(remoteParticipants);
+      if (room.streamingProtocol == StreamingProtocol.rtc) {
+        _subscribe(remoteParticipants);
+      } else {
+        if (!isPublisher) {
+          final publisher = room.members.firstWhereOrNull(
+            (member) => member.role == RoomRole.onwer,
+          );
+
+          if (publisher == null) {
+            return Result.failure(ServerFailure());
+          }
+
+          final participant = room.participants.firstWhereOrNull(
+            (participant) => participant.user?.id == publisher.user.id,
+          );
+
+          if (participant == null) {
+            return Result.failure(ServerFailure());
+          }
+
+          _subscribeHls(participant);
+        }
+      }
 
       return Result.success(room);
     } else {
@@ -409,6 +446,8 @@ class SdkCore extends WaterbusSdkInterface {
     required String roomId,
     required ParticipantInfo participant,
     required ConnectionType connectionType,
+    required StreamingProtocol streamingProtocol,
+    required bool isPublisher,
   }) async {
     try {
       WakelockPlus.enable();
@@ -417,6 +456,8 @@ class SdkCore extends WaterbusSdkInterface {
         roomId: roomId,
         participant: participant,
         connectionType: connectionType,
+        streamingProtocol: streamingProtocol,
+        isPublisher: isPublisher,
       );
     } catch (error) {
       _logger.severe(error.toString());
@@ -426,6 +467,14 @@ class SdkCore extends WaterbusSdkInterface {
   Future<void> _subscribe(List<ParticipantInfo> participants) async {
     try {
       _rtcManager.subscribeToParticipants(participants);
+    } catch (error) {
+      _logger.severe(error.toString());
+    }
+  }
+
+  Future<void> _subscribeHls(ParticipantInfo participant) async {
+    try {
+      _rtcManager.subscribeToHls(participant);
     } catch (error) {
       _logger.severe(error.toString());
     }

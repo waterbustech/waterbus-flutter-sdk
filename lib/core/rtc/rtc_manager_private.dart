@@ -181,7 +181,7 @@ extension RtcManagerPrivate on RtcManagerIpml {
       isAudioEnabled: _localParticipant?.isAudioEnabled ?? false,
       isE2eeEnabled: _localParticipant?.isE2eeEnabled ?? false,
       connectionType: _connectionType,
-      streamingProtocol: StreamingProtocol.sfu,
+      streamingProtocol: _streamingProtocol,
       isIpv6Supported: _isIpv6Supported,
     );
 
@@ -215,7 +215,7 @@ extension RtcManagerPrivate on RtcManagerIpml {
       constraints: RtcConfig.offerPublisherSdpConstraints,
     );
 
-    _localParticipant!.backupPc = pc;
+    _localParticipant?.backupPc = pc;
 
     pc.onIceCandidate = (candidate) {
       if (_canPublisherAddIceCandidate) {
@@ -236,8 +236,8 @@ extension RtcManagerPrivate on RtcManagerIpml {
         Future.delayed(10.seconds, () async {
           final p2pPeerConnection = _localParticipant?.peerConnection;
 
-          _localParticipant!.peerConnection = pc;
-          _localParticipant!.backupPc = null;
+          _localParticipant?.peerConnection = pc;
+          _localParticipant?.backupPc = null;
 
           await p2pPeerConnection?.close();
         });

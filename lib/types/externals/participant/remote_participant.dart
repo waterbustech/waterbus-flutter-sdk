@@ -306,6 +306,10 @@ class RemoteParticipant implements Participant {
     }
   }
 
+  void setHlsUrl(String? hlsUrl) {
+    cameraSource?.setHlsUrl(hlsUrl);
+  }
+
   @override
   Future<RemoteParticipant> setScreenSharing(
     bool isSharing, {

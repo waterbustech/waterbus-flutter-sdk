@@ -26,7 +26,7 @@ Map<String, dynamic> _$MemberToJson(_Member instance) => <String, dynamic>{
     };
 
 const _$RoomRoleEnumMap = {
-  RoomRole.host: 0,
+  RoomRole.onwer: 0,
   RoomRole.attendee: 1,
 };
 

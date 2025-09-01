@@ -6,6 +6,7 @@ import 'package:waterbus_sdk/core/ws/interfaces/ws_emitter.dart';
 import 'package:waterbus_sdk/core/ws/interfaces/ws_handler.dart';
 import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/injection/injection_container.dart';
+import 'package:waterbus_sdk/types/externals/rtc/subscribe_hls_payload.dart';
 
 @Injectable(as: WsEmitter)
 class WsEmitterImpl extends WsEmitter {
@@ -18,6 +19,11 @@ class WsEmitterImpl extends WsEmitter {
   @override
   void subscribeRoom({required SubscribePayload payload}) {
     _socket?.emit(WsEvent.roomSubscribe, payload.toJson());
+  }
+
+  @override
+  void subscribeHlsLiveStream({required SubscribeHlsPayload payload}) {
+    _socket?.emit(WsEvent.roomSubscribeHlsLiveStream, payload.toJson());
   }
 
   @override

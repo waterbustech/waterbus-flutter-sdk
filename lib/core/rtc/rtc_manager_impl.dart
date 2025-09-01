@@ -19,6 +19,7 @@ import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 import 'package:waterbus_sdk/native/native_channel.dart';
 import 'package:waterbus_sdk/native/replaykit.dart';
 import 'package:waterbus_sdk/native/virtual_background/index.dart';
+import 'package:waterbus_sdk/types/externals/rtc/subscribe_hls_payload.dart';
 import 'package:waterbus_sdk/utils/extensions/duration_extension.dart';
 import 'package:waterbus_sdk/utils/extensions/peer_extension.dart';
 import 'package:waterbus_sdk/utils/extensions/sdp_extension.dart';
@@ -53,6 +54,7 @@ class RtcManagerIpml extends RtcManager {
   }
 
   ConnectionType _connectionType = ConnectionType.p2p;
+  StreamingProtocol _streamingProtocol = StreamingProtocol.rtc;
   String? _currentRoomId;
   String? _currentParticipantId;
   MediaStream? _localCameraStream;
@@ -76,8 +78,19 @@ class RtcManagerIpml extends RtcManager {
     required String roomId,
     required ParticipantInfo participant,
     required ConnectionType connectionType,
+    required StreamingProtocol streamingProtocol,
+    required bool isPublisher,
   }) async {
     _connectionType = connectionType;
+    _streamingProtocol = streamingProtocol;
+    _currentRoomId = roomId;
+    _currentParticipantId = participant.id.toString();
+
+    if (streamingProtocol == StreamingProtocol.hls) {
+      _connectionType = ConnectionType.sfu;
+    }
+
+    if (!isPublisher) return;
 
     await Future.wait([
       _encryptionManager.initialize(
@@ -106,9 +119,6 @@ class RtcManagerIpml extends RtcManager {
       futures.add(toggleSpeakerOutput(forceValue: true));
       await Future.wait(futures);
     }
-
-    _currentRoomId = roomId;
-    _currentParticipantId = participant.id.toString();
 
     await _establishPublisher();
 
@@ -143,10 +153,34 @@ class RtcManagerIpml extends RtcManager {
   }
 
   @override
+  Future<void> subscribeToHls(ParticipantInfo participant) async {
+    _participants[participant.id.toString()] = participant;
+
+    final peerConnection = await _createPeerConnection(
+      constraints: RtcConfig.offerPublisherSdpConstraints,
+    );
+
+    _remoteSubscribers[participant.id.toString()] = RemoteParticipant(
+      peerConnection: peerConnection,
+      connectionType: ConnectionType.sfu,
+      ownerId: participant.id.toString(),
+      dataChannel: null,
+      videoCodec: RTCVideoCodec.h264,
+      info: participant,
+    );
+
+    _wsEmitter.subscribeHlsLiveStream(
+      payload: SubscribeHlsPayload(
+        roomId: _currentRoomId!,
+        targetId: participant.id.toString(),
+        participantId: _currentParticipantId!,
+      ),
+    );
+  }
+
+  @override
   Future<void> leaveRoom() async {
     try {
-      if (_localParticipant == null) return;
-
       if (_currentRoomId != null) {
         _wsEmitter.leaveRoom(_currentRoomId!);
       }
@@ -258,6 +292,22 @@ class RtcManagerIpml extends RtcManager {
     );
 
     await _answerSubscriber(remoteDescription: description, payload: payload);
+  }
+
+  @override
+  void setRemoteHlsUrlsAsSubscriber(String? hlsUrl) {
+    final remoteParticipant = _remoteSubscribers.values.firstOrNull;
+
+    if (remoteParticipant == null) return;
+
+    remoteParticipant.setHlsUrl(hlsUrl);
+
+    _notifyRoomEvent(
+      RoomStateChanged(
+        timestamp: DateTime.now(),
+        roomId: _currentRoomId ?? '',
+      ),
+    );
   }
 
   @override

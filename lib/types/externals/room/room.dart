@@ -18,7 +18,7 @@ abstract class Room with _$Room {
     @Default(RoomStatus.active) RoomStatus status,
     Message? latestMessage,
     String? avatar,
-    @Default(StreamingProtocol.sfu) StreamingProtocol streamingProtocol,
+    @Default(StreamingProtocol.rtc) StreamingProtocol streamingProtocol,
     @Default(RoomType.videoConferencing) RoomType roomType,
     @Default(true) bool isProtected,
     // Null is unlimited

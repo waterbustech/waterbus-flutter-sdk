@@ -15,6 +15,7 @@ class MediaSource {
   bool hasFirstFrameRendered;
   final Function()? onFirstFrameRendered;
   RTCDataChannel? dataChannel;
+  String? hlsUrl;
 
   final _logger = Logger('MediaSource');
 
@@ -25,6 +26,7 @@ class MediaSource {
     this.hasFirstFrameRendered = false,
     this.onFirstFrameRendered,
     this.dataChannel,
+    this.hlsUrl,
   }) {
     _initRendererIfNeeded();
   }
@@ -49,6 +51,14 @@ class MediaSource {
     renderer?.initialize().then((_) {
       renderer?.srcObject = stream;
     });
+  }
+
+  void setHlsUrl(String? hlsUrl) {
+    this.hlsUrl = hlsUrl;
+
+    if (hlsUrl != null) {
+      onFirstFrameRendered?.call();
+    }
   }
 
   void setRenderer(RTCVideoPlatformViewController controller) {
@@ -81,6 +91,7 @@ class MediaSource {
     MediaStream? stream,
     VideoRenderer? renderer,
     bool? hasFirstFrameRendered,
+    String? hlsUrl,
     Function()? onFirstFrameRendered,
   }) {
     return MediaSource(
@@ -88,6 +99,7 @@ class MediaSource {
       renderer: renderer ?? this.renderer,
       hasFirstFrameRendered:
           hasFirstFrameRendered ?? this.hasFirstFrameRendered,
+      hlsUrl: hlsUrl ?? this.hlsUrl,
       onFirstFrameRendered: onFirstFrameRendered ?? this.onFirstFrameRendered,
     );
   }
@@ -154,4 +166,6 @@ extension MediaSourceQuality on MediaSource {
       _logger.severe('Failed to send preferred quality: $e\n$st');
     }
   }
+
+  bool get isHls => hlsUrl != null;
 }

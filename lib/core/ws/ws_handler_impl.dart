@@ -140,6 +140,14 @@ class WsHandlerImpl extends WsHandler {
       await _rtcManager.setRemoteSdpAsSubscriber(payload);
     });
 
+    _socket?.on(WsEvent.roomHlsLiveStreamUpdated, (data) {
+      if (data == null) return;
+
+      final String? hlsUrl = data['hlsUrl'];
+
+      _rtcManager.setRemoteHlsUrlsAsSubscriber(hlsUrl);
+    });
+
     _socket?.on(WsEvent.roomParticipantLeft, (data) {
       if (data == null) return;
       _rtcManager.handleParticipantLeft(data['targetId']);

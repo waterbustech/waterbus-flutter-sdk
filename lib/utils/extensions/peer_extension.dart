@@ -1,8 +1,7 @@
 import 'package:logging/logging.dart';
 
-import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
-
 import 'package:waterbus_sdk/constants/rtc_config.dart' show RtcConfig;
+import 'package:waterbus_sdk/flutter_waterbus_sdk.dart';
 
 final _logger = Logger('PeerExtension');
 

@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 
 import 'package:flutter_webrtc_plus/flutter_webrtc_plus.dart';
-import 'package:logging/logging.dart';
 import 'package:rhttp/rhttp.dart';
 
 import 'package:waterbus_sdk/core/api/base/base_local_storage.dart';
@@ -151,14 +150,6 @@ class WaterbusSdk {
   }
 
   Future<void> _initializeWithConfig(SdkConfig config) async {
-    hierarchicalLoggingEnabled = true;
-    // Logger.root.level = Level.ALL;
-    // Logger.root.onRecord.listen((record) {
-    //   debugPrint(
-    //     '[${record.level.name}][${record.loggerName}]: ${record.message}',
-    //   );
-    // });
-
     // Set static configuration
     _serverConfig = config.serverConfig;
     _messageEncryptionKey = config.messageEncryptionKey;

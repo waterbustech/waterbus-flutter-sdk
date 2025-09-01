@@ -477,7 +477,7 @@ class _Room implements Room {
       this.status = RoomStatus.active,
       this.latestMessage,
       this.avatar,
-      this.streamingProtocol = StreamingProtocol.sfu,
+      this.streamingProtocol = StreamingProtocol.rtc,
       this.roomType = RoomType.videoConferencing,
       this.isProtected = true,
       this.capacity})
