@@ -48,11 +48,14 @@ dependencies:
   h264_profile_level_id: ^0.2.1
   dart_webrtc_plus: ^1.5.4+1
   flutter_webrtc_plus:
-    path: /Users/lambiengcode/Documents/waterbus/flutter-webrtc-plus
+    git:
+      url: https://github.com/waterbustech/flutter-webrtc-plus.git
+      ref: feat/upgrade-latest
 
   # HLS
   video_view:
-    path: /Users/lambiengcode/Documents/waterbus/flutter_video_view
+    git:
+      url: https://github.com/xxoo/flutter_video_view.git
   
   # Dependency Injection
   get_it: ^8.0.3
